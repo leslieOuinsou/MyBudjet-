@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Configuration du mode sombre avec Tailwind */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+}
+
+/* Styles globaux pour le mode sombre */
+@layer utilities {
+  /* Couleurs de texte par défaut */
+  .dark body {
+    color: #e0e0e0;
+  }
+  
+  /* Tables en mode sombre */
+  .dark table tbody tr {
+    color: #e0e0e0;
+  }
+  
+  .dark table tbody tr:nth-child(even) {
+    background-color: #2d2d2d;
+  }
+  
+  .dark table tbody tr:nth-child(odd) {
+    background-color: #383838;
+  }
+  
+  .dark table tbody tr:hover {
+    background-color: #404040;
+  }
+}
+
+/* Traduction de votre CSS en syntaxe valide */
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1440px;
+  height: 900px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
+  color: #FFFFFF; /* blanc */
+  background: #FFFFFF; /* blanc */
+  opacity: 1;
+  border: none;
+  border-radius: 0;
+}
+
+.button:hover {
+  color: #FFFFFF; /* blanc */
+  background: #488E38; /* succes-500 */
+}
+
+.button:hover:active {
+  color: #FFFFFF; /* blanc */
+  background: #488E38; /* succes-500 */
+}
+
+.button:disabled {
+  opacity: 0.4;
+}
+
+/* Bouton Login par défaut (même vert que sur survol/actif) */
+.btn-login {
+  background: #488E38;
+  color: #FFFFFF;
+}

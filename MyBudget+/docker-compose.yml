@@ -1,0 +1,47 @@
+services:
+  mongo:
+    image: mongo:6
+    container_name: mybudget-mongo
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: mybudget
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: mybudget-backend
+    restart: always
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      MONGO_URI: mongodb://mongo:27017/mybudget
+      JWT_SECRET: ${JWT_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+      FRONTEND_URL: http://localhost:5173
+      NODE_ENV: production
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm start
+
+  web:
+    build:
+      context: ./apps/web
+    container_name: mybudget-web
+    restart: always
+    ports:
+      - '5173:80'
+    environment:
+      VITE_API_URL: http://localhost:3001/api
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

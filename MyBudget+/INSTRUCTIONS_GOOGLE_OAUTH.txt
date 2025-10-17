@@ -1,0 +1,89 @@
+═══════════════════════════════════════════════════════
+  CONFIGURATION GOOGLE OAUTH - MyBudget+
+═══════════════════════════════════════════════════════
+
+✅ ÉTAPE COMPLÉTÉE : Client Secret configuré
+   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
+
+⚠️ IL RESTE : Ajouter votre Client ID
+
+═══════════════════════════════════════════════════════
+
+🔍 OÙ TROUVER VOTRE CLIENT ID ?
+
+1. Allez sur : https://console.cloud.google.com/apis/credentials
+
+2. Dans la liste des "ID client OAuth 2.0", cliquez sur votre client
+
+3. Copiez l'"ID client" qui ressemble à :
+   123456789-xxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+
+═══════════════════════════════════════════════════════
+
+✏️ AJOUTEZ-LE DANS LE FICHIER .env
+
+Ouvrez : backend\.env
+
+Remplacez la ligne :
+   GOOGLE_CLIENT_ID=YOUR_CLIENT_ID_HERE
+
+Par :
+   GOOGLE_CLIENT_ID=votre_vrai_client_id
+
+═══════════════════════════════════════════════════════
+
+🚀 ENSUITE, REDÉMARREZ LE BACKEND
+
+   cd backend
+   npm run dev
+
+Vous devriez voir :
+   ✅ Google OAuth configured
+
+═══════════════════════════════════════════════════════
+
+🔒 RAPPEL SÉCURITÉ
+
+⚠️  NE PARTAGEZ JAMAIS ces secrets :
+   - GOOGLE_CLIENT_SECRET (déjà configuré)
+   - GOOGLE_CLIENT_ID
+   - JWT_SECRET
+   - SESSION_SECRET
+
+⚠️  NE LES COMMITEZ PAS sur GitHub/GitLab
+   (le fichier .env est déjà dans .gitignore)
+
+═══════════════════════════════════════════════════════
+
+📝 EXEMPLE COMPLET DU FICHIER .env
+
+PORT=3001
+NODE_ENV=development
+MONGO_URI=mongodb://localhost:27017/mybudget
+JWT_SECRET=92ec173ed6b445be4946f8442dcd3ad28d09bfef63f4adc8737bb4439696a9eb
+SESSION_SECRET=0f2231abd4404fc964638c81dab7340b029837a4fdb307075a948ea000c9fdd5
+FRONTEND_URL=http://localhost:5173
+
+# Google OAuth
+GOOGLE_CLIENT_ID=123456789-xxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GOOGLE_CALLBACK_URL=http://localhost:3001/api/auth/google/callback
+
+═══════════════════════════════════════════════════════
+
+✅ APRÈS CONFIGURATION
+
+Testez la connexion Google :
+1. Démarrez le backend : npm run dev
+2. Démarrez le frontend : npm run dev (dans apps/web)
+3. Allez sur : http://localhost:5173/login
+4. Cliquez sur "Se connecter avec Google"
+
+═══════════════════════════════════════════════════════
+
+❓ BESOIN D'AIDE ?
+
+Consultez : GUIDE_GOOGLE_OAUTH.md (guide complet avec captures)
+
+═══════════════════════════════════════════════════════
+
