@@ -3,17 +3,17 @@ import { Link, useLocation } from "react-router-dom";
 import { MdMenu, MdClose, MdLogout } from "react-icons/md";
 
 const menu = [
-  { to: "/dashboard", label: "Tableau de bord" },
-  { to: "/categories", label: "Catégories & Portefeuilles" },
-  { to: "/budgets", label: "Budgets" },
-  { to: "/expenses", label: "Dépenses" },
-  { to: "/transactions", label: "Transactions" },
-  { to: "/reports", label: "Rapports" },
-  { to: "/importexport", label: "Import/Export" },
-  { to: "/forecasts", label: "Prévisions" },
-  { to: "/notifications", label: "Notifications" },
-  { to: "/settings", label: "Paramètres utilisateur" },
-  { to: "/profile", label: "Mon Profil" },
+  { to: "/dashboard", label: "📊 Tableau de bord" },
+  { to: "/categories", label: "🏷️ Catégories & Portefeuilles" },
+  { to: "/budgets", label: "💰 Budgets" },
+  { to: "/expenses", label: "💸 Dépenses" },
+  { to: "/transactions", label: "💳 Transactions" },
+  { to: "/reports", label: "📈 Rapports" },
+  { to: "/importexport", label: "📁 Import/Export" },
+  { to: "/forecasts", label: "🔮 Prévisions" },
+  { to: "/notifications", label: "🔔 Notifications" },
+  { to: "/settings", label: "⚙️ Paramètres utilisateur" },
+  { to: "/profile", label: "👤 Mon Profil" },
 ];
 
 export default function DashboardSidebar() {
@@ -53,19 +53,44 @@ export default function DashboardSidebar() {
         <div className="mb-8">
           <div className="text-xs text-[#6C757D] dark:text-[#a0a0a0] font-semibold mb-2">NAVIGATION</div>
           <ul className="space-y-2">
-            {menu.map((item) => (
-              <li key={item.to}>
-                <Link
-                  to={item.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-2 py-1 rounded transition-colors ${
-                    location.pathname === item.to 
-                      ? "bg-[#F5F7FA] dark:bg-[#383838] text-[#1E73BE] dark:text-[#60A5FA] font-semibold" 
-                      : "hover:bg-[#F5F7FA] dark:hover:bg-[#383838] text-[#343A40] dark:text-[#e0e0e0]"
-                  }`}
-                >
-                  {item.label}
-                </Link>
+            {menu.map((item, index) => (
+              <li key={`${item.to}-${index}`}>
+                {item.submenu ? (
+                  <div>
+                    <div className="block px-2 py-1 text-[#343A40] dark:text-[#e0e0e0] font-semibold">
+                      {item.label}
+                    </div>
+                    <ul className="ml-4 space-y-1">
+                      {item.submenu.map((subItem) => (
+                        <li key={subItem.to}>
+                          <Link
+                            to={subItem.to}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`block px-2 py-1 rounded transition-colors text-sm ${
+                              location.pathname === subItem.to 
+                                ? "bg-[#F5F7FA] dark:bg-[#383838] text-[#1E73BE] dark:text-[#60A5FA] font-semibold" 
+                                : "hover:bg-[#F5F7FA] dark:hover:bg-[#383838] text-[#343A40] dark:text-[#e0e0e0]"
+                            }`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <Link
+                    to={item.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block px-2 py-1 rounded transition-colors ${
+                      location.pathname === item.to 
+                        ? "bg-[#F5F7FA] dark:bg-[#383838] text-[#1E73BE] dark:text-[#60A5FA] font-semibold" 
+                        : "hover:bg-[#F5F7FA] dark:hover:bg-[#383838] text-[#343A40] dark:text-[#e0e0e0]"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

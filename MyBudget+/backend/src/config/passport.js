@@ -3,6 +3,12 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import GoogleStrategy from 'passport-google-oauth20';
 import User from '../models/user.js';
 
+// Vérifier que JWT_SECRET est configuré
+if (!process.env.JWT_SECRET) {
+  console.error('❌ JWT_SECRET non configurée dans les variables d\'environnement');
+  process.exit(1);
+}
+
 passport.use(new JwtStrategy({
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET,
@@ -17,7 +23,14 @@ passport.use(new JwtStrategy({
 }));
 
 // Google OAuth Strategy (optional - only if credentials are configured)
+console.log('🔑 Vérification des variables Google OAuth:', {
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? 'Défini' : 'Non défini',
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? 'Défini' : 'Non défini',
+  GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback'
+});
+
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  console.log('✅ Configuration Google OAuth activée');
   passport.use(new GoogleStrategy.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,

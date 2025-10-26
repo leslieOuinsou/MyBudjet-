@@ -1,11 +1,32 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 function getAuthHeaders(includeContentType = true) {
-  const token = localStorage.getItem("token");
+  // Vérifier d'abord localStorage, puis sessionStorage
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   const headers = {};
   if (token) headers.Authorization = `Bearer ${token}`;
   if (includeContentType) headers['Content-Type'] = 'application/json';
   return headers;
+}
+
+// Fonction utilitaire pour gérer les réponses d'erreur
+async function handleApiResponse(response) {
+  if (response.status === 401) {
+    // Token expiré ou invalide
+    localStorage.removeItem('token');
+    // Rediriger vers la page de connexion si on est dans le navigateur
+    if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+      window.location.href = '/login';
+    }
+    throw new Error('Session expirée. Veuillez vous reconnecter.');
+  }
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'Erreur serveur' }));
+    throw new Error(errorData.message || `Erreur ${response.status}`);
+  }
+  
+  return response.json();
 }
 
 // ============================================
@@ -13,7 +34,7 @@ function getAuthHeaders(includeContentType = true) {
 // ============================================
 
 // Connexion utilisateur
-export async function login(email, password) {
+export async function login(email, password, rememberMe = false) {
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
@@ -24,16 +45,78 @@ export async function login(email, password) {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: 'Identifiants invalides' }));
       
+      console.error('❌ Erreur de connexion:', errorData);
+      
       if (errorData.errors && Array.isArray(errorData.errors)) {
-        throw new Error(errorData.errors.map(e => e.message).join(', '));
+        throw new Error(errorData.errors.map(e => e.message || e.msg).join(', '));
       }
       throw new Error(errorData.message || 'Identifiants invalides');
     }
     
     const data = await response.json();
-    localStorage.setItem('token', data.token);
+    
+    // Stockage du token selon l'option "Se souvenir de moi"
+    if (rememberMe) {
+      // Stockage persistant (localStorage)
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('rememberMe', 'true');
+    } else {
+      // Stockage temporaire (sessionStorage)
+      sessionStorage.setItem('token', data.token);
+      localStorage.removeItem('rememberMe');
+    }
+    
     return data;
   } catch (error) {
+    console.error('❌ Erreur de connexion:', error);
+    throw error;
+  }
+}
+
+// Mot de passe oublié
+export async function forgotPassword(email, from = 'user') {
+  try {
+    const response = await fetch(`${API_URL}/auth/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, from }), // Inclure le paramètre 'from'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erreur lors de l\'envoi de l\'email de réinitialisation');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de la demande de réinitialisation:', error);
+    throw error;
+  }
+}
+
+// Réinitialisation du mot de passe
+export async function resetPassword(token, newPassword) {
+  try {
+    const response = await fetch(`${API_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token, newPassword }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erreur lors de la réinitialisation du mot de passe');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de la réinitialisation:', error);
     throw error;
   }
 }
@@ -43,8 +126,7 @@ export async function getCurrentUser() {
   const res = await fetch(`${API_URL}/users/me`, {
     headers: { ...getAuthHeaders(false) },
   });
-  if (!res.ok) throw new Error("Erreur lors du chargement du profil utilisateur");
-  return res.json();
+  return handleApiResponse(res);
 }
 
 // Notifications API
@@ -54,8 +136,7 @@ export async function getNotifications(params = {}) {
   const res = await fetch(url, {
     headers: { ...getAuthHeaders(false) },
   });
-  if (!res.ok) throw new Error("Erreur lors du chargement des notifications");
-  return res.json();
+  return handleApiResponse(res);
 }
 
 export async function markNotificationAsRead(id) {
@@ -108,8 +189,7 @@ export async function getUserSettings() {
   const res = await fetch(`${API_URL}/settings/preferences`, {
     headers: { ...getAuthHeaders(false) },
   });
-  if (!res.ok) throw new Error("Erreur lors du chargement des paramètres");
-  return res.json();
+  return handleApiResponse(res);
 }
 
 export async function updateUserSettings(settings) {
@@ -216,6 +296,23 @@ export async function uploadAvatar(file) {
   return res.json();
 }
 
+export async function deleteAvatar() {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_URL}/settings/profile/picture`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Erreur lors de la suppression de l'avatar");
+  }
+  return res.json();
+}
+
 export async function getBudgets() {
   const res = await fetch(`${API_URL}/budgets`, {
     headers: { ...getAuthHeaders() },
@@ -300,6 +397,18 @@ export async function deleteCategory(id) {
   return res.json();
 }
 
+export async function syncCategoriesFromTransactions() {
+  const res = await fetch(`${API_URL}/categories/sync`, {
+    method: "POST",
+    headers: { ...getAuthHeaders() },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Erreur lors de la synchronisation des catégories" }));
+    throw new Error(errorData.message || "Erreur lors de la synchronisation des catégories");
+  }
+  return res.json();
+}
+
 // Wallets API
 export async function getWallets() {
   const res = await fetch(`${API_URL}/wallets`, {
@@ -338,6 +447,18 @@ export async function deleteWallet(id) {
   return res.json();
 }
 
+export async function recalculateWalletBalance(id) {
+  const res = await fetch(`${API_URL}/wallets/${id}/recalculate`, {
+    method: "POST",
+    headers: { ...getAuthHeaders() },
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Erreur lors du recalcul du solde" }));
+    throw new Error(errorData.message || "Erreur lors du recalcul du solde");
+  }
+  return res.json();
+}
+
 // Transactions API
 export async function getTransactions(params = {}) {
   const queryString = new URLSearchParams(params).toString();
@@ -354,20 +475,26 @@ export async function getTransactions(params = {}) {
 export async function addTransaction(transaction) {
   const res = await fetch(`${API_URL}/transactions`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    headers: getAuthHeaders(true),
     body: JSON.stringify(transaction),
   });
-  if (!res.ok) throw new Error("Erreur lors de l'ajout de la transaction");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Erreur lors de l'ajout de la transaction" }));
+    throw new Error(errorData.message || "Erreur lors de l'ajout de la transaction");
+  }
   return res.json();
 }
 
 export async function updateTransaction(id, data) {
   const res = await fetch(`${API_URL}/transactions/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    headers: getAuthHeaders(true),
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Erreur lors de la modification de la transaction");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Erreur lors de la modification de la transaction" }));
+    throw new Error(errorData.message || "Erreur lors de la modification de la transaction");
+  }
   return res.json();
 }
 
@@ -963,12 +1090,215 @@ export async function getAllRecurringTransactionsAdmin() {
       headers: getAuthHeaders(),
     });
     
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Erreur lors de la récupération des transactions récurrentes');
-    }
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// ============================================
+// BANK ACCOUNTS API FUNCTIONS
+// ============================================
+
+// Obtenir tous les comptes bancaires de l'utilisateur
+export async function getBankAccounts() {
+  try {
+    const response = await fetch(`${API_URL}/bank-accounts`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
     
-    return await response.json();
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Obtenir un compte bancaire spécifique
+export async function getBankAccountById(id) {
+  try {
+    const response = await fetch(`${API_URL}/bank-accounts/${id}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Créer un nouveau compte bancaire
+export async function createBankAccount(accountData) {
+  try {
+    const response = await fetch(`${API_URL}/bank-accounts`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(accountData),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Mettre à jour un compte bancaire
+export async function updateBankAccount(id, accountData) {
+  try {
+    const response = await fetch(`${API_URL}/bank-accounts/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(accountData),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Supprimer un compte bancaire
+export async function deleteBankAccount(id) {
+  try {
+    const response = await fetch(`${API_URL}/bank-accounts/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Définir un compte comme principal
+export async function setPrimaryBankAccount(id) {
+  try {
+    const response = await fetch(`${API_URL}/bank-accounts/${id}/set-primary`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Obtenir les statistiques des comptes bancaires
+export async function getBankAccountsStats() {
+  try {
+    const response = await fetch(`${API_URL}/bank-accounts/stats`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+// ============================================
+// PAYPAL API FUNCTIONS
+// ============================================
+
+// Obtenir l'URL d'autorisation PayPal
+export async function getPayPalAuthUrl() {
+  try {
+    const response = await fetch(`${API_URL}/paypal/auth-url`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Callback après autorisation PayPal
+export async function handlePayPalCallback(code) {
+  try {
+    const response = await fetch(`${API_URL}/paypal/process-callback`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ code }),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Vérifier le statut de connexion PayPal
+export async function getPayPalStatus() {
+  try {
+    const response = await fetch(`${API_URL}/paypal/status`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Synchroniser les transactions PayPal
+export async function syncPayPalTransactions() {
+  try {
+    const response = await fetch(`${API_URL}/paypal/sync`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Déconnecter PayPal
+export async function disconnectPayPal() {
+  try {
+    const response = await fetch(`${API_URL}/paypal/disconnect`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Récupérer le solde PayPal
+export async function getPayPalBalance() {
+  try {
+    const response = await fetch(`${API_URL}/paypal/balance`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Récupérer les transactions PayPal
+export async function getPayPalTransactions() {
+  try {
+    const response = await fetch(`${API_URL}/paypal/transactions`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    
+    return await handleApiResponse(response);
   } catch (error) {
     throw error;
   }

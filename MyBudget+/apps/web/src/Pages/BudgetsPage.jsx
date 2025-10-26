@@ -113,9 +113,9 @@ export default function BudgetsPage() {
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
-        <main className="flex-1 px-4 md:px-8 lg:px-12 py-6 md:py-10 flex flex-col pt-16 md:pt-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-4">
-            <h1 className="text-2xl md:text-3xl font-extrabold text-[#22292F] dark:text-white">Budgets</h1>
+        <main className="flex-1 px-3 md:px-6 lg:px-8 xl:px-12 py-4 md:py-6 lg:py-10 flex flex-col pt-16 md:pt-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 lg:mb-8 gap-3 md:gap-4">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#22292F] dark:text-white">Budgets</h1>
             <div className="flex gap-4 items-center">
               <input 
                 type="text" 
@@ -125,9 +125,9 @@ export default function BudgetsPage() {
             </div>
           </div>
           {/* Formulaire de création */}
-          <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl p-8 mb-8">
-            <h2 className="text-xl font-bold text-[#22292F] dark:text-white mb-6">Créer un nouveau budget</h2>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end" onSubmit={handleSubmit}>
+          <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl p-4 md:p-6 lg:p-8 mb-4 md:mb-6 lg:mb-8">
+            <h2 className="text-lg md:text-xl font-bold text-[#22292F] dark:text-white mb-4 md:mb-6">Créer un nouveau budget</h2>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-end" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
                 <label className="text-[#343A40] dark:text-[#e0e0e0] text-sm">Nom du budget</label>
                 <input name="name" value={form.name} onChange={handleChange} placeholder="Ex: Courses mensuelles" className="border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-4 py-2 bg-[#F9FAFB] dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]" required />
@@ -156,25 +156,25 @@ export default function BudgetsPage() {
                 </div>
               </div>
               <div className="md:col-span-2 flex justify-end">
-                <button type="submit" className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-6 py-2 rounded-lg shadow transition">Créer un budget</button>
+                <button type="submit" className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-4 md:px-6 py-2 rounded-lg shadow transition text-sm md:text-base w-full md:w-auto">Créer un budget</button>
               </div>
             </form>
           </section>
           {/* Tableau des budgets */}
-          <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl p-8">
-            <h2 className="text-xl font-bold text-[#22292F] dark:text-white mb-6">Vos budgets actuels</h2>
+          <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl p-4 md:p-6 lg:p-8">
+            <h2 className="text-lg md:text-xl font-bold text-[#22292F] dark:text-white mb-4 md:mb-6">Vos budgets actuels</h2>
             <div className="overflow-x-auto rounded-xl">
-              <table className="min-w-full text-base">
+              <table className="min-w-full text-xs md:text-sm lg:text-base">
                 <thead>
                   <tr className="bg-[#F5F7FA] dark:bg-[#383838]">
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">CATÉGORIE</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">NOM DU BUDGET</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">PÉRIODE</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">MONTANT ALLOUÉ</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">DÉPENSES ACTUELLES</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">RESTE À DÉPENSER</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">PROGRESSION</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold">ACTIONS</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">CATÉGORIE</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">NOM DU BUDGET</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden lg:table-cell">PÉRIODE</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">MONTANT ALLOUÉ</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden md:table-cell">DÉPENSES ACTUELLES</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden lg:table-cell">RESTE À DÉPENSER</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">PROGRESSION</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -225,11 +225,11 @@ export default function BudgetsPage() {
                       
                       return (
                         <tr key={b._id} className="even:bg-white odd:bg-[#F5F7FA]">
-                          <td className="px-4 py-3 font-medium">{b.category || 'Général'}</td>
-                          <td className="px-4 py-3">{b.name}</td>
-                          <td className="px-4 py-3">{b.period}</td>
-                          <td className="px-4 py-3">{amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</td>
-                          <td className="px-4 py-3">
+                          <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-xs md:text-sm">{b.category || 'Général'}</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{b.name}</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell">{b.period}</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden md:table-cell">
                             <div className="flex items-center gap-1">
                               <span>{spent.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</span>
                               {b.alertMessage && (
@@ -237,44 +237,44 @@ export default function BudgetsPage() {
                               )}
                             </div>
                           </td>
-                          <td className={`px-4 py-3 ${reste < 0 ? "text-[#DC2626] font-semibold" : ""}`}>
+                          <td className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell ${reste < 0 ? "text-[#DC2626] font-semibold" : ""}`}>
                             {reste < 0 ? `-${Math.abs(reste).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €` : reste.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-2 md:px-4 py-2 md:py-3">
                             <div className="flex items-center gap-2">
                               <div className="flex-1">
                                 <div className="w-full h-2 bg-[#EAF4FB] rounded-full overflow-hidden">
                                   <div className={`h-2 rounded-full transition-all duration-300 ${color}`} style={{ width: `${Math.min(percent, 100)}%` }}></div>
                                 </div>
                                 <div className="flex justify-between items-center mt-1">
-                                  <span className="text-xs font-semibold text-[#22292F]">{percent}%</span>
-                                  <span className="text-xs text-[#6C757D] flex items-center gap-1">
-                                    <StatusIcon size={14} />
-                                    {statusText}
+                                  <span className="text-[10px] md:text-xs font-semibold text-[#22292F]">{percent}%</span>
+                                  <span className="text-[10px] md:text-xs text-[#6C757D] flex items-center gap-1">
+                                    <StatusIcon size={12} className="md:size-[14px]" />
+                                    <span className="hidden md:inline">{statusText}</span>
                                   </span>
                                 </div>
                                 {b.daysRemaining !== null && b.daysRemaining > 0 && (
-                                  <div className="text-xs text-[#6C757D] mt-1">
+                                  <div className="text-[10px] md:text-xs text-[#6C757D] mt-1">
                                     {b.daysRemaining} jour{b.daysRemaining > 1 ? 's' : ''} restant{b.daysRemaining > 1 ? 's' : ''}
                                   </div>
                                 )}
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 flex gap-2">
+                          <td className="px-2 md:px-4 py-2 md:py-3 flex gap-1 md:gap-2">
                             <button 
                               onClick={() => handleEdit(b)}
-                              className="text-[#1E73BE] hover:underline text-sm"
+                              className="text-[#1E73BE] hover:underline"
                               title="Modifier"
                             >
-                              <MdEdit size={20} />
+                              <MdEdit size={16} className="md:size-5" />
                             </button>
                             <button 
                               onClick={() => handleDelete(b._id)}
-                              className="text-[#DC2626] hover:underline text-sm"
+                              className="text-[#DC2626] hover:underline"
                               title="Supprimer"
                             >
-                              <MdDelete size={20} />
+                              <MdDelete size={16} className="md:size-5" />
                             </button>
                           </td>
                         </tr>

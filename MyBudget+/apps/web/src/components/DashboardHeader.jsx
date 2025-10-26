@@ -8,25 +8,50 @@ export default function DashboardHeader() {
   const [loading, setLoading] = useState(true);
 
   // Charger les données utilisateur
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        const userData = await getCurrentUser();
-        setUser(userData);
-      } catch (error) {
-        console.error('Erreur lors du chargement de l\'utilisateur:', error);
-      } finally {
+  const loadUser = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
         setLoading(false);
+        return;
       }
+
+      console.log('🔄 Rechargement des données utilisateur dans DashboardHeader...');
+      const userData = await getCurrentUser();
+      console.log('👤 Données utilisateur mises à jour:', userData?.profilePicture ? 'Avatar présent' : 'Pas d\'avatar');
+      setUser(userData);
+    } catch (error) {
+      console.error('Erreur lors du chargement de l\'utilisateur:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  // Écouter les changements d'avatar
+  useEffect(() => {
+    const handleAvatarUpdate = () => {
+      console.log('🔔 Événement avatar-updated reçu, rechargement...');
+      loadUser();
     };
 
-    loadUser();
+    // Écouter l'événement personnalisé
+    window.addEventListener('avatar-updated', handleAvatarUpdate);
+    
+    // Écouter aussi les changements de focus pour recharger
+    const handleFocus = () => {
+      loadUser();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('avatar-updated', handleAvatarUpdate);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   // Fonction pour extraire les initiales

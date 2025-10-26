@@ -292,23 +292,23 @@ export default function ReportsPage() {
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
-        <main className="flex-1 px-12 py-10 flex flex-col">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-extrabold text-[#22292F] dark:text-[#e4e4e4]">Rapports Financiers</h1>
-            <div className="flex gap-4 items-center">
+        <main className="flex-1 px-3 md:px-6 lg:px-8 xl:px-12 py-4 md:py-6 lg:py-10 flex flex-col pt-16 md:pt-10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 lg:mb-8 gap-3 md:gap-4">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#22292F] dark:text-[#e4e4e4]">Rapports Financiers</h1>
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center w-full sm:w-auto">
               <select 
                 value={period} 
                 onChange={(e) => setPeriod(e.target.value)}
-                className="border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-4 py-2 bg-[#F9FAFB] dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:border-[#1E73BE]"
+                className="border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-3 md:px-4 py-2 text-sm md:text-base bg-[#F9FAFB] dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:border-[#1E73BE] w-full sm:w-auto"
               >
                 <option value="week">Cette Semaine</option>
                 <option value="month">Ce Mois</option>
                 <option value="year">Cette Année</option>
               </select>
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <button 
                   onClick={() => document.getElementById('export-menu').classList.toggle('hidden')}
-                  className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-5 py-2 rounded-lg shadow transition"
+                  className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-3 md:px-5 py-2 rounded-lg shadow transition text-sm md:text-base w-full sm:w-auto"
                 >
                   Exporter ▼
                 </button>
@@ -348,51 +348,51 @@ export default function ReportsPage() {
             </div>
           )}
           {/* Statistiques */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
-              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-sm">Revenu Total</span>
-              <div className="flex items-center gap-2 text-2xl font-bold text-[#22C55E]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
+            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
+              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-xs md:text-sm">Revenu Total</span>
+              <div className="flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold text-[#22C55E]">
                 {stats.totalIncome.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
               </div>
-              <span className={`text-xs ${stats.incomeVariation >= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
+              <span className={`text-[10px] md:text-xs ${stats.incomeVariation >= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
                 {stats.incomeVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.incomeVariation || 0).toFixed(1)}% 
-                {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}
+                <span className="hidden sm:inline"> {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}</span>
               </span>
             </div>
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
-              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-sm">Dépenses Totales</span>
-              <div className="flex items-center gap-2 text-2xl font-bold text-[#DC2626]">
+            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
+              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-xs md:text-sm">Dépenses Totales</span>
+              <div className="flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold text-[#DC2626]">
                 {stats.totalExpense.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
               </div>
-              <span className={`text-xs ${stats.expenseVariation <= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
+              <span className={`text-[10px] md:text-xs ${stats.expenseVariation <= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
                 {stats.expenseVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.expenseVariation || 0).toFixed(1)}% 
-                {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}
+                <span className="hidden sm:inline"> {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}</span>
               </span>
             </div>
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
-              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-sm">Épargne Nette</span>
-              <div className={`flex items-center gap-2 text-2xl font-bold ${stats.savings >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
+            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2 sm:col-span-2 md:col-span-1">
+              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-xs md:text-sm">Épargne Nette</span>
+              <div className={`flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold ${stats.savings >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
                 {stats.savings >= 0 ? '+' : ''} {stats.savings.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
               </div>
-              <span className={`text-xs ${stats.savingsVariation >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
+              <span className={`text-[10px] md:text-xs ${stats.savingsVariation >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
                 {stats.savingsVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.savingsVariation || 0).toFixed(1)}% 
-                {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}
+                <span className="hidden sm:inline"> {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}</span>
               </span>
             </div>
           </div>
           {/* Graphiques et résumé */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2">Tendance des Revenus et Dépenses</span>
-              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-2">Visualisation de l'évolution des revenus et dépenses sur la période sélectionnée.</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6 lg:mb-8">
+            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
+              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2 text-sm md:text-base">Tendance des Revenus et Dépenses</span>
+              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-xs md:text-sm mb-2 hidden sm:block">Visualisation de l'évolution des revenus et dépenses sur la période sélectionnée.</span>
               <LineChart 
                 data={chartData.trends} 
                 isDarkMode={theme === 'dark'} 
               />
             </div>
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2">Répartition des Dépenses par Catégorie</span>
-              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-2">Analyse des dépenses par catégorie pour identifier les principaux postes.</span>
+            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
+              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2 text-sm md:text-base">Répartition des Dépenses par Catégorie</span>
+              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-xs md:text-sm mb-2 hidden sm:block">Analyse des dépenses par catégorie pour identifier les principaux postes.</span>
               <DoughnutChart 
                 data={chartData.categories} 
                 isDarkMode={theme === 'dark'} 
@@ -415,27 +415,27 @@ export default function ReportsPage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2">Adhérence au Budget</span>
-              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-2">Comparaison des dépenses réelles avec les budgets alloués par catégorie.</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6 lg:mb-8">
+            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
+              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2 text-sm md:text-base">Adhérence au Budget</span>
+              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-xs md:text-sm mb-2 hidden sm:block">Comparaison des dépenses réelles avec les budgets alloués par catégorie.</span>
               <BarChart 
                 data={chartData.budget} 
                 isDarkMode={theme === 'dark'} 
               />
             </div>
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2">Top Dépenses de la Période</span>
-              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-2">Les transactions les plus importantes de la période sélectionnée.</span>
+            <div className="bg-white dark:bg-[#2d2d2d] rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] dark:border-[#404040] flex flex-col gap-2">
+              <span className="font-bold text-[#22292F] dark:text-[#e4e4e4] mb-2 text-sm md:text-base">Top Dépenses de la Période</span>
+              <span className="text-[#6C757D] dark:text-[#b0b0b0] text-xs md:text-sm mb-2 hidden sm:block">Les transactions les plus importantes de la période sélectionnée.</span>
               <div className="overflow-x-auto rounded-xl">
-                <table className="min-w-full text-base">
+                <table className="min-w-full text-xs md:text-sm lg:text-base">
                   <thead>
                     <tr className="bg-[#F5F7FA] dark:bg-[#383838]">
-                      <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold">Date</th>
-                      <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold">Description</th>
-                      <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold">Catégorie</th>
-                      <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold">Montant</th>
-                      <th className="px-4 py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold">Portefeuille</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold text-xs md:text-sm">Date</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold text-xs md:text-sm">Description</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold text-xs md:text-sm hidden md:table-cell">Catégorie</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold text-xs md:text-sm">Montant</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e4e4e4] font-bold text-xs md:text-sm hidden lg:table-cell">Portefeuille</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -448,20 +448,20 @@ export default function ReportsPage() {
                     ) : (
                       topTransactions.transactions.map((transaction, index) => (
                         <tr key={transaction._id} className="even:bg-white dark:even:bg-[#2d2d2d] odd:bg-[#F5F7FA] dark:odd:bg-[#383838] hover:bg-[#EAF4FB] dark:hover:bg-[#404040] transition">
-                          <td className="px-4 py-3 font-medium text-[#343A40] dark:text-[#e4e4e4]">
+                          <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-[#343A40] dark:text-[#e4e4e4] text-xs md:text-sm">
                             {new Date(transaction.date).toLocaleDateString('fr-FR')}
                           </td>
-                          <td className="px-4 py-3 text-[#343A40] dark:text-[#e4e4e4]">{transaction.description}</td>
-                          <td className="px-4 py-3">
-                            <span className="bg-[#F5F7FA] dark:bg-[#383838] border border-[#EAF4FB] dark:border-[#404040] rounded px-2 py-1 text-xs text-[#343A40] dark:text-[#e4e4e4]">
+                          <td className="px-2 md:px-4 py-2 md:py-3 text-[#343A40] dark:text-[#e4e4e4] text-xs md:text-sm truncate max-w-[150px] md:max-w-none">{transaction.description}</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 hidden md:table-cell">
+                            <span className="bg-[#F5F7FA] dark:bg-[#383838] border border-[#EAF4FB] dark:border-[#404040] rounded px-2 py-1 text-[10px] md:text-xs text-[#343A40] dark:text-[#e4e4e4]">
                               {transaction.category?.name || 'Non catégorisé'}
                             </span>
                           </td>
-                          <td className="px-4 py-3 font-semibold text-[#DC2626]">
+                          <td className="px-2 md:px-4 py-2 md:py-3 font-semibold text-[#DC2626] text-xs md:text-sm">
                             - {transaction.amount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
                           </td>
-                          <td className="px-4 py-3">
-                            <span className="bg-[#E0F2FE] dark:bg-[#1a365d] border border-[#B3E5FC] dark:border-[#2d3748] rounded px-2 py-1 text-xs text-[#1E73BE] dark:text-[#63b3ed]">
+                          <td className="px-2 md:px-4 py-2 md:py-3 hidden lg:table-cell">
+                            <span className="bg-[#E0F2FE] dark:bg-[#1a365d] border border-[#B3E5FC] dark:border-[#2d3748] rounded px-2 py-1 text-[10px] md:text-xs text-[#1E73BE] dark:text-[#63b3ed]">
                               {transaction.wallet?.name || 'N/A'}
                             </span>
                           </td>
@@ -473,13 +473,13 @@ export default function ReportsPage() {
               </div>
             </div>
           </div>
-          <footer className="flex flex-col md:flex-row items-center justify-between gap-2 mt-8 text-[#6C757D] text-sm">
-            <div className="flex gap-6">
+          <footer className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-2 mt-6 md:mt-8 text-[#6C757D] text-xs md:text-sm">
+            <div className="flex flex-wrap gap-3 md:gap-6 justify-center md:justify-start">
               <span>MyBudget+</span>
               <Link to="/legal" className="hover:text-[#1E73BE] transition">Légal</Link>
               <Link to="/support" className="hover:text-[#1E73BE] transition">Support</Link>
             </div>
-            <div className="flex gap-4 text-xl">
+            <div className="flex gap-3 md:gap-4 text-lg md:text-xl">
               <span className="hover:text-[#1E73BE] cursor-pointer transition">📘</span>
               <span className="hover:text-[#1E73BE] cursor-pointer transition">🐦</span>
               <span className="hover:text-[#1E73BE] cursor-pointer transition">📧</span>

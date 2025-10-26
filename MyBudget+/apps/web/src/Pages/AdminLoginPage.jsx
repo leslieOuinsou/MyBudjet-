@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { login } from '../api';
@@ -18,17 +18,32 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Charger l'email admin sauvegardé au démarrage
+  useEffect(() => {
+    const savedAdminEmail = localStorage.getItem('savedAdminEmail');
+    const savedAdminRemember = localStorage.getItem('savedAdminRememberMe');
+    
+    if (savedAdminRemember === 'true' && savedAdminEmail) {
+      setEmail(savedAdminEmail);
+      setRememberMe(true);
+      console.log('✅ Email admin chargé depuis le stockage:', savedAdminEmail);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    
     setLoading(true);
 
     try {
       console.log('🔐 Tentative de connexion admin:', { email });
-      const response = await login(email, password);
+      const response = await login(email, password, rememberMe);
       
       // Vérifier que l'utilisateur est bien admin
       if (response.user.role !== 'admin') {
@@ -39,10 +54,29 @@ export default function AdminLoginPage() {
       }
       
       console.log('✅ Connexion admin réussie');
+      
+      // Sauvegarder l'email admin si "Se souvenir de moi" est coché
+      if (rememberMe) {
+        localStorage.setItem('savedAdminEmail', email);
+        localStorage.setItem('savedAdminRememberMe', 'true');
+        console.log('💾 Email admin sauvegardé:', email);
+      } else {
+        localStorage.removeItem('savedAdminEmail');
+        localStorage.removeItem('savedAdminRememberMe');
+        console.log('🗑️ Email admin effacé');
+      }
+      
       navigate('/admin');
     } catch (err) {
       console.error('❌ Erreur connexion admin:', err);
-      setError(err.message || 'Identifiants incorrects');
+      let errorMessage = err.message || 'Identifiants incorrects';
+      
+      // Message personnalisé pour les comptes Google
+      if (errorMessage.includes('social login') || errorMessage.includes('reset your password')) {
+        errorMessage = 'Ce compte a été créé avec Google. Créez d\'abord un mot de passe via "Mot de passe oublié" sur la page de connexion utilisateur.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -192,6 +226,21 @@ export default function AdminLoginPage() {
                 </div>
               </div>
               
+              {/* Option "Se souvenir de moi" */}
+              <div className="flex items-center justify-between mt-4">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="mr-2 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                  />
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    Se souvenir de moi
+                  </span>
+                </label>
+              </div>
+              
               <button
                 type="submit"
                 disabled={loading}
@@ -214,14 +263,26 @@ export default function AdminLoginPage() {
             <div className={`mt-6 pt-6 border-t ${isDarkMode ? 'border-purple-700/30' : 'border-purple-100'}`}>
               <div className="text-center space-y-3">
                 <Link
+                  to="/forgot-password?from=admin"
+                  className="block text-sm text-purple-600 hover:text-purple-700 hover:underline"
+                >
+                  Mot de passe oublié ?
+                </Link>
+                <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Pas encore de compte admin ?{' '}
+                  <Link
+                    to="/admin/signup"
+                    className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
+                  >
+                    Créer un compte
+                  </Link>
+                </div>
+                <Link
                   to="/login"
                   className="block text-sm text-purple-600 hover:text-purple-700 hover:underline"
                 >
                   Connexion utilisateur standard →
                 </Link>
-                <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  Vous n'êtes pas administrateur ? Utilisez la connexion standard.
-                </div>
               </div>
             </div>
             

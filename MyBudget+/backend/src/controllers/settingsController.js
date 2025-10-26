@@ -164,14 +164,25 @@ export const exportUserData = async (req, res) => {
 // Uploader une photo de profil
 export const uploadProfilePicture = async (req, res) => {
   try {
+    console.log('📸 Upload d\'avatar démarré pour utilisateur:', req.user._id);
+    console.log('📁 Fichier reçu:', req.file ? {
+      filename: req.file.filename,
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+      path: req.file.path
+    } : 'Aucun fichier');
+
     const userId = req.user._id;
 
     if (!req.file) {
+      console.log('❌ Aucun fichier uploadé');
       return res.status(400).json({ message: 'Aucun fichier uploadé' });
     }
 
     // Construire l'URL de l'image
     const profilePictureUrl = `/uploads/${req.file.filename}`;
+    console.log('🔗 URL de l\'avatar:', profilePictureUrl);
 
     // Mettre à jour l'utilisateur
     const user = await User.findByIdAndUpdate(
@@ -181,8 +192,11 @@ export const uploadProfilePicture = async (req, res) => {
     );
 
     if (!user) {
+      console.log('❌ Utilisateur non trouvé:', userId);
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
+
+    console.log('✅ Avatar mis à jour avec succès:', profilePictureUrl);
 
     res.json({ 
       message: 'Photo de profil mise à jour avec succès',
@@ -191,6 +205,37 @@ export const uploadProfilePicture = async (req, res) => {
     });
   } catch (error) {
     console.error('Erreur lors de l\'upload de la photo:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+// Supprimer la photo de profil
+export const deleteProfilePicture = async (req, res) => {
+  try {
+    console.log('🗑️ Suppression d\'avatar pour utilisateur:', req.user._id);
+    
+    const userId = req.user._id;
+
+    // Mettre à jour l'utilisateur pour supprimer la photo de profil
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $unset: { profilePicture: 1 } }, // Supprime le champ profilePicture
+      { new: true, select: '-password' }
+    );
+
+    if (!user) {
+      console.log('❌ Utilisateur non trouvé:', userId);
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    console.log('✅ Avatar supprimé avec succès pour:', user.name);
+
+    res.json({ 
+      message: 'Photo de profil supprimée avec succès',
+      user
+    });
+  } catch (error) {
+    console.error('❌ Erreur lors de la suppression de la photo:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };

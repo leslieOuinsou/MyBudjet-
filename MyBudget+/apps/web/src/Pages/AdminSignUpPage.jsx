@@ -47,6 +47,7 @@ export default function AdminSignUpPage() {
     setError('');
     setSuccess('');
     
+    
     // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Les mots de passe ne correspondent pas');
@@ -78,7 +79,7 @@ export default function AdminSignUpPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          adminCode: formData.adminCode
+          adminCode: formData.adminCode,
         }),
       });
       
@@ -313,6 +314,7 @@ export default function AdminSignUpPage() {
                 </p>
               </div>
               
+              {/* reCAPTCHA */}              
               <button
                 type="submit"
                 disabled={loading || !allRequirementsMet}

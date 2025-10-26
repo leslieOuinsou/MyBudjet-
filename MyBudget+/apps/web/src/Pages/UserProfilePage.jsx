@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { 
   getCurrentUser,
   updateUserProfile,
@@ -104,31 +105,11 @@ const UserProfilePage = () => {
   return (
     <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
       <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className={`w-64 py-8 px-6 hidden md:block ${isDarkMode ? 'bg-[#2d2d2d] border-r border-[#404040]' : 'bg-white border-r border-[#F5F7FA]'}`}>
-          <div className="mb-8">
-            <div className={`text-xs font-semibold mb-2 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>NAVIGATION</div>
-            <ul className="space-y-2">
-              <li><Link to="/dashboard" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Tableau de bord</Link></li>
-              <li><Link to="/categories" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Catégories & Portefeuilles</Link></li>
-              <li><Link to="/budgets" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Budgets</Link></li>
-              <li><Link to="/transactions" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Transactions</Link></li>
-              <li><Link to="/reports" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Rapports</Link></li>
-              <li><Link to="/importexport" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Import/Export</Link></li>
-              <li><Link to="/forecasts" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Prévisions</Link></li>
-              <li><Link to="/notifications" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Notifications</Link></li>
-              <li><Link to="/settings" className={`block px-2 py-1 rounded ${isDarkMode ? 'text-gray-300 hover:bg-[#383838]' : 'text-[#343A40] hover:bg-[#F5F7FA]'}`}>Paramètres utilisateur</Link></li>
-              <li><Link to="/profile" className={`block px-2 py-1 rounded font-semibold ${isDarkMode ? 'bg-[#383838] text-[#1E73BE]' : 'bg-[#F5F7FA] text-[#1E73BE]'}`}>Mon Profil</Link></li>
-            </ul>
-          </div>
-          <Link to="/login" className="mt-8 w-full bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37] flex items-center gap-2">
-            <span className="text-lg">⏻</span> Déconnexion
-          </Link>
-        </aside>
+        <DashboardSidebar />
         {/* Main content */}
-        <main className="flex-1 p-10">
-          <h1 className={`text-2xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Mon Profil</h1>
-          <p className={`mb-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+        <main className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10 pt-16 md:pt-10">
+          <h1 className={`text-xl md:text-2xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Mon Profil</h1>
+          <p className={`mb-4 md:mb-6 lg:mb-8 text-sm md:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Gérez vos informations personnelles, votre photo de profil et vos préférences.
             {user && ` Bonjour ${user.name?.split(' ')[0] || 'Utilisateur'} !`}
           </p>
@@ -144,73 +125,73 @@ const UserProfilePage = () => {
               {success}
             </div>
           )}
-          <div className="flex flex-wrap gap-8 mb-8">
+          <div className="flex flex-col lg:flex-row flex-wrap gap-4 md:gap-6 lg:gap-8 mb-4 md:mb-6 lg:mb-8">
             {/* Infos personnelles */}
-            <section className={`rounded-xl shadow p-6 flex-1 min-w-[320px] max-w-md ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
-              <div className="flex justify-between items-center mb-4">
-                <h2 className={`font-semibold text-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>Informations Personnelles</h2>
-                <button className="text-[#1E73BE] text-sm font-medium">Modifier</button>
+            <section className={`rounded-xl shadow p-4 md:p-6 flex-1 min-w-[280px] lg:min-w-[320px] lg:max-w-md ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
+              <div className="flex justify-between items-center mb-3 md:mb-4">
+                <h2 className={`font-semibold text-base md:text-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>Informations Personnelles</h2>
+                <button className="text-[#1E73BE] text-xs md:text-sm font-medium">Modifier</button>
               </div>
               <form onSubmit={handleProfileUpdate} className="space-y-3">
                 <div>
-                  <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Nom complet</label>
+                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Nom complet</label>
                   <input 
                     type="text"
                     value={profileForm.name}
                     onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-                    className={`border rounded px-3 py-2 w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
+                    className={`border rounded px-3 py-2 text-sm md:text-base w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
                     placeholder="Votre nom complet"
                   />
                 </div>
                 <div>
-                  <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Email</label>
+                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Email</label>
                   <input 
                     type="email"
                     value={profileForm.email}
                     onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
-                    className={`border rounded px-3 py-2 w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
+                    className={`border rounded px-3 py-2 text-sm md:text-base w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
                     placeholder="votre@email.com"
                   />
                 </div>
                 <div>
-                  <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Téléphone</label>
+                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Téléphone</label>
                   <input 
                     type="tel"
                     value={profileForm.phoneNumber}
                     onChange={(e) => setProfileForm({...profileForm, phoneNumber: e.target.value})}
-                    className={`border rounded px-3 py-2 w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
+                    className={`border rounded px-3 py-2 text-sm md:text-base w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
                     placeholder="+33 6 12 34 56 78"
                   />
                 </div>
-                <button type="submit" className="w-full bg-[#1E73BE] text-white px-4 py-2 rounded font-semibold hover:bg-[#155a8a]">
+                <button type="submit" className="w-full bg-[#1E73BE] text-white px-3 md:px-4 py-2 rounded font-semibold text-sm md:text-base hover:bg-[#155a8a]">
                   Mettre à jour le profil
                 </button>
               </form>
             </section>
             {/* Photo de profil */}
-            <section className={`rounded-xl shadow p-6 flex flex-col items-center min-w-[260px] max-w-xs ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
-              <h2 className={`font-semibold text-lg mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Photo de Profil</h2>
-              <div className="w-24 h-24 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-2xl mb-4">
+            <section className={`rounded-xl shadow p-4 md:p-6 flex flex-col items-center min-w-[240px] lg:min-w-[260px] lg:max-w-xs ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
+              <h2 className={`font-semibold text-base md:text-lg mb-3 md:mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Photo de Profil</h2>
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-xl md:text-2xl mb-3 md:mb-4">
                 {user ? (user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U') : 'U'}
               </div>
-              <button className={`px-4 py-2 rounded font-medium text-sm ${isDarkMode ? 'bg-[#383838] text-gray-300' : 'bg-gray-100 text-gray-700'}`}>Changer la photo</button>
+              <button className={`px-3 md:px-4 py-2 rounded font-medium text-xs md:text-sm ${isDarkMode ? 'bg-[#383838] text-gray-300' : 'bg-gray-100 text-gray-700'}`}>Changer la photo</button>
             </section>
           </div>
           {/* Préférences */}
-          <section className={`rounded-xl shadow p-6 mt-4 ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
-            <h2 className={`font-semibold text-lg mb-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>Préférences</h2>
-            <p className={`mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Gérez vos paramètres de notification, de sécurité et de confidentialité.</p>
-            <div className="flex gap-2 mb-6">
-              <button onClick={() => setTab("profile")} className={`px-4 py-2 rounded-t font-medium text-sm ${tab === "profile" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Profil</button>
-              <button onClick={() => setTab("notifications")} className={`px-4 py-2 rounded-t font-medium text-sm ${tab === "notifications" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Notifications</button>
-              <button onClick={() => setTab("securite")} className={`px-4 py-2 rounded-t font-medium text-sm ${tab === "securite" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Sécurité</button>
-              <button onClick={() => setTab("confidentialite")} className={`px-4 py-2 rounded-t font-medium text-sm ${tab === "confidentialite" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Confidentialité</button>
+          <section className={`rounded-xl shadow p-4 md:p-6 mt-2 md:mt-4 ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
+            <h2 className={`font-semibold text-base md:text-lg mb-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>Préférences</h2>
+            <p className={`mb-3 md:mb-4 text-sm md:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Gérez vos paramètres de notification, de sécurité et de confidentialité.</p>
+            <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+              <button onClick={() => setTab("profile")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "profile" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Profil</button>
+              <button onClick={() => setTab("notifications")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "notifications" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Notifications</button>
+              <button onClick={() => setTab("securite")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "securite" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Sécurité</button>
+              <button onClick={() => setTab("confidentialite")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "confidentialite" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Confidentialité</button>
             </div>
             {tab === "profile" && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3 md:space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div>
-                    <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Devise par défaut</label>
+                    <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Devise par défaut</label>
                     <select 
                       value={settings?.appearance?.currency || 'EUR'}
                       onChange={(e) => handleSettingsUpdate({ appearance: { currency: e.target.value } })}
@@ -223,7 +204,7 @@ const UserProfilePage = () => {
                     </select>
                   </div>
                   <div>
-                    <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Format de date</label>
+                    <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Format de date</label>
                     <select 
                       value={settings?.appearance?.dateFormat || 'DD/MM/YYYY'}
                       onChange={(e) => handleSettingsUpdate({ appearance: { dateFormat: e.target.value } })}
@@ -237,7 +218,7 @@ const UserProfilePage = () => {
                   </div>
                 </div>
                 <div>
-                  <label className={`block text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Langue</label>
+                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Langue</label>
                   <select 
                     value={settings?.appearance?.language || 'fr'}
                     onChange={(e) => {
@@ -258,11 +239,11 @@ const UserProfilePage = () => {
               </div>
             )}
             {tab === "notifications" && (
-              <div className="space-y-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications par e-mail</div>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des mises à jour importantes et des résumés par e-mail.</div>
+              <div className="space-y-4 md:space-y-5">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="flex-1">
+                    <div className={`font-medium text-sm md:text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications par e-mail</div>
+                    <div className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des mises à jour importantes et des résumés par e-mail.</div>
                   </div>
                   <label className="inline-flex items-center cursor-pointer">
                     <input 
@@ -276,10 +257,10 @@ const UserProfilePage = () => {
                     </span>
                   </label>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications par SMS</div>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des alertes rapides sur vos dépenses importantes.</div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="flex-1">
+                    <div className={`font-medium text-sm md:text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications par SMS</div>
+                    <div className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des alertes rapides sur vos dépenses importantes.</div>
                   </div>
                   <label className="inline-flex items-center cursor-pointer">
                     <input 
@@ -293,10 +274,10 @@ const UserProfilePage = () => {
                     </span>
                   </label>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications push</div>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des alertes directement sur votre appareil mobile ou votre navigateur.</div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="flex-1">
+                    <div className={`font-medium text-sm md:text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications push</div>
+                    <div className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des alertes directement sur votre appareil mobile ou votre navigateur.</div>
                   </div>
                   <label className="inline-flex items-center cursor-pointer">
                     <input 

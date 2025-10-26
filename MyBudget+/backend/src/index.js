@@ -1,5 +1,16 @@
 import 'dotenv/config';
 import express from 'express';
+
+// Debug: Vérifier les variables d'environnement
+console.log('🔍 Debug - Variables d\'environnement:');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ Configurée' : '❌ Non configurée');
+console.log('RECAPTCHA_SECRET_KEY:', process.env.RECAPTCHA_SECRET_KEY ? '✅ Configurée' : '❌ Non configurée');
+console.log('MONGO_URI:', process.env.MONGO_URI ? '✅ Configurée' : '❌ Non configurée');
+console.log('EMAIL_USER:', process.env.EMAIL_USER ? `✅ ${process.env.EMAIL_USER}` : '❌ Non configurée');
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Configurée (masquée)' : '❌ Non configurée');
+console.log('PAYPAL_CLIENT_ID:', process.env.PAYPAL_CLIENT_ID ? '✅ Configurée' : '❌ Non configurée');
+console.log('PAYPAL_CLIENT_SECRET:', process.env.PAYPAL_CLIENT_SECRET ? '✅ Configurée (masquée)' : '❌ Non configurée');
+console.log('PAYPAL_MODE:', process.env.PAYPAL_MODE ? `✅ ${process.env.PAYPAL_MODE}` : '❌ Non configurée');
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -26,6 +37,9 @@ import reportsRoutes from './routes/reports.js';
 import forecastRoutes from './routes/forecasts.js';
 import notificationRoutes from './routes/notifications.js';
 import settingsRoutes from './routes/settings.js';
+import bankAccountRoutes from './routes/bankAccounts.js';
+import importBankRoutes from './routes/importBank.js';
+import paypalRoutes from './routes/paypal.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -137,6 +151,24 @@ app.use('/api/importexport', importExportRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/billreminders', billReminderRoutes);
+app.use('/api/bank-accounts', bankAccountRoutes);
+app.use('/api/import-bank', importBankRoutes);
+app.use('/api/paypal', paypalRoutes);
+
+// Route spéciale pour le callback PayPal
+app.get('/callback', (req, res) => {
+  console.log('🔄 Callback PayPal reçu:', req.query);
+  const { code, error } = req.query;
+  if (code) {
+    const frontendUrl = `${process.env.FRONTEND_URL}/paypal?code=${code}`;
+    res.redirect(frontendUrl);
+  } else if (error) {
+    const frontendUrl = `${process.env.FRONTEND_URL}/paypal?error=${error}`;
+    res.redirect(frontendUrl);
+  } else {
+    res.redirect(`${process.env.FRONTEND_URL}/paypal?error=unknown`);
+  }
+});
 app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/reports', reportsRoutes);
@@ -236,7 +268,11 @@ if (!process.env.SESSION_SECRET) {
 console.log('✅ Environment variables validated');
 
 mongoose.connect(MONGO_URI)
-  .then(() => {
+  .then(async () => {
+    // Créer un admin par défaut si aucun n'existe
+    const { createDefaultAdmin } = await import('./utils/createDefaultAdmin.js');
+    await createDefaultAdmin();
+    
     app.listen(PORT, () => {
       console.log('');
       console.log('🎉 ========================================');

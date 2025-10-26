@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader.jsx';
+import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import Toast from '../components/Toast.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { 
@@ -11,7 +12,8 @@ import {
   deleteUserAccount,
   exportUserData,
   getCurrentUser,
-  uploadAvatar
+  uploadAvatar,
+  deleteAvatar
 } from '../api.js';
 
 export default function SettingsPage() {
@@ -261,18 +263,25 @@ export default function SettingsPage() {
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
+    console.log('📸 Fichier sélectionné:', file);
+    
     if (!file) return;
 
     // Vérifier le type de fichier
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    console.log('🔍 Type de fichier:', file.type, 'Valide:', validTypes.includes(file.type));
+    
     if (!validTypes.includes(file.type)) {
+      console.log('❌ Type de fichier non supporté');
       addToast('❌ Format non supporté. Utilisez JPG, PNG, GIF ou WebP', 'error');
       setError('Format non supporté. Utilisez JPG, PNG, GIF ou WebP');
       return;
     }
 
     // Vérifier la taille (max 5MB)
+    console.log('📏 Taille du fichier:', file.size, 'bytes (max: 5MB)');
     if (file.size > 5 * 1024 * 1024) {
+      console.log('❌ Fichier trop volumineux');
       addToast('❌ L\'image est trop grande. Maximum 5MB', 'error');
       setError('L\'image est trop grande. Maximum 5MB');
       return;
@@ -280,16 +289,63 @@ export default function SettingsPage() {
 
     try {
       setError('');
+      console.log('🚀 Début de l\'upload...');
       const result = await uploadAvatar(file);
+      console.log('✅ Résultat upload:', result);
       
       // Mettre à jour l'utilisateur local avec la nouvelle photo
       setUser(prev => ({ ...prev, profilePicture: result.profilePicture }));
+      
+      // Émettre un événement pour notifier les autres composants
+      console.log('📡 Émission de l\'événement avatar-updated...');
+      window.dispatchEvent(new CustomEvent('avatar-updated', { 
+        detail: { profilePicture: result.profilePicture } 
+      }));
       
       addToast('✅ Photo de profil mise à jour avec succès !', 'success');
       setSuccess('Photo de profil mise à jour avec succès');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
+      console.error('❌ Erreur upload avatar:', err);
       const errorMessage = err.message || 'Erreur lors de l\'upload de la photo';
+      addToast(`❌ ${errorMessage}`, 'error');
+      setError(errorMessage);
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!user?.profilePicture) {
+      addToast('❌ Aucun avatar à supprimer', 'error');
+      return;
+    }
+
+    // Demander confirmation
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer votre photo de profil ?')) {
+      return;
+    }
+
+    try {
+      setError('');
+      console.log('🗑️ Début de la suppression d\'avatar...');
+      
+      const result = await deleteAvatar();
+      console.log('✅ Résultat suppression:', result);
+      
+      // Mettre à jour l'utilisateur local pour supprimer la photo
+      setUser(prev => ({ ...prev, profilePicture: null }));
+      
+      // Émettre un événement pour notifier les autres composants
+      console.log('📡 Émission de l\'événement avatar-updated (suppression)...');
+      window.dispatchEvent(new CustomEvent('avatar-updated', { 
+        detail: { profilePicture: null } 
+      }));
+      
+      addToast('✅ Photo de profil supprimée avec succès !', 'success');
+      setSuccess('Photo de profil supprimée avec succès');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      console.error('❌ Erreur suppression avatar:', err);
+      const errorMessage = err.message || 'Erreur lors de la suppression de la photo';
       addToast(`❌ ${errorMessage}`, 'error');
       setError(errorMessage);
     }
@@ -310,27 +366,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <DashboardHeader />
       <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-[#F5F7FA] py-8 px-6 hidden md:block">
-          <div className="mb-8">
-            <div className="text-xs text-[#6C757D] font-semibold mb-2">NAVIGATION</div>
-            <ul className="space-y-2">
-              <li><Link to="/dashboard" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Tableau de bord</Link></li>
-              <li><Link to="/categories" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Catégories & Portefeuilles</Link></li>
-              <li><Link to="/budgets" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Budgets</Link></li>
-              <li><Link to="/transactions" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Transactions</Link></li>
-              <li><Link to="/reports" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Rapports</Link></li>
-              <li><Link to="/importexport" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Import/Export</Link></li>
-              <li><Link to="/forecasts" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Prévisions</Link></li>
-              <li><Link to="/notifications" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Notifications</Link></li>
-              <li><Link to="/settings" className="block px-2 py-1 rounded bg-[#F5F7FA] text-[#1E73BE] font-semibold">Paramètres utilisateur</Link></li>
-              <li><Link to="/profile" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Mon Profil</Link></li>
-            </ul>
-          </div>
-          <Link to="/login" className="mt-8 w-full bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37] flex items-center gap-2">
-            <span className="text-lg">⏻</span> Déconnexion
-          </Link>
-        </aside>
+        <DashboardSidebar />
         {/* Main content */}
         <main className="flex-1 py-10 px-4 md:px-12">
           <h1 className="text-2xl font-bold text-[#343A40] mb-1">Paramètres utilisateur</h1>
@@ -397,12 +433,23 @@ export default function SettingsPage() {
               <div>
                 <div className="font-semibold text-[#343A40] dark:text-[#e4e4e4]">{user?.name || 'Utilisateur'}</div>
                 <div className="text-[#6C757D] dark:text-[#b0b0b0] text-sm">{user?.email || 'email@exemple.com'}</div>
-                <label 
-                  htmlFor="avatar-upload" 
-                  className="mt-2 inline-block text-xs text-[#1E73BE] hover:underline cursor-pointer"
-                >
-                  📷 Changer l'avatar
-                </label>
+                <div className="mt-2 flex flex-col gap-1">
+                  <label 
+                    htmlFor="avatar-upload" 
+                    className="inline-block text-xs text-[#1E73BE] hover:underline cursor-pointer"
+                  >
+                    📷 Changer l'avatar
+                  </label>
+                  {user?.profilePicture && (
+                    <button
+                      type="button"
+                      onClick={handleDeleteAvatar}
+                      className="text-xs text-red-600 hover:underline cursor-pointer text-left"
+                    >
+                      🗑️ Supprimer l'avatar
+                    </button>
+                  )}
+                </div>
                 <p className="text-xs text-[#6C757D] dark:text-[#b0b0b0] mt-1">JPG, PNG, GIF ou WebP (max 5MB)</p>
               </div>
             </div>

@@ -2,6 +2,18 @@
 
 Application complète de gestion de finances personnelles avec backend Node.js, frontend React et application mobile React Native.
 
+## 🚀 Hébergement
+
+Votre application est prête à être hébergée ! Consultez les guides :
+
+- 📖 **[Guide de déploiement complet](DEPLOYMENT.md)** - Documentation détaillée
+- ⚡ **[Déploiement rapide](QUICK_DEPLOY.md)** - En ligne en 15 minutes
+
+Services recommandés (100% gratuit) :
+- **Frontend** : Vercel
+- **Backend** : Render
+- **Base de données** : MongoDB Atlas
+
 ## 🎯 Fonctionnalités
 
 - ✅ Authentification sécurisée (JWT + OAuth Google)

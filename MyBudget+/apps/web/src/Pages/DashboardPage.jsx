@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import DashboardHeader from '../components/DashboardHeader.jsx';
+import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { getDashboardData, getWallets, getTransactions, getBudgets, addBudget, addTransaction, getCurrentUser } from '../api.js';
 import NotificationBell from '../components/NotificationBell.jsx';
 
@@ -189,102 +191,43 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] dark:bg-[#1a1a1a] flex flex-col">
-      {/* Header */}
-      <header className="bg-white dark:bg-[#2d2d2d] shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
-          <span className="text-[#1E73BE] font-bold text-xl">MyBudget+</span>
-          <nav className="hidden md:flex gap-8 text-[#343A40] dark:text-[#e4e4e4] font-medium">
-            <Link to="/dashboard" className="text-[#1E73BE] font-bold">Tableau de bord</Link>
-            <Link to="/budgets" className="hover:text-[#1E73BE]">Budgets</Link>
-            <Link to="/importexport" className="hover:text-[#1E73BE]">Données</Link>
-            <Link to="/forecasts" className="hover:text-[#1E73BE]">Prévisions</Link>
-            <input type="text" placeholder="Rechercher des transactions ou cat..." className="ml-4 px-3 py-1 rounded border border-[#F5F7FA] dark:border-[#404040] bg-[#F5F7FA] dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] text-sm" />
-          </nav>
-          <div className="flex gap-2 items-center">
-            <NotificationBell />
-            <Link to="/importexport" className="bg-[#1E73BE] text-white px-4 py-2 rounded hover:bg-[#155a8a]">Importer/Exporter</Link>
-            <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              {/* Avatar ou Initiales */}
-              {user?.profilePicture ? (
-                <img 
-                  src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${user.profilePicture}`}
-                  alt={user.name || 'Avatar'}
-                  className="w-10 h-10 rounded-full border-2 border-[#1E73BE] object-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-              ) : null}
-              <div 
-                className="w-10 h-10 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-sm border-2 border-[#1E73BE]"
-                style={{ display: user?.profilePicture ? 'none' : 'flex' }}
-              >
-                {user ? getInitials(user.name) : 'U'}
-              </div>
-              <span className="hidden md:block text-[#343A40] dark:text-[#e4e4e4] font-medium">
-                {user ? getFirstName(user.name) : 'Utilisateur'}
-              </span>
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <DashboardHeader />
       <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-[#F5F7FA] py-8 px-6 hidden md:block">
-          <div className="mb-8">
-            <div className="text-xs text-[#6C757D] font-semibold mb-2">NAVIGATION</div>
-            <ul className="space-y-2">
-              <li><Link to="/dashboard" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Tableau de bord</Link></li>
-              <li><Link to="/categories" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Catégories & Portefeuilles</Link></li>
-              <li><Link to="/budgets" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Budgets</Link></li>
-              <li><Link to="/transactions" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Transactions</Link></li>
-              <li><Link to="/reports" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Rapports</Link></li>
-              <li><Link to="/importexport" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Import/Export</Link></li>
-              <li><Link to="/forecasts" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Prévisions</Link></li>
-              <li><Link to="/notifications" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Notifications</Link></li>
-              <li><Link to="/settings" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Paramètres utilisateur</Link></li>
-              <li><Link to="/profile" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Mon Profil</Link></li>
-            </ul>
-          </div>
-          <Link to="/login" className="mt-8 w-full bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37] flex items-center gap-2">
-            <span className="text-lg">⏻</span> Déconnexion
-          </Link>
-        </aside>
+        <DashboardSidebar />
         {/* Main content */}
-        <main className="flex-1 py-6 md:py-10 px-4 md:px-8 lg:px-12 pt-16 md:pt-10">
-          <h1 className="text-xl md:text-2xl font-bold text-[#343A40] dark:text-white mb-6 md:mb-8">
+        <main className="flex-1 py-4 md:py-6 lg:py-10 px-3 md:px-6 lg:px-8 xl:px-12">
+          <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-[#343A40] dark:text-white mb-4 md:mb-6 lg:mb-8">
             Bienvenue, {user ? getFirstName(user.name) : 'Utilisateur'}!
           </h1>
           {/* KPIs */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-sm">Revenu Total</div>
-              <div className="text-2xl font-bold text-[#1E73BE]">€{dashboardData?.incomeThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
+            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#6C757D] text-xs md:text-sm">Revenu Total</div>
+              <div className="text-xl md:text-2xl font-bold text-[#1E73BE]">€{dashboardData?.incomeThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
               <div className="text-xs text-[#28A745]">Ce mois-ci</div>
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-sm">Dépenses Totales</div>
-              <div className="text-2xl font-bold text-[#DC3545]">€{dashboardData?.spentThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
+            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#6C757D] text-xs md:text-sm">Dépenses Totales</div>
+              <div className="text-xl md:text-2xl font-bold text-[#DC3545]">€{dashboardData?.spentThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
               <div className="text-xs text-[#DC3545]">Ce mois-ci</div>
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-sm">Solde Total</div>
-              <div className="text-2xl font-bold text-[#343A40]">€{dashboardData?.totalBalance?.toLocaleString('fr-FR') || '0.00'}</div>
+            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#6C757D] text-xs md:text-sm">Solde Total</div>
+              <div className="text-xl md:text-2xl font-bold text-[#343A40]">€{dashboardData?.totalBalance?.toLocaleString('fr-FR') || '0.00'}</div>
               <div className="text-xs text-[#28A745]">Tous portefeuilles</div>
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-sm">Solde des portefeuilles</div>
-              <ul className="text-[#343A40] text-sm mt-2 space-y-1">
+            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#6C757D] text-xs md:text-sm">Solde des portefeuilles</div>
+              <ul className="text-[#343A40] text-xs md:text-sm mt-2 space-y-1">
                 {wallets.map((w, i) => (
-                  <li key={i} className="flex justify-between"><span>{w.name}</span><span className="font-semibold">€{w.balance?.toLocaleString('fr-FR') || '0'}</span></li>
+                  <li key={i} className="flex justify-between"><span className="truncate pr-2">{w.name}</span><span className="font-semibold whitespace-nowrap">€{w.balance?.toLocaleString('fr-FR') || '0'}</span></li>
                 ))}
               </ul>
             </div>
           </div>
           {/* Budget restant & Graphs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
               <div className="flex justify-between items-center mb-2">
                 <div className="font-semibold text-[#343A40]">Budget Restant</div>

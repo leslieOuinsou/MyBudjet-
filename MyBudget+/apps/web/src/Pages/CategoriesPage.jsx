@@ -1,12 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader.jsx';
+import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import CategoryIcon from '../components/CategoryIcon.jsx';
-import { getCategories, getWallets, addCategory, addWallet, updateCategory, updateWallet, deleteCategory, deleteWallet } from '../api.js';
+import { getCategories, getWallets, addCategory, addWallet, updateCategory, updateWallet, deleteCategory, deleteWallet, recalculateWalletBalance, syncCategoriesFromTransactions } from '../api.js';
 import { 
   MdAdd, MdEdit, MdDelete, MdCategory, MdAccountBalanceWallet,
-  MdTrendingUp, MdTrendingDown
+  MdTrendingUp, MdTrendingDown, MdRefresh
 } from 'react-icons/md';
+
+// Définition des icônes de catégories
+const categoryIcons = {
+  '💳': '💳',
+  '🍔': '🍔',
+  '⛽': '⛽',
+  '🏠': '🏠',
+  '🚗': '🚗',
+  '📱': '📱',
+  '👕': '👕',
+  '🎬': '🎬',
+  '🏥': '🏥',
+  '💰': '💰',
+  '📊': '📊',
+  '🎁': '🎁',
+  '✈️': '✈️',
+  '🎮': '🎮',
+  '📚': '📚',
+  '🏃': '🏃',
+  '🍕': '🍕',
+  '☕': '☕',
+  '🛒': '🛒',
+  '💊': '💊'
+};
 
 export default function CategoriesPage() {
 	const [categories, setCategories] = useState([]);
@@ -30,6 +55,7 @@ export default function CategoriesPage() {
 	const [newWallet, setNewWallet] = useState({
 		name: '',
 		balance: '',
+		overdraftLimit: '0',
 		type: 'checking'
 	});
 
@@ -37,17 +63,45 @@ export default function CategoriesPage() {
 		loadData();
 	}, []);
 
+	// Recharger les données quand on revient sur la page
+	useEffect(() => {
+		const handleFocus = () => {
+			console.log('🔄 Focus détecté, rechargement des données...');
+			loadData();
+		};
+		
+		const handleVisibilityChange = () => {
+			if (!document.hidden) {
+				console.log('🔄 Page visible, rechargement des données...');
+				loadData();
+			}
+		};
+		
+		window.addEventListener('focus', handleFocus);
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+		
+		return () => {
+			window.removeEventListener('focus', handleFocus);
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+	}, []);
+
 	const loadData = async () => {
 		try {
 			setLoading(true);
+			setError('');
+			
 			const [categoriesData, walletsData] = await Promise.all([
 				getCategories(),
 				getWallets()
 			]);
-			setCategories(categoriesData);
-			setWallets(walletsData);
+			
+			setCategories(categoriesData || []);
+			setWallets(walletsData || []);
 		} catch (err) {
 			setError(err.message || 'Erreur lors du chargement des données');
+			setCategories([]);
+			setWallets([]);
 		} finally {
 			setLoading(false);
 		}
@@ -75,14 +129,15 @@ export default function CategoriesPage() {
 		try {
 			const walletData = {
 				...newWallet,
-				balance: parseFloat(newWallet.balance) || 0
+				balance: parseFloat(newWallet.balance) || 0,
+				overdraftLimit: parseFloat(newWallet.overdraftLimit) || 0
 			};
 			if (editingWallet) {
 				await updateWallet(editingWallet._id, walletData);
 			} else {
 				await addWallet(walletData);
 			}
-			setNewWallet({ name: '', balance: '', type: 'checking' });
+			setNewWallet({ name: '', balance: '', overdraftLimit: '0', type: 'checking' });
 			setShowWalletModal(false);
 			setEditingWallet(null);
 			loadData();
@@ -106,6 +161,7 @@ export default function CategoriesPage() {
 		setNewWallet({
 			name: wallet.name,
 			balance: wallet.balance.toString(),
+			overdraftLimit: (wallet.overdraftLimit || 0).toString(),
 			type: wallet.type || 'checking'
 		});
 		setShowWalletModal(true);
@@ -133,358 +189,347 @@ export default function CategoriesPage() {
 		}
 	};
 
+	const handleRecalculateBalance = async (id) => {
+		if (window.confirm('Recalculer le solde basé sur toutes les transactions ? Cette action remplacera le solde actuel.')) {
+			try {
+				setError('');
+				const result = await recalculateWalletBalance(id);
+				console.log('Résultat du recalcul:', result);
+				alert(`Solde recalculé avec succès !\nAncien solde: ${result.oldBalance.toFixed(2)}€\nNouveau solde: ${result.newBalance.toFixed(2)}€`);
+				loadData();
+			} catch (err) {
+				setError(err.message || 'Erreur lors du recalcul du solde');
+				console.error('Erreur:', err);
+			}
+		}
+	};
+
+	const handleSyncCategories = async () => {
+		try {
+			setError('');
+			const result = await syncCategoriesFromTransactions();
+			console.log('Résultat de la synchronisation:', result);
+			alert(`✅ Synchronisation réussie !\n${result.createdCount} nouvelle(s) catégorie(s) créée(s)`);
+			loadData();
+		} catch (err) {
+			setError(err.message || 'Erreur lors de la synchronisation des catégories');
+			console.error('Erreur:', err);
+		}
+	};
+
 	if (loading) {
 		return (
 			<div className="min-h-screen bg-gray-100 flex items-center justify-center">
 				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-					<p className="text-[#6C757D]">Chargement des données...</p>
+					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+					<p className="text-gray-500">Chargement des données...</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className='min-h-screen bg-gray-100 flex flex-col'>
+		<div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col'>
 			<DashboardHeader />
 			<div className='flex flex-1'>
-				{/* Sidebar */}
-				<aside className='w-64 bg-white border-r border-[#F5F7FA] py-8 px-6 hidden md:block'>
-					<div className='mb-8'>
-						<div className='text-xs text-[#6C757D] font-semibold mb-2'>
-							NAVIGATION
-						</div>
-						<ul className='space-y-2'>
-							<li>
-								<Link
-									to='/dashboard'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Tableau de bord
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/categories'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Catégories & Portefeuilles
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/budgets'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Budgets
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/transactions'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Transactions
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/reports'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Rapports
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/importexport'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Import/Export
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/forecasts'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Prévisions
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/notifications'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Notifications
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/settings'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Paramètres utilisateur
-								</Link>
-							</li>
-							<li>
-								<Link
-									to='/profile'
-									className='block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]'
-								>
-									Mon Profil
-								</Link>
-							</li>
-						</ul>
-					</div>
-					<Link
-						to='/login'
-						className='mt-8 w-full bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37] flex items-center gap-2'
-					>
-						<span className='text-lg'>⏻</span> Déconnexion
-					</Link>
-				</aside>
+				<DashboardSidebar />
 				{/* Main content */}
-				<main className='flex-1 py-10 px-4 md:px-12'>
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+				<main className='flex-1 py-4 md:py-6 lg:py-10 px-3 md:px-6 lg:px-8 xl:px-12'>
+					<div className='mb-4 md:mb-6 lg:mb-8'>
+						<h1 className='text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 md:mb-2'>Gestion des Catégories & Portefeuilles</h1>
+						<p className='text-sm md:text-base text-gray-600'>Organisez vos catégories et portefeuilles pour une meilleure gestion financière</p>
+					</div>
+
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8'>
 						{/* Catégories */}
-						<section className='bg-white rounded-lg border border-[#F5F7FA] p-6'>
-							<div className='flex justify-between items-center mb-4'>
-								<h2 className='font-semibold text-[#343A40] text-lg'>
-									Gestion des Catégories
-								</h2>
+						<section className='bg-white rounded-xl md:rounded-2xl shadow-lg border border-gray-100 p-4 md:p-6 hover:shadow-xl transition-shadow duration-300'>
+							<div className='flex justify-between items-center mb-4 md:mb-6'>
+								<div className='flex items-center gap-2 md:gap-3'>
+									<div className='w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-md'>
+										<MdCategory size={20} className="text-white md:size-6" />
+									</div>
+									<h2 className='font-bold text-gray-900 text-lg md:text-xl'>
+										Catégories
+									</h2>
+								</div>
+							</div>
+
+							<div className='flex gap-2 md:gap-3 mb-4 md:mb-6 flex-wrap'>
+								<button 
+									onClick={handleSyncCategories}
+									className='bg-gradient-to-r from-green-500 to-green-600 text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:from-green-600 hover:to-green-700 text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+								>
+									<MdRefresh size={16} className="md:size-[18px]" />
+									<span className="hidden sm:inline">Synchroniser</span>
+									<span className="sm:hidden">Sync</span>
+								</button>
 								<button 
 									onClick={() => setShowCategoryModal(true)}
-									className='bg-[#1E73BE] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#155a8a] text-sm flex items-center gap-2 transition-colors shadow-sm'
+									className='bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
 								>
-									<MdAdd size={20} />
-									Ajouter une Catégorie
+									<MdAdd size={18} className="md:size-5" />
+									<span className="hidden sm:inline">Ajouter</span>
+									<span className="sm:hidden">Add</span>
 								</button>
 							</div>
-							{error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
-							<hr className='mb-4 border-[#F5F7FA]' />
+
+							{error && (
+								<div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+									{error}
+								</div>
+							)}
+
 							{loading ? (
-								<div className="text-center py-8 text-[#6C757D]">
-									<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1E73BE] mx-auto mb-3"></div>
-									Chargement des catégories...
+								<div className="text-center py-12 text-gray-500">
+									<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
+									<p className="font-medium">Chargement des catégories...</p>
 								</div>
 							) : categories.length === 0 ? (
-								<div className="text-center py-8 text-[#6C757D]">
-									<MdCategory size={48} className="mx-auto mb-3 opacity-30" />
-									<p className="font-medium">Aucune catégorie trouvée</p>
-									<p className="text-sm mt-2">Cliquez sur "Ajouter une Catégorie" pour créer votre première catégorie</p>
+								<div className="text-center py-12">
+									<div className='w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+										<MdCategory size={40} className="text-gray-400" />
+									</div>
+									<p className="font-semibold text-gray-900 mb-2">Aucune catégorie trouvée</p>
+									<p className="text-sm text-gray-600">Créez votre première catégorie pour commencer</p>
 								</div>
 							) : (
-							<ul className='space-y-3'>
-								{categories.map((cat) => (
-									<li
-										key={cat._id}
-										className='flex items-center justify-between bg-[#F5F7FA] rounded-lg px-4 py-3 hover:bg-[#EAF4FB] transition-colors'
-									>
-										<div className='flex items-center gap-3'>
-											<div className='w-10 h-10 rounded-lg flex items-center justify-center' style={{ backgroundColor: cat.color || '#1E73BE' }}>
-												<CategoryIcon iconName={cat.icon} color="white" size={20} />
-											</div>
-											<div>
-												<div className='font-medium text-[#343A40]'>
-													{cat.name}
+								<div className='space-y-2 md:space-y-3 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-1 md:pr-2'>
+									{categories.map((cat) => (
+										<div
+											key={cat._id}
+											className='flex items-center justify-between bg-gradient-to-r from-gray-50 to-white rounded-lg md:rounded-xl px-3 md:px-4 py-2.5 md:py-3.5 hover:shadow-md transition-all duration-200 border border-gray-100 group'
+										>
+											<div className='flex items-center gap-2 md:gap-3 flex-1 min-w-0'>
+												<div 
+													className='w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200 flex-shrink-0' 
+													style={{ backgroundColor: cat.color || '#1E73BE' }}
+												>
+													<CategoryIcon iconName={cat.icon} color="white" size={18} className="md:size-[22px]" />
 												</div>
-												<div className='flex items-center gap-2 mt-1'>
-													{cat.type === 'income' ? (
-														<span className='flex items-center gap-1 text-xs text-[#28A745]'>
-															<MdTrendingUp size={14} />
-															Revenu
-														</span>
-													) : (
-														<span className='flex items-center gap-1 text-xs text-[#DC3545]'>
-															<MdTrendingDown size={14} />
-															Dépense
-														</span>
+												<div className='min-w-0 flex-1'>
+													<div className='font-semibold text-gray-900 text-sm md:text-base truncate'>
+														{cat.name}
+													</div>
+													<div className='flex items-center gap-2 mt-0.5'>
+														{cat.type === 'income' ? (
+															<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-green-100 text-green-700 rounded md:rounded-lg'>
+																<MdTrendingUp size={10} className="md:size-3" />
+																Revenu
+															</span>
+														) : (
+															<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-red-100 text-red-700 rounded md:rounded-lg'>
+																<MdTrendingDown size={10} className="md:size-3" />
+																Dépense
+															</span>
+														)}
+													</div>
+												</div>
+											</div>
+											<div className='flex gap-0.5 md:gap-1 flex-shrink-0 ml-2'>
+												<button
+													onClick={() => handleEditCategory(cat)}
+													className='text-blue-600 hover:text-blue-700 p-1.5 md:p-2 rounded-lg hover:bg-blue-50 transition-all duration-200'
+													title="Modifier"
+												>
+													<MdEdit size={18} className="md:size-5" />
+												</button>
+												<button
+													onClick={() => handleDeleteCategory(cat._id)}
+													className='text-red-600 hover:text-red-700 p-1.5 md:p-2 rounded-lg hover:bg-red-50 transition-all duration-200'
+													title="Supprimer"
+												>
+													<MdDelete size={18} className="md:size-5" />
+												</button>
+											</div>
+										</div>
+									))}
+								</div>
+							)}
+						</section>
+
+						{/* Portefeuilles */}
+						<section className='bg-white rounded-xl md:rounded-2xl shadow-lg border border-gray-100 p-4 md:p-6 hover:shadow-xl transition-shadow duration-300'>
+							<div className='flex justify-between items-center mb-4 md:mb-6 flex-wrap gap-2'>
+								<div className='flex items-center gap-2 md:gap-3'>
+									<div className='w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-md'>
+										<MdAccountBalanceWallet size={20} className="text-white md:size-6" />
+									</div>
+									<h2 className='font-bold text-gray-900 text-lg md:text-xl'>
+										Portefeuilles
+									</h2>
+								</div>
+								<button 
+									onClick={() => setShowWalletModal(true)}
+									className='bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+								>
+									<MdAdd size={18} className="md:size-5" />
+									<span className="hidden sm:inline">Ajouter</span>
+									<span className="sm:hidden">Add</span>
+								</button>
+							</div>
+
+							{loading ? (
+								<div className="text-center py-12 text-gray-500">
+									<div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mx-auto mb-4"></div>
+									<p className="font-medium">Chargement des portefeuilles...</p>
+								</div>
+							) : wallets.length === 0 ? (
+								<div className="text-center py-12">
+									<div className='w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+										<MdAccountBalanceWallet size={40} className="text-gray-400" />
+									</div>
+									<p className="font-semibold text-gray-900 mb-2">Aucun portefeuille trouvé</p>
+									<p className="text-sm text-gray-600">Créez votre premier portefeuille pour commencer</p>
+								</div>
+							) : (
+								<div className='space-y-2 md:space-y-3 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-1 md:pr-2'>
+									{wallets.map((w) => (
+										<div
+											key={w._id}
+											className='flex items-center justify-between bg-gradient-to-r from-gray-50 to-white rounded-lg md:rounded-xl px-3 md:px-4 py-2.5 md:py-3.5 hover:shadow-md transition-all duration-200 border border-gray-100 group'
+										>
+											<div className='flex items-center gap-2 md:gap-3 flex-1 min-w-0'>
+												<div className='w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200 flex-shrink-0'>
+													<MdAccountBalanceWallet size={18} className="text-white md:size-[22px]" />
+												</div>
+												<div className='flex-1 min-w-0'>
+													<div className='font-semibold text-gray-900 text-sm md:text-base truncate'>
+														{w.name}
+													</div>
+													<div className={`text-sm md:text-base font-bold mt-1 ${w.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+														{w.balance !== undefined && w.balance !== null 
+															? `${w.balance < 0 ? '-' : ''}${Math.abs(w.balance).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
+															: '0,00 €'}
+													</div>
+													{w.overdraftLimit > 0 && (
+														<div className='text-[10px] md:text-xs font-medium text-blue-600 mt-1 px-1.5 md:px-2 py-0.5 bg-blue-50 rounded md:rounded-lg inline-block'>
+															Découvert: -{w.overdraftLimit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+														</div>
 													)}
 												</div>
 											</div>
-										</div>
-										<div className='flex gap-2'>
-											<button
-												onClick={() => handleEditCategory(cat)}
-												className='text-[#1E73BE] hover:text-[#155a8a] p-2 rounded hover:bg-white transition-colors'
-												title="Modifier"
-											>
-												<MdEdit size={20} />
-											</button>
-											<button
-												onClick={() => handleDeleteCategory(cat._id)}
-												className='text-[#DC3545] hover:text-[#b52a37] p-2 rounded hover:bg-white transition-colors'
-												title="Supprimer"
-											>
-												<MdDelete size={20} />
-											</button>
-										</div>
-									</li>
-								))}
-							</ul>
-							)}
-						</section>
-						{/* Portefeuilles */}
-						<section className='bg-white rounded-lg border border-[#F5F7FA] p-6'>
-							<div className='flex justify-between items-center mb-4'>
-								<h2 className='font-semibold text-[#343A40] text-lg'>
-									Gestion des Portefeuilles
-								</h2>
-								<button 
-									onClick={() => setShowWalletModal(true)}
-									className='bg-[#1E73BE] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#155a8a] text-sm flex items-center gap-2 transition-colors shadow-sm'
-								>
-									<MdAdd size={20} />
-									Ajouter un Portefeuille
-								</button>
-							</div>
-							<hr className='mb-4 border-[#F5F7FA]' />
-							{loading ? (
-								<div className="text-center py-8 text-[#6C757D]">
-									<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1E73BE] mx-auto mb-3"></div>
-									Chargement des portefeuilles...
-								</div>
-							) : wallets.length === 0 ? (
-								<div className="text-center py-8 text-[#6C757D]">
-									<MdAccountBalanceWallet size={48} className="mx-auto mb-3 opacity-30" />
-									<p className="font-medium">Aucun portefeuille trouvé</p>
-									<p className="text-sm mt-2">Cliquez sur "Ajouter un Portefeuille" pour créer votre premier portefeuille</p>
-								</div>
-							) : (
-							<ul className='space-y-3'>
-								{wallets.map((w) => (
-									<li
-										key={w._id}
-										className='flex items-center justify-between bg-[#F5F7FA] rounded-lg px-4 py-3 hover:bg-[#EAF4FB] transition-colors'
-									>
-										<div className='flex items-center gap-3'>
-											<div className='w-10 h-10 rounded-lg bg-gradient-to-br from-[#1E73BE] to-[#155a8a] flex items-center justify-center'>
-												<MdAccountBalanceWallet size={20} className="text-white" />
-											</div>
-											<div>
-												<div className='font-medium text-[#343A40]'>
-													{w.name}
-												</div>
-												<div className={`text-sm font-semibold mt-1 ${w.balance >= 0 ? 'text-[#28A745]' : 'text-[#DC3545]'}`}>
-													{w.balance?.toLocaleString('fr-FR', {
-														style: 'currency',
-														currency: 'EUR',
-													}) || '0,00 €'}
-												</div>
+											<div className='flex gap-0.5 md:gap-1 flex-shrink-0 ml-2'>
+												<button
+													onClick={() => handleRecalculateBalance(w._id)}
+													className='text-green-600 hover:text-green-700 p-1.5 md:p-2 rounded-lg hover:bg-green-50 transition-all duration-200'
+													title="Recalculer le solde"
+												>
+													<MdRefresh size={18} className="md:size-5" />
+												</button>
+												<button
+													onClick={() => handleEditWallet(w)}
+													className='text-blue-600 hover:text-blue-700 p-1.5 md:p-2 rounded-lg hover:bg-blue-50 transition-all duration-200'
+													title="Modifier"
+												>
+													<MdEdit size={18} className="md:size-5" />
+												</button>
+												<button
+													onClick={() => handleDeleteWallet(w._id)}
+													className='text-red-600 hover:text-red-700 p-1.5 md:p-2 rounded-lg hover:bg-red-50 transition-all duration-200'
+													title="Supprimer"
+												>
+													<MdDelete size={18} className="md:size-5" />
+												</button>
 											</div>
 										</div>
-										<div className='flex gap-2'>
-											<button
-												onClick={() => handleEditWallet(w)}
-												className='text-[#1E73BE] hover:text-[#155a8a] p-2 rounded hover:bg-white transition-colors'
-												title="Modifier"
-											>
-												<MdEdit size={20} />
-											</button>
-											<button
-												onClick={() => handleDeleteWallet(w._id)}
-												className='text-[#DC3545] hover:text-[#b52a37] p-2 rounded hover:bg-white transition-colors'
-												title="Supprimer"
-											>
-												<MdDelete size={20} />
-											</button>
-										</div>
-									</li>
-								))}
-							</ul>
+									))}
+								</div>
 							)}
 						</section>
 					</div>
 				</main>
 			</div>
+
 			{/* Footer */}
-			<footer className='bg-white border-t border-[#F5F7FA] py-8 mt-auto'>
+			<footer className='bg-white border-t border-gray-200 py-8 mt-auto'>
 				<div className='max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4'>
-					<span className='text-[#1E73BE] font-bold text-xl'>MyBudget+</span>
-					<div className='flex gap-6 text-[#6C757D] text-sm'>
-						<a href='#' className='hover:text-[#1E73BE]'>
+					<span className='text-blue-600 font-bold text-xl'>MyBudget+</span>
+					<div className='flex gap-6 text-gray-500 text-sm'>
+						<a href='#' className='hover:text-blue-600 transition-colors'>
 							Produit
 						</a>
-						<a href='#' className='hover:text-[#1E73BE]'>
+						<a href='#' className='hover:text-blue-600 transition-colors'>
 							Ressources
 						</a>
-						<a href='#' className='hover:text-[#1E73BE]'>
+						<a href='#' className='hover:text-blue-600 transition-colors'>
 							Légal
 						</a>
 					</div>
-					<div className='flex gap-4 text-[#6C757D]'>
-						<a href='#'>
+					<div className='flex gap-4 text-gray-500'>
+						<a href='#' className='hover:text-blue-600 transition-colors'>
 							<i className='fab fa-facebook-f'></i>
 						</a>
-						<a href='#'>
+						<a href='#' className='hover:text-blue-600 transition-colors'>
 							<i className='fab fa-twitter'></i>
 						</a>
-						<a href='#'>
+						<a href='#' className='hover:text-blue-600 transition-colors'>
 							<i className='fab fa-linkedin-in'></i>
 						</a>
-						<a href='#'>
+						<a href='#' className='hover:text-blue-600 transition-colors'>
 							<i className='fab fa-instagram'></i>
 						</a>
 					</div>
 				</div>
-				<div className='text-center text-xs text-[#6C757D] mt-4'>
+				<div className='text-center text-xs text-gray-500 mt-4'>
 					© 2024 MyBudget+. Tous droits réservés.
 				</div>
 			</footer>
 
-			{/* Modal Ajouter/Modifier Catégorie */}
-			{showCategoryModal && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-						<div className="flex justify-between items-center mb-4">
-							<h3 className="text-lg font-semibold text-[#343A40]">
-								{editingCategory ? 'Modifier la Catégorie' : 'Ajouter une Catégorie'}
-							</h3>
-							<button 
-								onClick={() => {
-									setShowCategoryModal(false);
-									setEditingCategory(null);
-									setNewCategory({ name: '', type: 'expense', icon: '💳' });
-								}}
-								className="text-[#6C757D] hover:text-[#343A40]"
-							>
-								✕
-							</button>
-						</div>
-						<form onSubmit={handleAddCategory} className="space-y-4">
+					{/* Modal Ajouter/Modifier Catégorie */}
+		{showCategoryModal && (
+			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+				<div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+					<div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 rounded-t-2xl flex justify-between items-center">
+						<h3 className="text-xl font-bold text-white">
+							{editingCategory ? 'Modifier la Catégorie' : 'Ajouter une Catégorie'}
+						</h3>
+						<button 
+							onClick={() => {
+								setShowCategoryModal(false);
+								setEditingCategory(null);
+								setNewCategory({ name: '', type: 'expense', icon: '💳' });
+							}}
+							className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors"
+						>
+							✕
+						</button>
+										</div>
+					<div className="p-6">
+						<form onSubmit={handleAddCategory} className="space-y-5">
 							<div>
-								<label className="block text-sm font-medium text-[#343A40] mb-1">Nom de la catégorie</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Nom de la catégorie</label>
 								<input
 									type="text"
 									value={newCategory.name}
 									onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
-									className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-500 transition-colors"
 									placeholder="Ex: Nourriture"
 									required
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-[#343A40] mb-1">Type</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Type</label>
 								<select
 									value={newCategory.type}
 									onChange={(e) => setNewCategory({...newCategory, type: e.target.value})}
-									className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-blue-500 transition-colors"
 								>
 									<option value="expense">Dépense</option>
 									<option value="income">Revenu</option>
 								</select>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-[#343A40] mb-1">Icône</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-3">Icône</label>
 								<div className="grid grid-cols-5 gap-2">
 									{Object.entries(categoryIcons).map(([name, icon]) => (
 										<button
 											key={name}
 											type="button"
 											onClick={() => setNewCategory({...newCategory, icon})}
-											className={`p-2 rounded border text-xl hover:bg-[#F5F7FA] ${
-												newCategory.icon === icon ? 'border-[#1E73BE] bg-[#F5F7FA]' : 'border-[#F5F7FA]'
+											className={`p-3 rounded-xl border-2 text-2xl hover:scale-110 transition-all duration-200 ${
+												newCategory.icon === icon 
+													? 'border-blue-500 bg-blue-50 shadow-md' 
+													: 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
 											}`}
 										>
 											{icon}
@@ -492,7 +537,7 @@ export default function CategoriesPage() {
 									))}
 								</div>
 							</div>
-							<div className="flex gap-2 pt-4">
+							<div className="flex gap-3 pt-4">
 								<button
 									type="button"
 									onClick={() => {
@@ -500,13 +545,13 @@ export default function CategoriesPage() {
 										setEditingCategory(null);
 										setNewCategory({ name: '', type: 'expense', icon: '💳' });
 									}}
-									className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
+									className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
 								>
 									Annuler
 								</button>
 								<button
 									type="submit"
-									className="flex-1 bg-[#1E73BE] text-white py-2 rounded hover:bg-[#155a8a]"
+									className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg"
 								>
 									{editingCategory ? 'Modifier' : 'Ajouter'}
 								</button>
@@ -514,57 +559,72 @@ export default function CategoriesPage() {
 						</form>
 					</div>
 				</div>
-			)}
+			</div>
+		)}
 
-			{/* Modal Ajouter/Modifier Portefeuille */}
-			{showWalletModal && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-					<div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-						<div className="flex justify-between items-center mb-4">
-							<h3 className="text-lg font-semibold text-[#343A40]">
-								{editingWallet ? 'Modifier le Portefeuille' : 'Ajouter un Portefeuille'}
-							</h3>
-							<button 
-								onClick={() => {
-									setShowWalletModal(false);
-									setEditingWallet(null);
-									setNewWallet({ name: '', balance: '', type: 'checking' });
-								}}
-								className="text-[#6C757D] hover:text-[#343A40]"
-							>
-								✕
-							</button>
-						</div>
-						<form onSubmit={handleAddWallet} className="space-y-4">
+					{/* Modal Ajouter/Modifier Portefeuille */}
+		{showWalletModal && (
+			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+				<div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+					<div className="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4 rounded-t-2xl flex justify-between items-center">
+						<h3 className="text-xl font-bold text-white">
+							{editingWallet ? 'Modifier le Portefeuille' : 'Ajouter un Portefeuille'}
+						</h3>
+						<button 
+							onClick={() => {
+								setShowWalletModal(false);
+								setEditingWallet(null);
+								setNewWallet({ name: '', balance: '', overdraftLimit: '0', type: 'checking' });
+							}}
+							className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors"
+						>
+							✕
+						</button>
+					</div>
+					<div className="p-6">
+						<form onSubmit={handleAddWallet} className="space-y-5">
 							<div>
-								<label className="block text-sm font-medium text-[#343A40] mb-1">Nom du portefeuille</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Nom du portefeuille</label>
 								<input
 									type="text"
 									value={newWallet.name}
 									onChange={(e) => setNewWallet({...newWallet, name: e.target.value})}
-									className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500 transition-colors"
 									placeholder="Ex: Compte Courant"
 									required
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-[#343A40] mb-1">Solde initial (€)</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Solde initial (€)</label>
 								<input
 									type="number"
 									step="0.01"
 									value={newWallet.balance}
 									onChange={(e) => setNewWallet({...newWallet, balance: e.target.value})}
-									className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500 transition-colors"
 									placeholder="0.00"
 									required
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-medium text-[#343A40] mb-1">Type</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Découvert autorisé (€)</label>
+								<input
+									type="number"
+									step="0.01"
+									min="0"
+									value={newWallet.overdraftLimit}
+									onChange={(e) => setNewWallet({...newWallet, overdraftLimit: e.target.value})}
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500 transition-colors"
+									placeholder="Ex: 1000"
+								/>
+								<p className="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded-lg">💡 Exemple: 1000€ = solde peut descendre jusqu'à -1000€</p>
+							</div>
+							<div>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Type</label>
 								<select
 									value={newWallet.type}
 									onChange={(e) => setNewWallet({...newWallet, type: e.target.value})}
-									className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-purple-500 transition-colors"
 								>
 									<option value="checking">Compte Courant</option>
 									<option value="savings">Épargne</option>
@@ -573,21 +633,21 @@ export default function CategoriesPage() {
 									<option value="investment">Investissement</option>
 								</select>
 							</div>
-							<div className="flex gap-2 pt-4">
+							<div className="flex gap-3 pt-4">
 								<button
 									type="button"
 									onClick={() => {
 										setShowWalletModal(false);
 										setEditingWallet(null);
-										setNewWallet({ name: '', balance: '', type: 'checking' });
+										setNewWallet({ name: '', balance: '', overdraftLimit: '0', type: 'checking' });
 									}}
-									className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
+									className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
 								>
 									Annuler
 								</button>
 								<button
 									type="submit"
-									className="flex-1 bg-[#1E73BE] text-white py-2 rounded hover:bg-[#155a8a]"
+									className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
 								>
 									{editingWallet ? 'Modifier' : 'Ajouter'}
 								</button>
@@ -595,7 +655,8 @@ export default function CategoriesPage() {
 						</form>
 					</div>
 				</div>
-			)}
+			</div>
+		)}
 		</div>
 	);
 }

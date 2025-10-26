@@ -24,11 +24,11 @@ const EXPENSE_CATEGORIES = [
 
 // Dépenses rapides prédéfinies
 const QUICK_EXPENSES = [
-  { name: 'Café', amount: 3.50, category: 'Alimentation', icon: 'MdLocalCafe' },
-  { name: 'Déjeuner', amount: 12.00, category: 'Alimentation', icon: 'MdRestaurant' },
-  { name: 'Essence', amount: 50.00, category: 'Transport', icon: 'MdLocalGasStation' },
-  { name: 'Parking', amount: 5.00, category: 'Transport', icon: 'MdLocalParking' },
-  { name: 'Cinéma', amount: 15.00, category: 'Divertissement', icon: 'MdMovie' }
+  { name: 'Café', amount: 3.50, category: 'Alimentation', icon: '☕' },
+  { name: 'Déjeuner', amount: 12.00, category: 'Alimentation', icon: '🍽️' },
+  { name: 'Essence', amount: 50.00, category: 'Transport', icon: '⛽' },
+  { name: 'Parking', amount: 5.00, category: 'Transport', icon: '🅿️' },
+  { name: 'Cinéma', amount: 15.00, category: 'Divertissement', icon: '🎬' }
 ];
 
 export default function ExpensesPage() {
@@ -74,6 +74,29 @@ export default function ExpensesPage() {
     loadData();
   }, []);
 
+  // Recharger les données quand on revient sur la page
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('🔄 Focus détecté sur ExpensesPage, rechargement des données...');
+      loadData();
+    };
+    
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('🔄 Page ExpensesPage visible, rechargement des données...');
+        loadData();
+      }
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -90,6 +113,11 @@ export default function ExpensesPage() {
       setExpenses(expensesOnly);
       setCategories(categoriesData);
       setWallets(walletsData);
+      console.log('✅ Données ExpensesPage actualisées:', { 
+        expenses: expensesOnly.length, 
+        categories: categoriesData.length, 
+        wallets: walletsData.length 
+      });
       
       // Calculer les statistiques
       calculateStats(expensesOnly);

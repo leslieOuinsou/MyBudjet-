@@ -6,7 +6,8 @@ import {
   updateProfile,
   deleteAccount,
   exportUserData,
-  uploadProfilePicture
+  uploadProfilePicture,
+  deleteProfilePicture
 } from '../controllers/settingsController.js';
 import { authenticateJWT } from '../middleware/auth.js';
 import { upload } from '../middleware/upload.js';
@@ -24,6 +25,7 @@ router.put('/preferences', updateUserPreferences);
 router.put('/profile', updateProfile);
 router.put('/password', changePassword);
 router.post('/profile/picture', upload.single('avatar'), uploadProfilePicture);
+router.delete('/profile/picture', deleteProfilePicture);
 
 // Routes pour la gestion du compte
 router.delete('/account', deleteAccount);
