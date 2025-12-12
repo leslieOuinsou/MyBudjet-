@@ -1,0 +1,172 @@
+/* Variables de couleurs pour le thème clair */
+:root {
+  --color-bg-primary: #F5F7FA;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #E9F7FB;
+  --color-text-primary: #343A40;
+  --color-text-secondary: #6C757D;
+  --color-text-tertiary: #FFFFFF;
+  --color-border: #F5F7FA;
+  --color-primary: #1E73BE;
+  --color-primary-hover: #155a8a;
+  --color-success: #28A745;
+  --color-success-hover: #218838;
+  --color-danger: #DC3545;
+  --color-danger-hover: #b52a37;
+  --color-warning: #FFC107;
+  --color-info: #17A2B8;
+  --color-gray-100: #F8F9FA;
+  --color-gray-200: #E9ECEF;
+  --color-gray-300: #DEE2E6;
+  --color-gray-400: #CED4DA;
+  --color-gray-500: #ADB5BD;
+  --color-gray-600: #6C757D;
+  --color-gray-700: #495057;
+  --color-gray-800: #343A40;
+  --color-gray-900: #212529;
+}
+
+/* Variables de couleurs pour le thème sombre */
+.dark {
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #2d2d2d;
+  --color-bg-tertiary: #383838;
+  --color-text-primary: #e4e4e4;
+  --color-text-secondary: #b0b0b0;
+  --color-text-tertiary: #FFFFFF;
+  --color-border: #404040;
+  --color-primary: #3b8fd8;
+  --color-primary-hover: #2a7bc4;
+  --color-success: #34c759;
+  --color-success-hover: #2db84c;
+  --color-danger: #ff3b30;
+  --color-danger-hover: #e6342a;
+  --color-warning: #ffcc00;
+  --color-info: #5ac8fa;
+  --color-gray-100: #2d2d2d;
+  --color-gray-200: #383838;
+  --color-gray-300: #454545;
+  --color-gray-400: #525252;
+  --color-gray-500: #6f6f6f;
+  --color-gray-600: #8c8c8c;
+  --color-gray-700: #a9a9a9;
+  --color-gray-800: #c6c6c6;
+  --color-gray-900: #e4e4e4;
+}
+
+/* Application des couleurs */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Classes utilitaires pour le thème */
+.bg-primary {
+  background-color: var(--color-bg-primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--color-bg-secondary) !important;
+}
+
+.bg-tertiary {
+  background-color: var(--color-bg-tertiary) !important;
+}
+
+.text-primary {
+  color: var(--color-text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--color-text-secondary) !important;
+}
+
+.border-color {
+  border-color: var(--color-border) !important;
+}
+
+/* Styles spécifiques pour les composants en mode sombre */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.dark .bg-white {
+  background-color: var(--color-bg-secondary) !important;
+}
+
+.dark .bg-gray-100,
+.dark .bg-\[#F5F7FA\] {
+  background-color: var(--color-bg-tertiary) !important;
+}
+
+.dark .text-\[#343A40\] {
+  color: var(--color-text-primary) !important;
+}
+
+.dark .text-\[#6C757D\],
+.dark .text-gray-500 {
+  color: var(--color-text-secondary) !important;
+}
+
+.dark .border-\[#F5F7FA\] {
+  border-color: var(--color-border) !important;
+}
+
+/* Cartes et conteneurs */
+.dark .rounded-lg,
+.dark .rounded-xl {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border);
+}
+
+/* Boutons */
+.dark .bg-\[#1E73BE\] {
+  background-color: var(--color-primary) !important;
+}
+
+.dark .hover\:bg-\[#155a8a\]:hover {
+  background-color: var(--color-primary-hover) !important;
+}
+
+.dark .bg-\[#DC3545\] {
+  background-color: var(--color-danger) !important;
+}
+
+.dark .hover\:bg-\[#b52a37\]:hover {
+  background-color: var(--color-danger-hover) !important;
+}
+
+.dark .bg-\[#28A745\] {
+  background-color: var(--color-success) !important;
+}
+
+/* Ombres en mode sombre */
+.dark .shadow,
+.dark .shadow-sm {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effects */
+.dark .hover\:bg-\[#F5F7FA\]:hover {
+  background-color: var(--color-bg-tertiary) !important;
+}
+
+.dark .hover\:bg-\[#E9F7FB\]:hover {
+  background-color: var(--color-bg-tertiary) !important;
+}
+
+/* Transition douce pour tous les changements de couleur */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+

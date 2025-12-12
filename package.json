@@ -1,0 +1,15 @@
+{
+  "name": "mybudget",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "backend"
+  ],
+  "scripts": {
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build:web": "cd apps/web && npm run build",
+    "build:backend": "cd backend && npm run build"
+  }
+}
