@@ -9,6 +9,7 @@
   "scripts": {
     "dev:web": "cd apps/web && npm run dev",
     "dev:backend": "cd backend && npm run dev",
+    "build": "cd apps/web && npm run build",
     "build:web": "cd apps/web && npm run build",
     "build:backend": "cd backend && npm run build"
   }
