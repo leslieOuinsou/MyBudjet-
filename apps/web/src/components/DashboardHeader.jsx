@@ -68,40 +68,72 @@ export default function DashboardHeader() {
     return `${firstInitial}${lastInitial}`;
   };
 
-  // Composant Avatar
+  // Composant Avatar avec initiales
   const UserAvatar = () => {
     if (loading) {
       return (
-        <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
+          <div className="hidden md:block">
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
       );
+    }
+
+    if (!user) {
+      return null;
     }
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
     const avatarUrl = user?.profilePicture 
       ? `${API_URL.replace('/api', '')}${user.profilePicture}`
       : null;
+    
+    const initials = getInitials(user?.name);
+    const firstName = user?.name ? user.name.split(' ')[0] : 'Utilisateur';
 
     return (
-      <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-        {avatarUrl ? (
-          // Afficher l'avatar si disponible
-          <img 
-            src={avatarUrl} 
-            alt={user?.name || 'Avatar'} 
-            className="w-10 h-10 rounded-full border-2 border-[#1E73BE] object-cover"
-            onError={(e) => {
-              // Si l'image ne charge pas, afficher les initiales
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
-            }}
-          />
-        ) : null}
-        {/* Initiales (affichées si pas d'avatar OU si l'avatar ne charge pas) */}
-        <div 
-          className="w-10 h-10 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-sm border-2 border-[#1E73BE]"
-          style={{ display: avatarUrl ? 'none' : 'flex' }}
-        >
-          {getInitials(user?.name)}
+      <Link 
+        to="/profile" 
+        className="flex items-center gap-2 md:gap-3 hover:opacity-90 transition-opacity group"
+      >
+        {/* Avatar ou Initiales */}
+        <div className="relative">
+          {avatarUrl ? (
+            // Afficher l'avatar si disponible
+            <img 
+              src={avatarUrl} 
+              alt={user?.name || 'Avatar'} 
+              className="w-10 h-10 rounded-full border-2 border-[#1E73BE] object-cover shadow-md group-hover:shadow-lg transition-shadow"
+              onError={(e) => {
+                // Si l'image ne charge pas, masquer l'image et afficher les initiales
+                e.target.style.display = 'none';
+                const initialsDiv = e.target.nextElementSibling;
+                if (initialsDiv) {
+                  initialsDiv.style.display = 'flex';
+                }
+              }}
+            />
+          ) : null}
+          {/* Initiales (toujours présentes, affichées si pas d'avatar ou si avatar échoue) */}
+          <div 
+            className={`w-10 h-10 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:shadow-lg transition-all group-hover:scale-105 ${
+              avatarUrl ? 'hidden' : 'flex'
+            }`}
+          >
+            {initials}
+          </div>
+        </div>
+        
+        {/* Nom de l'utilisateur (visible sur desktop) */}
+        <div className="hidden md:block text-left">
+          <div className="text-sm font-semibold text-[#343A40] group-hover:text-[#1E73BE] transition-colors">
+            {firstName}
+          </div>
+          <div className="text-xs text-[#6C757D]">
+            Connecté
+          </div>
         </div>
       </Link>
     );
