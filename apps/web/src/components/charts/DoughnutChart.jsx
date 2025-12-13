@@ -9,22 +9,13 @@ import { Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function DoughnutChart({ data, title, isDarkMode = false }) {
-  // Couleurs adaptées au thème
-  const colors = {
-    light: {
-      background: '#FFFFFF',
-      text: '#343A40',
-      grid: '#F5F7FA'
-    },
-    dark: {
-      background: '#2d2d2d',
-      text: '#e4e4e4',
-      grid: '#404040'
-    }
+export default function DoughnutChart({ data, title }) {
+  // Couleurs pour le thème clair uniquement
+  const theme = {
+    background: '#FFFFFF',
+    text: '#343A40',
+    grid: '#F5F7FA'
   };
-
-  const theme = isDarkMode ? colors.dark : colors.light;
 
   // Couleurs prédéfinies pour les catégories
   const categoryColors = [

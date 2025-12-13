@@ -6,7 +6,6 @@ import { getReportsData, getFinancialStats, getCategoryAnalytics, getTopTransact
 import LineChart from '../components/charts/LineChart.jsx';
 import DoughnutChart from '../components/charts/DoughnutChart.jsx';
 import BarChart from '../components/charts/BarChart.jsx';
-import { useTheme } from '../context/ThemeContext.jsx';
 
 const chartPlaceholder = (text = "Graphique") => (
   <div className="flex items-center justify-center h-56 w-full bg-[#F5F7FA] border border-[#EAF4FB] rounded-xl text-[#6C757D] text-lg font-bold">
@@ -19,7 +18,6 @@ export default function ReportsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [period, setPeriod] = useState('month');
-  const { theme } = useTheme();
   
   // Données du rapport
   const [stats, setStats] = useState({
@@ -387,7 +385,6 @@ export default function ReportsPage() {
               <span className="text-[#6C757D] text-xs md:text-sm mb-2 hidden sm:block">Visualisation de l'évolution des revenus et dépenses sur la période sélectionnée.</span>
               <LineChart 
                 data={chartData.trends} 
-                isDarkMode={theme === 'dark'} 
               />
             </div>
             <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
@@ -395,7 +392,6 @@ export default function ReportsPage() {
               <span className="text-[#6C757D] text-xs md:text-sm mb-2 hidden sm:block">Analyse des dépenses par catégorie pour identifier les principaux postes.</span>
               <DoughnutChart 
                 data={chartData.categories} 
-                isDarkMode={theme === 'dark'} 
               />
               <div className="mt-4 space-y-2">
                 {categoryAnalytics.categories.slice(0, 3).map((cat, index) => (
@@ -421,7 +417,6 @@ export default function ReportsPage() {
               <span className="text-[#6C757D] text-xs md:text-sm mb-2 hidden sm:block">Comparaison des dépenses réelles avec les budgets alloués par catégorie.</span>
               <BarChart 
                 data={chartData.budget} 
-                isDarkMode={theme === 'dark'} 
               />
             </div>
             <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">

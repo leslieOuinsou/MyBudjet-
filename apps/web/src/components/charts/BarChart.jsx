@@ -19,28 +19,16 @@ ChartJS.register(
   Legend
 );
 
-export default function BarChart({ data, title, isDarkMode = false }) {
-  // Couleurs adaptées au thème
-  const colors = {
-    light: {
-      spent: '#DC3545',
-      budget: '#1E73BE',
-      exceeded: '#FFC107',
-      grid: '#F5F7FA',
-      text: '#343A40',
-      background: '#FFFFFF'
-    },
-    dark: {
-      spent: '#F44336',
-      budget: '#2196F3',
-      exceeded: '#FF9800',
-      grid: '#404040',
-      text: '#e4e4e4',
-      background: '#2d2d2d'
-    }
+export default function BarChart({ data, title }) {
+  // Couleurs pour le thème clair uniquement
+  const theme = {
+    spent: '#DC3545',
+    budget: '#1E73BE',
+    exceeded: '#FFC107',
+    grid: '#F5F7FA',
+    text: '#343A40',
+    background: '#FFFFFF'
   };
-
-  const theme = isDarkMode ? colors.dark : colors.light;
 
   const chartData = {
     labels: data?.labels || [],
