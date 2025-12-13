@@ -11,23 +11,33 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
+        // Vérifier d'abord localStorage, puis sessionStorage (comme getAuthHeaders)
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        
+        console.log('🔍 ProtectedRoute - Vérification auth');
+        console.log('   Token localStorage:', localStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
+        console.log('   Token sessionStorage:', sessionStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
+        console.log('   Token trouvé:', token ? '✅ Oui' : '❌ Non');
         
         if (!token) {
+          console.log('❌ Aucun token trouvé, redirection vers /login');
           setIsAuthenticated(false);
           setIsLoading(false);
           return;
         }
 
         // Vérifier si l'utilisateur est authentifié
+        console.log('📡 Vérification de l\'utilisateur avec le backend...');
         const user = await getCurrentUser();
+        console.log('✅ Utilisateur authentifié:', user.email, 'Rôle:', user.role);
         setIsAuthenticated(true);
         setUserRole(user.role);
         
       } catch (error) {
         console.error('❌ Erreur vérification auth:', error);
-        // Token invalide ou expiré
+        // Token invalide ou expiré - nettoyer les deux storages
         localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);

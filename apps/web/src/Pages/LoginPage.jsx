@@ -70,7 +70,16 @@ export default function LoginPage() {
       const redirectUrl = isAdmin ? '/admin' : '/dashboard';
       
       console.log(`🔄 Redirection vers ${redirectUrl} (rôle: ${data.user?.role})`);
-      navigate(redirectUrl);
+      console.log('🔑 Token stocké:', rememberMe ? 'localStorage' : 'sessionStorage');
+      console.log('🔍 Vérification token localStorage:', localStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
+      console.log('🔍 Vérification token sessionStorage:', sessionStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
+      
+      // Utiliser replace: true pour forcer la navigation et éviter les problèmes de navigation
+      setTimeout(() => {
+        console.log('🚀 Exécution de la navigation...');
+        navigate(redirectUrl, { replace: true });
+        console.log('✅ Navigation exécutée');
+      }, 100); // Petit délai pour s'assurer que le token est bien stocké
     } catch (err) {
       console.error('❌ Erreur connexion:', err);
       let errorMessage = err.message || 'Erreur lors de la connexion';
