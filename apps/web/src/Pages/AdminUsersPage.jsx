@@ -215,11 +215,11 @@ export default function AdminUsersPage() {
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Actifs</div>
-              <div className="text-2xl font-bold text-green-600">{users.filter(u => !u.blocked).length}</div>
+              <div className="text-2xl font-bold text-[#28A745]">{users.filter(u => !u.blocked).length}</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Bloqués</div>
-              <div className="text-2xl font-bold text-red-600">{users.filter(u => u.blocked).length}</div>
+              <div className="text-2xl font-bold text-[#6C757D]">{users.filter(u => u.blocked).length}</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Admins</div>

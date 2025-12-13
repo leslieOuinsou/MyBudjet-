@@ -53,7 +53,7 @@ export default function RecurringTransactionsPage() {
               <li><Link to="/profile" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Mon Profil</Link></li>
             </ul>
           </div>
-          <Link to="/login" className="mt-8 w-full bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37] flex items-center gap-2">
+          <Link to="/login" className="mt-8 w-full bg-[#1E73BE] text-white px-6 py-2 rounded font-semibold hover:bg-[#155a8a] flex items-center gap-2">
             <span className="text-lg">⏻</span> Déconnexion
           </Link>
         </aside>
@@ -112,7 +112,7 @@ export default function RecurringTransactionsPage() {
                     </td>
                     <td className="px-4 py-3 flex gap-4">
                       <button className="text-[#1E73BE] hover:underline text-sm">Modifier</button>
-                      <button className="text-[#DC3545] hover:underline text-sm">Supprimer</button>
+                      <button className="text-[#6C757D] hover:underline text-sm">Supprimer</button>
                     </td>
                   </tr>
                 ))}

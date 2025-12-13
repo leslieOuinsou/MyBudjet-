@@ -69,8 +69,8 @@ export default function ForecastsPage() {
   // Fonction pour obtenir la couleur selon le type de conseil
   const getAdviceColor = (type) => {
     switch (type) {
-      case 'warning': return 'border-orange-200 bg-orange-50';
-      case 'success': return 'border-green-200 bg-green-50';
+      case 'warning': return 'border-[#6C757D] bg-[#F5F7FA]';
+      case 'success': return 'border-[#28A745] bg-[#D4EDDA]';
       case 'info': return 'border-blue-200 bg-blue-50';
       default: return 'border-gray-200 bg-gray-50';
     }
@@ -116,8 +116,8 @@ export default function ForecastsPage() {
         {
           label: 'Dépenses projetées',
           data: expensesData,
-          borderColor: '#DC3545',
-          backgroundColor: 'rgba(220, 53, 69, 0.1)',
+          borderColor: '#6C757D',
+          backgroundColor: 'rgba(108, 117, 125, 0.1)',
           tension: 0.4,
           fill: true,
           borderWidth: 2,
@@ -183,7 +183,7 @@ export default function ForecastsPage() {
 								Projection du solde de vos comptes à la fin du mois prochain.
 							</div>
 							{overview?.trends?.balanceTrend && (
-								<div className={`text-xs ${overview.trends.balanceTrend === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+								<div className={`text-xs ${overview.trends.balanceTrend === 'positive' ? 'text-[#28A745]' : 'text-[#6C757D]'}`}>
 									{overview.trends.balanceTrend === 'positive' ? '↗️ Tendance positive' : '↘️ Tendance négative'}
 								</div>
 							)}
@@ -197,21 +197,21 @@ export default function ForecastsPage() {
 								Épargne potentielle en suivant vos objectifs budgétaires.
 							</div>
 							{overview?.trends?.savingsTrend && (
-								<div className={`text-xs ${overview.trends.savingsTrend === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
+								<div className={`text-xs ${overview.trends.savingsTrend === 'positive' ? 'text-[#28A745]' : 'text-[#6C757D]'}`}>
 									{overview.trends.savingsTrend === 'positive' ? '↗️ Épargne croissante' : '↘️ Épargne décroissante'}
 								</div>
 							)}
 						</div>
 						<div className={`rounded-lg border p-6 flex flex-col gap-2 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#F5F7FA]'}`}>
 							<div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Dépenses Futures</div>
-							<div className='text-2xl font-bold text-[#DC3545]'>
+							<div className='text-2xl font-bold text-[#6C757D]'>
 								{formatAmount(overview?.futureExpenses)}
 							</div>
 							<div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-[#6C757D]'}`}>
 								Estimation des dépenses prévues pour le mois suivant.
 							</div>
 							{overview?.trends?.expensesTrend && (
-								<div className={`text-xs ${overview.trends.expensesTrend === 'stable' ? 'text-blue-600' : 'text-red-600'}`}>
+								<div className={`text-xs ${overview.trends.expensesTrend === 'stable' ? 'text-[#1E73BE]' : 'text-[#6C757D]'}`}>
 									{overview.trends.expensesTrend === 'stable' ? '➡️ Dépenses stables' : '↗️ Dépenses croissantes'}
 								</div>
 							)}
@@ -224,7 +224,7 @@ export default function ForecastsPage() {
 								<div className={`font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-[#343A40]'}`}>
 									Projections Financières sur 6 Mois
 									{chartData?.projections && (
-										<span className='ml-3 text-xs font-normal text-green-600'>
+										<span className='ml-3 text-xs font-normal text-[#28A745]'>
 											({chartData.projections.length} mois projetés)
 										</span>
 									)}
@@ -249,20 +249,20 @@ export default function ForecastsPage() {
 									<div className={`grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-lg ${isDarkMode ? 'bg-[#383838]' : 'bg-gray-50'}`}>
 										<div className='text-center'>
 											<div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Revenus moyens/mois</div>
-											<div className='text-lg font-semibold text-green-600'>
+											<div className='text-lg font-semibold text-[#28A745]'>
 												{formatAmount(chartData.summary?.avgMonthlyIncome)}
 											</div>
 										</div>
 										<div className='text-center'>
 											<div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Dépenses moyennes/mois</div>
-											<div className='text-lg font-semibold text-red-600'>
+											<div className='text-lg font-semibold text-[#6C757D]'>
 												{formatAmount(chartData.summary?.avgMonthlyExpenses)}
 											</div>
 										</div>
 										<div className='text-center'>
 											<div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Solde moyen/mois</div>
 											<div className={`text-lg font-semibold ${
-												(chartData.summary?.avgMonthlyBalance || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+												(chartData.summary?.avgMonthlyBalance || 0) >= 0 ? 'text-[#28A745]' : 'text-[#6C757D]'
 											}`}>
 												{formatAmount(chartData.summary?.avgMonthlyBalance)}
 											</div>
@@ -327,8 +327,8 @@ export default function ForecastsPage() {
 											</div>
 											{adviceItem.priority && (
 												<span className={`text-xs px-2 py-1 rounded-full ${
-													adviceItem.priority === 'high' ? 'bg-red-100 text-red-600' :
-													adviceItem.priority === 'medium' ? 'bg-orange-100 text-orange-600' :
+													adviceItem.priority === 'high' ? 'bg-[#495057] text-white' :
+													adviceItem.priority === 'medium' ? 'bg-[#6C757D] text-white' :
 													isDarkMode ? 'bg-[#383838] text-gray-300' : 'bg-gray-100 text-gray-600'
 												}`}>
 													{adviceItem.priority === 'high' ? 'Urgent' :
@@ -385,7 +385,7 @@ export default function ForecastsPage() {
 				</main>
 				{/* Sidebar mobile (déconnexion) */}
 				<aside className='md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#F5F7FA] p-4 flex justify-center'>
-					<button className='bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37] flex items-center gap-2'>
+					<button className='bg-[#1E73BE] text-white px-6 py-2 rounded font-semibold hover:bg-[#155a8a] flex items-center gap-2'>
 						<span className='text-lg'>⏻</span> Se déconnecter
 					</button>
 				</aside>

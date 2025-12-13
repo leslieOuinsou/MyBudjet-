@@ -9,17 +9,17 @@ import {
   MdTrendingUp, MdTrendingDown, MdAttachMoney 
 } from 'react-icons/md';
 
-// Catégories prédéfinies avec icônes
+// Catégories prédéfinies avec icônes - Palette Fintech
 const EXPENSE_CATEGORIES = [
-  { name: 'Alimentation', icon: 'MdRestaurant', color: '#FF6B6B' },
-  { name: 'Transport', icon: 'MdDirectionsCar', color: '#4ECDC4' },
-  { name: 'Logement', icon: 'MdHome', color: '#45B7D1' },
-  { name: 'Divertissement', icon: 'MdTheaters', color: '#96CEB4' },
-  { name: 'Santé', icon: 'MdLocalHospital', color: '#FFEAA7' },
-  { name: 'Éducation', icon: 'MdSchool', color: '#DDA0DD' },
-  { name: 'Shopping', icon: 'MdShoppingCart', color: '#F7DC6F' },
-  { name: 'Factures', icon: 'MdReceipt', color: '#BB8FCE' },
-  { name: 'Autres', icon: 'MdMoreHoriz', color: '#85C1E9' }
+  { name: 'Alimentation', icon: 'MdRestaurant', color: '#1E73BE' },
+  { name: 'Transport', icon: 'MdDirectionsCar', color: '#6C757D' },
+  { name: 'Logement', icon: 'MdHome', color: '#495057' },
+  { name: 'Divertissement', icon: 'MdTheaters', color: '#155a8a' },
+  { name: 'Santé', icon: 'MdLocalHospital', color: '#ADB5BD' },
+  { name: 'Éducation', icon: 'MdSchool', color: '#343A40' },
+  { name: 'Shopping', icon: 'MdShoppingCart', color: '#CED4DA' },
+  { name: 'Factures', icon: 'MdReceipt', color: '#1E73BE' },
+  { name: 'Autres', icon: 'MdMoreHoriz', color: '#6C757D' }
 ];
 
 // Dépenses rapides prédéfinies
@@ -367,7 +367,7 @@ export default function ExpensesPage() {
             </div>
           )}
           {success && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            <div className="mb-4 p-4 bg-[#D4EDDA] border border-[#28A745] text-[#155724] rounded-lg">
               {success}
             </div>
           )}
@@ -417,14 +417,14 @@ export default function ExpensesPage() {
 
           {/* Bouton pour ajouter les données par défaut */}
           {(categories.length <= 1 || wallets.length <= 1) && (
-            <div className="bg-[#FFF3CD] border border-[#FFEAA7] rounded-lg p-4 mb-8">
+            <div className="bg-[#E9ECEF] border border-[#CED4DA] rounded-lg p-4 mb-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-[#856404] mb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-[#495057] mb-2 flex items-center gap-2">
                     <MdFilterList size={24} />
                     Options limitées détectées
                   </h3>
-                  <p className="text-[#856404] text-sm">
+                  <p className="text-[#6C757D] text-sm">
                     Vous n'avez que {categories.length} catégorie(s) et {wallets.length} portefeuille(s). 
                     Ajoutez des options prédéfinies pour une meilleure expérience !
                   </p>
@@ -432,7 +432,7 @@ export default function ExpensesPage() {
                 <button
                   onClick={handleAddDefaultData}
                   disabled={loading}
-                  className="bg-[#FFC107] hover:bg-[#E0A800] text-[#212529] font-semibold px-6 py-3 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-[#1E73BE] hover:bg-[#155a8a] text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -606,7 +606,7 @@ export default function ExpensesPage() {
                           </button>
                           <button
                             onClick={() => handleDeleteExpense(expense._id)}
-                            className="text-[#DC2626] hover:text-[#B02A37] p-2"
+                            className="text-[#6C757D] hover:text-[#495057] p-2"
                             title="Supprimer"
                           >
                             <MdDelete size={20} />
@@ -632,7 +632,7 @@ export default function ExpensesPage() {
               </h3>
               <button 
                 onClick={resetForm}
-                className="text-[#DC3545] hover:text-[#B02A37] text-xl"
+                className="text-[#6C757D] hover:text-[#495057] text-xl"
               >
                 ×
               </button>
@@ -747,7 +747,7 @@ export default function ExpensesPage() {
               <h3 className="text-lg font-semibold text-[#22292F]">Dépenses Rapides</h3>
               <button 
                 onClick={() => setShowQuickAddModal(false)}
-                className="text-[#DC3545] hover:text-[#B02A37] text-xl"
+                className="text-[#6C757D] hover:text-[#495057] text-xl"
               >
                 ×
               </button>

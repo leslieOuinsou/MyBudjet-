@@ -147,7 +147,7 @@ export default function AdministrationPage() {
 								Tableau de Bord Administration
 							</h1>
 							<div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-								<span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+								<span className="w-2 h-2 bg-[#28A745] rounded-full animate-pulse"></span>
 								Dernière mise à jour : {lastRefresh.toLocaleTimeString('fr-FR')}
 								<span className="mx-2">•</span>
 								Auto-refresh : 30s
@@ -170,7 +170,7 @@ export default function AdministrationPage() {
 						</div>
 					)}
 					{success && (
-						<div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-green-100 border border-green-300 text-green-700'}`}>
+						<div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-[#D4EDDA] border border-[#28A745] text-[#155724]'}`}>
 							✅ {success}
 						</div>
 					)}
@@ -210,7 +210,7 @@ export default function AdministrationPage() {
 								<span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
 									Budgets Actifs
 								</span>
-								<MdAccountBalance size={24} className="text-[#FFC107]" />
+								<MdAccountBalance size={24} className="text-[#1E73BE]" />
 							</div>
 							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
 								{stats?.budgetCount || 0}
@@ -224,7 +224,7 @@ export default function AdministrationPage() {
 								<span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
 									Rappels de Factures
 								</span>
-								<MdNotifications size={24} className="text-[#DC3545]" />
+								<MdNotifications size={24} className="text-[#6C757D]" />
 							</div>
 							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
 								{stats?.reminderCount || 0}
@@ -295,8 +295,8 @@ export default function AdministrationPage() {
 													<span
 														className={`px-3 py-1 rounded-full text-xs font-bold ${
 															user.blocked 
-																? 'bg-red-100 text-red-700' 
-																: 'bg-green-100 text-green-700'
+																? 'bg-[#6C757D] text-white' 
+																: 'bg-[#D4EDDA] text-[#155724]'
 														}`}
 													>
 														{user.blocked ? 'Bloqué' : 'Actif'}
@@ -307,7 +307,7 @@ export default function AdministrationPage() {
 														{user.blocked ? (
 															<button 
 																onClick={() => handleUnblockUser(user._id)}
-																className="flex items-center gap-1 text-green-600 hover:text-green-800 text-sm"
+																className="flex items-center gap-1 text-[#28A745] hover:text-[#218838] text-sm"
 																title="Débloquer"
 															>
 																<MdCheckCircle size={18} />
@@ -325,7 +325,7 @@ export default function AdministrationPage() {
 														)}
 														<button 
 															onClick={() => handleDeleteUser(user._id)}
-															className="flex items-center gap-1 text-[#DC3545] hover:text-red-800 text-sm"
+															className="flex items-center gap-1 text-[#6C757D] hover:text-[#495057] text-sm"
 															title="Supprimer"
 														>
 															<MdDelete size={18} />
@@ -394,8 +394,8 @@ export default function AdministrationPage() {
 						
 						<div className={`rounded-xl shadow p-6 border flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
 							<div className="flex items-center gap-3">
-								<div className="p-3 bg-green-100 rounded-lg">
-									<MdAccountBalance size={24} className="text-green-600" />
+								<div className="p-3 bg-[#D4EDDA] rounded-lg">
+									<MdAccountBalance size={24} className="text-[#28A745]" />
 								</div>
 								<div>
 									<h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>

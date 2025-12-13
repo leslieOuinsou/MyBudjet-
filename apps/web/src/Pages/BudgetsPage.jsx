@@ -184,7 +184,7 @@ export default function BudgetsPage() {
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td colSpan="8" className="text-center text-[#DC3545] py-8">{error}</td>
+                      <td colSpan="8" className="text-center text-[#6C757D] py-8">{error}</td>
                     </tr>
                   ) : (
                     budgets.map((b) => {
@@ -201,23 +201,23 @@ export default function BudgetsPage() {
                       
                       switch (status) {
                         case 'exceeded':
-                          color = "bg-[#DC2626]";
+                          color = "bg-[#495057]";
                           StatusIcon = MdError;
                           statusText = "Dépassé";
                           break;
                         case 'warning':
-                          color = "bg-[#FACC15]";
+                          color = "bg-[#6C757D]";
                           StatusIcon = MdWarning;
                           statusText = "Attention";
                           break;
                         case 'half':
-                          color = "bg-[#3B82F6]";
+                          color = "bg-[#1E73BE]";
                           StatusIcon = MdShowChart;
                           statusText = "À mi-chemin";
                           break;
                         case 'good':
                         default:
-                          color = "bg-[#22C55E]";
+                          color = "bg-[#28A745]";
                           StatusIcon = MdCheckCircle;
                           statusText = "En cours";
                           break;
@@ -237,7 +237,7 @@ export default function BudgetsPage() {
                               )}
                             </div>
                           </td>
-                          <td className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell ${reste < 0 ? "text-[#DC2626] font-semibold" : ""}`}>
+                          <td className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell ${reste < 0 ? "text-[#495057] font-semibold" : ""}`}>
                             {reste < 0 ? `-${Math.abs(reste).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €` : reste.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3">
@@ -271,7 +271,7 @@ export default function BudgetsPage() {
                             </button>
                             <button 
                               onClick={() => handleDelete(b._id)}
-                              className="text-[#DC2626] hover:underline"
+                              className="text-[#6C757D] hover:underline"
                               title="Supprimer"
                             >
                               <MdDelete size={16} className="md:size-5" />
@@ -312,7 +312,7 @@ export default function BudgetsPage() {
                   setShowEditModal(false);
                   setEditingBudget(null);
                 }}
-                className="text-[#DC3545] hover:text-[#B02A37] text-xl"
+                className="text-[#6C757D] hover:text-[#495057] text-xl"
               >
                 ×
               </button>

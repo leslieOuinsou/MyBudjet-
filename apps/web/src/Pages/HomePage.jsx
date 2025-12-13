@@ -173,7 +173,7 @@ export default function HomePage() {
 									style={{
 										color:
 											i === 4
-												? '#DC3545'
+												? '#6C757D'
 												: i === 5
 												? '#28A745'
 												: '#1E73BE',

@@ -179,7 +179,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
+          <p className="text-[#6C757D] mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="bg-[#1E73BE] text-white px-4 py-2 rounded hover:bg-[#155a8a]"
@@ -210,8 +210,8 @@ export default function DashboardPage() {
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Dépenses Totales</div>
-              <div className="text-xl md:text-2xl font-bold text-[#DC3545]">€{dashboardData?.spentThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
-              <div className="text-xs text-[#DC3545]">Ce mois-ci</div>
+              <div className="text-xl md:text-2xl font-bold text-[#6C757D]">€{dashboardData?.spentThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
+              <div className="text-xs text-[#6C757D]">Ce mois-ci</div>
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Solde Total</div>
@@ -239,7 +239,7 @@ export default function DashboardPage() {
               </div>
               <div className="w-full h-2 bg-[#F5F7FA] rounded-full mb-2">
                 <div 
-                  className={`h-2 rounded-full ${dashboardData?.budgetPercentage > 90 ? 'bg-[#DC3545]' : dashboardData?.budgetPercentage > 70 ? 'bg-[#FFC107]' : 'bg-[#1E73BE]'}`}
+                  className={`h-2 rounded-full ${dashboardData?.budgetPercentage > 90 ? 'bg-[#495057]' : dashboardData?.budgetPercentage > 70 ? 'bg-[#6C757D]' : 'bg-[#1E73BE]'}`}
                   style={{ width: `${dashboardData?.budgetPercentage || 0}%` }}
                 ></div>
               </div>
@@ -264,7 +264,7 @@ export default function DashboardPage() {
                           <span className="text-sm">{categoryIcons[category] || '💳'}</span>
                           <span className="text-sm text-[#343A40]">{category}</span>
                         </div>
-                        <span className="text-sm font-semibold text-[#DC3545]">€{Math.abs(amount).toLocaleString('fr-FR')}</span>
+                        <span className="text-sm font-semibold text-[#6C757D]">€{Math.abs(amount).toLocaleString('fr-FR')}</span>
                       </div>
                     ))}
                   </div>
@@ -292,7 +292,7 @@ export default function DashboardPage() {
                             style={{ height: `${(stat.income / Math.max(...dashboardData.stats.map(s => Math.max(s.income, s.expense)))) * 80}px`, minHeight: '4px', width: '12px' }}
                           ></div>
                           <div 
-                            className="bg-[#DC3545] rounded-b" 
+                            className="bg-[#6C757D] rounded-b" 
                             style={{ height: `${(stat.expense / Math.max(...dashboardData.stats.map(s => Math.max(s.income, s.expense)))) * 80}px`, minHeight: '4px', width: '12px' }}
                           ></div>
                         </div>
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                       <span className="text-xl">{categoryIcons[transaction.category?.name] || categoryIcons['Autres']}</span>
                       <span className="text-[#343A40] text-sm">{transaction.description || transaction.category?.name || 'Transaction'}</span>
                     </div>
-                    <span className={`font-semibold ${transaction.type === 'expense' ? 'text-[#DC3545]' : 'text-[#28A745]'}`}>
+                    <span className={`font-semibold ${transaction.type === 'expense' ? 'text-[#6C757D]' : 'text-[#28A745]'}`}>
                       {transaction.type === 'expense' ? '-' : '+'}€{transaction.amount?.toLocaleString('fr-FR') || '0'}
                     </span>
                     <span className="text-[#6C757D] text-xs w-24 text-right">

@@ -253,7 +253,7 @@ export default function BillRemindersPage() {
             </div>
             <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>En retard</div>
-              <div className="text-3xl font-bold text-red-600">{overdueReminders.length}</div>
+              <div className="text-3xl font-bold text-[#495057]">{overdueReminders.length}</div>
             </div>
           </div>
           
@@ -280,20 +280,20 @@ export default function BillRemindersPage() {
                   <div
                     key={reminder._id}
                     className={`p-6 rounded-lg border-l-4 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-gray-200'}`}
-                    style={{ borderLeftColor: status.color === 'red' ? '#ef4444' : status.color === 'orange' ? '#f97316' : '#22c55e' }}
+                    style={{ borderLeftColor: status.color === 'red' ? '#495057' : status.color === 'orange' ? '#6C757D' : '#28A745' }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
-                          <MdNotifications size={24} className={`text-${status.color}-500`} />
+                          <MdNotifications size={24} className={status.color === 'red' ? 'text-[#495057]' : status.color === 'orange' ? 'text-[#6C757D]' : 'text-[#28A745]'} />
                           <div>
                             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                               {reminder.name}
                             </h3>
                             <span className={`text-xs px-2 py-1 rounded ${
-                              status.color === 'red' ? 'bg-red-100 text-red-700' :
-                              status.color === 'orange' ? 'bg-orange-100 text-orange-700' :
-                              'bg-green-100 text-green-700'
+                              status.color === 'red' ? 'bg-[#495057] text-white' :
+                              status.color === 'orange' ? 'bg-[#6C757D] text-white' :
+                              'bg-[#28A745] text-white'
                             }`}>
                               {status.label} {daysUntil >= 0 ? `(${daysUntil} jour${daysUntil > 1 ? 's' : ''})` : `(${Math.abs(daysUntil)} jour${Math.abs(daysUntil) > 1 ? 's' : ''} de retard)`}
                             </span>
@@ -348,7 +348,7 @@ export default function BillRemindersPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(reminder._id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded transition"
+                          className="p-2 text-[#6C757D] hover:bg-gray-50 rounded transition"
                           title="Supprimer"
                         >
                           <MdDelete size={20} />
