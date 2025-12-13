@@ -375,29 +375,29 @@ export default function SettingsPage() {
 
           {/* Messages d'erreur et de succès */}
           {error && (
-            <div className="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-4 shadow-lg flex items-center gap-3 animate-pulse">
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-4 shadow-lg flex items-center gap-3 animate-pulse">
               <span className="text-2xl">❌</span>
               <div className="flex-1">
                 <p className="font-bold">Erreur</p>
                 <p className="text-sm">{error}</p>
               </div>
-              <button onClick={() => setError('')} className="text-red-700 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100 text-xl">✕</button>
+              <button onClick={() => setError('')} className="text-red-700 hover:text-red-900 text-xl">✕</button>
             </div>
           )}
           {success && (
-            <div className="bg-green-100 dark:bg-green-900 border-l-4 border-green-500 text-green-700 dark:text-green-200 px-4 py-3 rounded mb-4 shadow-lg flex items-center gap-3 animate-pulse">
+            <div className="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded mb-4 shadow-lg flex items-center gap-3 animate-pulse">
               <span className="text-2xl">✅</span>
               <div className="flex-1">
                 <p className="font-bold">Succès</p>
                 <p className="text-sm">{success}</p>
               </div>
-              <button onClick={() => setSuccess('')} className="text-green-700 dark:text-green-200 hover:text-green-900 dark:hover:text-green-100 text-xl">✕</button>
+              <button onClick={() => setSuccess('')} className="text-green-700 hover:text-green-900 text-xl">✕</button>
             </div>
           )}
 
           {/* Gestion du profil */}
-          <section className="bg-white dark:bg-[#2d2d2d] rounded-lg border border-[#F5F7FA] dark:border-[#404040] p-6 mb-8">
-            <h2 className="font-semibold text-[#343A40] dark:text-[#e4e4e4] mb-4">Gestion du profil</h2>
+          <section className="bg-white rounded-lg border border-[#F5F7FA] p-6 mb-8">
+            <h2 className="font-semibold text-[#343A40] mb-4">Gestion du profil</h2>
             <div className="flex items-center gap-4 mb-6">
               {/* Avatar avec option d'upload */}
               <div className="relative">
@@ -429,8 +429,8 @@ export default function SettingsPage() {
                 />
               </div>
               <div>
-                <div className="font-semibold text-[#343A40] dark:text-[#e4e4e4]">{user?.name || 'Utilisateur'}</div>
-                <div className="text-[#6C757D] dark:text-[#b0b0b0] text-sm">{user?.email || 'email@exemple.com'}</div>
+                <div className="font-semibold text-[#343A40]">{user?.name || 'Utilisateur'}</div>
+                <div className="text-[#6C757D] text-sm">{user?.email || 'email@exemple.com'}</div>
                 <div className="mt-2 flex flex-col gap-1">
                   <label 
                     htmlFor="avatar-upload" 
@@ -448,7 +448,7 @@ export default function SettingsPage() {
                     </button>
                   )}
                 </div>
-                <p className="text-xs text-[#6C757D] dark:text-[#b0b0b0] mt-1">JPG, PNG, GIF ou WebP (max 5MB)</p>
+                <p className="text-xs text-[#6C757D] mt-1">JPG, PNG, GIF ou WebP (max 5MB)</p>
               </div>
             </div>
             <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -515,9 +515,9 @@ export default function SettingsPage() {
                   </label>
                 </div>
                 <div>
-                  <label className="block text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-1">Devise par défaut</label>
+                  <label className="block text-[#6C757D] text-sm mb-1">Devise par défaut</label>
                   <select 
-                    className="w-full border border-[#F5F7FA] dark:border-[#404040] rounded px-3 py-2 bg-[#F5F7FA] dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:outline-none focus:border-[#1E73BE]"
+                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-[#F5F7FA] text-[#343A40] focus:outline-none focus:border-[#1E73BE]"
                     value={settings?.appearance?.currency || 'EUR'}
                     onChange={(e) => handleSettingsUpdate('appearance', { currency: e.target.value })}
                   >
@@ -528,9 +528,9 @@ export default function SettingsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-1">Format de la date</label>
+                  <label className="block text-[#6C757D] text-sm mb-1">Format de la date</label>
                   <select 
-                    className="w-full border border-[#F5F7FA] dark:border-[#404040] rounded px-3 py-2 bg-[#F5F7FA] dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:outline-none focus:border-[#1E73BE]"
+                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-[#F5F7FA] text-[#343A40] focus:outline-none focus:border-[#1E73BE]"
                     value={settings?.appearance?.dateFormat || 'DD/MM/YYYY'}
                     onChange={(e) => handleSettingsUpdate('appearance', { dateFormat: e.target.value })}
                   >
@@ -540,9 +540,9 @@ export default function SettingsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-1">Langue de l'interface</label>
+                  <label className="block text-[#6C757D] text-sm mb-1">Langue de l'interface</label>
                   <select 
-                    className="w-full border border-[#F5F7FA] dark:border-[#404040] rounded px-3 py-2 bg-[#F5F7FA] dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:outline-none focus:border-[#1E73BE]"
+                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-[#F5F7FA] text-[#343A40] focus:outline-none focus:border-[#1E73BE]"
                     value={settings?.appearance?.language || 'fr'}
                     onChange={(e) => handleSettingsUpdate('appearance', { language: e.target.value })}
                   >
@@ -552,8 +552,8 @@ export default function SettingsPage() {
                     <option value="de">Deutsch</option>
                   </select>
                 </div>
-                <div className="pt-4 border-t border-[#F5F7FA] dark:border-[#404040]">
-                  <p className="text-xs text-[#6C757D] dark:text-[#b0b0b0] italic">
+                <div className="pt-4 border-t border-[#F5F7FA]">
+                  <p className="text-xs text-[#6C757D] italic">
                     💡 Vos préférences sont enregistrées automatiquement à chaque modification.
                   </p>
                 </div>
@@ -586,8 +586,8 @@ export default function SettingsPage() {
                   </label>
                 </div>
                 <div>
-                  <div className="font-medium text-[#343A40] dark:text-[#e4e4e4]">Dernière synchronisation</div>
-                  <div className="text-[#6C757D] dark:text-[#b0b0b0] text-sm">
+                  <div className="font-medium text-[#343A40]">Dernière synchronisation</div>
+                  <div className="text-[#6C757D] text-sm">
                     {syncStatus.lastSync ? (
                       <>
                         Synchronisé le {syncStatus.lastSync.toLocaleDateString('fr-FR', { 
@@ -634,43 +634,43 @@ export default function SettingsPage() {
           </section>
 
           {/* Sécurité du compte */}
-          <section className="bg-white dark:bg-[#2d2d2d] rounded-lg border border-[#F5F7FA] dark:border-[#404040] p-6 mb-8">
-            <h2 className="font-semibold text-[#343A40] dark:text-[#e4e4e4] mb-4">Sécurité du compte</h2>
+          <section className="bg-white rounded-lg border border-[#F5F7FA] p-6 mb-8">
+            <h2 className="font-semibold text-[#343A40] mb-4">Sécurité du compte</h2>
             
             {/* Formulaire de changement de mot de passe */}
             <form onSubmit={handlePasswordChange} className="mb-6">
-              <h3 className="font-medium text-[#343A40] dark:text-[#e4e4e4] mb-3">Changer le mot de passe</h3>
+              <h3 className="font-medium text-[#343A40] mb-3">Changer le mot de passe</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-1">Mot de passe actuel</label>
+                  <label className="block text-[#6C757D] text-sm mb-1">Mot de passe actuel</label>
                   <input 
                     type="password"
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                    className="w-full border border-[#F5F7FA] dark:border-[#404040] rounded px-3 py-2 bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:outline-none focus:border-[#1E73BE]" 
+                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-white text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
                     placeholder="Mot de passe actuel"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-1">Nouveau mot de passe</label>
+                  <label className="block text-[#6C757D] text-sm mb-1">Nouveau mot de passe</label>
                   <input 
                     type="password"
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                    className="w-full border border-[#F5F7FA] dark:border-[#404040] rounded px-3 py-2 bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:outline-none focus:border-[#1E73BE]" 
+                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-white text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
                     placeholder="Nouveau mot de passe (min. 6 caractères)"
                     minLength="6"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[#6C757D] dark:text-[#b0b0b0] text-sm mb-1">Confirmer le mot de passe</label>
+                  <label className="block text-[#6C757D] text-sm mb-1">Confirmer le mot de passe</label>
                   <input 
                     type="password"
                     value={passwordForm.confirmPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                    className="w-full border border-[#F5F7FA] dark:border-[#404040] rounded px-3 py-2 bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] focus:outline-none focus:border-[#1E73BE]" 
+                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-white text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
                     placeholder="Confirmer le mot de passe"
                     minLength="6"
                     required
@@ -697,14 +697,14 @@ export default function SettingsPage() {
               {/* Indicateur de sécurité du mot de passe */}
               {passwordForm.newPassword && (
                 <div className="mt-3">
-                  <div className="text-sm text-[#6C757D] dark:text-[#b0b0b0] mb-1">Force du mot de passe :</div>
+                  <div className="text-sm text-[#6C757D] mb-1">Force du mot de passe :</div>
                   <div className="flex gap-1">
                     <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 6 ? 'bg-red-500' : 'bg-gray-300'}`}></div>
                     <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 8 ? 'bg-yellow-500' : 'bg-gray-300'}`}></div>
                     <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 10 && /[A-Z]/.test(passwordForm.newPassword) ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                     <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 12 && /[A-Z]/.test(passwordForm.newPassword) && /[0-9]/.test(passwordForm.newPassword) && /[^A-Za-z0-9]/.test(passwordForm.newPassword) ? 'bg-green-700' : 'bg-gray-300'}`}></div>
                   </div>
-                  <p className="text-xs text-[#6C757D] dark:text-[#b0b0b0] mt-1">
+                  <p className="text-xs text-[#6C757D] mt-1">
                     {passwordForm.newPassword.length < 6 ? 'Trop faible' :
                      passwordForm.newPassword.length < 8 ? 'Faible' :
                      passwordForm.newPassword.length < 10 ? 'Moyen' :

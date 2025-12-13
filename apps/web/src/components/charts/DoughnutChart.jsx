@@ -39,10 +39,10 @@ export default function DoughnutChart({ data, title, isDarkMode = false }) {
       {
         data: data?.values || [],
         backgroundColor: categoryColors.slice(0, data?.labels?.length || 0),
-        borderColor: isDarkMode ? '#404040' : '#FFFFFF',
+        borderColor: '#FFFFFF',
         borderWidth: 2,
         hoverBorderWidth: 3,
-        hoverBorderColor: isDarkMode ? '#555555' : '#F5F7FA'
+        hoverBorderColor: '#F5F7FA'
       }
     ]
   };
@@ -96,10 +96,10 @@ export default function DoughnutChart({ data, title, isDarkMode = false }) {
         }
       },
       tooltip: {
-        backgroundColor: isDarkMode ? '#383838' : '#FFFFFF',
+        backgroundColor: '#FFFFFF',
         titleColor: theme.text,
         bodyColor: theme.text,
-        borderColor: isDarkMode ? '#404040' : '#F5F7FA',
+        borderColor: '#F5F7FA',
         borderWidth: 1,
         cornerRadius: 8,
         displayColors: true,

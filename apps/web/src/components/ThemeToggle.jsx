@@ -13,14 +13,14 @@ const ThemeToggle = ({ showLabel = true, className = '' }) => {
       {showLabel && (
         <span className="text-sm text-[#6C757D] font-medium">Thème :</span>
       )}
-      <div className="flex items-center gap-1 bg-[#F5F7FA] dark:bg-[#383838] rounded-lg p-1">
+      <div className="flex items-center gap-1 bg-[#F5F7FA] rounded-lg p-1">
         {/* Light mode */}
         <button
           onClick={() => handleThemeChange('light')}
           className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
             theme === 'light'
               ? 'bg-[#1E73BE] text-white'
-              : 'text-[#6C757D] hover:text-[#343A40] dark:text-[#b0b0b0] dark:hover:text-[#e4e4e4]'
+              : 'text-[#6C757D] hover:text-[#343A40]'
           }`}
           title="Mode clair"
         >
@@ -33,7 +33,7 @@ const ThemeToggle = ({ showLabel = true, className = '' }) => {
           className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
             theme === 'auto'
               ? 'bg-[#1E73BE] text-white'
-              : 'text-[#6C757D] hover:text-[#343A40] dark:text-[#b0b0b0] dark:hover:text-[#e4e4e4]'
+              : 'text-[#6C757D] hover:text-[#343A40]'
           }`}
           title="Mode automatique"
         >
@@ -46,7 +46,7 @@ const ThemeToggle = ({ showLabel = true, className = '' }) => {
           className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
             theme === 'dark'
               ? 'bg-[#1E73BE] text-white'
-              : 'text-[#6C757D] hover:text-[#343A40] dark:text-[#b0b0b0] dark:hover:text-[#e4e4e4]'
+              : 'text-[#6C757D] hover:text-[#343A40]'
           }`}
           title="Mode sombre"
         >

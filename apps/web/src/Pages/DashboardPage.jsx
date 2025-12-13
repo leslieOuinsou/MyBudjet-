@@ -197,7 +197,7 @@ export default function DashboardPage() {
         <DashboardSidebar />
         {/* Main content */}
         <main className="flex-1 py-4 md:py-6 lg:py-10 px-3 md:px-6 lg:px-8 xl:px-12">
-          <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-[#343A40] dark:text-white mb-4 md:mb-6 lg:mb-8">
+          <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-[#343A40] mb-4 md:mb-6 lg:mb-8">
             Bienvenue, {user ? getFirstName(user.name) : 'Utilisateur'}!
           </h1>
           {/* KPIs */}
@@ -568,12 +568,12 @@ export default function DashboardPage() {
       {/* Modal Ajouter Transaction */}
       {showTransactionModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40] dark:text-[#e4e4e4]">Ajouter une Transaction</h3>
+              <h3 className="text-lg font-semibold text-[#343A40]">Ajouter une Transaction</h3>
               <button 
                 onClick={() => setShowTransactionModal(false)}
-                className="text-[#6C757D] hover:text-[#343A40] dark:hover:text-[#e4e4e4]"
+                className="text-[#6C757D] hover:text-[#343A40]"
               >
                 ✕
               </button>
@@ -599,45 +599,45 @@ export default function DashboardPage() {
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Description</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Description</label>
                   <input
                     type="text"
                     value={newTransaction.description}
                     onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                     placeholder="Ex: Achat épicerie"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Montant (€)</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Montant (€)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={newTransaction.amount}
                     onChange={(e) => setNewTransaction({...newTransaction, amount: parseFloat(e.target.value)})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                     placeholder="0.00"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Type</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Type</label>
                   <select
                     value={newTransaction.type}
                     onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                   >
                     <option value="expense">Dépense</option>
                     <option value="income">Revenu</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Catégorie</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
                   <select
                     value={newTransaction.category}
                     onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                   >
                     <option value="">Sélectionner une catégorie</option>
                     <option value="Nourriture">🍽️ Nourriture</option>
@@ -649,12 +649,12 @@ export default function DashboardPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Date</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Date</label>
                   <input
                     type="date"
                     value={newTransaction.date}
                     onChange={(e) => setNewTransaction({...newTransaction, date: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                     required
                   />
                 </div>
@@ -663,7 +663,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowTransactionModal(false)}
-                  className="flex-1 px-4 py-2 border border-[#F5F7FA] dark:border-[#404040] text-[#343A40] dark:text-[#e4e4e4] rounded hover:bg-[#F5F7FA] dark:hover:bg-[#383838]"
+                  className="flex-1 px-4 py-2 border border-[#F5F7FA] text-[#343A40] rounded hover:bg-[#F5F7FA]"
                 >
                   Annuler
                 </button>
@@ -682,12 +682,12 @@ export default function DashboardPage() {
       {/* Modal Créer Budget */}
       {showBudgetModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40] dark:text-[#e4e4e4]">Créer un Budget</h3>
+              <h3 className="text-lg font-semibold text-[#343A40]">Créer un Budget</h3>
               <button 
                 onClick={() => setShowBudgetModal(false)}
-                className="text-[#6C757D] hover:text-[#343A40] dark:hover:text-[#e4e4e4]"
+                className="text-[#6C757D] hover:text-[#343A40]"
               >
                 ✕
               </button>
@@ -717,11 +717,11 @@ export default function DashboardPage() {
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Catégorie</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
                   <select
                     value={newBudget.category}
                     onChange={(e) => setNewBudget({...newBudget, category: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                     required
                   >
                     <option value="">Sélectionner une catégorie</option>
@@ -734,23 +734,23 @@ export default function DashboardPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Montant (€)</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Montant (€)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={newBudget.amount}
                     onChange={(e) => setNewBudget({...newBudget, amount: parseFloat(e.target.value)})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                     placeholder="0.00"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#343A40] dark:text-[#e4e4e4] mb-1">Période</label>
+                  <label className="block text-sm font-medium text-[#343A40] mb-1">Période</label>
                   <select
                     value={newBudget.period}
                     onChange={(e) => setNewBudget({...newBudget, period: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] dark:border-[#404040] rounded bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4]"
+                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
                   >
                     <option value="month">Mensuel</option>
                     <option value="week">Hebdomadaire</option>
@@ -762,7 +762,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowBudgetModal(false)}
-                  className="flex-1 px-4 py-2 border border-[#F5F7FA] dark:border-[#404040] text-[#343A40] dark:text-[#e4e4e4] rounded hover:bg-[#F5F7FA] dark:hover:bg-[#383838]"
+                  className="flex-1 px-4 py-2 border border-[#F5F7FA] text-[#343A40] rounded hover:bg-[#F5F7FA]"
                 >
                   Annuler
                 </button>

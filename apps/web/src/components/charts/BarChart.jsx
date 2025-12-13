@@ -98,10 +98,10 @@ export default function BarChart({ data, title, isDarkMode = false }) {
         }
       },
       tooltip: {
-        backgroundColor: isDarkMode ? '#383838' : '#FFFFFF',
+        backgroundColor: '#FFFFFF',
         titleColor: theme.text,
         bodyColor: theme.text,
-        borderColor: isDarkMode ? '#404040' : '#F5F7FA',
+        borderColor: '#F5F7FA',
         borderWidth: 1,
         cornerRadius: 8,
         displayColors: true,

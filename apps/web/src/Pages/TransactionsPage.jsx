@@ -313,7 +313,7 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] dark:bg-[#1a1a1a] flex flex-col">
+    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
       <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
@@ -321,12 +321,12 @@ export default function TransactionsPage() {
         <main className="flex-1 px-3 md:px-6 lg:px-8 xl:px-12 py-4 md:py-6 lg:py-10 flex flex-col pt-16 md:pt-10">
           {/* Messages d'erreur et succès */}
           {error && (
-            <div className="mb-6 bg-[#F8D7DA] dark:bg-[#4A1C1F] border border-[#F5C6CB] dark:border-[#842029] text-[#721C24] dark:text-[#F87171] px-4 py-3 rounded-lg">
+            <div className="mb-6 bg-[#F8D7DA] border border-[#F5C6CB] text-[#721C24] px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
           {success && (
-            <div className="mb-6 bg-[#D4EDDA] dark:bg-[#1E4620] border border-[#C3E6CB] dark:border-[#28A745] text-[#155724] dark:text-[#68D391] px-4 py-3 rounded-lg">
+            <div className="mb-6 bg-[#D4EDDA] border border-[#C3E6CB] text-[#155724] px-4 py-3 rounded-lg">
               {success}
             </div>
           )}
@@ -335,7 +335,7 @@ export default function TransactionsPage() {
             {/* Header avec titre et bouton PayPal */}
             <div className="flex flex-col gap-3 md:gap-4 mb-3 md:mb-4">
               <div className="flex flex-row justify-between items-center flex-wrap gap-3 md:gap-4">
-                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#22292F] dark:text-white m-0">Transactions</h1>
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#22292F] m-0">Transactions</h1>
                 
                 {/* Section PayPal */}
                 <button
@@ -358,7 +358,7 @@ export default function TransactionsPage() {
                     placeholder="Rechercher..." 
                     value={search} 
                     onChange={e => setSearch(e.target.value)} 
-                    className="w-full px-3 md:px-4 pl-9 md:pl-10 py-2 border border-[#EAF4FB] dark:border-[#404040] rounded-lg bg-[#F9FAFB] dark:bg-[#2d2d2d] text-[#22292F] dark:text-white text-sm md:text-base focus:outline-none focus:border-[#1E73BE]"
+                    className="w-full px-3 md:px-4 pl-9 md:pl-10 py-2 border border-[#EAF4FB] rounded-lg bg-[#F9FAFB] text-[#22292F] text-sm md:text-base focus:outline-none focus:border-[#1E73BE]"
                   />
                 </div>
                 <button 
@@ -396,13 +396,13 @@ export default function TransactionsPage() {
             </div>
           )}
           {/* Filtres */}
-          <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl shadow-sm mb-4 md:mb-6 lg:mb-8 p-4 md:p-6">
+          <section className="bg-white border border-[#EAF4FB] rounded-xl shadow-sm mb-4 md:mb-6 lg:mb-8 p-4 md:p-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 md:mb-4 gap-2">
               <div className="flex items-center gap-2">
                 <MdFilterList size={20} className="text-[#1E73BE] md:size-[22px]" />
-                <h2 className="text-base md:text-lg font-semibold text-[#22292F] dark:text-white">Filtres</h2>
+                <h2 className="text-base md:text-lg font-semibold text-[#22292F]">Filtres</h2>
               </div>
-              <span className="text-xs md:text-sm text-[#6C757D] dark:text-[#a0a0a0] bg-[#F5F7FA] dark:bg-[#383838] px-2 md:px-3 py-1 rounded-full">
+              <span className="text-xs md:text-sm text-[#6C757D] bg-[#F5F7FA] px-2 md:px-3 py-1 rounded-full">
                 {filtered.length} résultat{filtered.length > 1 ? 's' : ''}
               </span>
             </div>
@@ -410,15 +410,15 @@ export default function TransactionsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {/* Filtre par date */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">
-                  <MdCalendarToday size={16} className="text-[#6C757D] dark:text-[#a0a0a0]" />
+                <label className="flex items-center gap-2 text-sm font-medium text-[#343A40] mb-2">
+                  <MdCalendarToday size={16} className="text-[#6C757D]" />
                   Période
                 </label>
                 <div className="relative">
                   <select
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-[#EAF4FB] dark:border-[#404040] rounded-lg bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-[#1E73BE]/20 transition-all appearance-none cursor-pointer"
+                    className="w-full px-4 py-2.5 border border-[#EAF4FB] rounded-lg bg-white text-[#22292F] focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-[#1E73BE]/20 transition-all appearance-none cursor-pointer"
                   >
                     <option value="Tous">Toutes les périodes</option>
                     <option value="Aujourd'hui">Aujourd'hui</option>
@@ -432,15 +432,15 @@ export default function TransactionsPage() {
 
               {/* Filtre par catégorie */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">
-                  <MdCategory size={16} className="text-[#6C757D] dark:text-[#a0a0a0]" />
+                <label className="flex items-center gap-2 text-sm font-medium text-[#343A40] mb-2">
+                  <MdCategory size={16} className="text-[#6C757D]" />
                   Catégorie
                 </label>
                 <div className="relative">
                   <select
                     value={catFilter}
                     onChange={(e) => setCatFilter(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-[#EAF4FB] dark:border-[#404040] rounded-lg bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-[#1E73BE]/20 transition-all appearance-none cursor-pointer"
+                    className="w-full px-4 py-2.5 border border-[#EAF4FB] rounded-lg bg-white text-[#22292F] focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-[#1E73BE]/20 transition-all appearance-none cursor-pointer"
                   >
                     <option value="Tous">Toutes les catégories</option>
                     {categories.map(c => (
@@ -453,15 +453,15 @@ export default function TransactionsPage() {
 
               {/* Filtre par type */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">
-                  <MdSwapVert size={16} className="text-[#6C757D] dark:text-[#a0a0a0]" />
+                <label className="flex items-center gap-2 text-sm font-medium text-[#343A40] mb-2">
+                  <MdSwapVert size={16} className="text-[#6C757D]" />
                   Type
                 </label>
                 <div className="relative">
                   <select
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-[#EAF4FB] dark:border-[#404040] rounded-lg bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-[#1E73BE]/20 transition-all appearance-none cursor-pointer"
+                    className="w-full px-4 py-2.5 border border-[#EAF4FB] rounded-lg bg-white text-[#22292F] focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-[#1E73BE]/20 transition-all appearance-none cursor-pointer"
                   >
                     <option value="Tous">Tous les types</option>
                     <option value="income">💰 Revenus</option>
@@ -474,14 +474,14 @@ export default function TransactionsPage() {
 
             {/* Bouton pour réinitialiser les filtres */}
               {(dateFilter !== 'Tous' || catFilter !== 'Tous' || typeFilter !== 'Tous') && (
-              <div className="mt-4 pt-4 border-t border-[#EAF4FB] dark:border-[#404040]">
+              <div className="mt-4 pt-4 border-t border-[#EAF4FB]">
                 <button
                   onClick={() => {
                     setDateFilter('Tous');
                     setCatFilter('Tous');
                     setTypeFilter('Tous');
                   }}
-                  className="text-sm text-[#6C757D] dark:text-[#a0a0a0] hover:text-[#1E73BE] font-medium transition-colors flex items-center gap-2"
+                  className="text-sm text-[#6C757D] hover:text-[#1E73BE] font-medium transition-colors flex items-center gap-2"
                 >
                   <MdFilterList size={16} />
                   Réinitialiser tous les filtres
@@ -490,33 +490,33 @@ export default function TransactionsPage() {
             )}
           </section>
                      {/* Tableau transactions */}
-           <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl p-4 md:p-6 lg:p-8">
-             <h2 className="text-lg md:text-xl font-bold text-[#22292F] dark:text-white mb-4 md:mb-6">
+           <section className="bg-white border border-[#EAF4FB] rounded-xl p-4 md:p-6 lg:p-8">
+             <h2 className="text-lg md:text-xl font-bold text-[#22292F] mb-4 md:mb-6">
                Transactions ({filtered.length} résultat{filtered.length > 1 ? 's' : ''})
              </h2>
              <div className="overflow-x-auto rounded-xl">
                <table className="min-w-full text-xs md:text-sm lg:text-base">
                  <thead>
-                   <tr className="bg-[#F5F7FA] dark:bg-[#383838]">
-                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">Date</th>
-                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">Description</th>
-                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden md:table-cell">Catégorie</th>
-                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden lg:table-cell">Portefeuille</th>
-                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">Montant</th>
-                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden lg:table-cell">Type</th>
-                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">Actions</th>
+                   <tr className="bg-[#F5F7FA]">
+                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">Date</th>
+                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">Description</th>
+                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden md:table-cell">Catégorie</th>
+                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden lg:table-cell">Portefeuille</th>
+                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">Montant</th>
+                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden lg:table-cell">Type</th>
+                     <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">Actions</th>
                    </tr>
                  </thead>
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="px-4 py-8 text-center text-[#6C757D] dark:text-[#a0a0a0]">
+                      <td colSpan="7" className="px-4 py-8 text-center text-[#6C757D]">
                         Aucune transaction trouvée
                       </td>
                     </tr>
                   ) : (
                     filtered.map((t) => (
-                      <tr key={t._id} className="even:bg-white even:dark:bg-[#2d2d2d] odd:bg-[#F5F7FA] odd:dark:bg-[#383838] hover:bg-[#EAF4FB] dark:hover:bg-[#404040] transition">
+                      <tr key={t._id} className="even:bg-white odd:bg-[#F5F7FA] hover:bg-[#EAF4FB] transition">
                         <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-xs md:text-sm">
                           {new Date(t.date).toLocaleDateString('fr-FR')}
                         </td>
@@ -573,42 +573,42 @@ export default function TransactionsPage() {
                      {/* Modal */}
            {showModal && (
              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-               <div className="bg-white dark:bg-[#2d2d2d] rounded-xl p-6 md:p-8 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-                 <h3 className="text-lg md:text-xl font-bold text-[#22292F] dark:text-white mb-4 md:mb-6">
+               <div className="bg-white rounded-xl p-6 md:p-8 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+                 <h3 className="text-lg md:text-xl font-bold text-[#22292F] mb-4 md:mb-6">
                    {editingTransaction ? 'Modifier la transaction' : 'Ajouter une transaction'}
                  </h3>
                 <form onSubmit={handleAddTransaction}>
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">Description</label>
+                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Description</label>
                     <input
                       type="text"
                       value={newTransaction.description}
                       onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                      className="w-full border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-3 py-2 text-sm md:text-base bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]"
+                      className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 text-sm md:text-base bg-white text-[#22292F] focus:border-[#1E73BE]"
                       placeholder="Description de la transaction"
                       required
                     />
                   </div>
                   
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">Montant (€)</label>
+                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Montant (€)</label>
                     <input
                       type="number"
                       step="0.01"
                       value={newTransaction.amount}
                       onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
-                      className="w-full border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-3 py-2 text-sm md:text-base bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]"
+                      className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 text-sm md:text-base bg-white text-[#22292F] focus:border-[#1E73BE]"
                       placeholder="0.00"
                       required
                     />
                   </div>
                   
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">Type</label>
+                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Type</label>
                     <select
                       value={newTransaction.type}
                       onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value})}
-                      className="w-full border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-3 py-2 text-sm md:text-base bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]"
+                      className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 text-sm md:text-base bg-white text-[#22292F] focus:border-[#1E73BE]"
                       required
                     >
                       <option value="expense">Dépense</option>
@@ -617,11 +617,11 @@ export default function TransactionsPage() {
                   </div>
                   
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">Catégorie</label>
+                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Catégorie</label>
                     <select
                       value={newTransaction.category}
                       onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                      className="w-full border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-3 py-2 text-sm md:text-base bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]"
+                      className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 text-sm md:text-base bg-white text-[#22292F] focus:border-[#1E73BE]"
                       required
                     >
                       <option value="">Sélectionner une catégorie</option>
@@ -632,11 +632,11 @@ export default function TransactionsPage() {
                   </div>
                   
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">Portefeuille</label>
+                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Portefeuille</label>
                     <select
                       value={newTransaction.wallet}
                       onChange={(e) => setNewTransaction({...newTransaction, wallet: e.target.value})}
-                      className="w-full border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-3 py-2 text-sm md:text-base bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]"
+                      className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 text-sm md:text-base bg-white text-[#22292F] focus:border-[#1E73BE]"
                       required
                     >
                       <option value="">Sélectionner un portefeuille</option>
@@ -647,12 +647,12 @@ export default function TransactionsPage() {
                   </div>
                   
                   <div className="mb-4 md:mb-6">
-                    <label className="block text-xs md:text-sm font-medium text-[#343A40] dark:text-[#e0e0e0] mb-2">Date</label>
+                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Date</label>
                     <input
                       type="date"
                       value={newTransaction.date}
                       onChange={(e) => setNewTransaction({...newTransaction, date: e.target.value})}
-                      className="w-full border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-3 py-2 text-sm md:text-base bg-white dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]"
+                      className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 text-sm md:text-base bg-white text-[#22292F] focus:border-[#1E73BE]"
                       required
                     />
                   </div>
@@ -664,7 +664,7 @@ export default function TransactionsPage() {
                         setShowModal(false);
                         setEditingTransaction(null);
                       }}
-                      className="flex-1 border border-[#EAF4FB] dark:border-[#404040] text-[#6C757D] dark:text-[#a0a0a0] py-2.5 md:py-2 px-4 rounded-lg hover:bg-[#F5F7FA] dark:hover:bg-[#383838] transition text-sm md:text-base"
+                      className="flex-1 border border-[#EAF4FB] text-[#6C757D] py-2.5 md:py-2 px-4 rounded-lg hover:bg-[#F5F7FA] transition text-sm md:text-base"
                     >
                       Annuler
                     </button>

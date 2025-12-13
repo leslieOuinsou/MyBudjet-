@@ -362,7 +362,7 @@ export default function AdminProfilePage() {
                   </form>
                 ) : (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#383838]">
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
                       <MdPerson size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
                       <div className="flex-1">
                         <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Nom</div>
@@ -372,7 +372,7 @@ export default function AdminProfilePage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#383838]">
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
                       <MdEmail size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
                       <div className="flex-1">
                         <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Email</div>
@@ -382,7 +382,7 @@ export default function AdminProfilePage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#383838]">
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
                       <MdAdminPanelSettings size={24} className="text-purple-600" />
                       <div className="flex-1">
                         <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Rôle</div>
@@ -397,7 +397,7 @@ export default function AdminProfilePage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#383838]">
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
                       <MdCalendarToday size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
                       <div className="flex-1">
                         <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Membre depuis</div>

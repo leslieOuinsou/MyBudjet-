@@ -88,14 +88,14 @@ export default function DashboardSidebar() {
               <h2 className="text-xl font-bold bg-gradient-to-r from-[#1E73BE] to-[#155a8a] bg-clip-text text-transparent">
                 MyBudget+
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Gestion financière</p>
+              <p className="text-xs text-gray-500">Gestion financière</p>
             </div>
           </Link>
         </div>
 
         {/* Navigation */}
         <nav className="px-2">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 px-3">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 px-3">
             Navigation
           </div>
           <ul className="space-y-1">
@@ -114,7 +114,7 @@ export default function DashboardSidebar() {
                       ${
                         active
                           ? "bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white shadow-lg shadow-blue-500/30"
-                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#1E73BE] dark:hover:text-blue-400"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-[#1E73BE]"
                       }
                     `}
                   >
@@ -153,7 +153,7 @@ export default function DashboardSidebar() {
         </nav>
 
         {/* Section déconnexion */}
-        <div className="mt-auto pt-6 px-2 border-t border-gray-200 dark:border-gray-800">
+        <div className="mt-auto pt-6 px-2 border-t border-gray-200">
           <Link 
             to="/login" 
             onClick={() => {

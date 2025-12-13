@@ -23,26 +23,15 @@ ChartJS.register(
   Filler
 );
 
-export default function LineChart({ data, title, isDarkMode = false }) {
-  // Couleurs adaptées au thème
-  const colors = {
-    light: {
-      income: '#28A745',
-      expense: '#DC3545',
-      grid: '#F5F7FA',
-      text: '#343A40',
-      background: '#FFFFFF'
-    },
-    dark: {
-      income: '#4CAF50',
-      expense: '#F44336',
-      grid: '#404040',
-      text: '#e4e4e4',
-      background: '#2d2d2d'
-    }
+export default function LineChart({ data, title }) {
+  // Couleurs pour le thème clair uniquement
+  const theme = {
+    income: '#28A745',
+    expense: '#DC3545',
+    grid: '#F5F7FA',
+    text: '#343A40',
+    background: '#FFFFFF'
   };
-
-  const theme = isDarkMode ? colors.dark : colors.light;
 
   const chartData = {
     labels: data?.labels || [],
@@ -104,10 +93,10 @@ export default function LineChart({ data, title, isDarkMode = false }) {
         }
       },
       tooltip: {
-        backgroundColor: isDarkMode ? '#383838' : '#FFFFFF',
+        backgroundColor: '#FFFFFF',
         titleColor: theme.text,
         bodyColor: theme.text,
-        borderColor: isDarkMode ? '#404040' : '#F5F7FA',
+        borderColor: '#F5F7FA',
         borderWidth: 1,
         cornerRadius: 8,
         displayColors: true,

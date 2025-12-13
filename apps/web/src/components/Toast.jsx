@@ -40,22 +40,22 @@ const Toast = ({ message, type = 'success', duration = 5000, onClose }) => {
 
   const styles = {
     success: {
-      bg: 'bg-green-500 dark:bg-green-600',
+      bg: 'bg-green-500',
       icon: '✓',
       progressBg: 'bg-green-700'
     },
     error: {
-      bg: 'bg-red-500 dark:bg-red-600',
+      bg: 'bg-red-500',
       icon: '✕',
       progressBg: 'bg-red-700'
     },
     info: {
-      bg: 'bg-blue-500 dark:bg-blue-600',
+      bg: 'bg-blue-500',
       icon: 'ℹ',
       progressBg: 'bg-blue-700'
     },
     warning: {
-      bg: 'bg-yellow-500 dark:bg-yellow-600',
+      bg: 'bg-yellow-500',
       icon: '⚠',
       progressBg: 'bg-yellow-700'
     }

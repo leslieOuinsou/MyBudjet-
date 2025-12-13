@@ -347,7 +347,7 @@ export default function ExpensesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] dark:bg-[#1a1a1a] flex flex-col">
+    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
       <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
@@ -356,7 +356,7 @@ export default function ExpensesPage() {
         <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 pt-16 md:pt-6">
           {/* En-tête */}
           <div className="mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-[#22292F] dark:text-white mb-2">Gestion des Dépenses</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-[#22292F] mb-2">Gestion des Dépenses</h1>
             <p className="text-[#6C757D]">Suivez et analysez vos dépenses quotidiennes</p>
           </div>
 
@@ -374,7 +374,7 @@ export default function ExpensesPage() {
 
           {/* Statistiques rapides */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Aujourd'hui</p>
@@ -384,7 +384,7 @@ export default function ExpensesPage() {
               </div>
             </div>
             
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Cette semaine</p>
@@ -394,7 +394,7 @@ export default function ExpensesPage() {
               </div>
             </div>
             
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Ce mois</p>
@@ -404,7 +404,7 @@ export default function ExpensesPage() {
               </div>
             </div>
             
-            <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Moyenne/jour</p>
@@ -451,7 +451,7 @@ export default function ExpensesPage() {
           )}
 
           {/* Actions rapides */}
-          <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 shadow-sm border border-[#EAF4FB] mb-8">
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB] mb-8">
             <h2 className="text-xl font-semibold text-[#22292F] mb-4">Actions Rapides</h2>
             <div className="flex flex-wrap gap-4">
               <button
@@ -473,7 +473,7 @@ export default function ExpensesPage() {
           </div>
 
           {/* Filtres */}
-          <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 shadow-sm border border-[#EAF4FB] mb-6">
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB] mb-6">
             <h3 className="text-lg font-semibold text-[#22292F] mb-4">Filtres et Recherche</h3>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div>
@@ -545,7 +545,7 @@ export default function ExpensesPage() {
           </div>
 
           {/* Liste des dépenses */}
-          <div className="bg-white dark:bg-[#2d2d2d] rounded-lg shadow-sm border border-[#EAF4FB]">
+          <div className="bg-white rounded-lg shadow-sm border border-[#EAF4FB]">
             <div className="p-6 border-b border-[#EAF4FB]">
               <h3 className="text-lg font-semibold text-[#22292F]">
                 Dépenses ({filteredExpenses.length})
@@ -625,7 +625,7 @@ export default function ExpensesPage() {
       {/* Modal d'ajout/modification */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[#22292F]">
                 {editingExpense ? 'Modifier la dépense' : 'Ajouter une dépense'}
@@ -742,7 +742,7 @@ export default function ExpensesPage() {
       {/* Modal dépenses rapides */}
       {showQuickAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2d2d2d] rounded-lg p-6 w-full max-w-lg mx-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[#22292F]">Dépenses Rapides</h3>
               <button 

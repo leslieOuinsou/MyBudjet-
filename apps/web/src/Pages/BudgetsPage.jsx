@@ -108,50 +108,50 @@ export default function BudgetsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] dark:bg-[#1a1a1a] flex flex-col">
+    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
       <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
         <main className="flex-1 px-3 md:px-6 lg:px-8 xl:px-12 py-4 md:py-6 lg:py-10 flex flex-col pt-16 md:pt-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 lg:mb-8 gap-3 md:gap-4">
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#22292F] dark:text-white">Budgets</h1>
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#22292F]">Budgets</h1>
             <div className="flex gap-4 items-center">
               <input 
                 type="text" 
                 placeholder="🔍 Rechercher" 
-                className="w-full md:w-auto border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-4 py-2 bg-[#F9FAFB] dark:bg-[#2d2d2d] text-[#22292F] dark:text-white focus:border-[#1E73BE]" 
+                className="w-full md:w-auto border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" 
               />
             </div>
           </div>
           {/* Formulaire de création */}
-          <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl p-4 md:p-6 lg:p-8 mb-4 md:mb-6 lg:mb-8">
-            <h2 className="text-lg md:text-xl font-bold text-[#22292F] dark:text-white mb-4 md:mb-6">Créer un nouveau budget</h2>
+          <section className="bg-white border border-[#EAF4FB] rounded-xl p-4 md:p-6 lg:p-8 mb-4 md:mb-6 lg:mb-8">
+            <h2 className="text-lg md:text-xl font-bold text-[#22292F] mb-4 md:mb-6">Créer un nouveau budget</h2>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-end" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
-                <label className="text-[#343A40] dark:text-[#e0e0e0] text-sm">Nom du budget</label>
-                <input name="name" value={form.name} onChange={handleChange} placeholder="Ex: Courses mensuelles" className="border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-4 py-2 bg-[#F9FAFB] dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]" required />
+                <label className="text-[#343A40] text-sm">Nom du budget</label>
+                <input name="name" value={form.name} onChange={handleChange} placeholder="Ex: Courses mensuelles" className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" required />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[#343A40] dark:text-[#e0e0e0] text-sm">Catégorie</label>
-                <select name="category" value={form.category} onChange={handleChange} className="border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-4 py-2 bg-[#F9FAFB] dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]" required>
+                <label className="text-[#343A40] text-sm">Catégorie</label>
+                <select name="category" value={form.category} onChange={handleChange} className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" required>
                   <option value="">Sélectionner une catégorie</option>
                   {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
                 </select>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[#343A40] dark:text-[#e0e0e0] text-sm">Montant alloué</label>
-                <input name="amount" value={form.amount} onChange={handleChange} type="number" min="0" step="0.01" className="border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-4 py-2 bg-[#F9FAFB] dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]" required />
+                <label className="text-[#343A40] text-sm">Montant alloué</label>
+                <input name="amount" value={form.amount} onChange={handleChange} type="number" min="0" step="0.01" className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" required />
               </div>
               <div className="flex gap-2">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-[#343A40] dark:text-[#e0e0e0] text-sm">Période</label>
-                  <select name="period" value={form.period} onChange={handleChange} className="border border-[#EAF4FB] dark:border-[#404040] rounded-lg px-4 py-2 bg-[#F9FAFB] dark:bg-[#383838] text-[#22292F] dark:text-white focus:border-[#1E73BE]">
+                  <label className="text-[#343A40] text-sm">Période</label>
+                  <select name="period" value={form.period} onChange={handleChange} className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]">
                     {PERIODS.map((p) => <option key={p}>{p}</option>)}
                   </select>
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-[#343A40] dark:text-[#e0e0e0] text-sm">Date de début</label>
+                  <label className="text-[#343A40] text-sm">Date de début</label>
                   <input type="text" value={form.startDate} disabled className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#6C757D]" />
                 </div>
               </div>
@@ -161,20 +161,20 @@ export default function BudgetsPage() {
             </form>
           </section>
           {/* Tableau des budgets */}
-          <section className="bg-white dark:bg-[#2d2d2d] border border-[#EAF4FB] dark:border-[#404040] rounded-xl p-4 md:p-6 lg:p-8">
-            <h2 className="text-lg md:text-xl font-bold text-[#22292F] dark:text-white mb-4 md:mb-6">Vos budgets actuels</h2>
+          <section className="bg-white border border-[#EAF4FB] rounded-xl p-4 md:p-6 lg:p-8">
+            <h2 className="text-lg md:text-xl font-bold text-[#22292F] mb-4 md:mb-6">Vos budgets actuels</h2>
             <div className="overflow-x-auto rounded-xl">
               <table className="min-w-full text-xs md:text-sm lg:text-base">
                 <thead>
-                  <tr className="bg-[#F5F7FA] dark:bg-[#383838]">
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">CATÉGORIE</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">NOM DU BUDGET</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden lg:table-cell">PÉRIODE</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">MONTANT ALLOUÉ</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden md:table-cell">DÉPENSES ACTUELLES</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm hidden lg:table-cell">RESTE À DÉPENSER</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">PROGRESSION</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] dark:text-[#e0e0e0] font-bold text-xs md:text-sm">ACTIONS</th>
+                  <tr className="bg-[#F5F7FA]">
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">CATÉGORIE</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">NOM DU BUDGET</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden lg:table-cell">PÉRIODE</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">MONTANT ALLOUÉ</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden md:table-cell">DÉPENSES ACTUELLES</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden lg:table-cell">RESTE À DÉPENSER</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">PROGRESSION</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>

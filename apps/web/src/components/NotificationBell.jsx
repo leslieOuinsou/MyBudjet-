@@ -112,12 +112,12 @@ export default function NotificationBell() {
       {/* Bouton cloche */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#383838] transition-colors"
+        className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
         aria-label="Notifications"
       >
         {/* Icône cloche */}
         <svg 
-          className="w-6 h-6 text-[#343A40] dark:text-[#e4e4e4]" 
+          className="w-6 h-6 text-[#343A40]" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -140,13 +140,13 @@ export default function NotificationBell() {
 
       {/* Dropdown des notifications */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-[#2d2d2d] rounded-lg shadow-xl border border-[#F5F7FA] dark:border-[#404040] z-50 max-h-[500px] overflow-hidden flex flex-col">
+        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-[#F5F7FA] z-50 max-h-[500px] overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b border-[#F5F7FA] dark:border-[#404040] flex justify-between items-center">
-            <h3 className="font-semibold text-[#343A40] dark:text-[#e4e4e4]">
+          <div className="p-4 border-b border-[#F5F7FA] flex justify-between items-center">
+            <h3 className="font-semibold text-[#343A40]">
               Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-200 px-2 py-1 rounded-full">
+                <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
                   {unreadCount} nouvelles
                 </span>
               )}
@@ -163,22 +163,22 @@ export default function NotificationBell() {
           {/* Liste des notifications */}
           <div className="overflow-y-auto flex-1">
             {loading ? (
-              <div className="p-4 text-center text-[#6C757D] dark:text-[#b0b0b0]">
+              <div className="p-4 text-center text-[#6C757D]">
                 Chargement...
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="text-4xl mb-2">🔔</div>
-                <p className="text-[#6C757D] dark:text-[#b0b0b0]">Aucune notification</p>
+                <p className="text-[#6C757D]">Aucune notification</p>
               </div>
             ) : (
-              <div className="divide-y divide-[#F5F7FA] dark:divide-[#404040]">
+              <div className="divide-y divide-[#F5F7FA]">
                 {notifications.slice(0, 5).map((notification) => (
                   <div
                     key={notification._id}
                     onClick={() => !notification.isRead && handleMarkAsRead(notification._id)}
-                    className={`p-4 hover:bg-gray-50 dark:hover:bg-[#383838] cursor-pointer transition-colors ${
-                      !notification.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                      !notification.isRead ? 'bg-blue-50' : ''
                     }`}
                   >
                     <div className="flex gap-3">
@@ -191,12 +191,12 @@ export default function NotificationBell() {
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm ${
                           !notification.isRead 
-                            ? 'font-semibold text-[#343A40] dark:text-[#e4e4e4]' 
-                            : 'text-[#6C757D] dark:text-[#b0b0b0]'
+                            ? 'font-semibold text-[#343A40]' 
+                            : 'text-[#6C757D]'
                         }`}>
                           {notification.message}
                         </p>
-                        <p className="text-xs text-[#6C757D] dark:text-[#b0b0b0] mt-1">
+                        <p className="text-xs text-[#6C757D] mt-1">
                           {getTimeAgo(notification.createdAt)}
                         </p>
                       </div>
@@ -214,7 +214,7 @@ export default function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-[#F5F7FA] dark:border-[#404040] bg-gray-50 dark:bg-[#383838]">
+            <div className="p-3 border-t border-[#F5F7FA] bg-gray-50">
               <Link
                 to="/notifications"
                 onClick={() => setIsOpen(false)}
