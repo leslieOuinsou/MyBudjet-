@@ -156,22 +156,40 @@ const SignUpPage = () => {
       console.log('📥 Étape 6: Réponse reçue');
       console.log('⏱️ Temps de réponse:', `${duration}ms`);
       console.log('📊 Status:', res.status, res.statusText);
+      console.log('📊 res.ok:', res.ok);
+      console.log('📊 Status range:', res.status >= 200 && res.status < 300);
       console.log('📋 Headers:', Object.fromEntries(res.headers.entries()));
       
       let data = {};
+      let responseText = '';
       try {
-        const text = await res.text();
-        console.log('📄 Réponse texte brute:', text);
-        if (text) {
-          data = JSON.parse(text);
-          console.log('✅ Réponse JSON parsée:', data);
+        responseText = await res.text();
+        console.log('📄 Réponse texte brute:', responseText);
+        console.log('📄 Longueur du texte:', responseText.length);
+        if (responseText && responseText.trim()) {
+          try {
+            data = JSON.parse(responseText);
+            console.log('✅ Réponse JSON parsée:', data);
+          } catch (jsonError) {
+            console.error('❌ Erreur de parsing JSON:', jsonError);
+            console.error('📄 Texte qui a causé l\'erreur:', responseText);
+            // Si ce n'est pas du JSON valide, traiter comme une erreur
+            throw new Error(`Réponse invalide du serveur: ${responseText.substring(0, 100)}`);
+          }
         } else {
-          console.warn('⚠️ Réponse vide');
+          console.warn('⚠️ Réponse vide ou blanche');
+          data = { message: 'Réponse vide du serveur' };
         }
       } catch (parseError) {
-        console.error('❌ Erreur de parsing JSON:', parseError);
-        console.error('📄 Texte qui a causé l\'erreur:', text);
+        console.error('❌ Erreur lors de la lecture de la réponse:', parseError);
+        console.error('📄 Texte qui a causé l\'erreur:', responseText);
+        throw parseError;
       }
+      
+      console.log('🔍 Vérification du status de la réponse...');
+      console.log('   res.ok:', res.ok);
+      console.log('   res.status:', res.status);
+      console.log('   Condition !res.ok:', !res.ok);
       
       if (!res.ok) {
         console.error('❌ Étape 7: Erreur HTTP détectée');
@@ -210,11 +228,19 @@ const SignUpPage = () => {
       
       console.log('✅ Étape 7: Inscription réussie!');
       console.log('📋 Données reçues:', data);
+      console.log('📊 Status code:', res.status);
+      console.log('🎯 Entrée dans le bloc de succès');
       
-      // Afficher le message de succès
+      // Afficher le message de succès IMMÉDIATEMENT
+      console.log('📝 Affichage du message de succès...');
       setSuccess("Inscription réussie ! Redirection vers la page de connexion...");
+      console.log('✅ Message de succès défini');
+      
       setLoading(false);
+      console.log('✅ Loading désactivé');
+      
       setError(""); // S'assurer qu'il n'y a pas d'erreur affichée
+      console.log('✅ Erreur réinitialisée');
       
       // Compteur de redirection
       let countdown = 3;
