@@ -132,7 +132,22 @@ export default function ImportExportPage() {
         setUploadProgress(0);
       }, 5000);
     } catch (err) {
-      setError(err.message || 'Erreur lors de l\'import des données');
+      console.error('❌ Erreur import:', err);
+      let errorMessage = 'Erreur lors de l\'import des données';
+      
+      if (err.message) {
+        errorMessage = err.message;
+      } else if (err.response) {
+        // Si c'est une erreur HTTP avec réponse
+        try {
+          const errorData = await err.response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch {
+          errorMessage = `Erreur ${err.response.status}: ${err.response.statusText}`;
+        }
+      }
+      
+      setError(errorMessage);
       setUploadProgress(0);
     } finally {
       setLoading(false);

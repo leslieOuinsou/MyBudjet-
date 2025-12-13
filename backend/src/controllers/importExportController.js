@@ -130,21 +130,52 @@ export const importTransactions = async (req, res) => {
     try {
       if (ext === 'csv') {
         const content = fs.readFileSync(req.file.path, 'utf8');
-        const rows = content.split('\n').filter(row => row.trim());
+        
+        // Parser CSV amélioré qui gère les guillemets et les virgules dans les valeurs
+        const parseCSVLine = (line) => {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          result.push(current.trim());
+          return result;
+        };
+        
+        const rows = content.split(/\r?\n/).filter(row => row.trim());
         if (rows.length < 2) {
           throw new Error('Le fichier CSV doit contenir au moins un en-tête et une ligne de données');
         }
         
-        const headers = rows[0].split(',').map(h => h.trim().toLowerCase());
+        // Parser la première ligne comme en-têtes
+        const headers = parseCSVLine(rows[0]).map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
+        
+        // Parser les lignes de données
         for (let i = 1; i < rows.length; i++) {
-          const values = rows[i].split(',');
-          if (values.length === headers.length) {
+          const values = parseCSVLine(rows[i]).map(v => v.replace(/^"|"$/g, '').trim());
+          
+          if (values.length > 0 && values.some(v => v !== '')) {
             const obj = {};
             headers.forEach((h, idx) => {
-              obj[h] = values[idx]?.trim();
+              obj[h] = values[idx] || '';
             });
             data.push(obj);
           }
+        }
+        
+        if (data.length === 0) {
+          throw new Error('Aucune donnée valide trouvée dans le fichier CSV');
         }
       } else if (ext === 'xlsx' || ext === 'xls') {
         const workbook = XLSX.readFile(req.file.path);
@@ -173,35 +204,62 @@ export const importTransactions = async (req, res) => {
         const row = data[i];
         
         // Validation des champs requis et mapping
-        const amount = parseFloat(row.montant || row.amount);
-        const type = (row.type || row.type_transaction || '').toLowerCase();
-        const note = row.note || row.description || row.libelle || '';
-        const dateStr = row.date || row.date_transaction || new Date().toISOString();
+        const amountStr = (row.montant || row.amount || '').toString().replace(/[^\d.,-]/g, '').replace(',', '.');
+        const amount = parseFloat(amountStr);
+        const type = (row.type || row.type_transaction || row['type transaction'] || '').toString().toLowerCase().trim();
+        const note = (row.note || row.description || row.libelle || row.libellé || row.commentaire || '').toString().trim();
+        const dateStr = row.date || row.date_transaction || row['date transaction'] || new Date().toISOString();
         
         if (isNaN(amount) || amount === 0) {
           errors++;
-          details.push(`Ligne ${i + 2}: Montant invalide ou manquant`);
+          details.push(`Ligne ${i + 2}: Montant invalide ou manquant (valeur: "${row.montant || row.amount}")`);
           continue;
         }
         
-        if (!type || !['income', 'expense', 'revenu', 'depense'].includes(type)) {
+        // Types acceptés plus flexibles
+        const validTypes = ['income', 'expense', 'revenu', 'depense', 'revenue', 'dépense', 'entrée', 'sortie', 'in', 'out'];
+        if (!type || !validTypes.some(t => type.includes(t))) {
           errors++;
-          details.push(`Ligne ${i + 2}: Type de transaction invalide (doit être income/expense ou revenu/depense)`);
+          details.push(`Ligne ${i + 2}: Type de transaction invalide "${type}" (doit être: income/expense/revenu/depense)`);
           continue;
         }
 
         // Normaliser le type
-        const normalizedType = type === 'revenu' ? 'income' : (type === 'depense' ? 'expense' : type);
+        let normalizedType;
+        if (type.includes('revenu') || type.includes('revenue') || type.includes('entrée') || type.includes('in') || type === 'income') {
+          normalizedType = 'income';
+        } else if (type.includes('depense') || type.includes('dépense') || type.includes('sortie') || type.includes('out') || type === 'expense') {
+          normalizedType = 'expense';
+        } else {
+          normalizedType = type;
+        }
         
-        // Parser la date
+        // Parser la date avec plusieurs formats supportés
         let transactionDate;
         try {
-          transactionDate = new Date(dateStr);
-          if (isNaN(transactionDate.getTime())) {
-            transactionDate = new Date();
+          // Formats de date supportés: YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY, etc.
+          let dateToParse = dateStr.toString().trim();
+          
+          // Si format DD/MM/YYYY ou DD-MM-YYYY, convertir en YYYY-MM-DD
+          if (dateToParse.match(/^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/)) {
+            const parts = dateToParse.split(/[\/\-]/);
+            dateToParse = `${parts[2]}-${parts[1]}-${parts[0]}`;
           }
-        } catch {
+          
+          transactionDate = new Date(dateToParse);
+          if (isNaN(transactionDate.getTime())) {
+            // Essayer avec Date.parse
+            const parsed = Date.parse(dateToParse);
+            if (!isNaN(parsed)) {
+              transactionDate = new Date(parsed);
+            } else {
+              transactionDate = new Date();
+              details.push(`Ligne ${i + 2}: Date invalide "${dateStr}", date du jour utilisée`);
+            }
+          }
+        } catch (dateError) {
           transactionDate = new Date();
+          details.push(`Ligne ${i + 2}: Erreur parsing date "${dateStr}", date du jour utilisée`);
         }
 
         // Vérifier les doublons (même montant, type et date)
@@ -257,13 +315,33 @@ export const importTransactions = async (req, res) => {
   } catch (error) {
     // Nettoyage en cas d'erreur
     if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Erreur lors de la suppression du fichier temporaire:', unlinkError);
+      }
     }
     
-    console.error('Erreur lors de l\'import:', error);
+    console.error('❌ Erreur lors de l\'import:', error);
+    console.error('   Stack:', error.stack);
+    
+    // Gérer les erreurs multer spécifiques
+    if (error instanceof multer.MulterError) {
+      if (error.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ 
+          message: 'Le fichier est trop volumineux (maximum 10MB)',
+          error: error.message
+        });
+      }
+      return res.status(400).json({ 
+        message: 'Erreur lors de l\'upload du fichier',
+        error: error.message
+      });
+    }
+    
     res.status(500).json({ 
-      message: 'Erreur interne lors de l\'import',
-      error: error.message
+      message: error.message || 'Erreur interne lors de l\'import',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Erreur serveur'
     });
   }
 };

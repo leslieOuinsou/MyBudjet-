@@ -681,15 +681,27 @@ export async function importTransactions(file, format) {
     formData.append('file', file);
     formData.append('format', format);
     
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const headers = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+    // Ne pas mettre Content-Type pour FormData, le navigateur le fera automatiquement
+    
     const response = await fetch(`${API_URL}/importexport/import`, {
       method: 'POST',
-      headers: getAuthHeaders(false), // false to not include Content-Type for FormData
+      headers: headers,
       body: formData
     });
     
-    if (!response.ok) throw new Error('Erreur lors de l\'import des transactions');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ 
+        message: `Erreur ${response.status}: ${response.statusText}` 
+      }));
+      throw new Error(errorData.message || errorData.error || 'Erreur lors de l\'import des transactions');
+    }
+    
     return await response.json();
   } catch (error) {
+    console.error('❌ Erreur importTransactions:', error);
     throw error;
   }
 }
