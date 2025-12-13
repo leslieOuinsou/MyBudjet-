@@ -223,7 +223,7 @@ export default function AdminUsersPage() {
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Admins</div>
-              <div className="text-2xl font-bold text-purple-600">{users.filter(u => u.role === 'admin').length}</div>
+              <div className="text-2xl font-bold text-[#1E73BE]">{users.filter(u => u.role === 'admin').length}</div>
             </div>
           </div>
           

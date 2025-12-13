@@ -450,7 +450,7 @@ export default function SettingsPage() {
               </div>
               <h2 className="text-xl font-bold text-gray-900">Gestion du profil</h2>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 p-6 bg-gradient-to-br from-[#E3F2FD] to-[#BBDEFB] rounded-xl border border-[#1E73BE]">
               {/* Avatar avec option d'upload */}
               <div className="relative group">
                 {user?.profilePicture ? (
@@ -882,7 +882,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <div className="flex items-start gap-3 flex-1">
-                    <MdDevices className="text-indigo-600 mt-1 flex-shrink-0" size={20} />
+                    <MdDevices className="text-[#1E73BE] mt-1 flex-shrink-0" size={20} />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">Sessions actives</div>
                       <div className="text-gray-600 text-sm">Gérez les appareils connectés à votre compte.</div>
