@@ -17,11 +17,21 @@ export default function DoughnutChart({ data, title }) {
     grid: '#F5F7FA'
   };
 
-  // Couleurs prédéfinies pour les catégories
+  // Couleurs prédéfinies pour les catégories - Palette Fintech
+  // Bleu (confiance), Gris/Anthracite (sérieux), Vert (croissance)
   const categoryColors = [
-    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-    '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF',
-    '#4BC0C0', '#FF6384', '#36A2EB', '#FFCE56'
+    '#1E73BE', // Bleu principal
+    '#6C757D', // Gris anthracite
+    '#28A745', // Vert croissance
+    '#495057', // Gris foncé
+    '#155a8a', // Bleu foncé
+    '#ADB5BD', // Gris moyen
+    '#343A40', // Anthracite
+    '#CED4DA', // Gris clair
+    '#1E73BE', // Répétition bleu
+    '#6C757D', // Répétition gris
+    '#28A745', // Répétition vert
+    '#495057'  // Répétition gris foncé
   ];
 
   const chartData = {

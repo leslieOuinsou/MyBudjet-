@@ -1,21 +1,41 @@
-/* Variables de couleurs pour le thème clair */
+/* Variables de couleurs pour le thème clair - Palette Fintech */
 :root {
+  /* Fonds - Gris/Anthracite pour sérieux et sobriété */
   --color-bg-primary: #F5F7FA;
   --color-bg-secondary: #FFFFFF;
-  --color-bg-tertiary: #E9F7FB;
+  --color-bg-tertiary: #F8F9FA;
+  --color-bg-anthracite: #343A40;
+  
+  /* Textes - Gris/Anthracite pour textes secondaires */
   --color-text-primary: #343A40;
   --color-text-secondary: #6C757D;
-  --color-text-tertiary: #FFFFFF;
-  --color-border: #F5F7FA;
+  --color-text-tertiary: #495057;
+  --color-text-white: #FFFFFF;
+  
+  /* Bordures - Gris neutre */
+  --color-border: #E9ECEF;
+  --color-border-light: #F5F7FA;
+  
+  /* Bleu - Confiance, fiabilité, sécurité (couleur principale) */
   --color-primary: #1E73BE;
   --color-primary-hover: #155a8a;
+  --color-primary-light: #E3F2FD;
+  --color-primary-dark: #0d4a6f;
+  
+  /* Vert - Argent, croissance, succès financier */
   --color-success: #28A745;
   --color-success-hover: #218838;
+  --color-success-light: #D4EDDA;
+  --color-success-dark: #1e7e34;
+  
+  /* Danger - Utilisé uniquement pour les erreurs critiques */
   --color-danger: #DC3545;
-  --color-danger-hover: #b52a37;
-  --color-warning: #FFC107;
-  --color-info: #17A2B8;
-  --color-gray-100: #F8F9FA;
+  --color-danger-hover: #c82333;
+  --color-danger-light: #F8D7DA;
+  
+  /* Gris/Anthracite - Sérieux, sobriété, neutre */
+  --color-gray-50: #F8F9FA;
+  --color-gray-100: #F5F7FA;
   --color-gray-200: #E9ECEF;
   --color-gray-300: #DEE2E6;
   --color-gray-400: #CED4DA;

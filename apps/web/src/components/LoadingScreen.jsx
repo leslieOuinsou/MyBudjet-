@@ -30,10 +30,10 @@ export default function LoadingScreen() {
 	}, [navigate]);
 
 	return (
-		<div className='min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 flex items-center justify-center relative overflow-hidden'>
-			{/* Animated Aurora background */}
+		<div className='min-h-screen bg-gradient-to-br from-[#1E73BE] via-[#155a8a] to-[#0d4a6f] flex items-center justify-center relative overflow-hidden'>
+			{/* Animated Aurora background - Palette Fintech */}
 			<Aurora 
-				colorStops={["#3A29FF", "#FF94B4", "#FF3232"]}
+				colorStops={["#1E73BE", "#28A745", "#155a8a"]}
 				blend={0.5}
 				amplitude={1.0}
 				speed={0.5}
@@ -44,7 +44,7 @@ export default function LoadingScreen() {
 				{/* Logo/Icon */}
 				<div className='mb-8 animate-bounce'>
 					<div className='w-24 h-24 mx-auto bg-white rounded-2xl shadow-2xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300'>
-						<span className='text-4xl font-bold text-blue-600'>M</span>
+						<span className='text-4xl font-bold text-[#1E73BE]'>M</span>
 					</div>
 				</div>
 

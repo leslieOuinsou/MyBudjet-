@@ -20,14 +20,14 @@ ChartJS.register(
 );
 
 export default function BarChart({ data, title }) {
-  // Couleurs pour le thème clair uniquement
+  // Couleurs pour le thème clair - Palette Fintech
   const theme = {
-    spent: '#DC3545',
-    budget: '#1E73BE',
-    exceeded: '#FFC107',
-    grid: '#F5F7FA',
-    text: '#343A40',
-    background: '#FFFFFF'
+    spent: '#6C757D',      // Gris anthracite pour dépenses (sérieux)
+    budget: '#1E73BE',     // Bleu pour budget (confiance, sécurité)
+    exceeded: '#495057',   // Gris foncé pour dépassement (au lieu d'orange)
+    grid: '#F5F7FA',       // Gris clair pour grille
+    text: '#343A40',       // Anthracite pour texte
+    background: '#FFFFFF'  // Blanc pour fond
   };
 
   const chartData = {

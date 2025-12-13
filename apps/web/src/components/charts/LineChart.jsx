@@ -24,13 +24,13 @@ ChartJS.register(
 );
 
 export default function LineChart({ data, title }) {
-  // Couleurs pour le thème clair uniquement
+  // Couleurs pour le thème clair - Palette Fintech
   const theme = {
-    income: '#28A745',
-    expense: '#DC3545',
-    grid: '#F5F7FA',
-    text: '#343A40',
-    background: '#FFFFFF'
+    income: '#28A745',    // Vert pour revenus (croissance, succès financier)
+    expense: '#6C757D',   // Gris anthracite pour dépenses (sérieux, sobriété)
+    grid: '#F5F7FA',      // Gris clair pour grille
+    text: '#343A40',      // Anthracite pour texte
+    background: '#FFFFFF' // Blanc pour fond
   };
 
   const chartData = {

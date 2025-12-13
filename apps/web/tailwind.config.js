@@ -5,17 +5,46 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#488E38',      // New primary green
-        accent: '#488E38',       // Match accent to primary green
-        neutral: '#CDCDCD',      // Silver
-        muted: '#7C7C7C',        // Boulder
-        background: '#F9F9F9',   // Fond clair
-        text: '#080808',         // Texte principal (noir/gris foncé)
-        'text-secondary': '#7C7C7C', // Boulder pour texte secondaire
-        'card-bg': '#FFFFFF',    // Blanc pour les cartes
-        'border-color': '#CDCDCD', // Silver pour les bordures
-        'red-500': '#FA4739',    // Sunset Orange pour les dépenses
-        'green-500': '#00D4AA',  // Vert pour les revenus
+        // Bleu - Confiance, fiabilité, sécurité (couleur principale)
+        primary: {
+          DEFAULT: '#1E73BE',
+          hover: '#155a8a',
+          light: '#E3F2FD',
+          dark: '#0d4a6f',
+        },
+        // Vert - Argent, croissance, succès financier
+        success: {
+          DEFAULT: '#28A745',
+          hover: '#218838',
+          light: '#D4EDDA',
+          dark: '#1e7e34',
+        },
+        // Gris/Anthracite - Sérieux, sobriété, neutre
+        gray: {
+          50: '#F8F9FA',
+          100: '#F5F7FA',
+          200: '#E9ECEF',
+          300: '#DEE2E6',
+          400: '#CED4DA',
+          500: '#ADB5BD',
+          600: '#6C757D',
+          700: '#495057',
+          800: '#343A40',
+          900: '#212529',
+        },
+        // Danger - Utilisé uniquement pour les erreurs critiques
+        danger: {
+          DEFAULT: '#DC3545',
+          hover: '#c82333',
+          light: '#F8D7DA',
+        },
+        // Couleurs utilitaires
+        background: '#F5F7FA',
+        text: {
+          primary: '#343A40',
+          secondary: '#6C757D',
+          tertiary: '#495057',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
