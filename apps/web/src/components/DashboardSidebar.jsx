@@ -1,39 +1,65 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { MdMenu, MdClose, MdLogout } from "react-icons/md";
+import { 
+  MdMenu, 
+  MdClose, 
+  MdLogout,
+  MdDashboard,
+  MdCategory,
+  MdAccountBalance,
+  MdShoppingCart,
+  MdReceipt,
+  MdBarChart,
+  MdFolder,
+  MdTrendingUp,
+  MdNotifications,
+  MdSettings,
+  MdPerson
+} from "react-icons/md";
 
 const menu = [
-  { to: "/dashboard", label: "📊 Tableau de bord" },
-  { to: "/categories", label: "🏷️ Catégories & Portefeuilles" },
-  { to: "/budgets", label: "💰 Budgets" },
-  { to: "/expenses", label: "💸 Dépenses" },
-  { to: "/transactions", label: "💳 Transactions" },
-  { to: "/reports", label: "📈 Rapports" },
-  { to: "/importexport", label: "📁 Import/Export" },
-  { to: "/forecasts", label: "🔮 Prévisions" },
-  { to: "/notifications", label: "🔔 Notifications" },
-  { to: "/settings", label: "⚙️ Paramètres utilisateur" },
-  { to: "/profile", label: "👤 Mon Profil" },
+  { to: "/dashboard", label: "Tableau de bord", icon: MdDashboard },
+  { to: "/categories", label: "Catégories & Portefeuilles", icon: MdCategory },
+  { to: "/budgets", label: "Budgets", icon: MdAccountBalance },
+  { to: "/expenses", label: "Dépenses", icon: MdShoppingCart },
+  { to: "/transactions", label: "Transactions", icon: MdReceipt },
+  { to: "/reports", label: "Rapports", icon: MdBarChart },
+  { to: "/importexport", label: "Import/Export", icon: MdFolder },
+  { to: "/forecasts", label: "Prévisions", icon: MdTrendingUp },
+  { to: "/notifications", label: "Notifications", icon: MdNotifications },
+  { to: "/settings", label: "Paramètres", icon: MdSettings },
+  { to: "/profile", label: "Mon Profil", icon: MdPerson },
 ];
 
 export default function DashboardSidebar() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
+  const isActive = (path) => {
+    if (path === "/dashboard") {
+      return location.pathname === "/dashboard";
+    }
+    return location.pathname.startsWith(path);
+  };
+  
   return (
     <>
       {/* Bouton hamburger mobile */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white dark:bg-[#2d2d2d] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
+        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200"
       >
-        {mobileMenuOpen ? <MdClose size={24} className="text-gray-800 dark:text-white" /> : <MdMenu size={24} className="text-gray-800 dark:text-white" />}
+        {mobileMenuOpen ? (
+          <MdClose size={24} className="text-gray-800 dark:text-white" />
+        ) : (
+          <MdMenu size={24} className="text-gray-800 dark:text-white" />
+        )}
       </button>
       
       {/* Overlay pour mobile */}
       {mobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="md:hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
@@ -41,67 +67,106 @@ export default function DashboardSidebar() {
       {/* Sidebar */}
       <aside className={`
         fixed md:static
-        w-64 
-        bg-[#fff] dark:bg-[#2d2d2d] 
-        border-r border-[#F5F7FA] dark:border-[#404040] 
-        py-8 px-6 
+        w-72
+        bg-gradient-to-b from-white to-gray-50 dark:from-[#1a1a1a] dark:to-[#2d2d2d]
+        border-r border-gray-200 dark:border-gray-800
+        py-6 px-4
         h-screen
-        transition-transform duration-300 ease-in-out
+        overflow-y-auto
+        transition-all duration-300 ease-in-out
         z-40
+        shadow-lg md:shadow-none
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="mb-8">
-          <div className="text-xs text-[#6C757D] dark:text-[#a0a0a0] font-semibold mb-2">NAVIGATION</div>
-          <ul className="space-y-2">
-            {menu.map((item, index) => (
-              <li key={`${item.to}-${index}`}>
-                {item.submenu ? (
-                  <div>
-                    <div className="block px-2 py-1 text-[#343A40] dark:text-[#e0e0e0] font-semibold">
-                      {item.label}
-                    </div>
-                    <ul className="ml-4 space-y-1">
-                      {item.submenu.map((subItem) => (
-                        <li key={subItem.to}>
-                          <Link
-                            to={subItem.to}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`block px-2 py-1 rounded transition-colors text-sm ${
-                              location.pathname === subItem.to 
-                                ? "bg-[#F5F7FA] dark:bg-[#383838] text-[#1E73BE] dark:text-[#60A5FA] font-semibold" 
-                                : "hover:bg-[#F5F7FA] dark:hover:bg-[#383838] text-[#343A40] dark:text-[#e0e0e0]"
-                            }`}
-                          >
-                            {subItem.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
+        {/* Logo/Brand */}
+        <div className="mb-8 px-4">
+          <Link to="/dashboard" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1E73BE] to-[#155a8a] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200">
+              <MdDashboard className="text-white text-xl" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold bg-gradient-to-r from-[#1E73BE] to-[#155a8a] bg-clip-text text-transparent">
+                MyBudget+
+              </h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Gestion financière</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="px-2">
+          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 px-3">
+            Navigation
+          </div>
+          <ul className="space-y-1">
+            {menu.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.to);
+              
+              return (
+                <li key={item.to}>
                   <Link
                     to={item.to}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`block px-2 py-1 rounded transition-colors ${
-                      location.pathname === item.to 
-                        ? "bg-[#F5F7FA] dark:bg-[#383838] text-[#1E73BE] dark:text-[#60A5FA] font-semibold" 
-                        : "hover:bg-[#F5F7FA] dark:hover:bg-[#383838] text-[#343A40] dark:text-[#e0e0e0]"
-                    }`}
+                    className={`
+                      group relative flex items-center gap-3 px-4 py-3 rounded-xl
+                      transition-all duration-200 ease-in-out
+                      ${
+                        active
+                          ? "bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white shadow-lg shadow-blue-500/30"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-[#1E73BE] dark:hover:text-blue-400"
+                      }
+                    `}
                   >
-                    {item.label}
+                    {/* Indicateur actif */}
+                    {active && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"></div>
+                    )}
+                    
+                    {/* Icône */}
+                    <Icon 
+                      size={22} 
+                      className={`
+                        transition-transform duration-200
+                        ${active ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-[#1E73BE] dark:group-hover:text-blue-400"}
+                        ${active ? "" : "group-hover:scale-110"}
+                      `}
+                    />
+                    
+                    {/* Label */}
+                    <span className={`
+                      font-medium text-sm
+                      ${active ? "text-white font-semibold" : "text-gray-700 dark:text-gray-300"}
+                    `}>
+                      {item.label}
+                    </span>
+                    
+                    {/* Effet hover */}
+                    {!active && (
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#1E73BE]/0 to-[#1E73BE]/0 group-hover:from-[#1E73BE]/5 group-hover:to-transparent transition-all duration-200"></div>
+                    )}
                   </Link>
-                )}
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
+        </nav>
+
+        {/* Section déconnexion */}
+        <div className="mt-auto pt-6 px-2 border-t border-gray-200 dark:border-gray-800">
+          <Link 
+            to="/login" 
+            onClick={() => {
+              localStorage.removeItem('token');
+              sessionStorage.removeItem('token');
+              setMobileMenuOpen(false);
+            }}
+            className="group flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+          >
+            <MdLogout size={20} className="group-hover:rotate-12 transition-transform duration-200" />
+            <span>Déconnexion</span>
+          </Link>
         </div>
-        <Link 
-          to="/login" 
-          onClick={() => setMobileMenuOpen(false)}
-          className="mt-8 w-full bg-[#DC3545] hover:bg-[#b52a37] text-white px-6 py-2 rounded font-semibold flex items-center justify-center gap-2 transition-colors"
-        >
-          <MdLogout size={20} /> Déconnexion
-        </Link>
       </aside>
     </>
   );
