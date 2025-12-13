@@ -9,33 +9,84 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Validation du mot de passe
+  const validatePassword = (pwd) => {
+    if (pwd.length < 12) {
+      return "Le mot de passe doit contenir au moins 12 caractères";
+    }
+    if (!/[A-Z]/.test(pwd)) {
+      return "Le mot de passe doit contenir au moins une majuscule";
+    }
+    if (!/[a-z]/.test(pwd)) {
+      return "Le mot de passe doit contenir au moins une minuscule";
+    }
+    if (!/[0-9]/.test(pwd)) {
+      return "Le mot de passe doit contenir au moins un chiffre";
+    }
+    if (!/[@$!%*?&]/.test(pwd)) {
+      return "Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)";
+    }
+    return null;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setLoading(true);
     
-    
-    if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+    // Validation des champs
+    if (!firstName.trim() || !lastName.trim()) {
+      setError("Veuillez remplir tous les champs");
+      setLoading(false);
       return;
     }
+
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      setLoading(false);
+      return;
+    }
+
+    // Validation du mot de passe
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setError(passwordError);
+      setLoading(false);
+      return;
+    }
+
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      console.log('📤 Envoi de la requête d\'inscription vers:', `${API_URL.replace(/\/$/, "")}/auth/signup`);
+      
       const res = await fetch(`${API_URL.replace(/\/$/, "")}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: `${firstName} ${lastName}`.trim(), email, password }),
       });
+      
+      const data = await res.json().catch(() => ({}));
+      
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        // Gérer les erreurs de validation détaillées
+        if (data.errors && Array.isArray(data.errors)) {
+          const errorMessages = data.errors.map(err => err.message || err.msg).join(', ');
+          throw new Error(errorMessages || data.message || "Erreur lors de l'inscription");
+        }
         throw new Error(data.message || "Erreur lors de l'inscription");
       }
+      
       setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
+      console.error('❌ Erreur lors de l\'inscription:', err);
       setError(err.message || "Erreur lors de l'inscription");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,6 +126,25 @@ const SignUpPage = () => {
               <div>
                 <label className="block text-xs md:text-sm font-medium text-gray-700">Mot de passe</label>
                 <input type="password" placeholder="Votre mot de passe" className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500" value={password} onChange={e => setPassword(e.target.value)} required />
+                {password && (
+                  <div className="mt-2 text-xs text-gray-600 space-y-1">
+                    <div className={password.length >= 12 ? 'text-green-600' : 'text-gray-400'}>
+                      ✓ Au moins 12 caractères
+                    </div>
+                    <div className={/[A-Z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                      ✓ Une majuscule (A-Z)
+                    </div>
+                    <div className={/[a-z]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                      ✓ Une minuscule (a-z)
+                    </div>
+                    <div className={/[0-9]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                      ✓ Un chiffre (0-9)
+                    </div>
+                    <div className={/[@$!%*?&]/.test(password) ? 'text-green-600' : 'text-gray-400'}>
+                      ✓ Un caractère spécial (@$!%*?&)
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-xs md:text-sm font-medium text-gray-700">Confirmer le mot de passe</label>
@@ -82,8 +152,22 @@ const SignUpPage = () => {
               </div>
               
               {/* reCAPTCHA */}              
-              <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 md:py-2 rounded-md mt-2 transition-colors text-sm md:text-base">
-                S'inscrire
+              <button 
+                type="submit" 
+                disabled={loading}
+                className={`w-full ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white font-semibold py-2.5 md:py-2 rounded-md mt-2 transition-colors text-sm md:text-base flex items-center justify-center`}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Inscription en cours...
+                  </>
+                ) : (
+                  "S'inscrire"
+                )}
               </button>
             </form>
             <p className="text-[10px] md:text-xs text-gray-500 mt-3 md:mt-4 text-center">
