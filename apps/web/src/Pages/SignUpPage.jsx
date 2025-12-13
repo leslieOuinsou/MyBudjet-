@@ -61,63 +61,129 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🚀 ========== DÉBUT INSCRIPTION ==========');
+    console.log('📋 Données du formulaire:', {
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      passwordLength: password.length,
+      confirmPasswordLength: confirmPassword.length,
+      passwordsMatch: password === confirmPassword
+    });
+
     setError("");
     setSuccess("");
     setLoading(true);
     
     // Validation des champs
+    console.log('🔍 Étape 1: Validation des champs requis');
     if (!firstName.trim() || !lastName.trim()) {
+      console.warn('⚠️ Validation échouée: Champs requis manquants', {
+        firstName: firstName.trim(),
+        lastName: lastName.trim()
+      });
       setError("Veuillez remplir tous les champs");
       setLoading(false);
       return;
     }
+    console.log('✅ Champs requis: OK');
 
+    console.log('🔍 Étape 2: Vérification correspondance des mots de passe');
     if (password !== confirmPassword) {
+      console.warn('⚠️ Validation échouée: Mots de passe ne correspondent pas', {
+        passwordLength: password.length,
+        confirmPasswordLength: confirmPassword.length
+      });
       setError("Les mots de passe ne correspondent pas.");
       setLoading(false);
       return;
     }
+    console.log('✅ Mots de passe correspondent: OK');
 
     // Validation du mot de passe
+    console.log('🔍 Étape 3: Validation des règles du mot de passe');
     const passwordError = validatePassword(password);
     if (passwordError) {
+      console.warn('⚠️ Validation échouée: Mot de passe invalide', {
+        error: passwordError,
+        passwordLength: password.length,
+        hasUppercase: /[A-Z]/.test(password),
+        hasLowercase: /[a-z]/.test(password),
+        hasNumber: /[0-9]/.test(password),
+        hasSpecial: /[@$!%*?&]/.test(password)
+      });
       setShowPasswordRules(true);
       setError(passwordError);
       setLoading(false);
       return;
     }
+    console.log('✅ Mot de passe valide: OK');
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
       const signupUrl = `${API_URL.replace(/\/$/, "")}/auth/signup`;
-      console.log('📤 Envoi de la requête d\'inscription vers:', signupUrl);
-      console.log('📤 Données envoyées:', { name: `${firstName} ${lastName}`.trim(), email });
       
-      const res = await fetch(signupUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: `${firstName} ${lastName}`.trim(), email, password }),
+      console.log('🌐 Étape 4: Configuration de la requête API');
+      console.log('📍 URL API:', API_URL);
+      console.log('📍 URL complète:', signupUrl);
+      console.log('📤 Données à envoyer:', { 
+        name: `${firstName} ${lastName}`.trim(), 
+        email: email,
+        passwordLength: password.length 
       });
       
-      console.log('📥 Réponse reçue:', res.status, res.statusText);
+      console.log('📡 Étape 5: Envoi de la requête HTTP');
+      const requestBody = JSON.stringify({ 
+        name: `${firstName} ${lastName}`.trim(), 
+        email, 
+        password 
+      });
+      console.log('📦 Body de la requête:', requestBody.replace(/password":"[^"]+/, 'password":"***'));
+
+      const startTime = Date.now();
+      const res = await fetch(signupUrl, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: requestBody,
+      });
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      
+      console.log('📥 Étape 6: Réponse reçue');
+      console.log('⏱️ Temps de réponse:', `${duration}ms`);
+      console.log('📊 Status:', res.status, res.statusText);
+      console.log('📋 Headers:', Object.fromEntries(res.headers.entries()));
       
       let data = {};
       try {
         const text = await res.text();
-        console.log('📥 Réponse texte:', text);
+        console.log('📄 Réponse texte brute:', text);
         if (text) {
           data = JSON.parse(text);
+          console.log('✅ Réponse JSON parsée:', data);
+        } else {
+          console.warn('⚠️ Réponse vide');
         }
       } catch (parseError) {
         console.error('❌ Erreur de parsing JSON:', parseError);
+        console.error('📄 Texte qui a causé l\'erreur:', text);
       }
       
       if (!res.ok) {
+        console.error('❌ Étape 7: Erreur HTTP détectée');
+        console.error('📊 Status code:', res.status);
+        console.error('📋 Données d\'erreur:', data);
+        
         // Gérer les erreurs de validation détaillées
         if (data.errors && Array.isArray(data.errors)) {
+          console.error('📋 Erreurs de validation détaillées:', data.errors);
           // Traduire les messages d'erreur en français
           const translatedErrors = data.errors.map(err => {
             let message = err.message || err.msg;
+            console.log('🔄 Traduction erreur:', { original: message });
             // Traductions
             if (message.includes('at least 12 characters')) {
               message = 'Le mot de passe doit contenir au moins 12 caractères';
@@ -129,6 +195,7 @@ const SignUpPage = () => {
             return message;
           });
           const errorMessages = translatedErrors.join('. ');
+          console.error('📝 Messages d\'erreur traduits:', errorMessages);
           throw new Error(errorMessages || data.message || "Erreur lors de l'inscription");
         }
         // Traduire le message principal si nécessaire
@@ -136,22 +203,41 @@ const SignUpPage = () => {
         if (errorMessage.includes('Validation error')) {
           errorMessage = 'Erreur de validation. Veuillez vérifier vos données.';
         }
+        console.error('📝 Message d\'erreur final:', errorMessage);
         throw new Error(errorMessage);
       }
       
-      console.log('✅ Inscription réussie!', data);
+      console.log('✅ Étape 7: Inscription réussie!');
+      console.log('📋 Données reçues:', data);
       setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
       setLoading(false);
-      setTimeout(() => navigate("/login"), 1500);
+      console.log('⏳ Redirection vers /login dans 1.5s...');
+      setTimeout(() => {
+        console.log('🔄 Redirection en cours...');
+        navigate("/login");
+      }, 1500);
     } catch (err) {
-      console.error('❌ Erreur lors de l\'inscription:', err);
+      console.error('❌ ========== ERREUR CAPTURÉE ==========');
+      console.error('❌ Type d\'erreur:', err.constructor.name);
+      console.error('❌ Message:', err.message);
+      console.error('❌ Stack:', err.stack);
+      console.error('❌ Erreur complète:', err);
+      
       if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        console.error('🌐 Erreur réseau détectée');
+        console.error('💡 Vérifications à faire:');
+        console.error('   1. Le backend est-il démarré?');
+        console.error('   2. L\'URL API est-elle correcte?', import.meta.env.VITE_API_URL);
+        console.error('   3. Y a-t-il un problème CORS?');
         setError("Impossible de se connecter au serveur. Vérifiez votre connexion internet et que le backend est démarré.");
       } else {
+        console.error('📝 Affichage de l\'erreur à l\'utilisateur:', err.message);
         setError(err.message || "Erreur lors de l'inscription");
       }
       setLoading(false);
+      console.log('❌ ========== FIN ERREUR ==========');
     }
+    console.log('🏁 ========== FIN INSCRIPTION ==========');
   };
 
   const passwordRules = [
@@ -309,12 +395,20 @@ const SignUpPage = () => {
                           : 'border-gray-200 hover:border-gray-300 focus:border-blue-500'
                       } focus:outline-none focus:ring-4 focus:ring-blue-100`}
                       value={password} 
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        if (e.target.value.length > 0) {
-                          setShowPasswordRules(true);
-                        }
-                      }}
+                    onChange={(e) => {
+                      const newPassword = e.target.value;
+                      setPassword(newPassword);
+                      if (newPassword.length > 0) {
+                        setShowPasswordRules(true);
+                        console.log('🔐 Mot de passe modifié:', {
+                          length: newPassword.length,
+                          strength: getPasswordStrength(),
+                          isValid: isPasswordValid()
+                        });
+                      } else {
+                        setShowPasswordRules(false);
+                      }
+                    }}
                       onFocus={() => setFocusedField('password')}
                       onBlur={() => setFocusedField('')}
                       required 
@@ -390,7 +484,15 @@ const SignUpPage = () => {
                           : 'border-gray-200 hover:border-gray-300 focus:border-blue-500'
                       } focus:outline-none focus:ring-4 focus:ring-blue-100`}
                       value={confirmPassword} 
-                      onChange={e => setConfirmPassword(e.target.value)}
+                      onChange={e => {
+                        const newConfirmPassword = e.target.value;
+                        setConfirmPassword(newConfirmPassword);
+                        console.log('🔐 Confirmation mot de passe modifiée:', {
+                          matches: password === newConfirmPassword,
+                          passwordLength: password.length,
+                          confirmLength: newConfirmPassword.length
+                        });
+                      }}
                       onFocus={() => setFocusedField('confirmPassword')}
                       onBlur={() => setFocusedField('')}
                       required 
