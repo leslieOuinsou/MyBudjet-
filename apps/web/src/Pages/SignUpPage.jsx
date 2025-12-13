@@ -14,6 +14,7 @@ const SignUpPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPasswordRules, setShowPasswordRules] = useState(false);
   const [focusedField, setFocusedField] = useState("");
+  const [redirectCountdown, setRedirectCountdown] = useState(null);
   const navigate = useNavigate();
 
   // Calculer la force du mot de passe
@@ -209,13 +210,40 @@ const SignUpPage = () => {
       
       console.log('✅ Étape 7: Inscription réussie!');
       console.log('📋 Données reçues:', data);
-      setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+      
+      // Afficher le message de succès
+      setSuccess("Inscription réussie ! Redirection vers la page de connexion...");
       setLoading(false);
-      console.log('⏳ Redirection vers /login dans 1.5s...');
+      setError(""); // S'assurer qu'il n'y a pas d'erreur affichée
+      
+      // Compteur de redirection
+      let countdown = 3;
+      setRedirectCountdown(countdown);
+      console.log('⏳ Redirection vers /login dans 3s...');
+      
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        setRedirectCountdown(countdown);
+        console.log(`⏳ Redirection dans ${countdown}s...`);
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+      
+      // Redirection après 3 secondes
       setTimeout(() => {
-        console.log('🔄 Redirection en cours...');
-        navigate("/login");
-      }, 1500);
+        console.log('🔄 Redirection en cours vers /login...');
+        clearInterval(countdownInterval);
+        setRedirectCountdown(null);
+        try {
+          navigate("/login", { replace: true });
+          console.log('✅ Redirection effectuée avec succès');
+        } catch (navError) {
+          console.error('❌ Erreur lors de la redirection:', navError);
+          // Fallback: redirection manuelle
+          window.location.href = "/login";
+        }
+      }, 3000);
     } catch (err) {
       console.error('❌ ========== ERREUR CAPTURÉE ==========');
       console.error('❌ Type d\'erreur:', err.constructor.name);
@@ -284,12 +312,23 @@ const SignUpPage = () => {
                 </div>
               )}
               {success && (
-                <div className="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg shadow-sm animate-slide-down">
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div className="text-green-800 text-sm font-medium">{success}</div>
+                <div className="mb-4 p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl shadow-lg animate-slide-down">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <div className="text-green-800 text-base font-bold mb-1">{success}</div>
+                      {redirectCountdown !== null && redirectCountdown > 0 && (
+                        <div className="text-green-600 text-sm">
+                          Redirection dans <span className="font-bold text-green-700">{redirectCountdown}</span> seconde{redirectCountdown > 1 ? 's' : ''}...
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
