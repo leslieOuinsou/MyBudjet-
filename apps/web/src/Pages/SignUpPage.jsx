@@ -74,15 +74,28 @@ const SignUpPage = () => {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-      console.log('📤 Envoi de la requête d\'inscription vers:', `${API_URL.replace(/\/$/, "")}/auth/signup`);
+      const signupUrl = `${API_URL.replace(/\/$/, "")}/auth/signup`;
+      console.log('📤 Envoi de la requête d\'inscription vers:', signupUrl);
+      console.log('📤 Données envoyées:', { name: `${firstName} ${lastName}`.trim(), email });
       
-      const res = await fetch(`${API_URL.replace(/\/$/, "")}/auth/signup`, {
+      const res = await fetch(signupUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: `${firstName} ${lastName}`.trim(), email, password }),
       });
       
-      const data = await res.json().catch(() => ({}));
+      console.log('📥 Réponse reçue:', res.status, res.statusText);
+      
+      let data = {};
+      try {
+        const text = await res.text();
+        console.log('📥 Réponse texte:', text);
+        if (text) {
+          data = JSON.parse(text);
+        }
+      } catch (parseError) {
+        console.error('❌ Erreur de parsing JSON:', parseError);
+      }
       
       if (!res.ok) {
         // Gérer les erreurs de validation détaillées
@@ -90,15 +103,19 @@ const SignUpPage = () => {
           const errorMessages = data.errors.map(err => err.message || err.msg).join(', ');
           throw new Error(errorMessages || data.message || "Erreur lors de l'inscription");
         }
-        throw new Error(data.message || "Erreur lors de l'inscription");
+        throw new Error(data.message || `Erreur ${res.status}: ${res.statusText}`);
       }
       
+      console.log('✅ Inscription réussie!', data);
       setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       console.error('❌ Erreur lors de l\'inscription:', err);
-      setError(err.message || "Erreur lors de l'inscription");
-    } finally {
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        setError("Impossible de se connecter au serveur. Vérifiez votre connexion internet et que le backend est démarré.");
+      } else {
+        setError(err.message || "Erreur lors de l'inscription");
+      }
       setLoading(false);
     }
   };
