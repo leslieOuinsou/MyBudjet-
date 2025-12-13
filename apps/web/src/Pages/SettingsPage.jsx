@@ -823,10 +823,10 @@ export default function SettingsPage() {
                 <div className="mt-3">
                   <div className="text-sm text-[#6C757D] mb-1">Force du mot de passe :</div>
                   <div className="flex gap-1">
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 6 ? 'bg-red-500' : 'bg-gray-300'}`}></div>
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 8 ? 'bg-yellow-500' : 'bg-gray-300'}`}></div>
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 10 && /[A-Z]/.test(passwordForm.newPassword) ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 12 && /[A-Z]/.test(passwordForm.newPassword) && /[0-9]/.test(passwordForm.newPassword) && /[^A-Za-z0-9]/.test(passwordForm.newPassword) ? 'bg-green-700' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 6 ? 'bg-[#6C757D]' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 8 ? 'bg-[#495057]' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 10 && /[A-Z]/.test(passwordForm.newPassword) ? 'bg-[#28A745]' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 12 && /[A-Z]/.test(passwordForm.newPassword) && /[0-9]/.test(passwordForm.newPassword) && /[^A-Za-z0-9]/.test(passwordForm.newPassword) ? 'bg-[#218838]' : 'bg-gray-300'}`}></div>
                   </div>
                   <p className="text-xs text-[#6C757D] mt-1">
                     {passwordForm.newPassword.length < 6 ? 'Trop faible' :
@@ -897,16 +897,16 @@ export default function SettingsPage() {
           </section>
 
           {/* Zone de Danger */}
-          <section className="bg-gradient-to-br from-red-50 via-orange-50 to-red-50 rounded-2xl border-2 border-red-300 shadow-lg p-8 mb-8">
+          <section className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 rounded-2xl border-2 border-[#495057] shadow-lg p-8 mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gradient-to-br from-red-600 to-red-700 rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-[#495057] to-[#343A40] rounded-lg">
                 <MdWarning className="text-white" size={24} />
               </div>
-              <h2 className="text-xl font-bold text-red-700">Zone de Danger</h2>
+              <h2 className="text-xl font-bold text-[#495057]">Zone de Danger</h2>
             </div>
-            <div className="flex items-start gap-3 p-4 bg-red-100 rounded-xl border border-red-200 mb-6">
-              <MdWarning className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
-              <p className="text-red-800 text-sm">
+            <div className="flex items-start gap-3 p-4 bg-[#F5F7FA] rounded-xl border border-[#6C757D] mb-6">
+              <MdWarning className="text-[#495057] flex-shrink-0 mt-0.5" size={20} />
+              <p className="text-[#343A40] text-sm">
                 <span className="font-semibold">Attention :</span> Cette action supprimera définitivement toutes vos données et votre compte MyBudget+. Cette action est irréversible.
               </p>
             </div>
@@ -921,7 +921,7 @@ export default function SettingsPage() {
                     type="password"
                     value={deleteForm.password}
                     onChange={(e) => setDeleteForm({...deleteForm, password: e.target.value})}
-                    className="w-full border-2 border-red-300 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all shadow-sm" 
+                    className="w-full border-2 border-[#6C757D] rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#495057] focus:ring-2 focus:ring-gray-200 transition-all shadow-sm" 
                     placeholder="Votre mot de passe"
                     required
                   />
@@ -943,7 +943,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit"
-                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
+                className="bg-gradient-to-r from-[#495057] to-[#343A40] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#343A40] hover:to-[#212529] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
                 disabled={deleteForm.confirmation !== 'DELETE'}
               >
                 <MdDelete size={20} />

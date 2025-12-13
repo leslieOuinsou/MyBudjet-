@@ -270,7 +270,7 @@ export default function AdminSettingsPage() {
                           <div className={`font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-purple-900'}`}>
                             Notifications Admin
                           </div>
-                          <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
+                          <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-[#6C757D]'}`}>
                             En tant qu'administrateur, vous recevez des notifications pour :
                           </div>
                           <ul className={`text-sm mt-2 space-y-1 ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
@@ -316,7 +316,7 @@ export default function AdminSettingsPage() {
                     
                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700' : 'bg-red-50 border border-red-200'}`}>
                       <div className="flex items-start gap-3">
-                        <MdSecurity size={24} className="text-red-600 mt-0.5" />
+                        <MdSecurity size={24} className="text-[#1E73BE] mt-0.5" />
                         <div>
                           <div className={`font-medium mb-1 ${isDarkMode ? 'text-red-400' : 'text-red-900'}`}>
                             Sécurité Renforcée Admin
