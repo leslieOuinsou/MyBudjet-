@@ -5,6 +5,27 @@ import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import Footer from '../components/Footer.jsx';
 import Toast from '../components/Toast.jsx';
 import { 
+  MdPerson, 
+  MdEmail, 
+  MdPhone, 
+  MdCameraAlt,
+  MdDelete,
+  MdSettings,
+  MdNotifications,
+  MdLanguage,
+  MdSync,
+  MdSecurity,
+  MdLock,
+  MdDownload,
+  MdWarning,
+  MdCheckCircle,
+  MdError,
+  MdInfo,
+  MdRefresh,
+  MdVerifiedUser,
+  MdDevices
+} from 'react-icons/md';
+import { 
   getUserSettings, 
   updateUserSettings, 
   changePassword, 
@@ -352,74 +373,104 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement des paramètres...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-[#1E73BE] mx-auto mb-4"></div>
+            <MdSettings className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#1E73BE]" size={24} />
+          </div>
+          <p className="text-gray-600 font-medium">Chargement des paramètres...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
       <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main content */}
-        <main className="flex-1 py-10 px-4 md:px-12">
-          <h1 className="text-2xl font-bold text-[#343A40] mb-1">Paramètres utilisateur</h1>
-          <p className="text-[#6C757D] mb-8">
-            Gérez votre profil, vos préférences et vos options de synchronisation.
-            {user && ` Bonjour ${user.name?.split(' ')[0] || 'Utilisateur'} !`}
-          </p>
-
-          {/* Messages d'erreur et de succès */}
-          {error && (
-            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-4 shadow-lg flex items-center gap-3 animate-pulse">
-              <span className="text-2xl">❌</span>
-              <div className="flex-1">
-                <p className="font-bold">Erreur</p>
-                <p className="text-sm">{error}</p>
+        <main className="flex-1 py-8 px-4 md:px-8 lg:px-12 max-w-7xl mx-auto w-full">
+          {/* Header moderne */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] rounded-xl shadow-lg">
+                <MdSettings className="text-white" size={28} />
               </div>
-              <button onClick={() => setError('')} className="text-red-700 hover:text-red-900 text-xl">✕</button>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-[#1E73BE] to-[#155a8a] bg-clip-text text-transparent">
+                  Paramètres
+                </h1>
+                <p className="text-gray-600 text-sm">
+                  Gérez votre profil, vos préférences et vos options de synchronisation
+                  {user && ` • Bonjour ${user.name?.split(' ')[0] || 'Utilisateur'} !`}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Messages d'erreur et de succès modernisés */}
+          {error && (
+            <div className="bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 text-red-800 px-6 py-4 rounded-xl mb-6 shadow-lg flex items-start gap-4 animate-slide-down">
+              <MdError className="text-red-600 flex-shrink-0 mt-0.5" size={24} />
+              <div className="flex-1">
+                <p className="font-bold text-red-900 mb-1">Erreur</p>
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+              <button 
+                onClick={() => setError('')} 
+                className="text-red-600 hover:text-red-800 hover:bg-red-200 rounded-full p-1 transition-colors"
+              >
+                ✕
+              </button>
             </div>
           )}
           {success && (
-            <div className="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded mb-4 shadow-lg flex items-center gap-3 animate-pulse">
-              <span className="text-2xl">✅</span>
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 text-green-800 px-6 py-4 rounded-xl mb-6 shadow-lg flex items-start gap-4 animate-slide-down">
+              <MdCheckCircle className="text-green-600 flex-shrink-0 mt-0.5" size={24} />
               <div className="flex-1">
-                <p className="font-bold">Succès</p>
-                <p className="text-sm">{success}</p>
+                <p className="font-bold text-green-900 mb-1">Succès</p>
+                <p className="text-sm text-green-700">{success}</p>
               </div>
-              <button onClick={() => setSuccess('')} className="text-green-700 hover:text-green-900 text-xl">✕</button>
+              <button 
+                onClick={() => setSuccess('')} 
+                className="text-green-600 hover:text-green-800 hover:bg-green-200 rounded-full p-1 transition-colors"
+              >
+                ✕
+              </button>
             </div>
           )}
 
           {/* Gestion du profil */}
-          <section className="bg-white rounded-lg border border-[#F5F7FA] p-6 mb-8">
-            <h2 className="font-semibold text-[#343A40] mb-4">Gestion du profil</h2>
-            <div className="flex items-center gap-4 mb-6">
+          <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
+                <MdPerson className="text-white" size={24} />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Gestion du profil</h2>
+            </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
               {/* Avatar avec option d'upload */}
-              <div className="relative">
+              <div className="relative group">
                 {user?.profilePicture ? (
                   <img 
-                    src={`http://localhost:3001${user.profilePicture}`} 
+                    src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${user.profilePicture}`} 
                     alt="Avatar" 
-                    className="w-16 h-16 rounded-full object-cover border-2 border-[#1E73BE]" 
+                    className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-300" 
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-lg">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white flex items-center justify-center font-bold text-2xl shadow-xl group-hover:scale-105 transition-transform duration-300">
                     {user ? (user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U') : 'U'}
                   </div>
                 )}
                 {/* Badge pour changer l'avatar */}
                 <label 
                   htmlFor="avatar-upload" 
-                  className="absolute -bottom-1 -right-1 bg-[#1E73BE] text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-[#155a8a] shadow-lg"
+                  className="absolute -bottom-1 -right-1 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:from-[#155a8a] hover:to-[#0d4a6f] shadow-lg hover:scale-110 transition-all duration-300 border-2 border-white"
                   title="Changer l'avatar"
                 >
-                  📷
+                  <MdCameraAlt size={18} />
                 </label>
                 <input 
                   id="avatar-upload"
@@ -429,79 +480,108 @@ export default function SettingsPage() {
                   className="hidden"
                 />
               </div>
-              <div>
-                <div className="font-semibold text-[#343A40]">{user?.name || 'Utilisateur'}</div>
-                <div className="text-[#6C757D] text-sm">{user?.email || 'email@exemple.com'}</div>
-                <div className="mt-2 flex flex-col gap-1">
+              <div className="flex-1">
+                <div className="font-bold text-gray-900 text-xl mb-1">{user?.name || 'Utilisateur'}</div>
+                <div className="text-gray-600 text-sm mb-4 flex items-center gap-2">
+                  <MdEmail size={16} className="text-[#1E73BE]" />
+                  {user?.email || 'email@exemple.com'}
+                </div>
+                <div className="flex flex-wrap gap-3">
                   <label 
                     htmlFor="avatar-upload" 
-                    className="inline-block text-xs text-[#1E73BE] hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#1E73BE] rounded-lg hover:bg-blue-50 cursor-pointer transition-colors text-sm font-medium border border-blue-200 shadow-sm hover:shadow-md"
                   >
-                    📷 Changer l'avatar
+                    <MdCameraAlt size={16} />
+                    Changer l'avatar
                   </label>
                   {user?.profilePicture && (
                     <button
                       type="button"
                       onClick={handleDeleteAvatar}
-                      className="text-xs text-red-600 hover:underline cursor-pointer text-left"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors text-sm font-medium border border-red-200 shadow-sm hover:shadow-md"
                     >
-                      🗑️ Supprimer l'avatar
+                      <MdDelete size={16} />
+                      Supprimer
                     </button>
                   )}
                 </div>
-                <p className="text-xs text-[#6C757D] mt-1">JPG, PNG, GIF ou WebP (max 5MB)</p>
+                <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
+                  <MdInfo size={14} />
+                  Formats acceptés: JPG, PNG, GIF ou WebP (max 5MB)
+                </p>
               </div>
             </div>
-            <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-[#6C757D] text-sm mb-1">Nom complet</label>
+            <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                  <MdPerson size={16} className="text-[#1E73BE]" />
+                  Nom complet
+                </label>
                 <input 
                   type="text"
                   value={profileForm.name}
                   onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
                   placeholder="Votre nom complet"
                 />
               </div>
-              <div>
-                <label className="block text-[#6C757D] text-sm mb-1">Adresse e-mail</label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                  <MdEmail size={16} className="text-[#1E73BE]" />
+                  Adresse e-mail
+                </label>
                 <input 
                   type="email"
                   value={profileForm.email}
                   onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
                   placeholder="votre@email.com"
                 />
               </div>
-              <div>
-                <label className="block text-[#6C757D] text-sm mb-1">Numéro de téléphone</label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                  <MdPhone size={16} className="text-[#1E73BE]" />
+                  Numéro de téléphone
+                </label>
                 <input 
                   type="tel"
                   value={profileForm.phoneNumber}
                   onChange={(e) => setProfileForm({...profileForm, phoneNumber: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
                   placeholder="+33 6 12 34 56 78"
                 />
               </div>
-              <div className="md:col-span-3">
-                <button type="submit" className="bg-[#1E73BE] text-white px-6 py-2 rounded font-semibold hover:bg-[#155a8a]">
+              <div className="md:col-span-3 flex justify-end">
+                <button 
+                  type="submit" 
+                  className="bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+                >
+                  <MdCheckCircle size={20} />
                   Mettre à jour le profil
                 </button>
               </div>
             </form>
           </section>
 
-          {/* Préférences de l’application */}
-          <section className="bg-white rounded-lg border border-[#F5F7FA] p-6 mb-8">
-            <h2 className="font-semibold text-[#343A40] mb-4">Préférences de l’application</h2>
+          {/* Préférences de l'application */}
+          <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+                <MdSettings className="text-white" size={24} />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Préférences de l'application</h2>
+            </div>
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-1 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-[#343A40]">Alertes budgétaires</div>
-                    <div className="text-[#6C757D] text-sm">Recevez des notifications lorsque vous dépassez vos limites budgétaires.</div>
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                  <div className="flex items-start gap-3 flex-1">
+                    <MdNotifications className="text-purple-600 mt-1 flex-shrink-0" size={20} />
+                    <div>
+                      <div className="font-semibold text-gray-900 mb-1">Alertes budgétaires</div>
+                      <div className="text-gray-600 text-sm">Recevez des notifications lorsque vous dépassez vos limites budgétaires.</div>
+                    </div>
                   </div>
-                  <label className="inline-flex items-center cursor-pointer">
+                  <label className="inline-flex items-center cursor-pointer ml-4">
                     <input 
                       type="checkbox" 
                       className="sr-only" 
@@ -510,15 +590,18 @@ export default function SettingsPage() {
                         email: !settings?.notifications?.email 
                       })} 
                     />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings?.notifications?.email ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings?.notifications?.email ? 'translate-x-5' : ''}`}></span>
+                    <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${settings?.notifications?.email ? 'bg-gradient-to-r from-[#1E73BE] to-[#155a8a]' : 'bg-gray-300'}`}>
+                      <span className={`bg-white w-5 h-5 rounded-full shadow-lg transform duration-300 transition-all ${settings?.notifications?.email ? 'translate-x-6' : 'translate-x-0'}`}></span>
                     </span>
                   </label>
                 </div>
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Devise par défaut</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                    <span className="text-lg">💶</span>
+                    Devise par défaut
+                  </label>
                   <select 
-                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-[#F5F7FA] text-[#343A40] focus:outline-none focus:border-[#1E73BE]"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
                     value={settings?.appearance?.currency || 'EUR'}
                     onChange={(e) => handleSettingsUpdate('appearance', { currency: e.target.value })}
                   >
@@ -528,10 +611,13 @@ export default function SettingsPage() {
                     <option value="JPY">Yen (¥)</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Format de la date</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                    <span className="text-lg">📅</span>
+                    Format de la date
+                  </label>
                   <select 
-                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-[#F5F7FA] text-[#343A40] focus:outline-none focus:border-[#1E73BE]"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
                     value={settings?.appearance?.dateFormat || 'DD/MM/YYYY'}
                     onChange={(e) => handleSettingsUpdate('appearance', { dateFormat: e.target.value })}
                   >
@@ -540,10 +626,13 @@ export default function SettingsPage() {
                     <option value="YYYY-MM-DD">YYYY-MM-DD (2024-07-26)</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Langue de l'interface</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                    <MdLanguage size={16} className="text-[#1E73BE]" />
+                    Langue de l'interface
+                  </label>
                   <select 
-                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-[#F5F7FA] text-[#343A40] focus:outline-none focus:border-[#1E73BE]"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
                     value={settings?.appearance?.language || 'fr'}
                     onChange={(e) => handleSettingsUpdate('appearance', { language: e.target.value })}
                   >
@@ -553,26 +642,37 @@ export default function SettingsPage() {
                     <option value="de">Deutsch</option>
                   </select>
                 </div>
-                <div className="pt-4 border-t border-[#F5F7FA]">
-                  <p className="text-xs text-[#6C757D] italic">
-                    💡 Vos préférences sont enregistrées automatiquement à chaque modification.
-                  </p>
+                <div className="pt-6 border-t-2 border-gray-200 mt-6">
+                  <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <MdInfo className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
+                    <p className="text-sm text-blue-800">
+                      <span className="font-semibold">Astuce :</span> Vos préférences sont enregistrées automatiquement à chaque modification.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Options de synchronisation */}
-          <section className="bg-white rounded-lg border border-[#F5F7FA] p-6 mb-8">
-            <h2 className="font-semibold text-[#343A40] mb-4">Options de synchronisation</h2>
+          <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">
+                <MdSync className="text-white" size={24} />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Options de synchronisation</h2>
+            </div>
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="flex-1 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-[#343A40]">Synchronisation automatique</div>
-                    <div className="text-[#6C757D] text-sm">Activer la synchronisation automatique de vos données entre les plateformes web et mobile.</div>
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors mb-4">
+                  <div className="flex items-start gap-3 flex-1">
+                    <MdSync className="text-green-600 mt-1 flex-shrink-0" size={20} />
+                    <div>
+                      <div className="font-semibold text-gray-900 mb-1">Synchronisation automatique</div>
+                      <div className="text-gray-600 text-sm">Activer la synchronisation automatique de vos données entre les plateformes web et mobile.</div>
+                    </div>
                   </div>
-                  <label className="inline-flex items-center cursor-pointer">
+                  <label className="inline-flex items-center cursor-pointer ml-4">
                     <input 
                       type="checkbox" 
                       className="sr-only" 
@@ -581,27 +681,30 @@ export default function SettingsPage() {
                         autoBackup: !settings?.data?.autoBackup 
                       })} 
                     />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings?.data?.autoBackup ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings?.data?.autoBackup ? 'translate-x-5' : ''}`}></span>
+                    <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${settings?.data?.autoBackup ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gray-300'}`}>
+                      <span className={`bg-white w-5 h-5 rounded-full shadow-lg transform duration-300 transition-all ${settings?.data?.autoBackup ? 'translate-x-6' : 'translate-x-0'}`}></span>
                     </span>
                   </label>
                 </div>
-                <div>
-                  <div className="font-medium text-[#343A40]">Dernière synchronisation</div>
-                  <div className="text-[#6C757D] text-sm">
+                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MdInfo className="text-green-600" size={18} />
+                    <div className="font-semibold text-gray-900">Dernière synchronisation</div>
+                  </div>
+                  <div className="text-gray-700 text-sm ml-6">
                     {syncStatus.lastSync ? (
                       <>
-                        Synchronisé le {syncStatus.lastSync.toLocaleDateString('fr-FR', { 
+                        Synchronisé le <span className="font-semibold">{syncStatus.lastSync.toLocaleDateString('fr-FR', { 
                           day: '2-digit', 
                           month: '2-digit', 
                           year: 'numeric' 
-                        })} à {syncStatus.lastSync.toLocaleTimeString('fr-FR', { 
+                        })}</span> à <span className="font-semibold">{syncStatus.lastSync.toLocaleTimeString('fr-FR', { 
                           hour: '2-digit', 
                           minute: '2-digit' 
-                        })}
+                        })}</span>
                       </>
                     ) : (
-                      'Jamais synchronisé'
+                      <span className="text-gray-500 italic">Jamais synchronisé</span>
                     )}
                   </div>
                 </div>
@@ -609,69 +712,89 @@ export default function SettingsPage() {
               <button 
                 onClick={handleSync}
                 disabled={syncStatus.isSyncing || !settings?.data?.autoBackup}
-                className={`px-6 py-2 rounded font-semibold transition-all duration-200 ${
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl ${
                   syncStatus.isSyncing 
-                    ? 'bg-gray-400 cursor-not-allowed' 
+                    ? 'bg-gray-400 cursor-not-allowed text-white' 
                     : settings?.data?.autoBackup
-                      ? 'bg-[#1E73BE] hover:bg-[#155a8a] text-white'
+                      ? 'bg-gradient-to-r from-[#1E73BE] to-[#155a8a] hover:from-[#155a8a] hover:to-[#0d4a6f] text-white transform hover:scale-105'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
                 {syncStatus.isSyncing ? (
-                  <span className="flex items-center gap-2">
-                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Synchronisation...
-                  </span>
+                  <>
+                    <MdRefresh className="animate-spin" size={20} />
+                    <span>Synchronisation...</span>
+                  </>
                 ) : settings?.data?.autoBackup ? (
-                  'Synchroniser maintenant'
+                  <>
+                    <MdSync size={20} />
+                    <span>Synchroniser maintenant</span>
+                  </>
                 ) : (
-                  'Activez la synchro d\'abord'
+                  <>
+                    <MdInfo size={20} />
+                    <span>Activez la synchro d'abord</span>
+                  </>
                 )}
               </button>
             </div>
           </section>
 
           {/* Sécurité du compte */}
-          <section className="bg-white rounded-lg border border-[#F5F7FA] p-6 mb-8">
-            <h2 className="font-semibold text-[#343A40] mb-4">Sécurité du compte</h2>
+          <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-red-500 to-red-600 rounded-lg">
+                <MdSecurity className="text-white" size={24} />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Sécurité du compte</h2>
+            </div>
             
             {/* Formulaire de changement de mot de passe */}
-            <form onSubmit={handlePasswordChange} className="mb-6">
-              <h3 className="font-medium text-[#343A40] mb-3">Changer le mot de passe</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Mot de passe actuel</label>
+            <form onSubmit={handlePasswordChange} className="mb-8 p-6 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl border border-red-100">
+              <div className="flex items-center gap-2 mb-4">
+                <MdLock className="text-red-600" size={20} />
+                <h3 className="font-semibold text-gray-900">Changer le mot de passe</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                    <MdLock size={16} className="text-red-600" />
+                    Mot de passe actuel
+                  </label>
                   <input 
                     type="password"
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-white text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Mot de passe actuel"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Nouveau mot de passe</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                    <MdLock size={16} className="text-red-600" />
+                    Nouveau mot de passe
+                  </label>
                   <input 
                     type="password"
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-white text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Nouveau mot de passe (min. 6 caractères)"
                     minLength="6"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Confirmer le mot de passe</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                    <MdLock size={16} className="text-red-600" />
+                    Confirmer le mot de passe
+                  </label>
                   <input 
                     type="password"
                     value={passwordForm.confirmPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                    className="w-full border border-[#F5F7FA] rounded px-3 py-2 bg-white text-[#343A40] focus:outline-none focus:border-[#1E73BE]" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Confirmer le mot de passe"
                     minLength="6"
                     required
@@ -680,17 +803,17 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit" 
-                className="mt-3 bg-[#1E73BE] text-white px-6 py-2 rounded font-semibold hover:bg-[#155a8a] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
                 disabled={!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword || isChangingPassword}
               >
                 {isChangingPassword ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <MdRefresh className="animate-spin" size={20} />
                     <span>Changement en cours...</span>
                   </>
                 ) : (
                   <>
-                    <span>🔐</span>
+                    <MdLock size={20} />
                     <span>Changer le mot de passe</span>
                   </>
                 )}
@@ -716,24 +839,31 @@ export default function SettingsPage() {
             </form>
 
             {/* Export des données */}
-            <div className="mb-6">
-              <h3 className="font-medium text-[#343A40] mb-3">Export des données</h3>
-              <p className="text-[#6C757D] text-sm mb-3">Téléchargez une copie de toutes vos données au format JSON.</p>
+            <div className="mb-8 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+              <div className="flex items-center gap-2 mb-3">
+                <MdDownload className="text-green-600" size={20} />
+                <h3 className="font-semibold text-gray-900">Export des données</h3>
+              </div>
+              <p className="text-gray-700 text-sm mb-4">Téléchargez une copie de toutes vos données au format JSON.</p>
               <button 
                 onClick={handleDataExport}
-                className="bg-[#28A745] text-white px-6 py-2 rounded font-semibold hover:bg-[#218838]"
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
               >
+                <MdDownload size={20} />
                 Exporter mes données
               </button>
             </div>
             <div className="flex flex-col md:flex-row gap-8 items-center">
               <div className="flex-1 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-[#343A40]">Authentification à deux facteurs</div>
-                    <div className="text-[#6C757D] text-sm">Ajoutez une couche de sécurité supplémentaire à votre compte.</div>
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors mb-4">
+                  <div className="flex items-start gap-3 flex-1">
+                    <MdVerifiedUser className="text-blue-600 mt-1 flex-shrink-0" size={20} />
+                    <div>
+                      <div className="font-semibold text-gray-900 mb-1">Authentification à deux facteurs</div>
+                      <div className="text-gray-600 text-sm">Ajoutez une couche de sécurité supplémentaire à votre compte.</div>
+                    </div>
                   </div>
-                  <label className="inline-flex items-center cursor-pointer">
+                  <label className="inline-flex items-center cursor-pointer ml-4">
                     <input 
                       type="checkbox" 
                       className="sr-only" 
@@ -745,46 +875,67 @@ export default function SettingsPage() {
                         } 
                       })} 
                     />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings?.security?.twoFactorAuth?.enabled ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings?.security?.twoFactorAuth?.enabled ? 'translate-x-5' : ''}`}></span>
+                    <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${settings?.security?.twoFactorAuth?.enabled ? 'bg-gradient-to-r from-blue-500 to-blue-600' : 'bg-gray-300'}`}>
+                      <span className={`bg-white w-5 h-5 rounded-full shadow-lg transform duration-300 transition-all ${settings?.security?.twoFactorAuth?.enabled ? 'translate-x-6' : 'translate-x-0'}`}></span>
                     </span>
                   </label>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-[#343A40]">Sessions actives</div>
-                    <div className="text-[#6C757D] text-sm">Gérez les appareils connectés à votre compte.</div>
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                  <div className="flex items-start gap-3 flex-1">
+                    <MdDevices className="text-indigo-600 mt-1 flex-shrink-0" size={20} />
+                    <div>
+                      <div className="font-semibold text-gray-900 mb-1">Sessions actives</div>
+                      <div className="text-gray-600 text-sm">Gérez les appareils connectés à votre compte.</div>
+                    </div>
                   </div>
-                  <button className="bg-[#F5F7FA] text-[#1E73BE] px-4 py-2 rounded font-semibold border border-[#F5F7FA] hover:bg-[#E9F7FB]">Voir les sessions actives</button>
+                  <button className="bg-white text-[#1E73BE] px-6 py-2 rounded-xl font-semibold border-2 border-[#1E73BE] hover:bg-blue-50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    Voir les sessions
+                  </button>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Zone de Danger */}
-          <section className="bg-[#FFF5F5] rounded-lg border border-[#DC3545] p-6 mb-8">
-            <h2 className="font-semibold text-[#DC3545] mb-4">Zone de Danger</h2>
-            <p className="text-[#DC3545] text-sm mb-4">Cette action supprimera toutes vos données et votre compte MyBudget+.</p>
-            <form onSubmit={handleAccountDelete}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Mot de passe</label>
+          <section className="bg-gradient-to-br from-red-50 via-orange-50 to-red-50 rounded-2xl border-2 border-red-300 shadow-lg p-8 mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-gradient-to-br from-red-600 to-red-700 rounded-lg">
+                <MdWarning className="text-white" size={24} />
+              </div>
+              <h2 className="text-xl font-bold text-red-700">Zone de Danger</h2>
+            </div>
+            <div className="flex items-start gap-3 p-4 bg-red-100 rounded-xl border border-red-200 mb-6">
+              <MdWarning className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+              <p className="text-red-800 text-sm">
+                <span className="font-semibold">Attention :</span> Cette action supprimera définitivement toutes vos données et votre compte MyBudget+. Cette action est irréversible.
+              </p>
+            </div>
+            <form onSubmit={handleAccountDelete} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-red-700 text-sm font-medium">
+                    <MdLock size={16} />
+                    Mot de passe
+                  </label>
                   <input 
                     type="password"
                     value={deleteForm.password}
                     onChange={(e) => setDeleteForm({...deleteForm, password: e.target.value})}
-                    className="w-full border border-[#DC3545] rounded px-3 py-2 text-[#343A40] focus:outline-none focus:border-[#DC3545]" 
+                    className="w-full border-2 border-red-300 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all shadow-sm" 
                     placeholder="Votre mot de passe"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-[#6C757D] text-sm mb-1">Tapez DELETE pour confirmer</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-red-700 text-sm font-medium">
+                    <MdWarning size={16} />
+                    Tapez DELETE pour confirmer
+                  </label>
                   <input 
                     type="text"
                     value={deleteForm.confirmation}
                     onChange={(e) => setDeleteForm({...deleteForm, confirmation: e.target.value})}
-                    className="w-full border border-[#DC3545] rounded px-3 py-2 text-[#343A40] focus:outline-none focus:border-[#DC3545]" 
+                    className="w-full border-2 border-red-300 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all shadow-sm uppercase" 
                     placeholder="DELETE"
                     required
                   />
@@ -792,10 +943,11 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit"
-                className="bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37]"
+                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
                 disabled={deleteForm.confirmation !== 'DELETE'}
               >
-                Supprimer le compte
+                <MdDelete size={20} />
+                Supprimer définitivement le compte
               </button>
             </form>
           </section>
