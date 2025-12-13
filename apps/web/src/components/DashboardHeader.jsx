@@ -10,20 +10,38 @@ export default function DashboardHeader() {
   // Charger les données utilisateur
   const loadUser = async () => {
     try {
-      const token = localStorage.getItem('token');
+      // Vérifier le token dans localStorage ET sessionStorage
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      console.log('🔄 DashboardHeader - Chargement utilisateur...');
+      console.log('   Token localStorage:', localStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
+      console.log('   Token sessionStorage:', sessionStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
+      console.log('   Token trouvé:', token ? '✅ Oui' : '❌ Non');
+      
       if (!token) {
+        console.log('⚠️ Aucun token trouvé, pas de chargement utilisateur');
         setLoading(false);
+        setUser(null);
         return;
       }
 
-      console.log('🔄 Rechargement des données utilisateur dans DashboardHeader...');
+      console.log('📡 Appel API getCurrentUser...');
       const userData = await getCurrentUser();
-      console.log('👤 Données utilisateur mises à jour:', userData?.profilePicture ? 'Avatar présent' : 'Pas d\'avatar');
+      console.log('✅ Données utilisateur reçues:', userData);
+      console.log('   Nom:', userData?.name);
+      console.log('   Email:', userData?.email);
+      console.log('   Avatar:', userData?.profilePicture ? '✅ Présent' : '❌ Absent');
+      
       setUser(userData);
+      console.log('✅ Utilisateur défini dans le state');
     } catch (error) {
-      console.error('Erreur lors du chargement de l\'utilisateur:', error);
+      console.error('❌ Erreur lors du chargement de l\'utilisateur:', error);
+      console.error('   Message:', error.message);
+      console.error('   Stack:', error.stack);
+      setUser(null);
     } finally {
       setLoading(false);
+      console.log('✅ Loading terminé');
     }
   };
 
@@ -70,6 +88,8 @@ export default function DashboardHeader() {
 
   // Composant Avatar avec initiales
   const UserAvatar = () => {
+    console.log('🎨 UserAvatar render - loading:', loading, 'user:', user);
+    
     if (loading) {
       return (
         <div className="flex items-center gap-2">
@@ -81,8 +101,31 @@ export default function DashboardHeader() {
       );
     }
 
-    if (!user) {
+    // Si pas d'utilisateur mais qu'on a un token, afficher quand même quelque chose
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!user && !token) {
+      console.log('⚠️ Pas d\'utilisateur et pas de token, pas d\'affichage');
       return null;
+    }
+
+    // Si pas d'utilisateur mais qu'on a un token, afficher un placeholder
+    if (!user) {
+      console.log('⚠️ Pas d\'utilisateur mais token présent, affichage placeholder');
+      return (
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white flex items-center justify-center font-bold text-sm shadow-md">
+            U
+          </div>
+          <div className="hidden md:block text-left">
+            <div className="text-sm font-semibold text-[#343A40]">
+              Utilisateur
+            </div>
+            <div className="text-xs text-[#6C757D]">
+              Chargement...
+            </div>
+          </div>
+        </div>
+      );
     }
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
@@ -92,6 +135,8 @@ export default function DashboardHeader() {
     
     const initials = getInitials(user?.name);
     const firstName = user?.name ? user.name.split(' ')[0] : 'Utilisateur';
+    
+    console.log('👤 Affichage avatar - Initiales:', initials, 'Prénom:', firstName);
 
     return (
       <Link 
@@ -107,6 +152,7 @@ export default function DashboardHeader() {
               alt={user?.name || 'Avatar'} 
               className="w-10 h-10 rounded-full border-2 border-[#1E73BE] object-cover shadow-md group-hover:shadow-lg transition-shadow"
               onError={(e) => {
+                console.log('❌ Erreur chargement avatar, affichage initiales');
                 // Si l'image ne charge pas, masquer l'image et afficher les initiales
                 e.target.style.display = 'none';
                 const initialsDiv = e.target.nextElementSibling;
@@ -122,7 +168,7 @@ export default function DashboardHeader() {
               avatarUrl ? 'hidden' : 'flex'
             }`}
           >
-            {initials}
+            {initials || 'U'}
           </div>
         </div>
         
