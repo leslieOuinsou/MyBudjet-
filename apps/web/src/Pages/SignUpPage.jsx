@@ -108,6 +108,7 @@ const SignUpPage = () => {
       
       console.log('✅ Inscription réussie!', data);
       setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+      setLoading(false);
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       console.error('❌ Erreur lors de l\'inscription:', err);
