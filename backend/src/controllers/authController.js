@@ -7,26 +7,91 @@ import { createWelcomeNotification } from '../utils/notificationGenerator.js';
 import { initializeDefaultData, addMissingCategories, addMissingWallets } from '../utils/defaultData.js';
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
-  
-  // Validation du mot de passe (minimum 12 caractères)
-  if (!password || password.length < 12) {
-    return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 12 caractères' });
+  try {
+    console.log('🚀 ========== DÉBUT INSCRIPTION BACKEND ==========');
+    const { name, email, password } = req.body;
+    console.log('📋 Données reçues:', { name, email, passwordLength: password?.length });
+    
+    // Validation du mot de passe (minimum 12 caractères)
+    if (!password || password.length < 12) {
+      console.warn('⚠️ Validation échouée: Mot de passe trop court');
+      return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 12 caractères' });
+    }
+    
+    console.log('🔍 Vérification si l\'email existe déjà...');
+    const existing = await User.findOne({ email });
+    if (existing) {
+      console.warn('⚠️ Email déjà utilisé:', email);
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+    console.log('✅ Email disponible');
+    
+    console.log('🔐 Hashage du mot de passe...');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('✅ Mot de passe hashé');
+    
+    console.log('👤 Création de l\'utilisateur...');
+    const user = new User({ name, email, password: hashedPassword });
+    console.log('📋 Utilisateur créé:', { name: user.name, email: user.email });
+    
+    console.log('💾 Sauvegarde dans MongoDB...');
+    await user.save();
+    console.log('✅ Utilisateur sauvegardé avec ID:', user._id);
+    
+    console.log('📊 Initialisation des données par défaut...');
+    try {
+      await initializeDefaultData(user._id);
+      console.log('✅ Données par défaut initialisées');
+    } catch (defaultDataError) {
+      console.error('⚠️ Erreur lors de l\'initialisation des données par défaut:', defaultDataError);
+      // Ne pas bloquer l'inscription si les données par défaut échouent
+    }
+    
+    console.log('🔔 Création de la notification de bienvenue...');
+    try {
+      await createWelcomeNotification(user._id, user.name);
+      console.log('✅ Notification créée');
+    } catch (notificationError) {
+      console.error('⚠️ Erreur lors de la création de la notification:', notificationError);
+      // Ne pas bloquer l'inscription si la notification échoue
+    }
+    
+    console.log('✅ ========== INSCRIPTION RÉUSSIE ==========');
+    console.log('📤 Envoi de la réponse 201...');
+    res.status(201).json({ 
+      message: 'User registered with default data initialized',
+      success: true,
+      userId: user._id
+    });
+  } catch (error) {
+    console.error('❌ ========== ERREUR LORS DE L\'INSCRIPTION ==========');
+    console.error('❌ Type d\'erreur:', error.constructor.name);
+    console.error('❌ Message:', error.message);
+    console.error('❌ Stack:', error.stack);
+    console.error('❌ Erreur complète:', error);
+    
+    // Erreur MongoDB
+    if (error.name === 'MongoServerError' && error.code === 11000) {
+      console.error('📋 Erreur: Email déjà utilisé (duplicate key)');
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+    
+    // Erreur de validation Mongoose
+    if (error.name === 'ValidationError') {
+      console.error('📋 Erreur de validation Mongoose:', error.errors);
+      return res.status(400).json({ 
+        message: 'Validation error',
+        errors: Object.values(error.errors).map(e => ({ field: e.path, message: e.message }))
+      });
+    }
+    
+    // Erreur générique
+    console.error('📋 Envoi de l\'erreur 500 au client');
+    res.status(500).json({ 
+      message: 'Erreur lors de l\'inscription',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
-  
-  const existing = await User.findOne({ email });
-  if (existing) return res.status(400).json({ message: 'Email already in use' });
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = new User({ name, email, password: hashedPassword });
-  await user.save();
-  
-  // Initialiser les données par défaut (catégories et portefeuilles)
-  await initializeDefaultData(user._id);
-  
-  // Créer une notification de bienvenue
-  await createWelcomeNotification(user._id, user.name);
-  
-  res.status(201).json({ message: 'User registered with default data initialized' });
 };
 
 export const login = async (req, res) => {
