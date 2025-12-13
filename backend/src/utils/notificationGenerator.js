@@ -105,14 +105,17 @@ export const createSystemNotification = async (userId, title, message) => {
 // Notification de bienvenue pour nouveaux utilisateurs
 export const createWelcomeNotification = async (userId, userName) => {
   try {
+    // Extraire le prénom si le nom complet contient un espace
+    const firstName = userName ? userName.split(' ')[0] : 'Utilisateur';
+    
     await Notification.create({
       user: userId,
       type: 'system',
-      title: `Bienvenue ${userName} ! 👋`,
-      message: `Nous sommes ravis de vous accueillir sur MyBudget+. Commencez par créer votre premier budget !`,
+      title: `Bienvenue ${firstName} ! 👋`,
+      message: `Bonjour ${firstName}, nous sommes ravis de vous accueillir sur MyBudget+ ! Commencez par créer votre premier budget et gérez vos finances en toute simplicité.`,
       priority: 'medium'
     });
-    console.log(`👋 Notification de bienvenue créée pour ${userName}`);
+    console.log(`👋 Notification de bienvenue créée pour ${firstName}`);
   } catch (error) {
     console.error('Erreur lors de la création de notification:', error);
   }
