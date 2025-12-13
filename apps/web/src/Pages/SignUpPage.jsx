@@ -189,9 +189,15 @@ const SignUpPage = () => {
       console.log('🔍 Vérification du status de la réponse...');
       console.log('   res.ok:', res.ok);
       console.log('   res.status:', res.status);
+      console.log('   res.statusText:', res.statusText);
       console.log('   Condition !res.ok:', !res.ok);
+      console.log('   Status est 200-299?', res.status >= 200 && res.status < 300);
       
-      if (!res.ok) {
+      // Vérifier explicitement le status code
+      const isSuccess = res.status >= 200 && res.status < 300;
+      console.log('   isSuccess calculé:', isSuccess);
+      
+      if (!res.ok && !isSuccess) {
         console.error('❌ Étape 7: Erreur HTTP détectée');
         console.error('📊 Status code:', res.status);
         console.error('📋 Données d\'erreur:', data);
@@ -226,15 +232,29 @@ const SignUpPage = () => {
         throw new Error(errorMessage);
       }
       
-      console.log('✅ Étape 7: Inscription réussie!');
+      console.log('✅ Étape 7: INSCRIPTION RÉUSSIE!');
       console.log('📋 Données reçues:', data);
       console.log('📊 Status code:', res.status);
+      console.log('📊 res.ok:', res.ok);
       console.log('🎯 Entrée dans le bloc de succès');
+      
+      // Vérifier que les données sont valides
+      if (!data || (!data.message && !data.success)) {
+        console.warn('⚠️ Réponse sans message de succès, mais status OK');
+      }
       
       // Afficher le message de succès IMMÉDIATEMENT
       console.log('📝 Affichage du message de succès...');
-      setSuccess("Inscription réussie ! Redirection vers la page de connexion...");
-      console.log('✅ Message de succès défini');
+      const successMessage = data.message || "Inscription réussie ! Redirection vers la page de connexion...";
+      console.log('📝 Message de succès:', successMessage);
+      
+      setSuccess(successMessage);
+      console.log('✅ Message de succès défini dans le state');
+      
+      // Forcer le re-render pour afficher le message
+      setTimeout(() => {
+        console.log('🔄 Vérification du state success:', successMessage);
+      }, 100);
       
       setLoading(false);
       console.log('✅ Loading désactivé');
