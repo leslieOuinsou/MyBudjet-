@@ -100,10 +100,28 @@ const SignUpPage = () => {
       if (!res.ok) {
         // Gérer les erreurs de validation détaillées
         if (data.errors && Array.isArray(data.errors)) {
-          const errorMessages = data.errors.map(err => err.message || err.msg).join(', ');
+          // Traduire les messages d'erreur en français
+          const translatedErrors = data.errors.map(err => {
+            let message = err.message || err.msg;
+            // Traductions
+            if (message.includes('at least 12 characters')) {
+              message = 'Le mot de passe doit contenir au moins 12 caractères';
+            } else if (message.includes('uppercase letter, one lowercase letter')) {
+              message = 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial (@$!%*?&)';
+            } else if (message.includes('Email')) {
+              message = message.replace('Email', 'Email');
+            }
+            return message;
+          });
+          const errorMessages = translatedErrors.join('. ');
           throw new Error(errorMessages || data.message || "Erreur lors de l'inscription");
         }
-        throw new Error(data.message || `Erreur ${res.status}: ${res.statusText}`);
+        // Traduire le message principal si nécessaire
+        let errorMessage = data.message || `Erreur ${res.status}: ${res.statusText}`;
+        if (errorMessage.includes('Validation error')) {
+          errorMessage = 'Erreur de validation. Veuillez vérifier vos données.';
+        }
+        throw new Error(errorMessage);
       }
       
       console.log('✅ Inscription réussie!', data);
@@ -137,8 +155,20 @@ const SignUpPage = () => {
                 Lancez-vous avec MyBudget+ pour gérer vos finances.
               </p>
             </div>
-            {error && <div className="mb-4 text-red-600 text-center text-xs md:text-sm">{error}</div>}
-            {success && <div className="mb-4 text-green-600 text-center text-xs md:text-sm">{success}</div>}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <div className="text-red-800 text-center text-xs md:text-sm font-medium">
+                  {error}
+                </div>
+              </div>
+            )}
+            {success && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                <div className="text-green-800 text-center text-xs md:text-sm font-medium">
+                  {success}
+                </div>
+              </div>
+            )}
             <form className="space-y-3 md:space-y-4" onSubmit={handleSubmit}>
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
