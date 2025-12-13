@@ -464,7 +464,7 @@ export default function ExpensesPage() {
               
               <button
                 onClick={() => setShowQuickAddModal(true)}
-                className="bg-[#22C55E] hover:bg-[#16A34A] text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                className="bg-[#28A745] hover:bg-[#218838] text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
               >
                 <MdTrendingUp size={20} />
                 Dépenses rapides

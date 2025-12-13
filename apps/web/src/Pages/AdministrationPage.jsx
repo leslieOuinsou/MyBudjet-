@@ -187,7 +187,7 @@ export default function AdministrationPage() {
 							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
 								{stats?.userCount || 0}
 							</div>
-							<span className="text-xs text-[#22C55E]">
+							<span className="text-xs text-[#28A745]">
 								Utilisateurs inscrits
 							</span>
 						</div>
@@ -215,7 +215,7 @@ export default function AdministrationPage() {
 							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
 								{stats?.budgetCount || 0}
 							</div>
-							<span className="text-xs text-[#22C55E]">
+							<span className="text-xs text-[#28A745]">
 								Budgets créés
 							</span>
 						</div>

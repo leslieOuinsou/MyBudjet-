@@ -308,7 +308,7 @@ export default function ForecastsPage() {
 								</div>
 							</div>
 							<div className='flex items-center gap-3'>
-								<span className={`text-xs px-3 py-1 rounded-full ${isDarkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-700'}`}>
+								<span className={`text-xs px-3 py-1 rounded-full ${isDarkMode ? 'bg-green-900/30 text-green-400' : 'bg-[#D4EDDA] text-[#155724]'}`}>
 									{advice.length > 0 ? `${advice.length} conseil${advice.length > 1 ? 's' : ''}` : 'Analyse en cours'}
 								</span>
 							</div>
