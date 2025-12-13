@@ -236,7 +236,7 @@ const Footer = () => {
         </div>
 
         {/* Section Contact */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 p-6 bg-gradient-to-r from-[#E3F2FD] to-[#BBDEFB] rounded-2xl border border-[#1E73BE]">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-md">
               <MdEmail className="text-[#1E73BE]" size={20} />

@@ -263,9 +263,9 @@ export default function AdminSettingsPage() {
                       </label>
                     </div>
                     
-                    <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-700' : 'bg-purple-50 border border-purple-200'}`}>
+                    <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-700' : 'bg-[#E3F2FD] border border-[#1E73BE]'}`}>
                       <div className="flex items-start gap-3">
-                        <MdNotifications size={24} className="text-purple-600 mt-0.5" />
+                        <MdNotifications size={24} className="text-[#1E73BE] mt-0.5" />
                         <div>
                           <div className={`font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-purple-900'}`}>
                             Notifications Admin

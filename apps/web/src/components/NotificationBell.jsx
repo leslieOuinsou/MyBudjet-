@@ -132,7 +132,7 @@ export default function NotificationBell() {
 
         {/* Badge de compteur */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-[#1E73BE] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -146,7 +146,7 @@ export default function NotificationBell() {
             <h3 className="font-semibold text-[#343A40]">
               Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
+                <span className="ml-2 text-xs bg-[#E3F2FD] text-[#1E73BE] px-2 py-1 rounded-full">
                   {unreadCount} nouvelles
                 </span>
               )}
