@@ -340,15 +340,20 @@ export const exportPDF = async (req, res) => {
 
 export const exportReport = async (req, res) => {
   try {
+    console.log('📊 Génération du rapport PDF...');
     const { period = 'custom', year, month, startDate, endDate } = req.query;
     const user = req.user._id;
     let start, end;
     const now = new Date();
     
+    console.log('📋 Paramètres reçus:', { period, year, month, startDate, endDate });
+    
     // Déterminer la période
     if (period === 'custom' && startDate && endDate) {
       start = new Date(startDate);
       end = new Date(endDate);
+      // S'assurer que end est à la fin de la journée
+      end.setHours(23, 59, 59, 999);
     } else if (period === 'year') {
       const y = year || now.getFullYear();
       start = new Date(y, 0, 1);
@@ -360,15 +365,21 @@ export const exportReport = async (req, res) => {
       end = new Date(y, m + 1, 0, 23, 59, 59);
     }
     
+    console.log('📅 Période calculée:', { start: start.toISOString(), end: end.toISOString() });
+    
     const txs = await Transaction.find({ 
       user, 
       date: { $gte: start, $lte: end } 
     }).populate('category wallet').sort({ date: -1 });
     
+    console.log(`✅ ${txs.length} transactions trouvées`);
+    
     // Calculs statistiques
-    const totalIncome = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-    const totalExpense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    const totalIncome = txs.filter(t => t.type === 'income').reduce((s, t) => s + (t.amount || 0), 0);
+    const totalExpense = txs.filter(t => t.type === 'expense').reduce((s, t) => s + (t.amount || 0), 0);
     const balance = totalIncome - totalExpense;
+    
+    console.log('💰 Statistiques:', { totalIncome, totalExpense, balance });
     
     // Regroupement par catégorie
     const byCategory = {};
@@ -419,7 +430,7 @@ export const exportReport = async (req, res) => {
     let currentY = 100;
     
     // Dépenses par catégorie
-    if (Object.keys(byCategory).length > 0) {
+    if (Object.keys(byCategory).length > 0 && totalExpense > 0) {
       doc.setFontSize(14);
       doc.text('Dépenses par Catégorie', 10, currentY);
       currentY += 10;
@@ -432,17 +443,21 @@ export const exportReport = async (req, res) => {
           .map(([cat, val]) => [
             cat, 
             val.toFixed(2), 
-            ((val / totalExpense) * 100).toFixed(1) + '%'
+            totalExpense > 0 ? ((val / totalExpense) * 100).toFixed(1) + '%' : '0%'
           ]),
         styles: { fontSize: 10 },
         headStyles: { fillColor: [220, 53, 69] }
       });
       
-      currentY = doc.lastAutoTable.finalY + 20;
+      if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
+        currentY = doc.lastAutoTable.finalY + 20;
+      } else {
+        currentY += 50; // Valeur par défaut si lastAutoTable n'existe pas
+      }
     }
     
     // Revenus par catégorie
-    if (Object.keys(byCategoryIncome).length > 0) {
+    if (Object.keys(byCategoryIncome).length > 0 && totalIncome > 0) {
       doc.setFontSize(14);
       doc.text('Revenus par Catégorie', 10, currentY);
       currentY += 10;
@@ -455,13 +470,17 @@ export const exportReport = async (req, res) => {
           .map(([cat, val]) => [
             cat, 
             val.toFixed(2), 
-            ((val / totalIncome) * 100).toFixed(1) + '%'
+            totalIncome > 0 ? ((val / totalIncome) * 100).toFixed(1) + '%' : '0%'
           ]),
         styles: { fontSize: 10 },
         headStyles: { fillColor: [40, 167, 69] }
       });
       
-      currentY = doc.lastAutoTable.finalY + 20;
+      if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
+        currentY = doc.lastAutoTable.finalY + 20;
+      } else {
+        currentY += 50; // Valeur par défaut si lastAutoTable n'existe pas
+      }
     }
     
     // Solde par portefeuille
@@ -483,7 +502,11 @@ export const exportReport = async (req, res) => {
         headStyles: { fillColor: [30, 115, 190] }
       });
       
-      currentY = doc.lastAutoTable.finalY + 20;
+      if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
+        currentY = doc.lastAutoTable.finalY + 20;
+      } else {
+        currentY += 50; // Valeur par défaut si lastAutoTable n'existe pas
+      }
     }
     
     // Nouvelle page pour le détail des transactions si nécessaire
