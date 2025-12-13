@@ -317,8 +317,8 @@ export default function AdminUsersPage() {
                             }}
                             className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                               user.role === 'admin' 
-                                ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
-                                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                ? 'bg-[#1E73BE] text-white hover:bg-[#155a8a]' 
+                                : 'bg-[#E3F2FD] text-[#1E73BE] hover:bg-[#BBDEFB]'
                             }`}
                           >
                             {user.role === 'admin' ? <MdAdminPanelSettings size={14} /> : <MdPerson size={14} />}

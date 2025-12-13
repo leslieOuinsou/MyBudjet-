@@ -71,7 +71,7 @@ export default function ForecastsPage() {
     switch (type) {
       case 'warning': return 'border-[#6C757D] bg-[#F5F7FA]';
       case 'success': return 'border-[#28A745] bg-[#D4EDDA]';
-      case 'info': return 'border-blue-200 bg-blue-50';
+      case 'info': return 'border-[#1E73BE] bg-[#E3F2FD]';
       default: return 'border-gray-200 bg-gray-50';
     }
   };

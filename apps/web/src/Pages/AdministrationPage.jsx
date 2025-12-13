@@ -287,7 +287,7 @@ export default function AdministrationPage() {
 												<td className={`px-4 py-3 font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>{user.name}</td>
 												<td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{user.email}</td>
 												<td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E73BE] text-white' : 'bg-[#E3F2FD] text-[#1E73BE]'}`}>
 														{user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
 													</span>
 												</td>
@@ -350,8 +350,8 @@ export default function AdministrationPage() {
 					<section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 						<div className={`rounded-xl shadow p-6 border flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
 							<div className="flex items-center gap-3">
-								<div className="p-3 bg-blue-100 rounded-lg">
-									<MdPeople size={24} className="text-blue-600" />
+								<div className="p-3 bg-[#E3F2FD] rounded-lg">
+									<MdPeople size={24} className="text-[#1E73BE]" />
 								</div>
 								<div>
 									<h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
