@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
+import Footer from '../components/Footer.jsx';
 import { getDashboardData, getWallets, getTransactions, getBudgets, addBudget, addTransaction, getCurrentUser } from '../api.js';
 import NotificationBell from '../components/NotificationBell.jsx';
 
@@ -390,23 +391,7 @@ export default function DashboardPage() {
         </main>
       </div>
       {/* Footer */}
-      <footer className="bg-white border-t border-[#F5F7FA] py-8 mt-auto">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <span className="text-[#1E73BE] font-bold text-xl">MyBudget+</span>
-          <div className="flex gap-6 text-[#6C757D] text-sm">
-            <a href="#" className="hover:text-[#1E73BE]">Produit</a>
-            <a href="#" className="hover:text-[#1E73BE]">Ressources</a>
-            <a href="#" className="hover:text-[#1E73BE]">Légal</a>
-          </div>
-          <div className="flex gap-4 text-[#6C757D]">
-            <a href="#"><i className="fab fa-facebook-f"></i></a>
-            <a href="#"><i className="fab fa-twitter"></i></a>
-            <a href="#"><i className="fab fa-linkedin-in"></i></a>
-            <a href="#"><i className="fab fa-instagram"></i></a>
-          </div>
-        </div>
-        <div className="text-center text-xs text-[#6C757D] mt-4">© 2024 MyBudget+. Tous droits réservés.</div>
-      </footer>
+      <Footer />
 
       {/* Modal Ajouter Transaction */}
       {showTransactionModal && (
