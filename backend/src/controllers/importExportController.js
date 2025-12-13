@@ -509,45 +509,58 @@ export const exportReport = async (req, res) => {
       }
     }
     
-    // Nouvelle page pour le détail des transactions si nécessaire
-    if (currentY > 250) {
-      doc.addPage();
-      currentY = 20;
-    }
-    
     // Détail des transactions
-    doc.setFontSize(14);
-    doc.text('Détail des Transactions', 10, currentY);
-    currentY += 10;
-    
-    autoTable(doc, {
-      startY: currentY,
-      head: [['Date', 'Montant', 'Type', 'Catégorie', 'Portefeuille', 'Note']],
-      body: txs.slice(0, 100).map(t => [ // Limiter à 100 transactions pour éviter un PDF trop lourd
-        t.date ? new Date(t.date).toLocaleDateString('fr-FR') : '',
-        `${t.amount.toFixed(2)}€`,
-        t.type === 'income' ? 'Revenu' : 'Dépense',
-        t.category?.name || 'Non catégorisé',
-        t.wallet?.name || 'Non défini',
-        (t.note || '').substring(0, 25) + (t.note && t.note.length > 25 ? '...' : '')
-      ]),
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [108, 117, 125] }
-    });
-    
-    if (txs.length > 100) {
-      const finalY = doc.lastAutoTable.finalY;
-      doc.setFontSize(10);
-      doc.text(`Note: Seules les 100 premières transactions sont affichées (${txs.length} au total)`, 10, finalY + 10);
+    if (txs.length > 0) {
+      // Nouvelle page si nécessaire
+      if (currentY > 250) {
+        doc.addPage();
+        currentY = 20;
+      }
+      
+      doc.setFontSize(14);
+      doc.text('Détail des Transactions', 10, currentY);
+      currentY += 10;
+      
+      const transactionsToShow = txs.slice(0, 100);
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Date', 'Montant', 'Type', 'Catégorie', 'Portefeuille', 'Note']],
+        body: transactionsToShow.map(t => [
+          t.date ? new Date(t.date).toLocaleDateString('fr-FR') : '',
+          `${(t.amount || 0).toFixed(2)}€`,
+          t.type === 'income' ? 'Revenu' : 'Dépense',
+          t.category?.name || 'Non catégorisé',
+          t.wallet?.name || 'Non défini',
+          (t.note || '').substring(0, 25) + (t.note && t.note.length > 25 ? '...' : '')
+        ]),
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [108, 117, 125] }
+      });
+      
+      if (txs.length > 100 && doc.lastAutoTable && doc.lastAutoTable.finalY) {
+        const finalY = doc.lastAutoTable.finalY;
+        doc.setFontSize(10);
+        doc.text(`Note: Seules les 100 premières transactions sont affichées (${txs.length} au total)`, 10, finalY + 10);
+      }
+    } else {
+      // Aucune transaction trouvée
+      doc.setFontSize(12);
+      doc.text('Aucune transaction trouvée pour cette période.', 10, currentY);
     }
     
+    console.log('✅ PDF généré avec succès');
     const pdf = doc.output('arraybuffer');
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=rapport-financier-detaille.pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=rapport-financier-${period}-${Date.now()}.pdf`);
     res.send(Buffer.from(pdf));
     
   } catch (error) {
-    console.error('Erreur génération rapport:', error);
-    res.status(500).json({ message: 'Erreur lors de la génération du rapport', error: error.message });
+    console.error('❌ Erreur génération rapport:', error);
+    console.error('❌ Stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Erreur lors de la génération du rapport', 
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Erreur interne du serveur',
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
