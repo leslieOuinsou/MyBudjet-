@@ -498,7 +498,7 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={handleDeleteAvatar}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-red-600 rounded-lg hover:bg-red-50 cursor-pointer transition-colors text-sm font-medium border border-red-200 shadow-sm hover:shadow-md"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#6C757D] rounded-lg hover:bg-gray-50 cursor-pointer transition-colors text-sm font-medium border border-gray-200 shadow-sm hover:shadow-md"
                     >
                       <MdDelete size={16} />
                       Supprimer
