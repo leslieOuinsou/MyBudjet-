@@ -743,43 +743,43 @@ export default function SettingsPage() {
           {/* Sécurité du compte */}
           <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-gradient-to-br from-red-500 to-red-600 rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-[#495057] to-[#343A40] rounded-lg">
                 <MdSecurity className="text-white" size={24} />
               </div>
               <h2 className="text-xl font-bold text-gray-900">Sécurité du compte</h2>
             </div>
             
             {/* Formulaire de changement de mot de passe */}
-            <form onSubmit={handlePasswordChange} className="mb-8 p-6 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl border border-red-100">
+            <form onSubmit={handlePasswordChange} className="mb-8 p-6 bg-gradient-to-br from-[#E3F2FD] to-[#BBDEFB] rounded-xl border border-[#1E73BE]">
               <div className="flex items-center gap-2 mb-4">
-                <MdLock className="text-red-600" size={20} />
+                <MdLock className="text-[#1E73BE]" size={20} />
                 <h3 className="font-semibold text-gray-900">Changer le mot de passe</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <MdLock size={16} className="text-red-600" />
+                    <MdLock size={16} className="text-[#1E73BE]" />
                     Mot de passe actuel
                   </label>
                   <input 
                     type="password"
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all shadow-sm hover:shadow-md" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Mot de passe actuel"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <MdLock size={16} className="text-red-600" />
+                    <MdLock size={16} className="text-[#1E73BE]" />
                     Nouveau mot de passe
                   </label>
                   <input 
                     type="password"
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all shadow-sm hover:shadow-md" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Nouveau mot de passe (min. 6 caractères)"
                     minLength="6"
                     required
@@ -787,14 +787,14 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <MdLock size={16} className="text-red-600" />
+                    <MdLock size={16} className="text-[#1E73BE]" />
                     Confirmer le mot de passe
                   </label>
                   <input 
                     type="password"
                     value={passwordForm.confirmPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all shadow-sm hover:shadow-md" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Confirmer le mot de passe"
                     minLength="6"
                     required
@@ -803,7 +803,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit" 
-                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-3 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
+                className="bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
                 disabled={!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword || isChangingPassword}
               >
                 {isChangingPassword ? (
@@ -913,7 +913,7 @@ export default function SettingsPage() {
             <form onSubmit={handleAccountDelete} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-red-700 text-sm font-medium">
+                  <label className="flex items-center gap-2 text-[#495057] text-sm font-medium">
                     <MdLock size={16} />
                     Mot de passe
                   </label>
@@ -927,7 +927,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-red-700 text-sm font-medium">
+                  <label className="flex items-center gap-2 text-[#495057] text-sm font-medium">
                     <MdWarning size={16} />
                     Tapez DELETE pour confirmer
                   </label>
@@ -935,7 +935,7 @@ export default function SettingsPage() {
                     type="text"
                     value={deleteForm.confirmation}
                     onChange={(e) => setDeleteForm({...deleteForm, confirmation: e.target.value})}
-                    className="w-full border-2 border-red-300 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all shadow-sm uppercase" 
+                    className="w-full border-2 border-[#6C757D] rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#495057] focus:ring-2 focus:ring-gray-200 transition-all shadow-sm uppercase" 
                     placeholder="DELETE"
                     required
                   />

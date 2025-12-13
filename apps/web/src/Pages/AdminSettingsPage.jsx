@@ -267,13 +267,13 @@ export default function AdminSettingsPage() {
                       <div className="flex items-start gap-3">
                         <MdNotifications size={24} className="text-[#1E73BE] mt-0.5" />
                         <div>
-                          <div className={`font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-purple-900'}`}>
+                          <div className={`font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-[#1E73BE]'}`}>
                             Notifications Admin
                           </div>
                           <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-[#6C757D]'}`}>
                             En tant qu'administrateur, vous recevez des notifications pour :
                           </div>
-                          <ul className={`text-sm mt-2 space-y-1 ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
+                          <ul className={`text-sm mt-2 space-y-1 ${isDarkMode ? 'text-purple-300' : 'text-[#6C757D]'}`}>
                             <li>• Nouveaux utilisateurs inscrits</li>
                             <li>• Activités suspectes détectées</li>
                             <li>• Erreurs système critiques</li>
