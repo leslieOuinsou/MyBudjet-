@@ -412,15 +412,15 @@ export default function SettingsPage() {
 
           {/* Messages d'erreur et de succès modernisés */}
           {error && (
-            <div className="bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 text-red-800 px-6 py-4 rounded-xl mb-6 shadow-lg flex items-start gap-4 animate-slide-down">
-              <MdError className="text-red-600 flex-shrink-0 mt-0.5" size={24} />
+            <div className="bg-gradient-to-r from-[#F8D7DA] to-[#F5C6CB] border-l-4 border-[#DC3545] text-[#721C24] px-6 py-4 rounded-xl mb-6 shadow-lg flex items-start gap-4 animate-slide-down">
+              <MdError className="text-[#DC3545] flex-shrink-0 mt-0.5" size={24} />
               <div className="flex-1">
-                <p className="font-bold text-red-900 mb-1">Erreur</p>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="font-bold text-[#721C24] mb-1">Erreur</p>
+                <p className="text-sm text-[#721C24]">{error}</p>
               </div>
               <button 
                 onClick={() => setError('')} 
-                className="text-red-600 hover:text-red-800 hover:bg-red-200 rounded-full p-1 transition-colors"
+                className="text-[#DC3545] hover:text-[#721C24] hover:bg-[#F8D7DA] rounded-full p-1 transition-colors"
               >
                 ✕
               </button>
