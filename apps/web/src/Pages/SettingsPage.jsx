@@ -566,7 +566,7 @@ export default function SettingsPage() {
           {/* Préférences de l'application */}
           <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] rounded-lg">
                 <MdSettings className="text-white" size={24} />
               </div>
               <h2 className="text-xl font-bold text-gray-900">Préférences de l'application</h2>
@@ -575,7 +575,7 @@ export default function SettingsPage() {
               <div className="flex-1 space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <div className="flex items-start gap-3 flex-1">
-                    <MdNotifications className="text-purple-600 mt-1 flex-shrink-0" size={20} />
+                    <MdNotifications className="text-[#1E73BE] mt-1 flex-shrink-0" size={20} />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">Alertes budgétaires</div>
                       <div className="text-gray-600 text-sm">Recevez des notifications lorsque vous dépassez vos limites budgétaires.</div>
