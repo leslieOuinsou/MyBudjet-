@@ -26,34 +26,6 @@
   --color-gray-900: #212529;
 }
 
-/* Variables de couleurs pour le thème sombre */
-.dark {
-  --color-bg-primary: #1a1a1a;
-  --color-bg-secondary: #2d2d2d;
-  --color-bg-tertiary: #383838;
-  --color-text-primary: #e4e4e4;
-  --color-text-secondary: #b0b0b0;
-  --color-text-tertiary: #FFFFFF;
-  --color-border: #404040;
-  --color-primary: #3b8fd8;
-  --color-primary-hover: #2a7bc4;
-  --color-success: #34c759;
-  --color-success-hover: #2db84c;
-  --color-danger: #ff3b30;
-  --color-danger-hover: #e6342a;
-  --color-warning: #ffcc00;
-  --color-info: #5ac8fa;
-  --color-gray-100: #2d2d2d;
-  --color-gray-200: #383838;
-  --color-gray-300: #454545;
-  --color-gray-400: #525252;
-  --color-gray-500: #6f6f6f;
-  --color-gray-600: #8c8c8c;
-  --color-gray-700: #a9a9a9;
-  --color-gray-800: #c6c6c6;
-  --color-gray-900: #e4e4e4;
-}
-
 /* Application des couleurs */
 body {
   background-color: var(--color-bg-primary);

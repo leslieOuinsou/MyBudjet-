@@ -72,7 +72,7 @@ export default function DashboardHeader() {
   const UserAvatar = () => {
     if (loading) {
       return (
-        <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-[#404040] animate-pulse"></div>
+        <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
       );
     }
 
@@ -108,10 +108,10 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="bg-white dark:bg-[#2d2d2d] shadow-sm">
+    <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-4 md:px-6">
         <span className="text-[#1E73BE] font-bold text-lg md:text-xl">MyBudget+</span>
-        <nav className="hidden lg:flex gap-4 xl:gap-8 text-[#343A40] dark:text-[#e4e4e4] font-medium text-sm">
+        <nav className="hidden lg:flex gap-4 xl:gap-8 text-[#343A40] font-medium text-sm">
           <Link to="/dashboard" className="text-[#1E73BE] font-bold">Tableau de bord</Link>
           <Link to="/budgets" className="hover:text-[#1E73BE]">Budgets</Link>
           <Link to="/importexport" className="hover:text-[#1E73BE]">Données</Link>
@@ -119,7 +119,7 @@ export default function DashboardHeader() {
           <input 
             type="text" 
             placeholder="Rechercher..." 
-            className="ml-2 xl:ml-4 px-2 xl:px-3 py-1 rounded border border-[#F5F7FA] bg-[#F5F7FA] dark:bg-[#383838] dark:border-[#404040] text-[#343A40] dark:text-[#e4e4e4] text-sm w-32 xl:w-auto" 
+            className="ml-2 xl:ml-4 px-2 xl:px-3 py-1 rounded border border-[#F5F7FA] bg-[#F5F7FA] text-[#343A40] text-sm w-32 xl:w-auto" 
           />
         </nav>
         <div className="flex gap-2 items-center">

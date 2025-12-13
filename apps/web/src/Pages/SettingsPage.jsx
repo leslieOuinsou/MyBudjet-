@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import Toast from '../components/Toast.jsx';
-import { useTheme } from '../context/ThemeContext.jsx';
 import { 
   getUserSettings, 
   updateUserSettings, 
@@ -17,7 +16,6 @@ import {
 } from '../api.js';
 
 export default function SettingsPage() {
-  const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState(null);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -497,41 +495,6 @@ export default function SettingsPage() {
             <h2 className="font-semibold text-[#343A40] mb-4">Préférences de l’application</h2>
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-1 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-[#343A40] dark:text-[#e4e4e4]">Mode Thème</div>
-                    <div className="text-[#6C757D] dark:text-[#b0b0b0] text-sm">Choisissez entre le mode clair, sombre ou automatique.</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={theme}
-                      onChange={async (e) => {
-                        const newTheme = e.target.value;
-                        const result = await toggleTheme(newTheme);
-                        
-                        if (result?.success) {
-                          const themeLabels = {
-                            light: 'Clair ☀️',
-                            dark: 'Sombre 🌙',
-                            auto: 'Automatique 🔄'
-                          };
-                          addToast(`✅ Thème ${themeLabels[newTheme]} activé !`, 'success');
-                          setSuccess(`✅ Thème ${themeLabels[newTheme]} appliqué avec succès`);
-                          setTimeout(() => setSuccess(''), 3000);
-                        } else {
-                          addToast(`❌ ${result?.error || 'Erreur lors du changement de thème'}`, 'error');
-                          setError(`❌ ${result?.error || 'Erreur lors du changement de thème'}`);
-                          setTimeout(() => setError(''), 5000);
-                        }
-                      }}
-                      className="border border-[#F5F7FA] dark:border-[#404040] rounded px-3 py-2 bg-white dark:bg-[#383838] text-[#343A40] dark:text-[#e4e4e4] text-sm focus:outline-none focus:border-[#1E73BE]"
-                    >
-                      <option value="light">☀️ Clair</option>
-                      <option value="auto">🔄 Auto</option>
-                      <option value="dark">🌙 Sombre</option>
-                    </select>
-                  </div>
-                </div>
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-medium text-[#343A40]">Alertes budgétaires</div>

@@ -47,12 +47,12 @@ export default function DashboardSidebar() {
       {/* Bouton hamburger mobile */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200"
+        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200"
       >
         {mobileMenuOpen ? (
-          <MdClose size={24} className="text-gray-800 dark:text-white" />
+          <MdClose size={24} className="text-gray-800" />
         ) : (
-          <MdMenu size={24} className="text-gray-800 dark:text-white" />
+          <MdMenu size={24} className="text-gray-800" />
         )}
       </button>
       
@@ -68,8 +68,8 @@ export default function DashboardSidebar() {
       <aside className={`
         fixed md:static
         w-72
-        bg-gradient-to-b from-white to-gray-50 dark:from-[#1a1a1a] dark:to-[#2d2d2d]
-        border-r border-gray-200 dark:border-gray-800
+        bg-gradient-to-b from-white to-gray-50
+        border-r border-gray-200
         py-6 px-4
         h-screen
         overflow-y-auto
@@ -128,7 +128,7 @@ export default function DashboardSidebar() {
                       size={22} 
                       className={`
                         transition-transform duration-200
-                        ${active ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-[#1E73BE] dark:group-hover:text-blue-400"}
+                        ${active ? "text-white" : "text-gray-500 group-hover:text-[#1E73BE]"}
                         ${active ? "" : "group-hover:scale-110"}
                       `}
                     />
@@ -136,7 +136,7 @@ export default function DashboardSidebar() {
                     {/* Label */}
                     <span className={`
                       font-medium text-sm
-                      ${active ? "text-white font-semibold" : "text-gray-700 dark:text-gray-300"}
+                      ${active ? "text-white font-semibold" : "text-gray-700"}
                     `}>
                       {item.label}
                     </span>
