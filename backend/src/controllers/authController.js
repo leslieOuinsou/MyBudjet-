@@ -1,5 +1,6 @@
 import User from '../models/user.js';
 import ResetToken from '../models/resetToken.js';
+import Notification from '../models/notification.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -111,9 +112,33 @@ export const login = async (req, res) => {
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) return res.status(400).json({ message: 'Invalid credentials' });
   
+  // Vérifier si c'est la première connexion (pas de lastLogin ou créé récemment)
+  const isFirstLogin = !user.lastLogin;
+  const isNewUser = user.createdAt && (new Date() - new Date(user.createdAt)) < 24 * 60 * 60 * 1000; // Créé il y a moins de 24h
+  
   // Update last login
   user.lastLogin = new Date();
   await user.save();
+  
+  // Créer une notification de bienvenue si c'est la première connexion ou un nouvel utilisateur
+  if (isFirstLogin || isNewUser) {
+    try {
+      // Vérifier s'il existe déjà une notification de bienvenue pour éviter les doublons
+      const existingWelcome = await Notification.findOne({
+        user: user._id,
+        type: 'system',
+        title: { $regex: /Bienvenue.*👋/i }
+      });
+      
+      if (!existingWelcome) {
+        await createWelcomeNotification(user._id, user.name);
+        console.log(`👋 Notification de bienvenue créée lors de la première connexion pour ${user.name}`);
+      }
+    } catch (notificationError) {
+      console.error('⚠️ Erreur lors de la création de la notification de bienvenue:', notificationError);
+      // Ne pas bloquer la connexion si la notification échoue
+    }
+  }
   
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
