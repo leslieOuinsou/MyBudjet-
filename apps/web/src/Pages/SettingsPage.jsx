@@ -717,7 +717,7 @@ export default function SettingsPage() {
                     ? 'bg-[#9CA3AF] cursor-not-allowed text-white' 
                     : settings?.data?.autoBackup
                       ? 'bg-[#1E3A8A] hover:bg-[#1e40af] text-white transform hover:scale-105'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-[#9CA3AF] text-white cursor-not-allowed'
                 }`}
               >
                 {syncStatus.isSyncing ? (

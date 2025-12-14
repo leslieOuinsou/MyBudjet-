@@ -532,7 +532,7 @@ export default function TransactionsPage() {
                           </span>
                         </td>
                         <td className={`px-2 md:px-4 py-2 md:py-3 font-semibold text-xs md:text-sm ${
-                          t.type === 'expense' ? 'text-[#DC2626]' : 'text-[#22C55E]'
+                          t.type === 'expense' ? 'text-[#374151]' : 'text-[#22C55E]'
                         }`}>
                           {t.type === 'income' ? '+ ' : '- '}
                           {Math.abs(t.amount).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
