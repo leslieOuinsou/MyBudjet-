@@ -155,7 +155,7 @@ export default function AdministrationPage() {
 						</div>
 						<button 
 							onClick={loadAdminData}
-							className="flex items-center gap-2 bg-[#1E73BE] text-white px-4 py-2 rounded-lg hover:bg-[#155a8a] transition"
+							className="flex items-center gap-2 bg-[#1E3A8A] text-white px-4 py-2 rounded-lg hover:bg-[#1e40af] transition"
 							disabled={loading}
 						>
 							<MdRefresh size={20} />
@@ -287,7 +287,7 @@ export default function AdministrationPage() {
 												<td className={`px-4 py-3 font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>{user.name}</td>
 												<td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{user.email}</td>
 												<td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E73BE] text-white' : 'bg-[#E3F2FD] text-[#1E73BE]'}`}>
+													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E3A8A] text-white' : 'bg-[#E3F2FD] text-[#1E3A8A]'}`}>
 														{user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
 													</span>
 												</td>
@@ -364,7 +364,7 @@ export default function AdministrationPage() {
 							</div>
 							<Link 
 								to="/admin/users"
-								className="bg-[#1E73BE] text-white text-center px-4 py-2 rounded-lg font-semibold hover:bg-[#155a8a] transition"
+								className="bg-[#1E3A8A] text-white text-center px-4 py-2 rounded-lg font-semibold hover:bg-[#1e40af] transition"
 							>
 								Gérer les utilisateurs
 							</Link>
@@ -386,7 +386,7 @@ export default function AdministrationPage() {
 							</div>
 							<Link 
 								to="/admin/billreminders"
-								className="bg-[#1E73BE] text-white text-center px-4 py-2 rounded-lg font-semibold hover:bg-[#155a8a] transition"
+								className="bg-[#1E3A8A] text-white text-center px-4 py-2 rounded-lg font-semibold hover:bg-[#1e40af] transition"
 							>
 								Gérer les rappels
 							</Link>
@@ -407,7 +407,7 @@ export default function AdministrationPage() {
 								</div>
 							</div>
 							<button 
-								className="bg-[#1E73BE] text-white text-center px-4 py-2 rounded-lg font-semibold hover:bg-[#155a8a] transition"
+								className="bg-[#1E3A8A] text-white text-center px-4 py-2 rounded-lg font-semibold hover:bg-[#1e40af] transition"
 								onClick={() => window.location.href = '/budgets'}
 							>
 								Voir les budgets

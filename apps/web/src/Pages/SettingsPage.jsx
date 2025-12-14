@@ -803,7 +803,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit" 
-                className="bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
+                className="bg-[#1E3A8A] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#1e40af] disabled:bg-[#9CA3AF] disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
                 disabled={!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword || isChangingPassword}
               >
                 {isChangingPassword ? (

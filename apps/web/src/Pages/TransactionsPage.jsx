@@ -341,7 +341,7 @@ export default function TransactionsPage() {
                 <button
                   onClick={handlePayPalConnect}
                   disabled={paypalLoading}
-                  className="flex items-center gap-2 bg-[#0070BA] text-white px-3 md:px-4 py-2 rounded-lg border-none cursor-pointer text-xs md:text-sm font-semibold hover:bg-[#005FA8] transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 bg-[#1E3A8A] text-white px-3 md:px-4 py-2 rounded-lg border-none cursor-pointer text-xs md:text-sm font-semibold hover:bg-[#1e40af] transition-colors disabled:bg-[#9CA3AF]"
                 >
                   <MdAccountBalance className="text-base md:text-lg" />
                   <span className="hidden sm:inline">{paypalLoading ? 'Connexion...' : 'Se connecter avec PayPal'}</span>
@@ -549,7 +549,7 @@ export default function TransactionsPage() {
                         <td className="px-2 md:px-4 py-2 md:py-3 flex gap-1 md:gap-2">
                           <button 
                             onClick={() => handleEditTransaction(t)}
-                            className="text-[#1E73BE] hover:bg-[#1E73BE] hover:text-white p-1 md:p-1.5 rounded transition text-sm md:text-base"
+                            className="text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white p-1 md:p-1.5 rounded transition text-sm md:text-base"
                             title="Modifier"
                           >
                             ✏️

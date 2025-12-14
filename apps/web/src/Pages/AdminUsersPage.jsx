@@ -187,7 +187,7 @@ export default function AdminUsersPage() {
             </div>
             <button 
               onClick={loadUsers}
-              className="flex items-center gap-2 bg-[#1E73BE] text-white px-4 py-2 rounded-lg hover:bg-[#155a8a] transition"
+              className="flex items-center gap-2 bg-[#1E3A8A] text-white px-4 py-2 rounded-lg hover:bg-[#1e40af] transition"
               disabled={loading}
             >
               <MdRefresh size={20} />
@@ -300,7 +300,7 @@ export default function AdminUsersPage() {
                       >
                         <td className={`px-6 py-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold">
+                            <div className="w-10 h-10 rounded-full bg-[#1E3A8A] text-white flex items-center justify-center font-semibold">
                               {user.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                             </div>
                             <div className="font-medium">{user.name}</div>
@@ -317,7 +317,7 @@ export default function AdminUsersPage() {
                             }}
                             className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                               user.role === 'admin' 
-                                ? 'bg-[#1E73BE] text-white hover:bg-[#155a8a]' 
+                                ? 'bg-[#1E3A8A] text-white hover:bg-[#1e40af]' 
                                 : 'bg-[#E3F2FD] text-[#1E73BE] hover:bg-[#BBDEFB]'
                             }`}
                           >
@@ -418,7 +418,7 @@ export default function AdminUsersPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleUpdateRole}
-                className="flex-1 bg-[#1E73BE] text-white px-4 py-2 rounded-lg hover:bg-[#155a8a] transition"
+                className="flex-1 bg-[#1E3A8A] text-white px-4 py-2 rounded-lg hover:bg-[#1e40af] transition"
               >
                 Enregistrer
               </button>

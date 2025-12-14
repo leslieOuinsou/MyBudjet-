@@ -222,7 +222,7 @@ export default function BillRemindersPage() {
             </div>
             <button
               onClick={openCreateModal}
-              className="flex items-center gap-2 bg-[#1E73BE] text-white px-6 py-3 rounded-lg hover:bg-[#155a8a] transition"
+              className="flex items-center gap-2 bg-[#1E3A8A] text-white px-6 py-3 rounded-lg hover:bg-[#1e40af] transition"
             >
               <MdAdd size={20} />
               Nouveau Rappel
@@ -341,7 +341,7 @@ export default function BillRemindersPage() {
                       <div className="flex gap-2 ml-4">
                         <button
                           onClick={() => handleEdit(reminder)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded transition"
+                          className="p-2 text-[#1E3A8A] hover:bg-blue-50 rounded transition"
                           title="Modifier"
                         >
                           <MdEdit size={20} />

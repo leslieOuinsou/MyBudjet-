@@ -182,7 +182,7 @@ export default function DashboardPage() {
           <p className="text-[#6C757D] mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="bg-[#1E73BE] text-white px-4 py-2 rounded hover:bg-[#155a8a]"
+            className="bg-[#1E3A8A] text-white px-4 py-2 rounded hover:bg-[#1e40af]"
           >
             Réessayer
           </button>
@@ -239,7 +239,7 @@ export default function DashboardPage() {
               </div>
               <div className="w-full h-2 bg-[#F5F7FA] rounded-full mb-2">
                 <div 
-                  className={`h-2 rounded-full ${dashboardData?.budgetPercentage > 90 ? 'bg-[#495057]' : dashboardData?.budgetPercentage > 70 ? 'bg-[#6C757D]' : 'bg-[#1E73BE]'}`}
+                  className={`h-2 rounded-full ${dashboardData?.budgetPercentage > 90 ? 'bg-[#495057]' : dashboardData?.budgetPercentage > 70 ? 'bg-[#6C757D]' : 'bg-[#1E3A8A]'}`}
                   style={{ width: `${dashboardData?.budgetPercentage || 0}%` }}
                 ></div>
               </div>
@@ -363,7 +363,7 @@ export default function DashboardPage() {
                   <div className="text-[#343A40] text-sm">Actuel: €{dashboardData?.totalBalance ? Math.round(dashboardData.totalBalance * 0.3).toLocaleString('fr-FR') : '0'}</div>
                   <div className="text-[#6C757D] text-xs">Cible: €10,000</div>
                   <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
-                    <div className="h-2 bg-[#1E73BE] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.3 / 10000) * 100 : 0)}%` }}></div>
+                    <div className="h-2 bg-[#1E3A8A] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.3 / 10000) * 100 : 0)}%` }}></div>
                   </div>
                   <div className="text-xs text-[#6C757D]">{Math.min(100, dashboardData?.totalBalance ? Math.round((dashboardData.totalBalance * 0.3 / 10000) * 100) : 0)}% atteint</div>
                 </div>
@@ -372,7 +372,7 @@ export default function DashboardPage() {
                   <div className="text-[#343A40] text-sm">Actuel: €{dashboardData?.totalBalance ? Math.round(dashboardData.totalBalance * 0.1).toLocaleString('fr-FR') : '0'}</div>
                   <div className="text-[#6C757D] text-xs">Cible: €5,000</div>
                   <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
-                    <div className="h-2 bg-[#1E73BE] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.1 / 5000) * 100 : 0)}%` }}></div>
+                    <div className="h-2 bg-[#1E3A8A] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.1 / 5000) * 100 : 0)}%` }}></div>
                   </div>
                   <div className="text-xs text-[#6C757D]">{Math.min(100, dashboardData?.totalBalance ? Math.round((dashboardData.totalBalance * 0.1 / 5000) * 100) : 0)}% atteint</div>
                 </div>
@@ -381,7 +381,7 @@ export default function DashboardPage() {
                   <div className="text-[#343A40] text-sm">Actuel: €{dashboardData?.totalBalance ? Math.round(dashboardData.totalBalance * 0.15).toLocaleString('fr-FR') : '0'}</div>
                   <div className="text-[#6C757D] text-xs">Cible: €20,000</div>
                   <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
-                    <div className="h-2 bg-[#1E73BE] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.15 / 20000) * 100 : 0)}%` }}></div>
+                    <div className="h-2 bg-[#1E3A8A] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.15 / 20000) * 100 : 0)}%` }}></div>
                   </div>
                   <div className="text-xs text-[#6C757D]">{Math.min(100, dashboardData?.totalBalance ? Math.round((dashboardData.totalBalance * 0.15 / 20000) * 100) : 0)}% atteint</div>
                 </div>
@@ -461,7 +461,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-[#1E73BE] text-white py-2 rounded hover:bg-[#155a8a]"
+                  className="flex-1 bg-[#1E3A8A] text-white py-2 rounded hover:bg-[#1e40af]"
                 >
                   Ajouter
                 </button>
@@ -540,7 +540,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-[#1E73BE] text-white py-2 rounded hover:bg-[#155a8a]"
+                  className="flex-1 bg-[#1E3A8A] text-white py-2 rounded hover:bg-[#1e40af]"
                 >
                   Créer
                 </button>
@@ -654,7 +654,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-[#1E73BE] text-white rounded hover:bg-[#155a8a]"
+                  className="flex-1 px-4 py-2 bg-[#1E3A8A] text-white rounded hover:bg-[#1e40af]"
                 >
                   Ajouter
                 </button>
@@ -753,7 +753,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-[#1E73BE] text-white rounded hover:bg-[#155a8a]"
+                  className="flex-1 px-4 py-2 bg-[#1E3A8A] text-white rounded hover:bg-[#1e40af]"
                 >
                   Créer
                 </button>
