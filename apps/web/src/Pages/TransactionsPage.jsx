@@ -664,13 +664,13 @@ export default function TransactionsPage() {
                         setShowModal(false);
                         setEditingTransaction(null);
                       }}
-                      className="flex-1 border border-[#EAF4FB] text-[#6C757D] py-2.5 md:py-2 px-4 rounded-lg hover:bg-[#F5F7FA] transition text-sm md:text-base"
+                      className="flex-1 bg-[#E5E7EB] text-[#374151] py-2.5 md:py-2 px-4 rounded-lg hover:bg-[#D1D5DB] transition text-sm md:text-base"
                     >
                       Annuler
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 bg-[#22C55E] hover:bg-[#16A34A] text-white py-2.5 md:py-2 px-4 rounded-lg transition text-sm md:text-base"
+                      className="flex-1 bg-[#1E3A8A] hover:bg-[#1e40af] text-white py-2.5 md:py-2 px-4 rounded-lg transition text-sm md:text-base"
                     >
                       {editingTransaction ? 'Modifier' : 'Ajouter'}
                     </button>

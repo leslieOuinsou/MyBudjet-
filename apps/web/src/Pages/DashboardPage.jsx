@@ -338,19 +338,19 @@ export default function DashboardPage() {
               <div className="font-semibold text-[#343A40] mb-2">Actions Rapides</div>
               <button 
                 onClick={() => setShowTransactionModal(true)}
-                className="w-full bg-[#1E73BE] text-white px-4 py-2 rounded font-semibold hover:bg-[#155a8a] flex items-center gap-2 justify-center"
+                className="w-full bg-[#1E3A8A] text-white px-4 py-2 rounded font-semibold hover:bg-[#1e40af] flex items-center gap-2 justify-center"
               >
                 <span className="text-lg">+</span> Ajouter une Transaction
               </button>
               <button 
                 onClick={() => setShowBudgetModal(true)}
-                className="w-full bg-[#F5F7FA] text-[#1E73BE] px-4 py-2 rounded font-semibold border border-[#F5F7FA] hover:bg-[#E9F7FB]"
+                className="w-full bg-[#E5E7EB] text-[#374151] px-4 py-2 rounded font-semibold border border-[#E5E7EB] hover:bg-[#D1D5DB]"
               >
                 Créer un Budget
               </button>
               <Link 
                 to="/reports" 
-                className="w-full bg-[#F5F7FA] text-[#1E73BE] px-4 py-2 rounded font-semibold border border-[#F5F7FA] hover:bg-[#E9F7FB] text-center"
+                className="w-full bg-[#E5E7EB] text-[#374151] px-4 py-2 rounded font-semibold border border-[#E5E7EB] hover:bg-[#D1D5DB] text-center"
               >
                 Voir les Rapports
               </Link>

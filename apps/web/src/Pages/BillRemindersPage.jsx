@@ -476,7 +476,7 @@ export default function BillRemindersPage() {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-[#1E73BE] text-white px-4 py-2 rounded-lg hover:bg-[#155a8a] transition"
+                  className="flex-1 bg-[#1E3A8A] text-white px-4 py-2 rounded-lg hover:bg-[#1e40af] transition"
                 >
                   {editingReminder ? 'Modifier' : 'Créer'}
                 </button>
@@ -487,7 +487,7 @@ export default function BillRemindersPage() {
                     setEditingReminder(null);
                     resetForm();
                   }}
-                  className={`flex-1 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-[#383838] text-gray-300 hover:bg-[#404040]' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                  className="flex-1 bg-[#E5E7EB] text-[#374151] px-4 py-2 rounded-lg hover:bg-[#D1D5DB] transition"
                 >
                   Annuler
                 </button>

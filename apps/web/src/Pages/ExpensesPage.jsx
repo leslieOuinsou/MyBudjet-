@@ -432,7 +432,7 @@ export default function ExpensesPage() {
                 <button
                   onClick={handleAddDefaultData}
                   disabled={loading}
-                  className="bg-[#1E73BE] hover:bg-[#155a8a] text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-[#1E3A8A] hover:bg-[#1e40af] text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 disabled:bg-[#9CA3AF] disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -456,7 +456,7 @@ export default function ExpensesPage() {
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => setShowAddModal(true)}
-                className="bg-[#1E73BE] hover:bg-[#1557A0] text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                className="bg-[#1E3A8A] hover:bg-[#1e40af] text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
               >
                 <MdAdd size={20} />
                 Ajouter une dépense
@@ -464,7 +464,7 @@ export default function ExpensesPage() {
               
               <button
                 onClick={() => setShowQuickAddModal(true)}
-                className="bg-[#28A745] hover:bg-[#218838] text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                className="bg-[#E5E7EB] text-[#374151] px-6 py-3 rounded-lg font-semibold hover:bg-[#D1D5DB] transition-colors flex items-center gap-2"
               >
                 <MdTrendingUp size={20} />
                 Dépenses rapides
@@ -722,14 +722,14 @@ export default function ExpensesPage() {
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-[#1E73BE] text-white py-2 px-4 rounded-md hover:bg-[#1557A0] transition-colors"
+                  className="flex-1 bg-[#1E3A8A] text-white py-2 px-4 rounded-md hover:bg-[#1e40af] transition-colors"
                 >
                   {editingExpense ? 'Modifier' : 'Ajouter'}
                 </button>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="flex-1 bg-[#6C757D] text-white py-2 px-4 rounded-md hover:bg-[#545B62] transition-colors"
+                  className="flex-1 bg-[#E5E7EB] text-[#374151] py-2 px-4 rounded-md hover:bg-[#D1D5DB] transition-colors"
                 >
                   Annuler
                 </button>
