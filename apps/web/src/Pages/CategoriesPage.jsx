@@ -245,7 +245,7 @@ export default function CategoriesPage() {
 						<section className='bg-white rounded-xl md:rounded-2xl shadow-lg border border-gray-100 p-4 md:p-6 hover:shadow-xl transition-shadow duration-300'>
 							<div className='flex justify-between items-center mb-4 md:mb-6'>
 								<div className='flex items-center gap-2 md:gap-3'>
-									<div className='w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] rounded-lg md:rounded-xl flex items-center justify-center shadow-md'>
+									<div className='w-10 h-10 md:w-12 md:h-12 bg-[#1E3A8A] rounded-lg md:rounded-xl flex items-center justify-center shadow-md'>
 										<MdCategory size={20} className="text-white md:size-6" />
 									</div>
 									<h2 className='font-bold text-gray-900 text-lg md:text-xl'>
@@ -257,7 +257,7 @@ export default function CategoriesPage() {
 							<div className='flex gap-2 md:gap-3 mb-4 md:mb-6 flex-wrap'>
 								<button 
 									onClick={handleSyncCategories}
-									className='bg-gradient-to-r from-[#28A745] to-[#218838] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:from-[#218838] hover:to-[#1e7e34] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+									className='bg-[#22C55E] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:bg-[#16a34a] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
 								>
 									<MdRefresh size={16} className="md:size-[18px]" />
 									<span className="hidden sm:inline">Synchroniser</span>
@@ -265,7 +265,7 @@ export default function CategoriesPage() {
 								</button>
 								<button 
 									onClick={() => setShowCategoryModal(true)}
-									className='bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+									className='bg-[#1E3A8A] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:bg-[#1e40af] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
 								>
 									<MdAdd size={18} className="md:size-5" />
 									<span className="hidden sm:inline">Ajouter</span>
@@ -312,12 +312,12 @@ export default function CategoriesPage() {
 													</div>
 													<div className='flex items-center gap-2 mt-0.5'>
 														{cat.type === 'income' ? (
-															<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#D4EDDA] text-[#155724] rounded md:rounded-lg'>
-																<MdTrendingUp size={10} className="md:size-3" />
-																Revenu
-															</span>
+														<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#D4EDDA] text-[#22C55E] rounded md:rounded-lg'>
+															<MdTrendingUp size={10} className="md:size-3" />
+															Revenu
+														</span>
 														) : (
-															<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#F5F7FA] text-[#6C757D] rounded md:rounded-lg'>
+															<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#F5F7FA] text-[#374151] rounded md:rounded-lg'>
 																<MdTrendingDown size={10} className="md:size-3" />
 																Dépense
 															</span>
@@ -328,14 +328,14 @@ export default function CategoriesPage() {
 											<div className='flex gap-0.5 md:gap-1 flex-shrink-0 ml-2'>
 												<button
 													onClick={() => handleEditCategory(cat)}
-													className='text-[#1E73BE] hover:text-[#155a8a] p-1.5 md:p-2 rounded-lg hover:bg-[#E3F2FD] transition-all duration-200'
+													className='text-[#1E3A8A] hover:text-[#1e40af] p-1.5 md:p-2 rounded-lg hover:bg-[#E3F2FD] transition-all duration-200'
 													title="Modifier"
 												>
 													<MdEdit size={18} className="md:size-5" />
 												</button>
 												<button
 													onClick={() => handleDeleteCategory(cat._id)}
-													className='text-[#6C757D] hover:text-[#495057] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
+													className='text-[#374151] hover:text-[#1f2937] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
 													title="Supprimer"
 												>
 													<MdDelete size={18} className="md:size-5" />
@@ -351,7 +351,7 @@ export default function CategoriesPage() {
 						<section className='bg-white rounded-xl md:rounded-2xl shadow-lg border border-gray-100 p-4 md:p-6 hover:shadow-xl transition-shadow duration-300'>
 							<div className='flex justify-between items-center mb-4 md:mb-6 flex-wrap gap-2'>
 								<div className='flex items-center gap-2 md:gap-3'>
-									<div className='w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] rounded-lg md:rounded-xl flex items-center justify-center shadow-md'>
+									<div className='w-10 h-10 md:w-12 md:h-12 bg-[#1E3A8A] rounded-lg md:rounded-xl flex items-center justify-center shadow-md'>
 										<MdAccountBalanceWallet size={20} className="text-white md:size-6" />
 									</div>
 									<h2 className='font-bold text-gray-900 text-lg md:text-xl'>
@@ -360,7 +360,7 @@ export default function CategoriesPage() {
 								</div>
 								<button 
 									onClick={() => setShowWalletModal(true)}
-									className='bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+									className='bg-[#1E3A8A] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:bg-[#1e40af] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
 								>
 									<MdAdd size={18} className="md:size-5" />
 									<span className="hidden sm:inline">Ajouter</span>
@@ -389,20 +389,20 @@ export default function CategoriesPage() {
 											className='flex items-center justify-between bg-gradient-to-r from-gray-50 to-white rounded-lg md:rounded-xl px-3 md:px-4 py-2.5 md:py-3.5 hover:shadow-md transition-all duration-200 border border-gray-100 group'
 										>
 											<div className='flex items-center gap-2 md:gap-3 flex-1 min-w-0'>
-												<div className='w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-br from-[#1E73BE] to-[#155a8a] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200 flex-shrink-0'>
+												<div className='w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-[#1E3A8A] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200 flex-shrink-0'>
 													<MdAccountBalanceWallet size={18} className="text-white md:size-[22px]" />
 												</div>
 												<div className='flex-1 min-w-0'>
 													<div className='font-semibold text-gray-900 text-sm md:text-base truncate'>
 														{w.name}
 													</div>
-													<div className={`text-sm md:text-base font-bold mt-1 ${w.balance >= 0 ? 'text-[#28A745]' : 'text-[#6C757D]'}`}>
+													<div className={`text-sm md:text-base font-bold mt-1 ${w.balance >= 0 ? 'text-[#22C55E]' : 'text-[#374151]'}`}>
 														{w.balance !== undefined && w.balance !== null 
 															? `${w.balance < 0 ? '-' : ''}${Math.abs(w.balance).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
 															: '0,00 €'}
 													</div>
 													{w.overdraftLimit > 0 && (
-														<div className='text-[10px] md:text-xs font-medium text-[#1E73BE] mt-1 px-1.5 md:px-2 py-0.5 bg-[#E3F2FD] rounded md:rounded-lg inline-block'>
+														<div className='text-[10px] md:text-xs font-medium text-[#1E3A8A] mt-1 px-1.5 md:px-2 py-0.5 bg-[#E3F2FD] rounded md:rounded-lg inline-block'>
 															Découvert: -{w.overdraftLimit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
 														</div>
 													)}
@@ -411,21 +411,21 @@ export default function CategoriesPage() {
 											<div className='flex gap-0.5 md:gap-1 flex-shrink-0 ml-2'>
 												<button
 													onClick={() => handleRecalculateBalance(w._id)}
-													className='text-[#28A745] hover:text-[#218838] p-1.5 md:p-2 rounded-lg hover:bg-[#D4EDDA] transition-all duration-200'
+													className='text-[#22C55E] hover:text-[#16a34a] p-1.5 md:p-2 rounded-lg hover:bg-[#D4EDDA] transition-all duration-200'
 													title="Recalculer le solde"
 												>
 													<MdRefresh size={18} className="md:size-5" />
 												</button>
 												<button
 													onClick={() => handleEditWallet(w)}
-													className='text-[#1E73BE] hover:text-[#155a8a] p-1.5 md:p-2 rounded-lg hover:bg-[#E3F2FD] transition-all duration-200'
+													className='text-[#1E3A8A] hover:text-[#1e40af] p-1.5 md:p-2 rounded-lg hover:bg-[#E3F2FD] transition-all duration-200'
 													title="Modifier"
 												>
 													<MdEdit size={18} className="md:size-5" />
 												</button>
 												<button
 													onClick={() => handleDeleteWallet(w._id)}
-													className='text-[#6C757D] hover:text-[#495057] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
+													className='text-[#374151] hover:text-[#1f2937] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
 													title="Supprimer"
 												>
 													<MdDelete size={18} className="md:size-5" />
@@ -443,29 +443,29 @@ export default function CategoriesPage() {
 			{/* Footer */}
 			<footer className='bg-white border-t border-gray-200 py-8 mt-auto'>
 				<div className='max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4'>
-					<span className='text-[#1E73BE] font-bold text-xl'>MyBudget+</span>
+					<span className='text-[#1E3A8A] font-bold text-xl'>MyBudget+</span>
 					<div className='flex gap-6 text-gray-500 text-sm'>
-						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
+						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
 							Produit
 						</a>
-						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
+						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
 							Ressources
 						</a>
-						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
+						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
 							Légal
 						</a>
 					</div>
 					<div className='flex gap-4 text-gray-500'>
-						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
+						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
 							<i className='fab fa-facebook-f'></i>
 						</a>
-						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
+						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
 							<i className='fab fa-twitter'></i>
 						</a>
-						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
+						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
 							<i className='fab fa-linkedin-in'></i>
 						</a>
-						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
+						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
 							<i className='fab fa-instagram'></i>
 						</a>
 					</div>
@@ -479,7 +479,7 @@ export default function CategoriesPage() {
 		{showCategoryModal && (
 			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
 				<div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-					<div className="bg-gradient-to-r from-[#1E73BE] to-[#155a8a] px-6 py-4 rounded-t-2xl flex justify-between items-center">
+					<div className="bg-[#1E3A8A] px-6 py-4 rounded-t-2xl flex justify-between items-center">
 						<h3 className="text-xl font-bold text-white">
 							{editingCategory ? 'Modifier la Catégorie' : 'Ajouter une Catégorie'}
 						</h3>
@@ -502,7 +502,7 @@ export default function CategoriesPage() {
 									type="text"
 									value={newCategory.name}
 									onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
-									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E73BE] transition-colors"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 									placeholder="Ex: Nourriture"
 									required
 								/>
@@ -512,7 +512,7 @@ export default function CategoriesPage() {
 								<select
 									value={newCategory.type}
 									onChange={(e) => setNewCategory({...newCategory, type: e.target.value})}
-									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E73BE] transition-colors"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 								>
 									<option value="expense">Dépense</option>
 									<option value="income">Revenu</option>
@@ -528,7 +528,7 @@ export default function CategoriesPage() {
 											onClick={() => setNewCategory({...newCategory, icon})}
 											className={`p-3 rounded-xl border-2 text-2xl hover:scale-110 transition-all duration-200 ${
 												newCategory.icon === icon 
-													? 'border-[#1E73BE] bg-[#E3F2FD] shadow-md' 
+													? 'border-[#1E3A8A] bg-[#E3F2FD] shadow-md' 
 													: 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
 											}`}
 										>
@@ -545,13 +545,13 @@ export default function CategoriesPage() {
 										setEditingCategory(null);
 										setNewCategory({ name: '', type: 'expense', icon: '💳' });
 									}}
-									className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+									className="flex-1 bg-[#E5E7EB] text-[#374151] py-3 rounded-xl font-semibold hover:bg-[#D1D5DB] transition-colors"
 								>
 									Annuler
 								</button>
 								<button
 									type="submit"
-									className="flex-1 bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white py-3 rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] transition-all shadow-md hover:shadow-lg"
+									className="flex-1 bg-[#1E3A8A] text-white py-3 rounded-xl font-semibold hover:bg-[#1e40af] transition-all shadow-md hover:shadow-lg"
 								>
 									{editingCategory ? 'Modifier' : 'Ajouter'}
 								</button>
@@ -566,7 +566,7 @@ export default function CategoriesPage() {
 		{showWalletModal && (
 			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
 				<div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-					<div className="bg-gradient-to-r from-[#1E73BE] to-[#155a8a] px-6 py-4 rounded-t-2xl flex justify-between items-center">
+					<div className="bg-[#1E3A8A] px-6 py-4 rounded-t-2xl flex justify-between items-center">
 						<h3 className="text-xl font-bold text-white">
 							{editingWallet ? 'Modifier le Portefeuille' : 'Ajouter un Portefeuille'}
 						</h3>
@@ -589,7 +589,7 @@ export default function CategoriesPage() {
 									type="text"
 									value={newWallet.name}
 									onChange={(e) => setNewWallet({...newWallet, name: e.target.value})}
-									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E73BE] transition-colors"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 									placeholder="Ex: Compte Courant"
 									required
 								/>
@@ -601,7 +601,7 @@ export default function CategoriesPage() {
 									step="0.01"
 									value={newWallet.balance}
 									onChange={(e) => setNewWallet({...newWallet, balance: e.target.value})}
-									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E73BE] transition-colors"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 									placeholder="0.00"
 									required
 								/>
@@ -614,7 +614,7 @@ export default function CategoriesPage() {
 									min="0"
 									value={newWallet.overdraftLimit}
 									onChange={(e) => setNewWallet({...newWallet, overdraftLimit: e.target.value})}
-									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E73BE] transition-colors"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 									placeholder="Ex: 1000"
 								/>
 								<p className="text-xs text-gray-500 mt-2 bg-gray-50 p-2 rounded-lg">💡 Exemple: 1000€ = solde peut descendre jusqu'à -1000€</p>
@@ -624,7 +624,7 @@ export default function CategoriesPage() {
 								<select
 									value={newWallet.type}
 									onChange={(e) => setNewWallet({...newWallet, type: e.target.value})}
-									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E73BE] transition-colors"
+									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 								>
 									<option value="checking">Compte Courant</option>
 									<option value="savings">Épargne</option>
@@ -641,13 +641,13 @@ export default function CategoriesPage() {
 										setEditingWallet(null);
 										setNewWallet({ name: '', balance: '', overdraftLimit: '0', type: 'checking' });
 									}}
-									className="flex-1 bg-gray-100 text-gray-800 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+									className="flex-1 bg-[#E5E7EB] text-[#374151] py-3 rounded-xl font-semibold hover:bg-[#D1D5DB] transition-colors"
 								>
 									Annuler
 								</button>
 								<button
 									type="submit"
-									className="flex-1 bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white py-3 rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] transition-all shadow-md hover:shadow-lg"
+									className="flex-1 bg-[#1E3A8A] text-white py-3 rounded-xl font-semibold hover:bg-[#1e40af] transition-all shadow-md hover:shadow-lg"
 								>
 									{editingWallet ? 'Modifier' : 'Ajouter'}
 								</button>
