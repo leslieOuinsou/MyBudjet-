@@ -714,9 +714,9 @@ export default function SettingsPage() {
                 disabled={syncStatus.isSyncing || !settings?.data?.autoBackup}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl ${
                   syncStatus.isSyncing 
-                    ? 'bg-gray-400 cursor-not-allowed text-white' 
+                    ? 'bg-[#9CA3AF] cursor-not-allowed text-white' 
                     : settings?.data?.autoBackup
-                      ? 'bg-gradient-to-r from-[#1E73BE] to-[#155a8a] hover:from-[#155a8a] hover:to-[#0d4a6f] text-white transform hover:scale-105'
+                      ? 'bg-[#1E3A8A] hover:bg-[#1e40af] text-white transform hover:scale-105'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
