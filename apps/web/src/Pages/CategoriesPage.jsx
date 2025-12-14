@@ -402,7 +402,7 @@ export default function CategoriesPage() {
 															: '0,00 €'}
 													</div>
 													{w.overdraftLimit > 0 && (
-														<div className='text-[10px] md:text-xs font-medium text-blue-600 mt-1 px-1.5 md:px-2 py-0.5 bg-blue-50 rounded md:rounded-lg inline-block'>
+														<div className='text-[10px] md:text-xs font-medium text-[#1E73BE] mt-1 px-1.5 md:px-2 py-0.5 bg-[#E3F2FD] rounded md:rounded-lg inline-block'>
 															Découvert: -{w.overdraftLimit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
 														</div>
 													)}
@@ -443,29 +443,29 @@ export default function CategoriesPage() {
 			{/* Footer */}
 			<footer className='bg-white border-t border-gray-200 py-8 mt-auto'>
 				<div className='max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4'>
-					<span className='text-blue-600 font-bold text-xl'>MyBudget+</span>
+					<span className='text-[#1E73BE] font-bold text-xl'>MyBudget+</span>
 					<div className='flex gap-6 text-gray-500 text-sm'>
-						<a href='#' className='hover:text-blue-600 transition-colors'>
+						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
 							Produit
 						</a>
-						<a href='#' className='hover:text-blue-600 transition-colors'>
+						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
 							Ressources
 						</a>
-						<a href='#' className='hover:text-blue-600 transition-colors'>
+						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
 							Légal
 						</a>
 					</div>
 					<div className='flex gap-4 text-gray-500'>
-						<a href='#' className='hover:text-blue-600 transition-colors'>
+						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
 							<i className='fab fa-facebook-f'></i>
 						</a>
-						<a href='#' className='hover:text-blue-600 transition-colors'>
+						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
 							<i className='fab fa-twitter'></i>
 						</a>
-						<a href='#' className='hover:text-blue-600 transition-colors'>
+						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
 							<i className='fab fa-linkedin-in'></i>
 						</a>
-						<a href='#' className='hover:text-blue-600 transition-colors'>
+						<a href='#' className='hover:text-[#1E73BE] transition-colors'>
 							<i className='fab fa-instagram'></i>
 						</a>
 					</div>
