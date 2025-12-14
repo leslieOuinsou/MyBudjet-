@@ -180,7 +180,20 @@ export const uploadProfilePicture = async (req, res) => {
       return res.status(400).json({ message: 'Aucun fichier uploadé' });
     }
 
-    // Construire l'URL de l'image
+    // Sur Vercel (serverless), les fichiers sont en mémoire et ne peuvent pas être stockés de manière persistante
+    // Il faudrait utiliser un service externe comme Cloudinary, AWS S3, ou Vercel Blob Storage
+    if (req.file.buffer && !req.file.path) {
+      console.warn('⚠️ Upload de photo de profil en mémoire (Vercel) - nécessite un service de stockage externe');
+      return res.status(501).json({ 
+        message: 'L\'upload de photos de profil nécessite un service de stockage externe en production. Veuillez configurer Cloudinary, AWS S3 ou Vercel Blob Storage.' 
+      });
+    }
+
+    // Construire l'URL de l'image (seulement si fichier sur disque)
+    if (!req.file.filename) {
+      return res.status(400).json({ message: 'Impossible de déterminer le nom du fichier' });
+    }
+    
     const profilePictureUrl = `/uploads/${req.file.filename}`;
     console.log('🔗 URL de l\'avatar:', profilePictureUrl);
 

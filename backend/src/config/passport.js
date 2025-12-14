@@ -31,10 +31,24 @@ console.log('🔑 Vérification des variables Google OAuth:', {
 
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   console.log('✅ Configuration Google OAuth activée');
+  
+  // Construire l'URL de callback complète
+  let callbackURL = process.env.GOOGLE_CALLBACK_URL;
+  if (!callbackURL) {
+    // Si pas défini, construire depuis l'environnement
+    if (process.env.VERCEL_URL) {
+      callbackURL = `https://${process.env.VERCEL_URL}/api/auth/google/callback`;
+    } else {
+      callbackURL = '/api/auth/google/callback';
+    }
+  }
+  
+  console.log('🔗 Google OAuth Callback URL:', callbackURL);
+  
   passport.use(new GoogleStrategy.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback',
+    callbackURL: callbackURL,
   }, async (accessToken, refreshToken, profile, done) => {
     try {
       console.log('🔍 Google profile received:', {

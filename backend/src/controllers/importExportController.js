@@ -127,9 +127,24 @@ export const importTransactions = async (req, res) => {
     let details = [];
 
     // Lecture du fichier selon le format
+    // Gérer les deux cas : memoryStorage (Vercel) et diskStorage (local)
+    let fileContent;
+    let filePath = null;
+    
+    if (req.file.buffer) {
+      // Fichier en mémoire (Vercel serverless)
+      fileContent = req.file.buffer.toString('utf8');
+    } else if (req.file.path) {
+      // Fichier sur disque (local)
+      filePath = req.file.path;
+      fileContent = fs.readFileSync(req.file.path, 'utf8');
+    } else {
+      return res.status(400).json({ message: 'Impossible de lire le fichier' });
+    }
+    
     try {
       if (ext === 'csv') {
-        const content = fs.readFileSync(req.file.path, 'utf8');
+        const content = fileContent;
         
         // Parser CSV amélioré qui gère les guillemets et les virgules dans les valeurs
         const parseCSVLine = (line) => {
@@ -178,7 +193,13 @@ export const importTransactions = async (req, res) => {
           throw new Error('Aucune donnée valide trouvée dans le fichier CSV');
         }
       } else if (ext === 'xlsx' || ext === 'xls') {
-        const workbook = XLSX.readFile(req.file.path);
+        // Gérer les fichiers Excel en mémoire ou sur disque
+        let workbook;
+        if (req.file.buffer) {
+          workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+        } else {
+          workbook = XLSX.readFile(req.file.path);
+        }
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         data = XLSX.utils.sheet_to_json(sheet);
@@ -299,8 +320,14 @@ export const importTransactions = async (req, res) => {
       }
     }
 
-    // Nettoyage du fichier temporaire
-    fs.unlinkSync(req.file.path);
+    // Nettoyage du fichier temporaire (seulement si sur disque)
+    if (filePath && fs.existsSync(filePath)) {
+      try {
+        fs.unlinkSync(filePath);
+      } catch (unlinkError) {
+        console.warn('⚠️ Impossible de supprimer le fichier temporaire:', unlinkError.message);
+      }
+    }
 
     // Réponse avec statistiques détaillées
     res.json({ 
@@ -313,8 +340,8 @@ export const importTransactions = async (req, res) => {
     });
 
   } catch (error) {
-    // Nettoyage en cas d'erreur
-    if (req.file && fs.existsSync(req.file.path)) {
+    // Nettoyage en cas d'erreur (seulement si sur disque)
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
       try {
         fs.unlinkSync(req.file.path);
       } catch (unlinkError) {
