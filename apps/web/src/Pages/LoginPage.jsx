@@ -202,16 +202,6 @@ export default function LoginPage() {
               S'inscrire
             </Link>
           </div>
-          
-          <div className="text-center mt-6 pt-6 border-t border-gray-200">
-            <Link 
-              to="/admin/login" 
-              className="inline-flex items-center gap-2 text-xs text-[#374151] hover:text-[#1E3A8A] hover:underline font-medium transition-colors"
-            >
-              <span>🔐</span>
-              Accès Administrateur
-            </Link>
-          </div>
         </div>
       </div>
     </div>

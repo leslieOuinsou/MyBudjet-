@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useTheme } from '../context/ThemeContext';
 import AdminHeader from '../components/AdminHeader';
 import AdminSidebar from '../components/AdminSidebar';
 import { 
@@ -25,7 +24,6 @@ import {
 } from 'react-icons/md';
 
 export default function AdministrationPage() {
-	const { isDarkMode } = useTheme();
 	
 	// États pour les données
 	const [users, setUsers] = useState([]);
@@ -123,17 +121,17 @@ export default function AdministrationPage() {
 	
 	if (loading) {
 		return (
-			<div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+			<div className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
 				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-					<p className={isDarkMode ? 'text-gray-300' : 'text-[#6C757D]'}>Chargement du tableau de bord admin...</p>
+					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E3A8A] mx-auto mb-4"></div>
+					<p className="text-[#6C757D]">Chargement du tableau de bord admin...</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+		<div className="min-h-screen flex flex-col bg-[#F5F7FA]">
 			<AdminHeader />
 			
 			<div className="flex flex-1">
@@ -143,10 +141,10 @@ export default function AdministrationPage() {
 				<main className="flex-1 px-4 md:px-8 lg:px-12 py-6 md:py-10 flex flex-col pt-16 md:pt-10">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
 						<div>
-							<h1 className={`text-2xl md:text-3xl font-extrabold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+							<h1 className="text-2xl md:text-3xl font-extrabold text-[#22292F]">
 								Tableau de Bord Administration
 							</h1>
-							<div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+							<div className="text-xs mt-2 flex items-center gap-2 text-gray-400">
 								<span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span>
 								Dernière mise à jour : {lastRefresh.toLocaleTimeString('fr-FR')}
 								<span className="mx-2">•</span>
@@ -165,93 +163,93 @@ export default function AdministrationPage() {
 					
 					{/* Messages d'erreur et de succès */}
 					{error && (
-						<div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700 text-red-400' : 'bg-red-100 border border-red-300 text-red-700'}`}>
+						<div className="mb-4 p-4 rounded-lg bg-red-100 border border-red-300 text-red-700">
 							❌ {error}
 						</div>
 					)}
 					{success && (
-						<div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-[#D4EDDA] border border-[#22C55E] text-[#155724]'}`}>
+						<div className="mb-4 p-4 rounded-lg bg-[#D4EDDA] border border-[#22C55E] text-[#155724]">
 							✅ {success}
 						</div>
 					)}
 					
 					{/* Statistiques Clés */}
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-						<div className={`rounded-xl shadow p-6 border flex flex-col gap-2 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
 							<div className="flex items-center justify-between">
-								<span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+								<span className="text-sm text-[#6C757D]">
 									Total Utilisateurs
 								</span>
 								<MdPeople size={24} className="text-[#1E73BE]" />
 							</div>
-							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
 								{stats?.userCount || 0}
 							</div>
 							<span className="text-xs text-[#22C55E]">
 								Utilisateurs inscrits
 							</span>
 						</div>
-						<div className={`rounded-xl shadow p-6 border flex flex-col gap-2 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
 							<div className="flex items-center justify-between">
-								<span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+								<span className="text-sm text-[#6C757D]">
 									Transactions
 								</span>
 								<MdAttachMoney size={24} className="text-[#22C55E]" />
 							</div>
-							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
 								{stats?.txCount || 0}
 							</div>
 							<span className="text-xs text-[#6C757D]">
 								Transactions enregistrées
 							</span>
 						</div>
-						<div className={`rounded-xl shadow p-6 border flex flex-col gap-2 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
 							<div className="flex items-center justify-between">
-								<span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+								<span className="text-sm text-[#6C757D]">
 									Budgets Actifs
 								</span>
 								<MdAccountBalance size={24} className="text-[#1E73BE]" />
 							</div>
-							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
 								{stats?.budgetCount || 0}
 							</div>
 							<span className="text-xs text-[#22C55E]">
 								Budgets créés
 							</span>
 						</div>
-						<div className={`rounded-xl shadow p-6 border flex flex-col gap-2 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
 							<div className="flex items-center justify-between">
-								<span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+								<span className="text-sm text-[#6C757D]">
 									Rappels de Factures
 								</span>
 								<MdNotifications size={24} className="text-[#6C757D]" />
 							</div>
-							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
 								{stats?.reminderCount || 0}
 							</div>
 							<span className="text-xs text-[#1E73BE]">Rappels actifs</span>
 						</div>
 					</div>
 					{/* Gestion des Utilisateurs */}
-					<section className={`rounded-xl shadow p-6 border mb-8 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+					<section className="rounded-xl shadow p-6 border mb-8 bg-white border-[#EAF4FB]">
 						<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
 							<div>
-								<h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+								<h2 className="text-xl font-bold text-[#22292F]">
 									Gestion des Utilisateurs ({filteredUsers.length})
 								</h2>
-								<p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+								<p className="text-sm mt-1 text-[#6C757D]">
 									Gérez les comptes utilisateurs et leurs accès
 								</p>
 							</div>
 							<div className="flex gap-3">
 								<div className="relative">
-									<MdSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} size={20} />
+									<MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
 									<input
 										type="text"
 										placeholder="Rechercher..."
 										value={searchTerm}
 										onChange={(e) => setSearchTerm(e.target.value)}
-										className={`pl-10 pr-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
+										className="pl-10 pr-4 py-2 rounded-lg border bg-white border-gray-300 text-black"
 									/>
 								</div>
 							</div>
@@ -259,20 +257,20 @@ export default function AdministrationPage() {
 						<div className="overflow-x-auto rounded-xl">
 							<table className="min-w-full text-base">
 								<thead>
-									<tr className={isDarkMode ? 'bg-[#383838]' : 'bg-[#F5F7FA]'}>
-										<th className={`px-4 py-3 text-left font-bold ${isDarkMode ? 'text-gray-300' : 'text-[#343A40]'}`}>
+									<tr className="bg-[#F5F7FA]">
+										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
 											NOM
 										</th>
-										<th className={`px-4 py-3 text-left font-bold ${isDarkMode ? 'text-gray-300' : 'text-[#343A40]'}`}>
+										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
 											EMAIL
 										</th>
-										<th className={`px-4 py-3 text-left font-bold ${isDarkMode ? 'text-gray-300' : 'text-[#343A40]'}`}>
+										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
 											RÔLE
 										</th>
-										<th className={`px-4 py-3 text-left font-bold ${isDarkMode ? 'text-gray-300' : 'text-[#343A40]'}`}>
+										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
 											STATUT
 										</th>
-										<th className={`px-4 py-3 text-left font-bold ${isDarkMode ? 'text-gray-300' : 'text-[#343A40]'}`}>
+										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
 											ACTIONS
 										</th>
 									</tr>
@@ -282,11 +280,11 @@ export default function AdministrationPage() {
 										filteredUsers.map((user) => (
 											<tr
 												key={user._id}
-												className={isDarkMode ? 'even:bg-[#2d2d2d] odd:bg-[#383838] hover:bg-[#404040]' : 'even:bg-white odd:bg-[#F5F7FA] hover:bg-gray-100'}
+												className="even:bg-white odd:bg-[#F5F7FA] hover:bg-gray-100"
 											>
-												<td className={`px-4 py-3 font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>{user.name}</td>
-												<td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{user.email}</td>
-												<td className={`px-4 py-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+												<td className="px-4 py-3 font-medium text-black">{user.name}</td>
+												<td className="px-4 py-3 text-gray-700">{user.email}</td>
+												<td className="px-4 py-3 text-gray-700">
 													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E3A8A] text-white' : 'bg-[#E3F2FD] text-[#1E3A8A]'}`}>
 														{user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
 													</span>
@@ -337,7 +335,7 @@ export default function AdministrationPage() {
 										))
 									) : (
 										<tr>
-											<td colSpan="5" className={`px-4 py-8 text-center ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+											<td colSpan="5" className="px-4 py-8 text-center text-[#6C757D]">
 												{searchTerm ? 'Aucun utilisateur trouvé' : 'Aucun utilisateur'}
 											</td>
 										</tr>
@@ -348,16 +346,16 @@ export default function AdministrationPage() {
 					</section>
 					{/* Actions Rapides */}
 					<section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-						<div className={`rounded-xl shadow p-6 border flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#EAF4FB]">
 							<div className="flex items-center gap-3">
 								<div className="p-3 bg-[#E3F2FD] rounded-lg">
 									<MdPeople size={24} className="text-[#1E73BE]" />
 								</div>
 								<div>
-									<h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+									<h3 className="text-lg font-bold text-[#22292F]">
 										Utilisateurs
 									</h3>
-									<p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+									<p className="text-sm text-[#6C757D]">
 										{stats?.userCount || 0} comptes
 									</p>
 								</div>
@@ -370,16 +368,16 @@ export default function AdministrationPage() {
 							</Link>
 						</div>
 						
-						<div className={`rounded-xl shadow p-6 border flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#EAF4FB]">
 							<div className="flex items-center gap-3">
 								<div className="p-3 bg-yellow-100 rounded-lg">
 									<MdNotifications size={24} className="text-yellow-600" />
 								</div>
 								<div>
-									<h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+									<h3 className="text-lg font-bold text-[#22292F]">
 										Rappels
 									</h3>
-									<p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+									<p className="text-sm text-[#6C757D]">
 										{stats?.reminderCount || 0} rappels
 									</p>
 								</div>
@@ -392,16 +390,16 @@ export default function AdministrationPage() {
 							</Link>
 						</div>
 						
-						<div className={`rounded-xl shadow p-6 border flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#EAF4FB]">
 							<div className="flex items-center gap-3">
 								<div className="p-3 bg-[#D4EDDA] rounded-lg">
 									<MdAccountBalance size={24} className="text-[#22C55E]" />
 								</div>
 								<div>
-									<h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+									<h3 className="text-lg font-bold text-[#22292F]">
 										Budgets
 									</h3>
-									<p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+									<p className="text-sm text-[#6C757D]">
 										{stats?.budgetCount || 0} budgets
 									</p>
 								</div>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
 import { 
   MdDashboard, 
   MdPeople, 
@@ -16,7 +15,6 @@ import {
 } from 'react-icons/md';
 
 export default function AdminSidebar() {
-  const { isDarkMode } = useTheme();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -43,16 +41,12 @@ export default function AdminSidebar() {
       {/* Bouton hamburger mobile */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg shadow-lg border"
-        style={{
-          backgroundColor: isDarkMode ? '#2d2d2d' : 'white',
-          borderColor: isDarkMode ? '#6b21a8' : '#e5e7eb'
-        }}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg shadow-lg border bg-white border-gray-200"
       >
         {mobileMenuOpen ? (
-          <MdClose size={24} style={{ color: isDarkMode ? 'white' : '#1f2937' }} />
+          <MdClose size={24} className="text-gray-800" />
         ) : (
-          <MdMenu size={24} style={{ color: isDarkMode ? 'white' : '#1f2937' }} />
+          <MdMenu size={24} className="text-gray-800" />
         )}
       </button>
       
@@ -71,11 +65,11 @@ export default function AdminSidebar() {
         h-screen
         transition-transform duration-300 ease-in-out
         z-40
+        bg-white border-r border-gray-200
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        ${isDarkMode ? 'bg-[#2d2d2d] border-r border-[#404040]' : 'bg-white border-r border-[#F5F7FA]'}
       `}>
       <div className="mb-8">
-        <div className={`text-xs font-semibold mb-4 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+        <div className="text-xs font-semibold mb-4 text-[#6C757D]">
           ADMINISTRATION
         </div>
         <ul className="space-y-2">
@@ -90,12 +84,8 @@ export default function AdminSidebar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg transition ${
                     active
-                      ? isDarkMode 
-                        ? 'bg-purple-900/30 text-purple-400 font-semibold border border-purple-700/50' 
-                        : 'bg-purple-50 text-purple-700 font-semibold border border-purple-200'
-                      : isDarkMode
-                        ? 'text-gray-300 hover:bg-[#383838]'
-                        : 'text-[#343A40] hover:bg-[#F5F7FA]'
+                      ? 'bg-[#1E3A8A] text-white font-semibold shadow-md'
+                      : 'text-[#343A40] hover:bg-gray-100 hover:text-[#1E3A8A]'
                   }`}
                 >
                   <Icon size={20} />
@@ -114,7 +104,7 @@ export default function AdminSidebar() {
           localStorage.removeItem('token');
           setMobileMenuOpen(false);
         }}
-        className="mt-8 w-full bg-[#DC3545] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#b52a37] flex items-center justify-center gap-2 transition"
+        className="mt-8 w-full bg-[#DC3545] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#b52a37] flex items-center justify-center gap-2 transition shadow-md hover:shadow-lg"
       >
         <MdLogout size={20} />
         Déconnexion
@@ -123,4 +113,3 @@ export default function AdminSidebar() {
     </>
   );
 }
-

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
 import { login } from '../api';
 import { 
   MdAdminPanelSettings, 
@@ -12,7 +11,6 @@ import {
 } from 'react-icons/md';
 
 export default function AdminLoginPage() {
-  const { isDarkMode } = useTheme();
   const navigate = useNavigate();
   
   const [email, setEmail] = useState('');
@@ -37,7 +35,6 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
     
     setLoading(true);
 
@@ -83,219 +80,158 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className={`min-h-screen flex ${isDarkMode ? 'bg-gradient-to-br from-[#1a1a1a] via-purple-900/10 to-[#1a1a1a]' : 'bg-gradient-to-br from-purple-50 via-white to-purple-100'}`}>
-      {/* Partie gauche - Branding Admin */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 to-purple-900 p-12 flex-col justify-between relative overflow-hidden">
-        {/* Motifs de fond */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-        </div>
-        
-        <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-2 text-white hover:opacity-80 transition mb-8">
-            <MdArrowBack size={24} />
-            <span className="text-sm">Retour à l'accueil</span>
-          </Link>
-          
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-              <MdAdminPanelSettings size={40} className="text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col px-4 py-6 md:py-12">
+      <div className="flex-grow flex items-center justify-center">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200">
+          {/* Logo et titre */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="relative mb-4">
+              <div className="absolute inset-0 bg-[#1E3A8A] rounded-full blur-xl opacity-20 animate-pulse"></div>
+              <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] rounded-2xl flex items-center justify-center shadow-lg">
+                <MdAdminPanelSettings className="text-white text-2xl" />
+              </div>
             </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-[#343A40] mb-2">
+              MyBudget<span className="text-[#1E3A8A]">+</span>
+            </h1>
+            <h2 className="text-xl md:text-2xl font-semibold text-[#343A40] mt-2 mb-2">Connexion Admin</h2>
+            <p className="text-[#6C757D] text-center text-sm md:text-base">
+              Accédez au panneau d'administration
+            </p>
+          </div>
+
+          {/* Bouton retour */}
+          <div className="mb-4">
+            <Link 
+              to="/" 
+              className="inline-flex items-center gap-2 text-sm text-[#6C757D] hover:text-[#1E3A8A] transition-colors"
+            >
+              <MdArrowBack size={18} />
+              <span>Retour à l'accueil</span>
+            </Link>
+          </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-800 rounded-lg text-sm font-medium">
+              {error}
+            </div>
+          )}
+
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={handleSubmit}
+          >
             <div>
-              <h1 className="text-4xl font-bold text-white">MyBudget+</h1>
-              <p className="text-purple-200 text-sm">Portail Administrateur</p>
-            </div>
-          </div>
-          
-          <div className="mt-12 space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="p-2 bg-white/20 rounded-lg mt-1">
-                <MdAdminPanelSettings size={24} className="text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">Accès Sécurisé</h3>
-                <p className="text-purple-200">
-                  Portail réservé aux administrateurs de la plateforme MyBudget+. 
-                  Authentification renforcée et sessions sécurisées.
-                </p>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Email Administrateur</label>
+              <div className="relative">
+                <MdEmail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="email"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 text-sm transition-all duration-200 border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A] focus:outline-none focus:ring-4 focus:ring-blue-100"
+                  placeholder="admin@mybudget.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                />
               </div>
             </div>
-            
-            <div className="flex items-start gap-4">
-              <div className="p-2 bg-white/20 rounded-lg mt-1">
-                <MdLock size={24} className="text-white" />
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
+              <div className="relative">
+                <MdLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border-2 text-sm transition-all duration-200 border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A] focus:outline-none focus:ring-4 focus:ring-blue-100"
+                  placeholder="Votre mot de passe"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors duration-200"
+                >
+                  {showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
+                </button>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">Sécurité Maximale</h3>
-                <p className="text-purple-200">
-                  Toutes les actions administratives sont surveillées et enregistrées 
-                  pour garantir la sécurité de la plateforme.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="relative z-10 text-purple-200 text-sm">
-          © 2025 MyBudget+. Tous droits réservés.
-          <div className="mt-2 text-xs">
-            Version Admin 1.0 • Sécurisé par SSL
-          </div>
-        </div>
-      </div>
-      
-      {/* Partie droite - Formulaire */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          {/* Logo mobile */}
-          <div className="lg:hidden mb-8 text-center">
-            <div className="inline-flex items-center gap-3 mb-4">
-              <div className="p-3 bg-gradient-to-br from-purple-600 to-purple-900 rounded-xl">
-                <MdAdminPanelSettings size={32} className="text-white" />
-              </div>
-              <div className="text-left">
-                <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                  MyBudget+
-                </h1>
-                <p className="text-purple-600 text-sm">Portail Admin</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className={`p-8 rounded-2xl shadow-xl ${isDarkMode ? 'bg-[#2d2d2d] border border-purple-700/30' : 'bg-white border border-purple-100'}`}>
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-700 rounded-lg">
-                  <MdAdminPanelSettings size={24} className="text-white" />
-                </div>
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                  Connexion Admin
-                </h2>
-              </div>
-              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Accédez au panneau d'administration
-              </p>
             </div>
             
-            {error && (
-              <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700 text-red-400' : 'bg-red-50 border border-red-200 text-red-700'}`}>
-                {error}
-              </div>
-            )}
+            {/* Option "Se souvenir de moi" */}
+            <div className="flex items-center justify-between mt-2">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="mr-2 h-4 w-4 text-[#1E3A8A] focus:ring-[#1E3A8A] border-gray-300 rounded"
+                />
+                <span className="text-sm text-gray-600">Se souvenir de moi</span>
+              </label>
+            </div>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Email Administrateur
-                </label>
-                <div className="relative">
-                  <MdEmail className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} size={20} />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-3 rounded-lg border transition ${isDarkMode ? 'bg-[#383838] border-purple-700/30 text-white focus:border-purple-500' : 'bg-white border-purple-200 text-black focus:border-purple-500'}`}
-                    placeholder="admin@mybudget.com"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Mot de passe
-                </label>
-                <div className="relative">
-                  <MdLock className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} size={20} />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full pl-10 pr-12 py-3 rounded-lg border transition ${isDarkMode ? 'bg-[#383838] border-purple-700/30 text-white focus:border-purple-500' : 'bg-white border-purple-200 text-black focus:border-purple-500'}`}
-                    placeholder="••••••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-purple-600"
-                  >
-                    {showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
-                  </button>
-                </div>
-              </div>
-              
-              {/* Option "Se souvenir de moi" */}
-              <div className="flex items-center justify-between mt-4">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="mr-2 w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
-                  />
-                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Se souvenir de moi
-                  </span>
-                </label>
-              </div>
-              
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full font-semibold py-3 rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 ${
+                loading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-gradient-to-r from-[#1E3A8A] to-[#155a8a] hover:from-[#155a8a] hover:to-[#1E3A8A] text-white hover:shadow-xl transform hover:scale-[1.01]'
+              }`}
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Connexion...</span>
+                </>
+              ) : (
+                <>
+                  <MdAdminPanelSettings size={20} />
+                  <span>Se connecter en tant qu'Admin</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="text-center space-y-3">
+              <Link
+                to="/forgot-password?from=admin"
+                className="block text-sm text-[#1E3A8A] hover:text-[#155a8a] hover:underline transition-colors"
               >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Connexion...
-                  </>
-                ) : (
-                  <>
-                    <MdAdminPanelSettings size={20} />
-                    Se connecter en tant qu'Admin
-                  </>
-                )}
-              </button>
-            </form>
-            
-            <div className={`mt-6 pt-6 border-t ${isDarkMode ? 'border-purple-700/30' : 'border-purple-100'}`}>
-              <div className="text-center space-y-3">
+                Mot de passe oublié ?
+              </Link>
+              <div className="text-sm text-gray-600">
+                Pas encore de compte admin ?{' '}
                 <Link
-                  to="/forgot-password?from=admin"
-                  className="block text-sm text-purple-600 hover:text-purple-700 hover:underline"
+                  to="/admin/signup"
+                  className="text-[#1E3A8A] hover:text-[#155a8a] hover:underline font-semibold transition-colors"
                 >
-                  Mot de passe oublié ?
-                </Link>
-                <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Pas encore de compte admin ?{' '}
-                  <Link
-                    to="/admin/signup"
-                    className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
-                  >
-                    Créer un compte
-                  </Link>
-                </div>
-                <Link
-                  to="/login"
-                  className="block text-sm text-purple-600 hover:text-purple-700 hover:underline"
-                >
-                  Connexion utilisateur standard →
+                  Créer un compte
                 </Link>
               </div>
+              <Link
+                to="/login"
+                className="block text-sm text-[#1E3A8A] hover:text-[#155a8a] hover:underline transition-colors"
+              >
+                Connexion utilisateur standard →
+              </Link>
             </div>
-            
-            {/* Avertissement de sécurité */}
-            <div className={`mt-6 p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-700/50' : 'bg-purple-50 border border-purple-200'}`}>
-              <div className="flex items-start gap-3">
-                <MdLock size={20} className="text-purple-600 mt-0.5" />
-                <div className={`text-xs ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
-                  <div className="font-semibold mb-1">Accès Sécurisé</div>
-                  <div>
-                    Cette interface est réservée aux administrateurs autorisés. 
-                    Toutes les connexions sont surveillées et enregistrées.
-                  </div>
+          </div>
+
+          {/* Avertissement de sécurité */}
+          <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
+            <div className="flex items-start gap-3">
+              <MdLock size={20} className="text-[#1E3A8A] mt-0.5 flex-shrink-0" />
+              <div className="text-xs text-blue-700">
+                <div className="font-semibold mb-1">Accès Sécurisé</div>
+                <div>
+                  Cette interface est réservée aux administrateurs autorisés. 
+                  Toutes les connexions sont surveillées et enregistrées.
                 </div>
               </div>
             </div>
@@ -305,4 +241,3 @@ export default function AdminLoginPage() {
     </div>
   );
 }
-
