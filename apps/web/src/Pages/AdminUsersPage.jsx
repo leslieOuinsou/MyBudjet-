@@ -178,7 +178,7 @@ export default function AdminUsersPage() {
                   Gérez tous les comptes utilisateurs de la plateforme
                 </p>
                 <div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  <span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span>
                   Dernière mise à jour : {lastRefresh.toLocaleTimeString('fr-FR')}
                   <span className="mx-2">•</span>
                   Auto-refresh : 30s
@@ -202,7 +202,7 @@ export default function AdminUsersPage() {
             </div>
           )}
           {success && (
-            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-green-100 border border-green-300 text-green-700'}`}>
+            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-[#D4EDDA] border border-[#22C55E] text-[#155724]'}`}>
               ✅ {success}
             </div>
           )}
@@ -330,7 +330,7 @@ export default function AdminUsersPage() {
                           <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                             user.blocked 
                               ? 'bg-red-100 text-red-700' 
-                              : 'bg-green-100 text-green-700'
+                              : 'bg-[#D4EDDA] text-[#155724]'
                           }`}>
                             {user.blocked ? 'Bloqué' : 'Actif'}
                           </span>
@@ -343,7 +343,7 @@ export default function AdminUsersPage() {
                             {user.blocked ? (
                               <button 
                                 onClick={() => handleUnblockUser(user._id)}
-                                className="flex items-center gap-1 px-3 py-1 rounded text-sm text-green-600 hover:bg-green-50"
+                                className="flex items-center gap-1 px-3 py-1 rounded text-sm text-[#22C55E] hover:bg-[#D4EDDA]"
                                 title="Débloquer"
                               >
                                 <MdCheckCircle size={18} />

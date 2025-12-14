@@ -147,7 +147,7 @@ export default function AdministrationPage() {
 								Tableau de Bord Administration
 							</h1>
 							<div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-								<span className="w-2 h-2 bg-[#28A745] rounded-full animate-pulse"></span>
+								<span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span>
 								Dernière mise à jour : {lastRefresh.toLocaleTimeString('fr-FR')}
 								<span className="mx-2">•</span>
 								Auto-refresh : 30s
@@ -170,7 +170,7 @@ export default function AdministrationPage() {
 						</div>
 					)}
 					{success && (
-						<div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-[#D4EDDA] border border-[#28A745] text-[#155724]'}`}>
+						<div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-[#D4EDDA] border border-[#22C55E] text-[#155724]'}`}>
 							✅ {success}
 						</div>
 					)}

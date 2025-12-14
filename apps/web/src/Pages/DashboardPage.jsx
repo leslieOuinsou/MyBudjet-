@@ -288,7 +288,7 @@ export default function DashboardPage() {
                       <div key={i} className="flex-1 flex flex-col items-center">
                         <div className="flex flex-col items-center gap-1 mb-1">
                           <div 
-                            className="bg-[#28A745] rounded-t" 
+                            className="bg-[#22C55E] rounded-t" 
                             style={{ height: `${(stat.income / Math.max(...dashboardData.stats.map(s => Math.max(s.income, s.expense)))) * 80}px`, minHeight: '4px', width: '12px' }}
                           ></div>
                           <div 

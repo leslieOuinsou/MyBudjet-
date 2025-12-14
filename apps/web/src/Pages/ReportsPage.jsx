@@ -341,7 +341,7 @@ export default function ReportsPage() {
             </div>
           )}
           {success && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg">
+            <div className="mb-4 p-4 bg-[#D4EDDA] border border-[#22C55E] text-[#155724] rounded-lg">
               {success}
             </div>
           )}

@@ -391,7 +391,7 @@ export default function TransactionsPage() {
             </div>
           )}
           {success && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg">
+            <div className="mb-4 p-4 bg-[#D4EDDA] border border-[#22C55E] text-[#155724] rounded-lg">
               {success}
             </div>
           )}
@@ -540,7 +540,7 @@ export default function TransactionsPage() {
                         <td className="px-2 md:px-4 py-2 md:py-3 hidden lg:table-cell">
                           <span className={`rounded px-2 py-1 text-[10px] md:text-xs font-semibold ${
                             t.type === 'expense' 
-                              ? 'bg-[#FEE2E2] text-[#DC2626]' 
+                              ? 'bg-[#F5F7FA] text-[#374151]' 
                               : 'bg-[#DCFCE7] text-[#22C55E]'
                           }`}>
                             {t.type === 'expense' ? 'Dépense' : 'Revenu'}
