@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Footer from '../components/Footer.jsx';
 
 const features = [
 	{
@@ -221,8 +220,6 @@ export default function HomePage() {
 				</div>
 			</section>
 
-			{/* Footer */}
-			<Footer />
 		</div>
 	);
 }

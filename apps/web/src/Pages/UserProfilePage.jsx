@@ -305,20 +305,6 @@ const UserProfilePage = () => {
           </section>
         </main>
       </div>
-      {/* Footer */}
-      <footer className={`flex items-center justify-between px-8 py-3 border-t mt-auto ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-gray-200'}`}>
-        <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Made with <span className="text-[#1E73BE]">❤️</span></div>
-        <div className={`flex gap-6 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-          <a href="#" className="hover:underline">Ressources</a>
-          <a href="#" className="hover:underline">Légal</a>
-          <a href="#" className="hover:underline">Nous Contacter</a>
-        </div>
-        <div className={`flex gap-4 text-lg ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-          <span>⚡</span>
-          <span>🔒</span>
-          <span>👥</span>
-        </div>
-      </footer>
     </div>
   );
 };

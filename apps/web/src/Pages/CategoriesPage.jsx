@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import CategoryIcon from '../components/CategoryIcon.jsx';
 import { getCategories, getWallets, addCategory, addWallet, updateCategory, updateWallet, deleteCategory, deleteWallet, recalculateWalletBalance, syncCategoriesFromTransactions } from '../api.js';
@@ -31,6 +30,32 @@ const categoryIcons = {
   '☕': '☕',
   '🛒': '🛒',
   '💊': '💊'
+};
+
+// Palette de couleurs Fintech pour les icônes
+const fintechColors = [
+  '#1E3A8A', // Bleu principal
+  '#22C55E', // Vert croissance
+  '#374151', // Gris anthracite
+  '#6C757D', // Gris moyen
+  '#155a8a', // Bleu foncé
+  '#343A40', // Anthracite foncé
+  '#1E73BE', // Bleu confiance (variante)
+  '#28A745', // Vert succès (variante)
+];
+
+// Fonction pour obtenir une couleur basée sur le nom de la catégorie
+const getCategoryColor = (categoryName, categoryType) => {
+  if (!categoryName) return fintechColors[0];
+  
+  // Pour les revenus, utiliser principalement le vert
+  if (categoryType === 'income') {
+    return '#22C55E'; // Vert pour les revenus
+  }
+  
+  // Pour les dépenses, utiliser un cycle de couleurs basé sur le nom
+  const hash = categoryName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return fintechColors[hash % fintechColors.length];
 };
 
 export default function CategoriesPage() {
@@ -110,10 +135,16 @@ export default function CategoriesPage() {
 	const handleAddCategory = async (e) => {
 		e.preventDefault();
 		try {
+			// Assigner automatiquement une couleur si elle n'est pas définie
+			const categoryData = {
+				...newCategory,
+				color: newCategory.color || getCategoryColor(newCategory.name, newCategory.type)
+			};
+			
 			if (editingCategory) {
-				await updateCategory(editingCategory._id, newCategory);
+				await updateCategory(editingCategory._id, categoryData);
 			} else {
-				await addCategory(newCategory);
+				await addCategory(categoryData);
 			}
 			setNewCategory({ name: '', type: 'expense', icon: '💳' });
 			setShowCategoryModal(false);
@@ -151,7 +182,8 @@ export default function CategoriesPage() {
 		setNewCategory({
 			name: category.name,
 			type: category.type,
-			icon: categoryIcons[category.name] || '💳'
+			icon: category.icon || categoryIcons[category.name] || '💳',
+			color: category.color || getCategoryColor(category.name, category.type)
 		});
 		setShowCategoryModal(true);
 	};
@@ -230,7 +262,6 @@ export default function CategoriesPage() {
 
 	return (
 		<div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col'>
-			<DashboardHeader />
 			<div className='flex flex-1'>
 				<DashboardSidebar />
 				{/* Main content */}
@@ -302,7 +333,7 @@ export default function CategoriesPage() {
 											<div className='flex items-center gap-2 md:gap-3 flex-1 min-w-0'>
 												<div 
 													className='w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200 flex-shrink-0' 
-													style={{ backgroundColor: cat.color || '#1E73BE' }}
+													style={{ backgroundColor: cat.color || getCategoryColor(cat.name, cat.type) }}
 												>
 													<CategoryIcon iconName={cat.icon} color="white" size={18} className="md:size-[22px]" />
 												</div>
@@ -440,41 +471,6 @@ export default function CategoriesPage() {
 				</main>
 			</div>
 
-			{/* Footer */}
-			<footer className='bg-white border-t border-gray-200 py-8 mt-auto'>
-				<div className='max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4'>
-					<span className='text-[#1E3A8A] font-bold text-xl'>MyBudget+</span>
-					<div className='flex gap-6 text-gray-500 text-sm'>
-						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
-							Produit
-						</a>
-						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
-							Ressources
-						</a>
-						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
-							Légal
-						</a>
-					</div>
-					<div className='flex gap-4 text-gray-500'>
-						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
-							<i className='fab fa-facebook-f'></i>
-						</a>
-						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
-							<i className='fab fa-twitter'></i>
-						</a>
-						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
-							<i className='fab fa-linkedin-in'></i>
-						</a>
-						<a href='#' className='hover:text-[#1E3A8A] transition-colors'>
-							<i className='fab fa-instagram'></i>
-						</a>
-					</div>
-				</div>
-				<div className='text-center text-xs text-gray-500 mt-4'>
-					© 2024 MyBudget+. Tous droits réservés.
-				</div>
-			</footer>
-
 					{/* Modal Ajouter/Modifier Catégorie */}
 		{showCategoryModal && (
 			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -501,7 +497,11 @@ export default function CategoriesPage() {
 								<input
 									type="text"
 									value={newCategory.name}
-									onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
+									onChange={(e) => {
+										const name = e.target.value;
+										const color = getCategoryColor(name, newCategory.type);
+										setNewCategory({...newCategory, name, color});
+									}}
 									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 									placeholder="Ex: Nourriture"
 									required
@@ -511,7 +511,11 @@ export default function CategoriesPage() {
 								<label className="block text-sm font-semibold text-gray-800 mb-2">Type</label>
 								<select
 									value={newCategory.type}
-									onChange={(e) => setNewCategory({...newCategory, type: e.target.value})}
+									onChange={(e) => {
+										const type = e.target.value;
+										const color = getCategoryColor(newCategory.name, type);
+										setNewCategory({...newCategory, type, color});
+									}}
 									className="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#1E3A8A] transition-colors"
 								>
 									<option value="expense">Dépense</option>
@@ -525,7 +529,10 @@ export default function CategoriesPage() {
 										<button
 											key={name}
 											type="button"
-											onClick={() => setNewCategory({...newCategory, icon})}
+											onClick={() => {
+												const color = getCategoryColor(newCategory.name || name, newCategory.type);
+												setNewCategory({...newCategory, icon, color});
+											}}
 											className={`p-3 rounded-xl border-2 text-2xl hover:scale-110 transition-all duration-200 ${
 												newCategory.icon === icon 
 													? 'border-[#1E3A8A] bg-[#E3F2FD] shadow-md' 
@@ -534,6 +541,25 @@ export default function CategoriesPage() {
 										>
 											{icon}
 										</button>
+									))}
+								</div>
+							</div>
+							<div>
+								<label className="block text-sm font-semibold text-gray-800 mb-3">Couleur</label>
+								<div className="grid grid-cols-4 gap-2">
+									{fintechColors.map((color) => (
+										<button
+											key={color}
+											type="button"
+											onClick={() => setNewCategory({...newCategory, color})}
+											className={`w-full h-12 rounded-xl border-2 transition-all duration-200 hover:scale-110 ${
+												(newCategory.color || getCategoryColor(newCategory.name, newCategory.type)) === color
+													? 'border-[#1E3A8A] ring-4 ring-[#1E3A8A]/20 shadow-lg' 
+													: 'border-gray-200 hover:border-gray-300'
+											}`}
+											style={{ backgroundColor: color }}
+											title={color}
+										/>
 									))}
 								</div>
 							</div>

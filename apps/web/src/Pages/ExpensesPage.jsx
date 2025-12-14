@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import CategoryIcon from '../components/CategoryIcon.jsx';
 import { getTransactions, getCategories, getWallets, addTransaction, updateTransaction, deleteTransaction, addMissingDefaultData } from '../api.js';
@@ -348,7 +347,6 @@ export default function ExpensesPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
-      <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
         

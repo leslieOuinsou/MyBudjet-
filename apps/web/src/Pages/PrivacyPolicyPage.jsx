@@ -322,7 +322,6 @@ export default function PrivacyPolicyPage() {
         </div>
       </div>
 
-      {/* Footer */}
       <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} mt-10 py-6`}>
         <div className="max-w-5xl mx-auto px-4 text-center">
           <Link 

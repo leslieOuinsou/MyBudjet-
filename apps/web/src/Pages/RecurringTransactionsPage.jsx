@@ -119,19 +119,6 @@ export default function RecurringTransactionsPage() {
               </tbody>
             </table>
           </div>
-          <footer className="flex flex-col md:flex-row items-center justify-between gap-2 mt-8 text-[#6C757D] text-sm">
-            <div className="flex gap-6">
-              <span>Ressources</span>
-              <span>Légal</span>
-              <span>Communauté</span>
-            </div>
-            <div className="flex gap-4 text-xl">
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf09a)}</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf099)}</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf0e1)}</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf16d)}</span>
-            </div>
-          </footer>
         </main>
       </div>
     </div>

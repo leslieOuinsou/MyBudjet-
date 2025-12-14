@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import DashboardHeader from "../components/DashboardHeader.jsx";
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { 
   getNotifications, 
@@ -164,7 +163,6 @@ const NotificationsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main content */}
@@ -323,20 +321,6 @@ const NotificationsPage = () => {
           </div>
         </main>
       </div>
-      {/* Footer */}
-      <footer className="flex items-center justify-between px-8 py-3 bg-white border-t mt-auto">
-        <div className="text-xs text-gray-400">Made with <span className="text-[#1E73BE]">❤️</span></div>
-        <div className="flex gap-6 text-sm text-gray-500">
-          <a href="#" className="hover:underline">Ressources</a>
-          <a href="#" className="hover:underline">Légal</a>
-          <a href="#" className="hover:underline">Contact</a>
-        </div>
-        <div className="flex gap-4 text-gray-400 text-lg">
-          <span>⚡</span>
-          <span>🔒</span>
-          <span>👥</span>
-        </div>
-      </footer>
     </div>
   );
 };

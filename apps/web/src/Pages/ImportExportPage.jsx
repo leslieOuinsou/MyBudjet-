@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { Link } from "react-router-dom";
 import { 
@@ -225,7 +224,6 @@ export default function ImportExportPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
-      <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
@@ -432,10 +430,6 @@ export default function ImportExportPage() {
           </div>
         </main>
       </div>
-      <footer className="mt-8 text-gray-400 text-sm flex justify-between items-center px-8">
-        <span>Produit    Ressources    Légal</span>
-        <span>Made with <span className="text-[#7B61FF]">V</span> easily</span>
-      </footer>
     </div>
   );
 }

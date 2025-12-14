@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
-import Footer from '../components/Footer.jsx';
 import { getDashboardData, getWallets, getTransactions, getBudgets, addBudget, addTransaction, getCurrentUser } from '../api.js';
 import NotificationBell from '../components/NotificationBell.jsx';
 
@@ -192,12 +190,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      <DashboardHeader />
-      <div className="flex flex-1">
+    <div className="h-screen bg-gray-100 flex flex-col overflow-hidden">
+      <div className="flex flex-1 min-h-0">
         <DashboardSidebar />
         {/* Main content */}
-        <main className="flex-1 py-4 md:py-6 lg:py-10 px-3 md:px-6 lg:px-8 xl:px-12">
+        <main className="flex-1 py-4 md:py-6 lg:py-10 px-3 md:px-6 lg:px-8 xl:px-12 overflow-y-auto">
           <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-[#343A40] mb-4 md:mb-6 lg:mb-8">
             Bienvenue, {user ? getFirstName(user.name) : 'Utilisateur'}!
           </h1>
@@ -390,8 +387,6 @@ export default function DashboardPage() {
           </div>
         </main>
       </div>
-      {/* Footer */}
-      <Footer />
 
       {/* Modal Ajouter Transaction */}
       {showTransactionModal && (

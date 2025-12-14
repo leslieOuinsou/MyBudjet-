@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
-import Footer from '../components/Footer.jsx';
 import LineChart from '../components/charts/LineChart.jsx';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -138,7 +136,6 @@ export default function ForecastsPage() {
   if (loading) {
     return (
       <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
-        <DashboardHeader />
         <div className='flex flex-1'>
           <DashboardSidebar />
           <main className='flex-1 py-10 px-4 md:px-12 flex items-center justify-center'>
@@ -154,8 +151,6 @@ export default function ForecastsPage() {
 
 	return (
 		<div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
-			{/* Header */}
-			<DashboardHeader />
 			<div className='flex flex-1'>
 				<DashboardSidebar />
 				{/* Main content */}
@@ -390,8 +385,6 @@ export default function ForecastsPage() {
 					</button>
 				</aside>
 			</div>
-			{/* Footer */}
-			<Footer />
 		</div>
 	);
 }

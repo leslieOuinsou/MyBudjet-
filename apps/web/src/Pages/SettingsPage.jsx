@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
-import Footer from '../components/Footer.jsx';
 import Toast from '../components/Toast.jsx';
 import { 
   MdPerson, 
@@ -386,12 +384,11 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
-      <DashboardHeader />
-      <div className="flex flex-1">
+    <div className="h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col overflow-hidden">
+      <div className="flex flex-1 min-h-0">
         <DashboardSidebar />
         {/* Main content */}
-        <main className="flex-1 py-8 px-4 md:px-8 lg:px-12 max-w-7xl mx-auto w-full">
+        <main className="flex-1 py-8 px-4 md:px-8 lg:px-12 max-w-7xl mx-auto w-full overflow-y-auto">
           {/* Header moderne */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
@@ -959,8 +956,6 @@ export default function SettingsPage() {
           </button>
         </aside>
       </div>
-      {/* Footer */}
-      <Footer />
 
       {/* Toasts pour les notifications */}
       {toasts.map((toast, index) => (

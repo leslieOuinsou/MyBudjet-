@@ -84,13 +84,6 @@ export default function AccessDeniedPage() {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="text-center mt-6">
-          <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-            © 2025 MyBudget+ - Tous droits réservés
-          </p>
-        </div>
       </div>
     </div>
   );

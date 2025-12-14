@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { getReportsData, getFinancialStats, getCategoryAnalytics, getTopTransactions, exportReportData, getTrendsData, getBudgetComparison } from '../api.js';
 import LineChart from '../components/charts/LineChart.jsx';
@@ -286,7 +285,6 @@ export default function ReportsPage() {
   }
   return (
     <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
-      <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
@@ -468,19 +466,6 @@ export default function ReportsPage() {
               </div>
             </div>
           </div>
-          <footer className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-2 mt-6 md:mt-8 text-[#6C757D] text-xs md:text-sm">
-            <div className="flex flex-wrap gap-3 md:gap-6 justify-center md:justify-start">
-              <span>MyBudget+</span>
-              <Link to="/legal" className="hover:text-[#1E73BE] transition">Légal</Link>
-              <Link to="/support" className="hover:text-[#1E73BE] transition">Support</Link>
-            </div>
-            <div className="flex gap-3 md:gap-4 text-lg md:text-xl">
-              <span className="hover:text-[#1E73BE] cursor-pointer transition">📘</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer transition">🐦</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer transition">📧</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer transition">💼</span>
-            </div>
-          </footer>
         </main>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "../assets/logo.jpg";
-import DashboardHeader from "../components/DashboardHeader.jsx";
 
 export default function ServerErrorPage() {
   const handleReload = () => {
@@ -8,7 +7,6 @@ export default function ServerErrorPage() {
   };
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <DashboardHeader />
       <div className="w-full max-w-xl bg-white rounded-2xl shadow-md flex flex-col items-center p-8 mt-8">
         <img src={logo} alt="MyBudget+" className="h-10 mb-4" />
         <h1 className="text-2xl font-bold text-gray-800 mb-2">500 - Erreur interne</h1>
@@ -17,7 +15,6 @@ export default function ServerErrorPage() {
           Rafraîchir la page
         </button>
       </div>
-      <footer className="mt-8 text-gray-400 text-sm">© 2025 MyBudget+</footer>
     </div>
   );
 }

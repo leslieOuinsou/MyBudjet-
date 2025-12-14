@@ -10,17 +10,17 @@ import { initializeDefaultData, addMissingCategories, addMissingWallets } from '
 export const register = async (req, res) => {
   try {
     console.log('🚀 ========== DÉBUT INSCRIPTION BACKEND ==========');
-    const { name, email, password } = req.body;
+  const { name, email, password } = req.body;
     console.log('📋 Données reçues:', { name, email, passwordLength: password?.length });
-    
-    // Validation du mot de passe (minimum 12 caractères)
-    if (!password || password.length < 12) {
+  
+  // Validation du mot de passe (minimum 12 caractères)
+  if (!password || password.length < 12) {
       console.warn('⚠️ Validation échouée: Mot de passe trop court');
-      return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 12 caractères' });
-    }
-    
+    return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 12 caractères' });
+  }
+  
     console.log('🔍 Vérification si l\'email existe déjà...');
-    const existing = await User.findOne({ email });
+  const existing = await User.findOne({ email });
     if (existing) {
       console.warn('⚠️ Email déjà utilisé:', email);
       return res.status(400).json({ message: 'Email already in use' });
@@ -28,29 +28,29 @@ export const register = async (req, res) => {
     console.log('✅ Email disponible');
     
     console.log('🔐 Hashage du mot de passe...');
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
     console.log('✅ Mot de passe hashé');
     
     console.log('👤 Création de l\'utilisateur...');
-    const user = new User({ name, email, password: hashedPassword });
+  const user = new User({ name, email, password: hashedPassword });
     console.log('📋 Utilisateur créé:', { name: user.name, email: user.email });
     
     console.log('💾 Sauvegarde dans MongoDB...');
-    await user.save();
+  await user.save();
     console.log('✅ Utilisateur sauvegardé avec ID:', user._id);
-    
+  
     console.log('📊 Initialisation des données par défaut...');
     try {
-      await initializeDefaultData(user._id);
+  await initializeDefaultData(user._id);
       console.log('✅ Données par défaut initialisées');
     } catch (defaultDataError) {
       console.error('⚠️ Erreur lors de l\'initialisation des données par défaut:', defaultDataError);
       // Ne pas bloquer l'inscription si les données par défaut échouent
     }
-    
+  
     console.log('🔔 Création de la notification de bienvenue...');
     try {
-      await createWelcomeNotification(user._id, user.name);
+  await createWelcomeNotification(user._id, user.name);
       console.log('✅ Notification créée');
     } catch (notificationError) {
       console.error('⚠️ Erreur lors de la création de la notification:', notificationError);

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import DashboardHeader from '../components/DashboardHeader.jsx';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { getBudgets, addBudget, updateBudget, deleteBudget } from '../api.js';
 import { 
@@ -109,7 +108,6 @@ export default function BudgetsPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
-      <DashboardHeader />
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
@@ -285,19 +283,6 @@ export default function BudgetsPage() {
               </table>
             </div>
           </section>
-          <footer className="flex flex-col md:flex-row items-center justify-between gap-2 mt-8 text-[#6C757D] text-sm">
-            <div className="flex gap-6">
-              <span>MyBudget+</span>
-              <span>Ressources</span>
-              <span>Légal</span>
-            </div>
-            <div className="flex gap-4 text-xl">
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf09a)}</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf099)}</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf0e1)}</span>
-              <span className="hover:text-[#1E73BE] cursor-pointer">{String.fromCharCode(0xf16d)}</span>
-            </div>
-          </footer>
         </main>
       </div>
 

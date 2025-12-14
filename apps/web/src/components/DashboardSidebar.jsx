@@ -34,7 +34,6 @@ const menuSections = [
       { to: "/expenses", label: "Dépenses", icon: MdShoppingCart },
       { to: "/budgets", label: "Budgets", icon: MdAccountBalance },
       { to: "/categories", label: "Catégories & Portefeuilles", icon: MdCategory },
-      { to: "/recurring", label: "Transactions récurrentes", icon: MdRepeat },
       { to: "/bills", label: "Rappels de factures", icon: MdEventNote },
     ]
   },
@@ -96,39 +95,40 @@ export default function DashboardSidebar() {
         bg-gradient-to-b from-white to-gray-50
         border-r border-gray-200
         h-screen
-        overflow-y-auto
         transition-all duration-300 ease-in-out
         z-40
         shadow-lg md:shadow-none
         flex flex-col
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        {/* Logo/Brand */}
-        <div className="px-6 py-6 border-b border-gray-200">
-          <Link to="/dashboard" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-xl bg-[#1E3A8A] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200">
-              <MdDashboard className="text-white text-xl" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-[#1E3A8A]">
-                MyBudget+
-              </h2>
-              <p className="text-xs text-gray-500">Gestion financière</p>
-            </div>
-          </Link>
-        </div>
+        {/* Conteneur flex pour organiser logo, nav et bouton */}
+        <div className="flex flex-col h-full">
+          {/* Logo/Brand - Fixe en haut */}
+          <div className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
+            <Link to="/dashboard" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-xl bg-[#1E3A8A] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200">
+                <MdDashboard className="text-white text-lg" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-[#1E3A8A]">
+                  MyBudget+
+                </h2>
+                <p className="text-xs text-gray-500">Gestion financière</p>
+              </div>
+            </Link>
+          </div>
 
-        {/* Navigation - Utilise flex-1 pour occuper tout l'espace disponible */}
-        <nav className="flex-1 px-4 py-6 overflow-y-auto">
+          {/* Navigation - Scrollable si nécessaire, occupe l'espace disponible entre logo et bouton */}
+          <nav className="flex-1 px-4 py-3 overflow-y-auto min-h-0">
           {menuSections.map((section, sectionIndex) => (
-            <div key={sectionIndex} className={sectionIndex > 0 ? "mt-8" : ""}>
+            <div key={sectionIndex} className={sectionIndex > 0 ? "mt-4" : ""}>
               {/* Titre de section */}
-              <div className="text-xs font-semibold text-[#374151] uppercase tracking-wider mb-3 px-3">
+              <div className="text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 px-3">
                 {section.title}
               </div>
               
               {/* Items de la section */}
-              <ul className="space-y-1.5">
+              <ul className="space-y-0.5">
                 {section.items.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.to);
@@ -139,7 +139,7 @@ export default function DashboardSidebar() {
                         to={item.to}
                         onClick={() => setMobileMenuOpen(false)}
                         className={`
-                          group relative flex items-center gap-3 px-4 py-3 rounded-xl
+                          group relative flex items-center gap-2.5 px-3 py-2 rounded-xl
                           transition-all duration-200 ease-in-out
                           ${
                             active
@@ -150,12 +150,12 @@ export default function DashboardSidebar() {
                       >
                         {/* Indicateur actif */}
                         {active && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"></div>
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
                         )}
                         
                         {/* Icône */}
                         <Icon 
-                          size={20} 
+                          size={18} 
                           className={`
                             transition-transform duration-200 flex-shrink-0
                             ${active ? "text-white" : "text-gray-500 group-hover:text-[#1E3A8A]"}
@@ -182,25 +182,23 @@ export default function DashboardSidebar() {
               </ul>
             </div>
           ))}
-        </nav>
+          </nav>
 
-        {/* Espacement avant le bouton de déconnexion */}
-        <div className="flex-1 min-h-[60px]"></div>
-
-        {/* Section déconnexion - Fixée en bas avec espacement */}
-        <div className="px-4 pt-6 pb-6 border-t border-gray-200 bg-white mt-auto">
-          <Link 
-            to="/login" 
-            onClick={() => {
-              localStorage.removeItem('token');
-              sessionStorage.removeItem('token');
-              setMobileMenuOpen(false);
-            }}
-            className="group flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-[#374151] hover:bg-[#1f2937] text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
-          >
-            <MdLogout size={20} className="group-hover:rotate-12 transition-transform duration-200" />
-            <span>Déconnexion</span>
-          </Link>
+          {/* Section déconnexion - Toujours visible en bas, fixée */}
+          <div className="px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
+            <Link 
+              to="/login" 
+              onClick={() => {
+                localStorage.removeItem('token');
+                sessionStorage.removeItem('token');
+                setMobileMenuOpen(false);
+              }}
+              className="group flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[#374151] hover:bg-[#1f2937] text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+            >
+              <MdLogout size={18} className="group-hover:rotate-12 transition-transform duration-200" />
+              <span className="text-sm">Déconnexion</span>
+            </Link>
+          </div>
         </div>
       </aside>
     </>
