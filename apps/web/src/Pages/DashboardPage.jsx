@@ -206,7 +206,7 @@ export default function DashboardPage() {
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Revenu Total</div>
               <div className="text-xl md:text-2xl font-bold text-[#1E73BE]">€{dashboardData?.incomeThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
-              <div className="text-xs text-[#28A745]">Ce mois-ci</div>
+              <div className="text-xs text-[#22C55E]">Ce mois-ci</div>
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Dépenses Totales</div>
@@ -216,7 +216,7 @@ export default function DashboardPage() {
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Solde Total</div>
               <div className="text-xl md:text-2xl font-bold text-[#343A40]">€{dashboardData?.totalBalance?.toLocaleString('fr-FR') || '0.00'}</div>
-              <div className="text-xs text-[#28A745]">Tous portefeuilles</div>
+              <div className="text-xs text-[#22C55E]">Tous portefeuilles</div>
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Solde des portefeuilles</div>
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                       <span className="text-xl">{categoryIcons[transaction.category?.name] || categoryIcons['Autres']}</span>
                       <span className="text-[#343A40] text-sm">{transaction.description || transaction.category?.name || 'Transaction'}</span>
                     </div>
-                    <span className={`font-semibold ${transaction.type === 'expense' ? 'text-[#6C757D]' : 'text-[#28A745]'}`}>
+                    <span className={`font-semibold ${transaction.type === 'expense' ? 'text-[#374151]' : 'text-[#22C55E]'}`}>
                       {transaction.type === 'expense' ? '-' : '+'}€{transaction.amount?.toLocaleString('fr-FR') || '0'}
                     </span>
                     <span className="text-[#6C757D] text-xs w-24 text-right">

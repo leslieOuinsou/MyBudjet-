@@ -285,7 +285,7 @@ export default function BillRemindersPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
-                          <MdNotifications size={24} className={status.color === 'red' ? 'text-[#495057]' : status.color === 'orange' ? 'text-[#6C757D]' : 'text-[#28A745]'} />
+                          <MdNotifications size={24} className={status.color === 'red' ? 'text-[#495057]' : status.color === 'orange' ? 'text-[#6C757D]' : 'text-[#22C55E]'} />
                           <div>
                             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                               {reminder.name}
@@ -293,7 +293,7 @@ export default function BillRemindersPage() {
                             <span className={`text-xs px-2 py-1 rounded ${
                               status.color === 'red' ? 'bg-[#495057] text-white' :
                               status.color === 'orange' ? 'bg-[#6C757D] text-white' :
-                              'bg-[#28A745] text-white'
+                              'bg-[#22C55E] text-white'
                             }`}>
                               {status.label} {daysUntil >= 0 ? `(${daysUntil} jour${daysUntil > 1 ? 's' : ''})` : `(${Math.abs(daysUntil)} jour${Math.abs(daysUntil) > 1 ? 's' : ''} de retard)`}
                             </span>

@@ -187,7 +187,7 @@ export default function AdministrationPage() {
 							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
 								{stats?.userCount || 0}
 							</div>
-							<span className="text-xs text-[#28A745]">
+							<span className="text-xs text-[#22C55E]">
 								Utilisateurs inscrits
 							</span>
 						</div>
@@ -196,7 +196,7 @@ export default function AdministrationPage() {
 								<span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
 									Transactions
 								</span>
-								<MdAttachMoney size={24} className="text-[#28A745]" />
+								<MdAttachMoney size={24} className="text-[#22C55E]" />
 							</div>
 							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
 								{stats?.txCount || 0}
@@ -215,7 +215,7 @@ export default function AdministrationPage() {
 							<div className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
 								{stats?.budgetCount || 0}
 							</div>
-							<span className="text-xs text-[#28A745]">
+							<span className="text-xs text-[#22C55E]">
 								Budgets créés
 							</span>
 						</div>
@@ -307,7 +307,7 @@ export default function AdministrationPage() {
 														{user.blocked ? (
 															<button 
 																onClick={() => handleUnblockUser(user._id)}
-																className="flex items-center gap-1 text-[#28A745] hover:text-[#218838] text-sm"
+																className="flex items-center gap-1 text-[#22C55E] hover:text-[#16a34a] text-sm"
 																title="Débloquer"
 															>
 																<MdCheckCircle size={18} />
@@ -395,7 +395,7 @@ export default function AdministrationPage() {
 						<div className={`rounded-xl shadow p-6 border flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-[#EAF4FB]'}`}>
 							<div className="flex items-center gap-3">
 								<div className="p-3 bg-[#D4EDDA] rounded-lg">
-									<MdAccountBalance size={24} className="text-[#28A745]" />
+									<MdAccountBalance size={24} className="text-[#22C55E]" />
 								</div>
 								<div>
 									<h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
