@@ -1,9 +1,19 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api|_next|.*\\..*|assets|images|favicon.ico|robots.txt|sitemap.xml).*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
     }
   ]
 }
-
