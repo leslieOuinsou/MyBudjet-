@@ -48,6 +48,97 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Fonction pour initialiser la connexion MongoDB
+// Sur Vercel, cette fonction sera appelée à chaque invocation si la connexion n'existe pas
+let isConnecting = false;
+let connectionPromise = null;
+
+async function connectDatabase() {
+  // Si déjà connecté, retourner
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+
+  // Si une connexion est en cours, attendre qu'elle se termine
+  if (isConnecting && connectionPromise) {
+    return connectionPromise;
+  }
+
+  const MONGO_URI = process.env.MONGO_URI;
+
+  // Validate required environment variables
+  if (!MONGO_URI) {
+    const error = '❌ MONGO_URI is not defined in environment variables';
+    console.error(error);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+    throw new Error(error);
+  }
+
+  if (!process.env.JWT_SECRET) {
+    const error = '❌ JWT_SECRET is not defined in environment variables';
+    console.error(error);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+    throw new Error(error);
+  }
+
+  if (!process.env.SESSION_SECRET) {
+    const error = '❌ SESSION_SECRET is not defined in environment variables';
+    console.error(error);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+    throw new Error(error);
+  }
+
+  // Démarrer la connexion
+  isConnecting = true;
+  
+  // Configuration optimisée pour Vercel serverless
+  const mongoOptions = {
+    serverSelectionTimeoutMS: 30000, // 30 secondes pour la sélection du serveur
+    socketTimeoutMS: 45000, // 45 secondes pour les opérations socket
+    connectTimeoutMS: 30000, // 30 secondes pour la connexion initiale
+    maxPoolSize: process.env.VERCEL ? 1 : 10, // Pool size minimal sur Vercel
+    minPoolSize: process.env.VERCEL ? 0 : 1,
+    maxIdleTimeMS: 10000, // Fermer les connexions inactives après 10s
+  };
+  
+  // Désactiver le buffering des commandes Mongoose pour éviter les timeouts
+  mongoose.set('bufferCommands', false);
+  mongoose.set('bufferTimeoutMS', 30000);
+  
+  console.log('🔄 Connexion à MongoDB...', process.env.VERCEL ? '(Vercel serverless)' : '(local)');
+  
+  connectionPromise = mongoose.connect(MONGO_URI, mongoOptions)
+    .then(async () => {
+      console.log('✅ MongoDB connected');
+      
+      // Créer un admin par défaut si aucun n'existe (seulement la première fois)
+      // Vérifier si c'est une nouvelle connexion
+      const { createDefaultAdmin } = await import('./utils/createDefaultAdmin.js');
+      await createDefaultAdmin();
+      
+      isConnecting = false;
+      return true;
+    })
+    .catch(err => {
+      isConnecting = false;
+      connectionPromise = null;
+      console.error('❌ MongoDB connection error:', err);
+      if (!process.env.VERCEL) {
+        console.error('💡 Make sure MongoDB is running (mongod or docker-compose up -d mongo)');
+        process.exit(1);
+      }
+      throw err;
+    });
+
+  return connectionPromise;
+}
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -172,6 +263,21 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
+// Middleware pour s'assurer que MongoDB est connecté AVANT de traiter les requêtes
+// DOIT être placé AVANT les routes
+app.use(async (req, res, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (err) {
+    console.error('❌ Erreur de connexion MongoDB dans le middleware:', err);
+    res.status(500).json({ 
+      message: 'Database connection error',
+      error: process.env.NODE_ENV === 'production' ? undefined : err.message
+    });
+  }
+});
+
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -275,95 +381,6 @@ app.use((err, req, res, next) => {
     message,
     ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
   });
-});
-
-// Fonction pour initialiser la connexion MongoDB
-// Sur Vercel, cette fonction sera appelée à chaque invocation si la connexion n'existe pas
-let isConnecting = false;
-let connectionPromise = null;
-
-async function connectDatabase() {
-  // Si déjà connecté, retourner
-  if (mongoose.connection.readyState === 1) {
-    return;
-  }
-
-  // Si une connexion est en cours, attendre qu'elle se termine
-  if (isConnecting && connectionPromise) {
-    return connectionPromise;
-  }
-
-  const MONGO_URI = process.env.MONGO_URI;
-
-  // Validate required environment variables
-  if (!MONGO_URI) {
-    const error = '❌ MONGO_URI is not defined in environment variables';
-    console.error(error);
-    if (!process.env.VERCEL) {
-      process.exit(1);
-    }
-    throw new Error(error);
-  }
-
-  if (!process.env.JWT_SECRET) {
-    const error = '❌ JWT_SECRET is not defined in environment variables';
-    console.error(error);
-    if (!process.env.VERCEL) {
-      process.exit(1);
-    }
-    throw new Error(error);
-  }
-
-  if (!process.env.SESSION_SECRET) {
-    const error = '❌ SESSION_SECRET is not defined in environment variables';
-    console.error(error);
-    if (!process.env.VERCEL) {
-      process.exit(1);
-    }
-    throw new Error(error);
-  }
-
-  // Démarrer la connexion
-  isConnecting = true;
-  connectionPromise = mongoose.connect(MONGO_URI, {
-    serverSelectionTimeoutMS: 5000, // Timeout après 5s au lieu de 30s
-  })
-    .then(async () => {
-      console.log('✅ MongoDB connected');
-      
-      // Créer un admin par défaut si aucun n'existe (seulement la première fois)
-      // Vérifier si c'est une nouvelle connexion
-      const { createDefaultAdmin } = await import('./utils/createDefaultAdmin.js');
-      await createDefaultAdmin();
-      
-      isConnecting = false;
-      return true;
-    })
-    .catch(err => {
-      isConnecting = false;
-      connectionPromise = null;
-      console.error('❌ MongoDB connection error:', err);
-      if (!process.env.VERCEL) {
-        console.error('💡 Make sure MongoDB is running (mongod or docker-compose up -d mongo)');
-        process.exit(1);
-      }
-      throw err;
-    });
-
-  return connectionPromise;
-}
-
-// Middleware pour s'assurer que MongoDB est connecté avant de traiter les requêtes
-app.use(async (req, res, next) => {
-  try {
-    await connectDatabase();
-    next();
-  } catch (err) {
-    res.status(500).json({ 
-      message: 'Database connection error',
-      error: process.env.NODE_ENV === 'production' ? undefined : err.message
-    });
-  }
 });
 
 // Démarrer le serveur seulement si on n'est pas sur Vercel
