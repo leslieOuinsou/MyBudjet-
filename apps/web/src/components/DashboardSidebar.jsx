@@ -184,8 +184,11 @@ export default function DashboardSidebar() {
           ))}
         </nav>
 
-        {/* Section déconnexion - Fixée en bas */}
-        <div className="px-4 py-4 border-t border-gray-200 bg-white">
+        {/* Espacement avant le bouton de déconnexion */}
+        <div className="flex-1 min-h-[60px]"></div>
+
+        {/* Section déconnexion - Fixée en bas avec espacement */}
+        <div className="px-4 pt-6 pb-6 border-t border-gray-200 bg-white mt-auto">
           <Link 
             to="/login" 
             onClick={() => {
