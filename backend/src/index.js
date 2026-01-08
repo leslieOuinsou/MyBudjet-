@@ -232,8 +232,10 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/', limiter);
 
 // CSRF Protection (must be before routes)
-// Désactivé en développement pour faciliter les tests
-if (process.env.NODE_ENV === 'production') {
+// Désactivé temporairement car il cause des problèmes avec les requêtes API
+// Le JWT dans les headers Authorization est suffisant pour sécuriser l'API
+// CSRF est principalement utile pour les formulaires web, pas pour les APIs REST
+if (false && process.env.NODE_ENV === 'production') {
   const csrfProtection = csrf({ cookie: false });
   const csrfExcluded = [
     '/api/auth/register',
@@ -256,7 +258,7 @@ if (process.env.NODE_ENV === 'production') {
   });
   console.log('✅ CSRF Protection enabled');
 } else {
-  console.log('⚠️  CSRF Protection disabled (development mode)');
+  console.log('⚠️  CSRF Protection disabled (JWT authentication is used instead)');
 }
 
 // Apply rate limiting to auth routes

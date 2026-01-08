@@ -489,14 +489,24 @@ export async function getTransactions(params = {}) {
         message: `Erreur ${res.status}: ${res.statusText}` 
       }));
       
-      console.error('❌ Erreur API getTransactions:', errorData);
+      console.error('❌ Erreur API getTransactions:', {
+        status: res.status,
+        statusText: res.statusText,
+        error: errorData,
+        url: url,
+        headers: { ...headers, Authorization: headers.Authorization ? 'Bearer ***' : 'Absent' }
+      });
       
       // Si c'est une erreur 401 ou 403, essayer de rafraîchir le token
       if (res.status === 401 || res.status === 403) {
-        console.warn('⚠️ Erreur d\'authentification, vérification du token...');
+        console.warn('⚠️ Erreur d\'authentification (', res.status, '), détails:', errorData);
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         if (!token) {
           throw new Error('Session expirée. Veuillez vous reconnecter.');
+        }
+        // Si le token existe mais qu'on a une erreur 403, c'est peut-être un problème de permissions
+        if (res.status === 403) {
+          throw new Error(errorData.message || 'Accès refusé. Vérifiez vos permissions ou contactez l\'administrateur.');
         }
       }
       
