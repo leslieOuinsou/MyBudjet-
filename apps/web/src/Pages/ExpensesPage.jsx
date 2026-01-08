@@ -195,11 +195,38 @@ export default function ExpensesPage() {
       setError('');
       setSuccess('');
       
+      // Validation des champs requis
+      if (!newExpense.description || !newExpense.description.trim()) {
+        setError('La description est requise');
+        return;
+      }
+      
+      if (!newExpense.amount || parseFloat(newExpense.amount) <= 0) {
+        setError('Le montant doit être supérieur à 0');
+        return;
+      }
+      
+      if (!newExpense.category) {
+        setError('Veuillez sélectionner une catégorie');
+        return;
+      }
+      
+      if (!newExpense.wallet) {
+        setError('Veuillez sélectionner un portefeuille');
+        return;
+      }
+      
       const expenseData = {
-        ...newExpense,
+        description: newExpense.description.trim(),
         amount: parseFloat(newExpense.amount),
-        type: 'expense'
+        type: 'expense',
+        category: newExpense.category,
+        wallet: newExpense.wallet,
+        date: newExpense.date || new Date().toISOString().split('T')[0],
+        notes: newExpense.notes || '' // Le backend mappera automatiquement vers 'note'
       };
+      
+      console.log('📤 Envoi de la dépense:', expenseData);
       
       if (editingExpense) {
         await updateTransaction(editingExpense._id, expenseData);
@@ -214,7 +241,15 @@ export default function ExpensesPage() {
       setTimeout(() => setSuccess(''), 3000);
       
     } catch (err) {
-      setError(err.message || 'Erreur lors de la sauvegarde de la dépense');
+      console.error('❌ Erreur lors de l\'ajout de la dépense:', err);
+      // Afficher un message d'erreur plus détaillé
+      const errorMessage = err.message || 'Erreur lors de la sauvegarde de la dépense';
+      setError(errorMessage);
+      
+      // Si c'est une erreur de validation, afficher les détails
+      if (err.message && err.message.includes('Validation error')) {
+        setError('Erreur de validation. Vérifiez que tous les champs sont correctement remplis.');
+      }
     }
   };
 

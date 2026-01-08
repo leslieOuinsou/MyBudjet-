@@ -104,10 +104,40 @@ export default function DashboardPage() {
   const handleAddTransaction = async (e) => {
     e.preventDefault();
     try {
+      setError('');
+      
+      // Validation des champs requis
+      if (!newTransaction.description || !newTransaction.description.trim()) {
+        setError('La description est requise');
+        return;
+      }
+      
+      if (!newTransaction.amount || parseFloat(newTransaction.amount) <= 0) {
+        setError('Le montant doit être supérieur à 0');
+        return;
+      }
+      
+      if (!newTransaction.category) {
+        setError('Veuillez sélectionner une catégorie');
+        return;
+      }
+      
+      if (!newTransaction.wallet) {
+        setError('Veuillez sélectionner un portefeuille');
+        return;
+      }
+      
       const transactionData = {
-        ...newTransaction,
-        amount: parseFloat(newTransaction.amount)
+        description: newTransaction.description.trim(),
+        amount: parseFloat(newTransaction.amount),
+        type: newTransaction.type || 'expense',
+        category: newTransaction.category,
+        wallet: newTransaction.wallet,
+        date: newTransaction.date || new Date().toISOString().split('T')[0],
+        notes: newTransaction.notes || ''
       };
+      
+      console.log('📤 Envoi de la transaction:', transactionData);
       
       await addTransaction(transactionData);
       
@@ -118,7 +148,8 @@ export default function DashboardPage() {
         type: 'expense',
         category: '',
         wallet: '',
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        notes: ''
       });
       
       setShowTransactionModal(false);
@@ -126,8 +157,9 @@ export default function DashboardPage() {
       // Recharger les données
       window.location.reload();
     } catch (err) {
-      console.error('Erreur lors de l\'ajout de la transaction:', err);
-      setError('Erreur lors de l\'ajout de la transaction');
+      console.error('❌ Erreur lors de l\'ajout de la transaction:', err);
+      const errorMessage = err.message || 'Erreur lors de l\'ajout de la transaction';
+      setError(errorMessage);
     }
   };
 

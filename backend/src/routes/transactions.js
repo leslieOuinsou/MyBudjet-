@@ -6,10 +6,18 @@ import { validate, transactionSchema, updateTransactionSchema } from '../validat
 
 const router = express.Router();
 
+// Middleware pour mapper 'notes' vers 'note' (compatibilité frontend)
+const mapNotesToNote = (req, res, next) => {
+  if (req.body.notes !== undefined && req.body.note === undefined) {
+    req.body.note = req.body.notes;
+  }
+  next();
+};
+
 router.get('/', authenticateJWT, getTransactions);
 router.get('/:id', authenticateJWT, getTransaction);
-router.post('/', authenticateJWT, upload.single('attachment'), validate(transactionSchema), createTransaction);
-router.put('/:id', authenticateJWT, upload.single('attachment'), validate(updateTransactionSchema), updateTransaction);
+router.post('/', authenticateJWT, upload.single('attachment'), mapNotesToNote, validate(transactionSchema), createTransaction);
+router.put('/:id', authenticateJWT, upload.single('attachment'), mapNotesToNote, validate(updateTransactionSchema), updateTransaction);
 router.delete('/:id', authenticateJWT, deleteTransaction);
 
 export default router;

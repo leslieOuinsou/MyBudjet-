@@ -461,28 +461,93 @@ export async function recalculateWalletBalance(id) {
 
 // Transactions API
 export async function getTransactions(params = {}) {
-  const queryString = new URLSearchParams(params).toString();
-  const res = await fetch(
-    `${API_URL}/transactions${queryString ? `?${queryString}` : ""}`,
-    {
-      headers: { ...getAuthHeaders() },
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const url = `${API_URL}/transactions${queryString ? `?${queryString}` : ""}`;
+    // Pour les requêtes GET, on n'a pas besoin du Content-Type
+    const headers = getAuthHeaders(false);
+    
+    // Vérifier que le token est présent
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (!token) {
+      throw new Error('Session expirée. Veuillez vous reconnecter.');
     }
-  );
-  if (!res.ok) throw new Error("Erreur lors du chargement des transactions");
-  return res.json();
+    
+    console.log('📤 Récupération transactions depuis:', url);
+    console.log('📤 Token présent:', token ? 'Oui' : 'Non');
+    
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: headers,
+      credentials: 'include' // Important pour les cookies CORS
+    });
+    
+    console.log('📥 Réponse status:', res.status, res.statusText);
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ 
+        message: `Erreur ${res.status}: ${res.statusText}` 
+      }));
+      
+      console.error('❌ Erreur API getTransactions:', errorData);
+      
+      // Si c'est une erreur 401 ou 403, essayer de rafraîchir le token
+      if (res.status === 401 || res.status === 403) {
+        console.warn('⚠️ Erreur d\'authentification, vérification du token...');
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (!token) {
+          throw new Error('Session expirée. Veuillez vous reconnecter.');
+        }
+      }
+      
+      throw new Error(errorData.message || `Erreur ${res.status}: ${res.statusText}`);
+    }
+    
+    const result = await res.json();
+    console.log('✅ Transactions récupérées:', result.length || '0');
+    return result;
+  } catch (error) {
+    console.error('❌ Erreur dans getTransactions:', error);
+    throw error;
+  }
 }
 
 export async function addTransaction(transaction) {
-  const res = await fetch(`${API_URL}/transactions`, {
-    method: "POST",
-    headers: getAuthHeaders(true),
-    body: JSON.stringify(transaction),
-  });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ message: "Erreur lors de l'ajout de la transaction" }));
-    throw new Error(errorData.message || "Erreur lors de l'ajout de la transaction");
+  try {
+    console.log('📤 Envoi transaction à:', `${API_URL}/transactions`);
+    console.log('📤 Données transaction:', transaction);
+    
+    const res = await fetch(`${API_URL}/transactions`, {
+      method: "POST",
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(transaction),
+    });
+    
+    console.log('📥 Réponse status:', res.status, res.statusText);
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ 
+        message: `Erreur ${res.status}: ${res.statusText}` 
+      }));
+      
+      console.error('❌ Erreur API:', errorData);
+      
+      // Si c'est une erreur de validation, extraire les détails
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        const errorMessages = errorData.errors.map(e => e.message || e.msg).join(', ');
+        throw new Error(errorMessages || errorData.message || "Erreur lors de l'ajout de la transaction");
+      }
+      
+      throw new Error(errorData.message || `Erreur ${res.status}: ${res.statusText}`);
+    }
+    
+    const result = await res.json();
+    console.log('✅ Transaction créée avec succès:', result);
+    return result;
+  } catch (error) {
+    console.error('❌ Erreur dans addTransaction:', error);
+    throw error;
   }
-  return res.json();
 }
 
 export async function updateTransaction(id, data) {

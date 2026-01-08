@@ -184,10 +184,38 @@ export default function TransactionsPage() {
       setError('');
       setSuccess('');
       
+      // Validation des champs requis
+      if (!newTransaction.description || !newTransaction.description.trim()) {
+        setError('La description est requise');
+        return;
+      }
+      
+      if (!newTransaction.amount || parseFloat(newTransaction.amount) <= 0) {
+        setError('Le montant doit être supérieur à 0');
+        return;
+      }
+      
+      if (!newTransaction.category) {
+        setError('Veuillez sélectionner une catégorie');
+        return;
+      }
+      
+      if (!newTransaction.wallet) {
+        setError('Veuillez sélectionner un portefeuille');
+        return;
+      }
+      
       const transactionData = {
-        ...newTransaction,
-        amount: parseFloat(newTransaction.amount)
+        description: newTransaction.description.trim(),
+        amount: parseFloat(newTransaction.amount),
+        type: newTransaction.type || 'expense',
+        category: newTransaction.category,
+        wallet: newTransaction.wallet,
+        date: newTransaction.date || new Date().toISOString().split('T')[0],
+        notes: newTransaction.notes || ''
       };
+      
+      console.log('📤 Envoi de la transaction:', transactionData);
       
       if (editingTransaction) {
         await updateTransaction(editingTransaction._id, transactionData);
@@ -203,7 +231,8 @@ export default function TransactionsPage() {
         type: 'expense',
         category: '',
         wallet: '',
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        notes: ''
       });
       
       setShowModal(false);
@@ -212,7 +241,9 @@ export default function TransactionsPage() {
       
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError(err.message || 'Erreur lors de la sauvegarde de la transaction');
+      console.error('❌ Erreur lors de la sauvegarde de la transaction:', err);
+      const errorMessage = err.message || 'Erreur lors de la sauvegarde de la transaction';
+      setError(errorMessage);
     }
   };
 

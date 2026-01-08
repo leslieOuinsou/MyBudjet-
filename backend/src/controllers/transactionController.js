@@ -134,10 +134,12 @@ export const getTransaction = async (req, res) => {
 };
 
 export const createTransaction = async (req, res) => {
-  const { amount, type, category, wallet, date, description, note } = req.body;
+  // Mapper 'notes' (frontend) vers 'note' (backend)
+  const { amount, type, category, wallet, date, description, note, notes } = req.body;
+  const finalNote = note || notes || ''; // Accepter les deux formats
   let attachment = req.file ? `/uploads/${req.file.filename}` : undefined;
   
-  console.log('🔄 Création de transaction:', { amount, type, category, wallet });
+  console.log('🔄 Création de transaction:', { amount, type, category, wallet, description, note: finalNote });
   
   // Vérifier le découvert autorisé AVANT de créer la transaction
   if (type === 'expense' && wallet) {
@@ -207,7 +209,8 @@ export const createTransaction = async (req, res) => {
     wallet,
     user: req.user?._id,
     date,
-    description: description || note,
+    description: description || finalNote,
+    note: finalNote,
     attachment,
   });
   await transaction.save();
@@ -240,12 +243,22 @@ export const createTransaction = async (req, res) => {
 };
 
 export const updateTransaction = async (req, res) => {
-  const { amount, type, category, wallet, date, description, note } = req.body;
+  // Mapper 'notes' (frontend) vers 'note' (backend)
+  const { amount, type, category, wallet, date, description, note, notes } = req.body;
+  const finalNote = note || notes || '';
   
   // Récupérer l'ancienne transaction pour restaurer le solde
   const oldTransaction = await Transaction.findById(req.params.id);
   
-  let update = { amount, type, category, wallet, date, description: description || note };
+  let update = { 
+    amount, 
+    type, 
+    category, 
+    wallet, 
+    date, 
+    description: description || finalNote,
+    note: finalNote
+  };
   if (req.file) update.attachment = `/uploads/${req.file.filename}`;
   const transaction = await Transaction.findByIdAndUpdate(
     req.params.id,
