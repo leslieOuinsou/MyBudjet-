@@ -316,6 +316,25 @@ app.use('/api/forecasts', forecastRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/settings', settingsRoutes);
 
+// Route à la racine pour Vercel (avant /api)
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'MyBudget API Server',
+    status: 'running',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      transactions: '/api/transactions',
+      categories: '/api/categories',
+      wallets: '/api/wallets',
+      dashboard: '/api/dashboard',
+      budgets: '/api/budgets'
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Route de test pour vérifier que le serveur fonctionne
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running', timestamp: new Date().toISOString() });
@@ -334,7 +353,21 @@ console.log('   - /api/health (test)');
 
 // 404 Handler - Must be after all routes
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({ 
+    message: 'Route not found',
+    path: req.path,
+    method: req.method,
+    availableEndpoints: [
+      'GET /',
+      'GET /api/health',
+      'POST /api/auth/login',
+      'GET /api/transactions',
+      'GET /api/categories',
+      'GET /api/wallets',
+      'GET /api/dashboard'
+    ],
+    hint: 'All API routes are prefixed with /api'
+  });
 });
 
 // Global Error Handler - Must be last
