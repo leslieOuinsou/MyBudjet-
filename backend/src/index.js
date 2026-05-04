@@ -48,6 +48,11 @@ import { fileURLToPath } from 'url';
 
 const app = express();
 
+// Derrière le proxy Vercel (IP client, cookies sécurisés, rate-limit)
+if (process.env.VERCEL) {
+  app.set('trust proxy', 1);
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
