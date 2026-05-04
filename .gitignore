@@ -37,6 +37,8 @@ out/
 # Uploads
 uploads/*
 !uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
 tmp/*
 !tmp/.gitkeep
 

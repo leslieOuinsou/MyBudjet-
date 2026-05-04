@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import { register, login, googleCallback, addMissingDefaultData, registerAdmin, forgotPassword, resetPassword } from '../controllers/authController.js';
+import { sendSMSCode, verifySMSCode } from '../controllers/smsAuthController.js';
 import { validate, registerSchema, loginSchema } from '../validators/authValidator.js';
 import { authenticateJWT } from '../middleware/auth.js';
 
@@ -14,6 +15,10 @@ router.post('/login', validate(loginSchema), login);
 // Routes de réinitialisation de mot de passe
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
+
+// Routes d'authentification par SMS
+router.post('/sms/send-code', sendSMSCode);
+router.post('/sms/verify-code', verifySMSCode);
 
 // Google OAuth routes temporairement désactivées
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

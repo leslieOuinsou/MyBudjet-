@@ -11,6 +11,9 @@ console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Configurée (masquée)'
 console.log('PAYPAL_CLIENT_ID:', process.env.PAYPAL_CLIENT_ID ? '✅ Configurée' : '❌ Non configurée');
 console.log('PAYPAL_CLIENT_SECRET:', process.env.PAYPAL_CLIENT_SECRET ? '✅ Configurée (masquée)' : '❌ Non configurée');
 console.log('PAYPAL_MODE:', process.env.PAYPAL_MODE ? `✅ ${process.env.PAYPAL_MODE}` : '❌ Non configurée');
+console.log('TWILIO_ACCOUNT_SID:', process.env.TWILIO_ACCOUNT_SID ? '✅ Configurée' : '❌ Non configurée');
+console.log('TWILIO_AUTH_TOKEN:', process.env.TWILIO_AUTH_TOKEN ? '✅ Configurée' : '❌ Non configurée');
+console.log('TWILIO_PHONE_NUMBER:', process.env.TWILIO_PHONE_NUMBER ? `✅ ${process.env.TWILIO_PHONE_NUMBER}` : '❌ Non configurée');
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import cors from 'cors';

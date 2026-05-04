@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { sendSMSCode, verifySMSCode } from '../api.js';
 
 export default function LoginPage() {
+  const [loginMethod, setLoginMethod] = useState('email'); // 'email' ou 'sms'
+  
+  // États pour connexion email
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  
+  // États pour connexion SMS
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [smsCode, setSmsCode] = useState('');
+  const [smsSent, setSmsSent] = useState(false);
+  const [smsLoading, setSmsLoading] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   // Charger l'email sauvegardé au démarrage
@@ -20,10 +33,82 @@ export default function LoginPage() {
     }
   }, []);
 
+  // Compte à rebours pour réenvoyer le code SMS
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
+
+  const handleSendSMSCode = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    
+    if (!phoneNumber) {
+      setError('Veuillez entrer votre numéro de téléphone');
+      return;
+    }
+    
+    try {
+      setSmsLoading(true);
+      await sendSMSCode(phoneNumber);
+      setSmsSent(true);
+      setSuccess('Code de vérification envoyé par SMS !');
+      setCountdown(60); // 60 secondes avant de pouvoir réenvoyer
+    } catch (err) {
+      setError(err.message || 'Erreur lors de l\'envoi du code SMS');
+    } finally {
+      setSmsLoading(false);
+    }
+  };
+
+  const handleVerifySMSCode = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    
+    if (!smsCode || smsCode.length !== 6) {
+      setError('Veuillez entrer le code à 6 chiffres reçu par SMS');
+      return;
+    }
+    
+    try {
+      setSmsLoading(true);
+      const data = await verifySMSCode(phoneNumber, smsCode);
+      console.log('✅ Connexion SMS réussie', data);
+      
+      // Stockage du token (toujours en sessionStorage pour SMS)
+      sessionStorage.setItem('token', data.token);
+      localStorage.removeItem('rememberMe');
+      
+      // Redirection selon le rôle
+      const isAdmin = data.user?.role === 'admin';
+      const redirectUrl = isAdmin ? '/admin' : '/dashboard';
+      
+      setTimeout(() => {
+        navigate(redirectUrl, { replace: true });
+      }, 100);
+    } catch (err) {
+      setError(err.message || 'Code invalide. Veuillez réessayer.');
+    } finally {
+      setSmsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
+    if (loginMethod === 'sms') {
+      if (!smsSent) {
+        await handleSendSMSCode(e);
+      } else {
+        await handleVerifySMSCode(e);
+      }
+      return;
+    }
     
     try {
       console.log('📤 Tentative de connexion avec:', { email, password: '***' });
@@ -50,41 +135,28 @@ export default function LoginPage() {
       
       // Stockage du token selon l'option "Se souvenir de moi"
       if (rememberMe) {
-        // Stockage persistant (localStorage) - Token ET email uniquement
         localStorage.setItem('token', data.token);
         localStorage.setItem('rememberMe', 'true');
         localStorage.setItem('savedEmail', email);
         localStorage.setItem('savedRememberMe', 'true');
-        console.log('💾 Email sauvegardé:', email);
       } else {
-        // Stockage temporaire (sessionStorage) - Token seulement
         sessionStorage.setItem('token', data.token);
         localStorage.removeItem('rememberMe');
         localStorage.removeItem('savedEmail');
         localStorage.removeItem('savedRememberMe');
-        console.log('🗑️ Email effacé');
       }
       
       // Redirection selon le rôle
       const isAdmin = data.user?.role === 'admin';
       const redirectUrl = isAdmin ? '/admin' : '/dashboard';
       
-      console.log(`🔄 Redirection vers ${redirectUrl} (rôle: ${data.user?.role})`);
-      console.log('🔑 Token stocké:', rememberMe ? 'localStorage' : 'sessionStorage');
-      console.log('🔍 Vérification token localStorage:', localStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
-      console.log('🔍 Vérification token sessionStorage:', sessionStorage.getItem('token') ? '✅ Présent' : '❌ Absent');
-      
-      // Utiliser replace: true pour forcer la navigation et éviter les problèmes de navigation
       setTimeout(() => {
-        console.log('🚀 Exécution de la navigation...');
         navigate(redirectUrl, { replace: true });
-        console.log('✅ Navigation exécutée');
-      }, 100); // Petit délai pour s'assurer que le token est bien stocké
+      }, 100);
     } catch (err) {
       console.error('❌ Erreur connexion:', err);
       let errorMessage = err.message || 'Erreur lors de la connexion';
       
-      // Message personnalisé pour les comptes Google
       if (errorMessage.includes('social login') || errorMessage.includes('reset your password')) {
         errorMessage = 'Ce compte a été créé avec Google. Utilisez "Se connecter avec Google" ou créez un mot de passe via "Mot de passe oublié".';
       }
@@ -106,6 +178,43 @@ export default function LoginPage() {
             <p className="text-[#6C757D] text-sm">Connectez-vous pour accéder à votre compte</p>
           </div>
           
+          {/* Onglets de sélection de méthode */}
+          <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl">
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMethod('email');
+                setError('');
+                setSuccess('');
+                setSmsSent(false);
+              }}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
+                loginMethod === 'email'
+                  ? 'bg-white text-[#1E3A8A] shadow-sm'
+                  : 'text-[#6C757D] hover:text-[#343A40]'
+              }`}
+            >
+              📧 Email
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMethod('sms');
+                setError('');
+                setSuccess('');
+                setSmsSent(false);
+                setSmsCode('');
+              }}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
+                loginMethod === 'sms'
+                  ? 'bg-white text-[#1E3A8A] shadow-sm'
+                  : 'text-[#6C757D] hover:text-[#343A40]'
+              }`}
+            >
+              📱 SMS
+            </button>
+          </div>
+
           {error && (
             <div className="mb-4 p-4 bg-red-50 border-l-4 border-[#DC3545] rounded-lg">
               <div className="flex items-center gap-2">
@@ -116,56 +225,144 @@ export default function LoginPage() {
               </div>
             </div>
           )}
-          <form
-            className="flex flex-col gap-3 md:gap-4"
-            onSubmit={handleSubmit}
-          >
-            <div>
-              <label className="block text-[#343A40] text-sm font-semibold mb-2">Adresse e-mail</label>
-              <input
-                type="email"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#343A40] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all"
-                placeholder="votre.email@exemple.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-[#343A40] text-sm font-semibold">Mot de passe</label>
-                <Link to="/forgot-password?from=user" className="text-xs text-[#1E3A8A] hover:text-[#155a8a] hover:underline font-medium">Mot de passe oublié ?</Link>
+
+          {success && (
+            <div className="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-green-700 text-sm font-medium">{success}</span>
               </div>
-              <input
-                type="password"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#343A40] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all"
-                placeholder="Votre mot de passe"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-              />
             </div>
-            
-            {/* Option "Se souvenir de moi" */}
-            <div className="flex items-center justify-between mt-2">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 text-[#1E3A8A] border-gray-300 rounded focus:ring-[#1E3A8A] focus:ring-2"
-                />
-                <span className="ml-2 text-sm text-[#6C757D]">Se souvenir de moi</span>
-              </label>
-            </div>
-            
-            <button
-              type="submit"
-              className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#155a8a] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+          )}
+
+          {loginMethod === 'email' ? (
+            <form
+              className="flex flex-col gap-3 md:gap-4"
+              onSubmit={handleSubmit}
             >
-              Se connecter
-            </button>
-          </form>
+              <div>
+                <label className="block text-[#343A40] text-sm font-semibold mb-2">Adresse e-mail</label>
+                <input
+                  type="email"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#343A40] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all"
+                  placeholder="votre.email@exemple.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-[#343A40] text-sm font-semibold">Mot de passe</label>
+                  <Link to="/forgot-password?from=user" className="text-xs text-[#1E3A8A] hover:text-[#155a8a] hover:underline font-medium">Mot de passe oublié ?</Link>
+                </div>
+                <input
+                  type="password"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#343A40] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all"
+                  placeholder="Votre mot de passe"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="flex items-center justify-between mt-2">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 text-[#1E3A8A] border-gray-300 rounded focus:ring-[#1E3A8A] focus:ring-2"
+                  />
+                  <span className="ml-2 text-sm text-[#6C757D]">Se souvenir de moi</span>
+                </label>
+              </div>
+              
+              <button
+                type="submit"
+                className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#155a8a] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Se connecter
+              </button>
+            </form>
+          ) : (
+            <form
+              className="flex flex-col gap-3 md:gap-4"
+              onSubmit={handleSubmit}
+            >
+              <div>
+                <label className="block text-[#343A40] text-sm font-semibold mb-2">Numéro de téléphone</label>
+                <input
+                  type="tel"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#343A40] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all"
+                  placeholder="+33612345678"
+                  value={phoneNumber}
+                  onChange={e => setPhoneNumber(e.target.value)}
+                  disabled={smsSent}
+                  required
+                />
+                <p className="text-xs text-[#6C757D] mt-1">Format international requis (ex: +33612345678)</p>
+              </div>
+
+              {smsSent && (
+                <div>
+                  <label className="block text-[#343A40] text-sm font-semibold mb-2">Code de vérification</label>
+                  <input
+                    type="text"
+                    maxLength="6"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#343A40] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all text-center text-2xl tracking-widest"
+                    placeholder="000000"
+                    value={smsCode}
+                    onChange={e => setSmsCode(e.target.value.replace(/\D/g, ''))}
+                    required
+                  />
+                  <p className="text-xs text-[#6C757D] mt-1 text-center">Entrez le code à 6 chiffres reçu par SMS</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={smsLoading}
+                className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#155a8a] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                {smsLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {smsSent ? 'Vérification...' : 'Envoi...'}
+                  </span>
+                ) : smsSent ? (
+                  'Vérifier le code'
+                ) : (
+                  'Envoyer le code'
+                )}
+              </button>
+
+              {smsSent && countdown > 0 && (
+                <button
+                  type="button"
+                  disabled
+                  className="text-xs text-[#6C757D] text-center"
+                >
+                  Réenvoyer le code dans {countdown}s
+                </button>
+              )}
+
+              {smsSent && countdown === 0 && (
+                <button
+                  type="button"
+                  onClick={handleSendSMSCode}
+                  className="text-xs text-[#1E3A8A] hover:text-[#155a8a] hover:underline text-center font-medium"
+                >
+                  Réenvoyer le code
+                </button>
+              )}
+            </form>
+          )}
           {/* Google OAuth */}
           {true && (
             <>

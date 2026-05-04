@@ -14,6 +14,7 @@ async function handleApiResponse(response) {
   if (response.status === 401) {
     // Token expiré ou invalide
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     // Rediriger vers la page de connexion si on est dans le navigateur
     if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
       window.location.href = '/login';
@@ -69,6 +70,53 @@ export async function login(email, password, rememberMe = false) {
     return data;
   } catch (error) {
     console.error('❌ Erreur de connexion:', error);
+    throw error;
+  }
+}
+
+// Authentification par SMS
+export async function sendSMSCode(phoneNumber) {
+  try {
+    const response = await fetch(`${API_URL}/auth/sms/send-code`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erreur lors de l\'envoi du code SMS');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi du code SMS:', error);
+    throw error;
+  }
+}
+
+export async function verifySMSCode(phoneNumber, code) {
+  try {
+    const response = await fetch(`${API_URL}/auth/sms/verify-code`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber, code }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Erreur lors de la vérification du code');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de la vérification du code SMS:', error);
     throw error;
   }
 }
