@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoadingScreen from "./components/LoadingScreen.jsx";
 import HomePage from "./Pages/HomePage.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
@@ -43,26 +43,20 @@ import CookieConsent from "./components/CookieConsent.jsx";
 function AppContent() {
   const [showLoading, setShowLoading] = useState(true);
 
+  const handleInitialLoadComplete = useCallback(() => {
+    sessionStorage.setItem('hasVisited', 'true');
+    setShowLoading(false);
+  }, []);
+
   useEffect(() => {
-    // Vérifier si c'est la première visite
     const hasVisited = sessionStorage.getItem('hasVisited');
-    
     if (hasVisited) {
-      // Si l'utilisateur a déjà visité, ne pas montrer le loading
       setShowLoading(false);
-    } else {
-      // Sinon, montrer le loading pendant 3 secondes
-      const timer = setTimeout(() => {
-        sessionStorage.setItem('hasVisited', 'true');
-        setShowLoading(false);
-      }, 3000);
-      
-      return () => clearTimeout(timer);
     }
   }, []);
 
   if (showLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen onComplete={handleInitialLoadComplete} />;
   }
 
   return (

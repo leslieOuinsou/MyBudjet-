@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const MESSAGES = [
   'Chargement de vos données',
@@ -20,23 +20,42 @@ const COLORS = {
   accentLight: '#1E73BE',
 };
 
-export default function LoadingScreen() {
+/** Délai après 100 % pour laisser voir le cercle complet avant la suite (ms) */
+const HOLD_AT_100_MS = 450;
+
+export default function LoadingScreen({ onComplete }) {
   const [progress, setProgress] = useState(0);
   const [msgIndex, setMsgIndex] = useState(0);
   const [fade, setFade] = useState(true);
+  const intervalRef = useRef(null);
+  const onCompleteRef = useRef(onComplete);
+  const completionFiredRef = useRef(false);
+
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setProgress((p) => {
         if (p >= 100) {
-          clearInterval(timer);
+          if (intervalRef.current) clearInterval(intervalRef.current);
           return 100;
         }
         return p + 1;
       });
     }, 28);
-    return () => clearInterval(timer);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
+
+  useEffect(() => {
+    if (progress < 100 || completionFiredRef.current) return;
+    completionFiredRef.current = true;
+    const t = setTimeout(() => {
+      onCompleteRef.current?.();
+    }, HOLD_AT_100_MS);
+    return () => clearTimeout(t);
+  }, [progress]);
 
   useEffect(() => {
     const timer = setInterval(() => {
