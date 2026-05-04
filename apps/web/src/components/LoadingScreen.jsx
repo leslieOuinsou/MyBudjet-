@@ -1,108 +1,257 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Aurora from './Aurora';
+
+const MESSAGES = [
+  'Chargement de vos données',
+  'Analyse des dépenses',
+  'Calcul des soldes',
+  'Presque prêt…',
+];
+
+/** Couleurs charte MyBudget+ (tailwind + pages login/dashboard) */
+const COLORS = {
+  bg: '#F5F7FA',
+  bgRadial: 'rgba(30, 58, 138, 0.06)',
+  text: '#343A40',
+  textMuted: '#6C757D',
+  textSoft: '#ADB5BD',
+  line: '#DEE2E6',
+  track: '#E9ECEF',
+  accent: '#1E3A8A',
+  accentLight: '#1E73BE',
+};
 
 export default function LoadingScreen() {
-	const navigate = useNavigate();
-	const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [msgIndex, setMsgIndex] = useState(0);
+  const [fade, setFade] = useState(true);
 
-	useEffect(() => {
-		// Animation de progression
-		const interval = setInterval(() => {
-			setProgress(prev => {
-				if (prev >= 100) {
-					clearInterval(interval);
-					return 100;
-				}
-				return prev + 2;
-			});
-		}, 50);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 100) {
+          clearInterval(timer);
+          return 100;
+        }
+        return p + 1;
+      });
+    }, 28);
+    return () => clearInterval(timer);
+  }, []);
 
-		// Après 3 secondes, naviguer vers la home page
-		const timer = setTimeout(() => {
-			navigate('/');
-		}, 3000);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setMsgIndex((i) => (i + 1) % MESSAGES.length);
+        setFade(true);
+      }, 300);
+    }, 900);
+    return () => clearInterval(timer);
+  }, []);
 
-		return () => {
-			clearInterval(interval);
-			clearTimeout(timer);
-		};
-	}, [navigate]);
+  const RADIUS = 54;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+  const offset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE;
 
-	return (
-		<div className='min-h-screen bg-gradient-to-br from-[#1E73BE] via-[#155a8a] to-[#0d4a6f] flex items-center justify-center relative overflow-hidden'>
-			{/* Animated Aurora background - Palette Fintech */}
-			<Aurora 
-				colorStops={["#1E73BE", "#28A745", "#155a8a"]}
-				blend={0.5}
-				amplitude={1.0}
-				speed={0.5}
-			/>
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-			{/* Content */}
-			<div className='relative z-10 text-center px-4'>
-				{/* Logo/Icon */}
-				<div className='mb-8 animate-bounce'>
-					<div className='w-24 h-24 mx-auto bg-white rounded-2xl shadow-2xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300'>
-						<span className='text-4xl font-bold text-[#1E73BE]'>M</span>
-					</div>
-				</div>
+        .lb-root {
+          background: ${COLORS.bg};
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          overflow: hidden;
+          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
 
-				{/* Title */}
-				<h1 className='text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 animate-fade-in'>
-					MyBudget+
-				</h1>
+        .lb-root::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(ellipse 60% 50% at 50% 45%, ${COLORS.bgRadial}, transparent 72%);
+          pointer-events: none;
+        }
 
-				{/* Slogan */}
-				<p className='text-xl md:text-2xl text-white/90 mb-12 font-medium animate-slide-up'>
-					Prenez le contrôle de vos finances avec MyBudget+
-				</p>
+        .lb-logo {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: ${COLORS.text};
+          letter-spacing: -0.02em;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 52px;
+          animation: lbFadeUp 0.8s ease forwards;
+          opacity: 0;
+        }
 
-				{/* Progress Bar */}
-				<div className='max-w-md mx-auto'>
-					<div className='bg-white/20 rounded-full h-3 overflow-hidden shadow-lg'>
-						<div 
-							className='h-full bg-gradient-to-r from-white to-blue-100 rounded-full transition-all duration-300 ease-out'
-							style={{ width: `${progress}%` }}
-						></div>
-					</div>
-					<p className='text-white/80 mt-4 text-sm'>{progress}%</p>
-				</div>
+        .lb-logo-plus {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 2.25rem;
+          height: 2.25rem;
+          border-radius: 0.75rem;
+          background: linear-gradient(135deg, ${COLORS.accent} 0%, ${COLORS.accentLight} 100%);
+          color: #fff;
+          font-size: 1rem;
+          font-weight: 700;
+          box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.35);
+        }
 
-				{/* Loading dots */}
-				<div className='flex justify-center gap-2 mt-8'>
-					<div className='w-3 h-3 bg-white rounded-full animate-pulse' style={{ animationDelay: '0ms' }}></div>
-					<div className='w-3 h-3 bg-white rounded-full animate-pulse' style={{ animationDelay: '150ms' }}></div>
-					<div className='w-3 h-3 bg-white rounded-full animate-pulse' style={{ animationDelay: '300ms' }}></div>
-				</div>
-			</div>
+        .lb-ring-wrap {
+          position: relative;
+          width: 120px;
+          height: 120px;
+          animation: lbFadeIn 0.6s ease forwards 0.6s;
+          opacity: 0;
+        }
 
-					<style>{`
-			@keyframes fade-in {
-				from {
-					opacity: 0;
-				}
-				to {
-					opacity: 1;
-				}
-			}
-			.animate-fade-in {
-				animation: fade-in 1s ease-out;
-			}
-			@keyframes slide-up {
-				from {
-					opacity: 0;
-					transform: translateY(20px);
-				}
-				to {
-					opacity: 1;
-					transform: translateY(0);
-				}
-			}
-			.animate-slide-up {
-				animation: slide-up 1s ease-out 0.3s both;
-			}
-		`}</style>
-		</div>
-	);
+        .lb-counter {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 22px;
+          font-weight: 300;
+          color: ${COLORS.text};
+          letter-spacing: -0.04em;
+          display: flex;
+          align-items: baseline;
+          gap: 1px;
+        }
+
+        .lb-pct {
+          font-size: 11px;
+          color: ${COLORS.textMuted};
+        }
+
+        .lb-status {
+          margin-top: 36px;
+          font-size: 11px;
+          color: ${COLORS.textSoft};
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          font-weight: 500;
+          height: 16px;
+          animation: lbFadeIn 0.6s ease forwards 1.4s;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .lb-status.lb-hidden { opacity: 0 !important; }
+        .lb-status.lb-visible { opacity: 1; }
+
+        .lb-tags {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 20px 24px;
+          margin-top: 48px;
+          animation: lbFadeUp 0.8s ease forwards 2s;
+          opacity: 0;
+        }
+
+        .lb-tag {
+          font-size: 10px;
+          color: ${COLORS.textSoft};
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .lb-tag::before {
+          content: '';
+          width: 16px;
+          height: 1px;
+          background: ${COLORS.line};
+          display: inline-block;
+        }
+
+        .lb-sep {
+          position: absolute;
+          bottom: 0;
+          left: 10%;
+          right: 10%;
+          height: 1px;
+          background: linear-gradient(to right, transparent, ${COLORS.line} 30%, ${COLORS.line} 70%, transparent);
+          animation: lbFadeIn 1s ease forwards 1.8s;
+          opacity: 0;
+        }
+
+        @keyframes lbFadeUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes lbFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+      `}</style>
+
+      <div className="lb-root">
+        <div className="lb-logo">
+          <span className="lb-logo-plus">M+</span>
+          <span>MyBudget+</span>
+        </div>
+
+        <div className="lb-ring-wrap">
+          <svg width="120" height="120" viewBox="0 0 120 120" aria-hidden>
+            <circle
+              cx="60"
+              cy="60"
+              r={RADIUS}
+              fill="none"
+              stroke={COLORS.track}
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="60"
+              cy="60"
+              r={RADIUS}
+              fill="none"
+              stroke={COLORS.accent}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={offset}
+              style={{
+                transform: 'rotate(-90deg)',
+                transformOrigin: '60px 60px',
+                transition: 'stroke-dashoffset 0.03s linear',
+              }}
+            />
+          </svg>
+
+          <div className="lb-counter">
+            <span>{progress}</span>
+            <span className="lb-pct">%</span>
+          </div>
+        </div>
+
+        <div className={`lb-status ${fade ? 'lb-visible' : 'lb-hidden'}`} role="status">
+          {MESSAGES[msgIndex]}
+        </div>
+
+        <div className="lb-tags">
+          {['Budgets', 'Transactions', 'Statistiques'].map((t) => (
+            <span key={t} className="lb-tag">
+              {t}
+            </span>
+          ))}
+        </div>
+
+        <div className="lb-sep" />
+      </div>
+    </>
+  );
 }
