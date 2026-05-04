@@ -325,7 +325,7 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col justify-between px-4 py-6 md:py-8">
       <div className="flex flex-1 items-center justify-center w-full">
-        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden border border-gray-200">
+        <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden border border-gray-200">
           {/* Formulaire */}
           <div className="w-full p-6 md:p-8 lg:p-10 flex flex-col justify-center relative">
             {/* Effet de fond animé */}
