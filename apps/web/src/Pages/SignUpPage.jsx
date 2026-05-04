@@ -325,9 +325,9 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col justify-between px-4 py-6 md:py-8">
       <div className="flex flex-1 items-center justify-center w-full">
-        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl flex flex-col md:flex-row overflow-hidden border border-gray-200">
+        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden border border-gray-200">
           {/* Formulaire */}
-          <div className="w-full md:w-1/2 p-6 md:p-8 lg:p-10 flex flex-col justify-center relative">
+          <div className="w-full p-6 md:p-8 lg:p-10 flex flex-col justify-center relative">
             {/* Effet de fond animé */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A8A]/5 to-transparent opacity-50 pointer-events-none"></div>
             
@@ -659,46 +659,6 @@ const SignUpPage = () => {
                     Se connecter
                   </Link>
                 </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Section témoignage moderne */}
-          <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] flex-col items-center justify-center p-8 lg:p-12 relative overflow-hidden">
-            {/* Effets de fond */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
-            </div>
-            
-            <div className="relative z-10 text-white text-center">
-              <div className="mb-8">
-                <div className="w-20 h-20 mx-auto rounded-full bg-white/20 backdrop-blur-sm border-4 border-white/30 flex items-center justify-center mb-4 shadow-xl">
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <blockquote className="text-xl md:text-2xl font-medium mb-4 leading-relaxed">
-                « MyBudget+ a transformé la façon dont je gère mes finances. C'est intuitif, puissant et me fait gagner un temps précieux. »
-              </blockquote>
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30"></div>
-                  <div className="text-left">
-                    <div className="font-semibold">Alice Dubois</div>
-                    <div className="text-sm text-white/80">Analyste Financière</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-8 pt-6 border-t border-white/20">
-                <div className="text-xs uppercase tracking-wider text-white/60 mb-4">APPROUVÉ PAR DES EXPERTS</div>
-                <div className="flex gap-4 justify-center items-center">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-12 h-12 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-                      <div className="w-8 h-8 bg-white/20 rounded"></div>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
