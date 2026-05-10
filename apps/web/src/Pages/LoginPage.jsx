@@ -76,6 +76,17 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col px-4 py-6 md:py-12">
+      <div className="w-full max-w-md mx-auto shrink-0 mb-3">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#1E3A8A] hover:text-[#155a8a] transition-colors"
+        >
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Retour à l&apos;accueil
+        </Link>
+      </div>
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200">
           <div className="text-center mb-6">
