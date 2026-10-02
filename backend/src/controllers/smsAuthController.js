@@ -112,6 +112,14 @@ export const sendSMSCode = async (req, res) => {
       } else {
         console.log(`\n⚠️  MODE DÉVELOPPEMENT: Le code ${code} est conservé malgré l'erreur Twilio.`);
         console.log(`⚠️  Vous pouvez utiliser ce code pour tester l'authentification.\n`);
+
+        // Le code étant conservé en base, le retourner pour permettre le test de bout en bout
+        return res.status(200).json({
+          success: true,
+          message: "SMS non envoyé (Twilio non configuré ou erreur d'envoi). Code de test retourné en mode développement.",
+          code,
+          dev: true
+        });
       }
       
       // Message d'erreur plus détaillé

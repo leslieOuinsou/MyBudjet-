@@ -1,5 +1,11 @@
 import prisma from '../lib/prisma.js';
 import { serialize, userId as getUserId } from '../lib/serialize.js';
+import {
+  isCloudinaryConfigured,
+  isCloudinaryUrl,
+  uploadImageToCloudinary,
+  deleteCloudinaryImage,
+} from '../lib/cloudinary.js';
 import bcrypt from 'bcryptjs';
 
 const DEFAULT_USER_PREFERENCES = {
@@ -233,19 +239,37 @@ export const uploadProfilePicture = async (req, res) => {
       return res.status(400).json({ message: 'Aucun fichier uploadé' });
     }
 
-    if (req.file.buffer && !req.file.path) {
-      console.warn('⚠️ Upload de photo de profil en mémoire (Vercel) - nécessite un service de stockage externe');
+    let profilePictureUrl;
+
+    if (isCloudinaryConfigured()) {
+      // Stockage externe Cloudinary (production Vercel et/ou local)
+      const result = await uploadImageToCloudinary(req.file, 'avatars');
+      profilePictureUrl = result.secure_url;
+      console.log('☁️ Avatar uploadé sur Cloudinary:', result.public_id);
+    } else if (req.file.path && req.file.filename) {
+      // Développement local sans Cloudinary : disque + express.static
+      profilePictureUrl = `/uploads/${req.file.filename}`;
+    } else {
+      console.warn('⚠️ Fichier reçu en mémoire sans stockage externe configuré (Cloudinary)');
       return res.status(501).json({
-        message: "L'upload de photos de profil nécessite un service de stockage externe en production. Veuillez configurer Cloudinary, AWS S3 ou Vercel Blob Storage.",
+        message: "L'upload de photos de profil nécessite un service de stockage externe en production. Veuillez configurer Cloudinary (variables CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET).",
       });
     }
 
-    if (!req.file.filename) {
-      return res.status(400).json({ message: 'Impossible de déterminer le nom du fichier' });
-    }
-
-    const profilePictureUrl = `/uploads/${req.file.filename}`;
     console.log('🔗 URL de l\'avatar:', profilePictureUrl);
+
+    // Supprimer l'ancien avatar Cloudinary éventuel (best-effort)
+    const existingUser = await prisma.user.findUnique({
+      where: { id: uid },
+      select: { profilePicture: true },
+    });
+    if (isCloudinaryUrl(existingUser?.profilePicture)) {
+      try {
+        await deleteCloudinaryImage(existingUser.profilePicture);
+      } catch (err) {
+        console.warn('⚠️ Impossible de supprimer l\'ancien avatar Cloudinary:', err.message);
+      }
+    }
 
     try {
       const user = await prisma.user.update({
@@ -289,6 +313,19 @@ export const deleteProfilePicture = async (req, res) => {
     console.log('🗑️ Suppression d\'avatar pour utilisateur:', getUserId(req.user));
 
     const uid = getUserId(req.user);
+
+    // Supprimer l'image distante si elle est hébergée sur Cloudinary (best-effort)
+    const existingUser = await prisma.user.findUnique({
+      where: { id: uid },
+      select: { profilePicture: true },
+    });
+    if (isCloudinaryUrl(existingUser?.profilePicture)) {
+      try {
+        await deleteCloudinaryImage(existingUser.profilePicture);
+      } catch (err) {
+        console.warn('⚠️ Impossible de supprimer l\'image Cloudinary:', err.message);
+      }
+    }
 
     try {
       const user = await prisma.user.update({

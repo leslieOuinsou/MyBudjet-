@@ -452,7 +452,9 @@ export default function SettingsPage() {
               <div className="relative group">
                 {user?.profilePicture ? (
                   <img 
-                    src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${user.profilePicture}`} 
+                    src={user.profilePicture.startsWith('http')
+                      ? user.profilePicture
+                      : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001'}${user.profilePicture}`}
                     alt="Avatar" 
                     className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-300" 
                   />

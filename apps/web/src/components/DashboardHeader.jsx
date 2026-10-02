@@ -129,8 +129,10 @@ export default function DashboardHeader() {
     }
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-    const avatarUrl = user?.profilePicture 
-      ? `${API_URL.replace('/api', '')}${user.profilePicture}`
+    const avatarUrl = user?.profilePicture
+      ? user.profilePicture.startsWith('http')
+        ? user.profilePicture
+        : `${API_URL.replace('/api', '')}${user.profilePicture}`
       : null;
     
     const initials = getInitials(user?.name);
