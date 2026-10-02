@@ -22,30 +22,78 @@ const initialSettings = {
 
 const typeColors = {
   budget: "bg-[#1E73BE] text-white",
+  budget_alert: "bg-[#1E73BE] text-white",
+  budget_exceeded: "bg-red-600 text-white",
   bill: "bg-green-500 text-white",
   security: "bg-yellow-500 text-white",
   update: "bg-gray-400 text-white",
   transaction: "bg-red-500 text-white",
+  transaction_reminder: "bg-orange-500 text-white",
   marketing: "bg-purple-500 text-white",
   weekly: "bg-blue-500 text-white",
+  goal_achieved: "bg-emerald-500 text-white",
+  system: "bg-gray-600 text-white",
 };
 
 const typeLabels = {
   budget: "Budget",
+  budget_alert: "Alerte budget",
+  budget_exceeded: "Budget dépassé",
   bill: "Facture",
   security: "Sécurité",
   update: "Application",
   transaction: "Transaction",
+  transaction_reminder: "Rappel transaction",
   marketing: "Marketing",
   weekly: "Hebdomadaire",
+  goal_achieved: "Objectif atteint",
+  system: "Système",
 };
+
+// Interrupteur de préférence avec état de sauvegarde
+const SettingSwitch = ({ label, description, settingKey, value, saving, onToggle }) => (
+  <div className="flex items-center justify-between">
+    <div>
+      <div className="font-medium flex items-center gap-2">
+        {label}
+        {saving && (
+          <span className="inline-block h-3 w-3 rounded-full border-2 border-[#1E73BE] border-t-transparent animate-spin" title="Enregistrement…" />
+        )}
+      </div>
+      <div className="text-gray-500 text-sm">{description}</div>
+    </div>
+    <label className={`inline-flex items-center ${saving ? 'cursor-wait opacity-60' : 'cursor-pointer'}`}>
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={() => onToggle(settingKey)}
+        disabled={saving}
+        className="sr-only"
+      />
+      <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${value ? 'bg-[#1E73BE]' : ''}`}>
+        <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${value ? 'translate-x-5' : ''}`}></span>
+      </span>
+    </label>
+  </div>
+);
 
 const NotificationsPage = () => {
   const [settings, setSettings] = useState(initialSettings);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [actionError, setActionError] = useState('');
+  const [savedMessage, setSavedMessage] = useState('');
+  const [savingKey, setSavingKey] = useState(null);
+  const [savingAll, setSavingAll] = useState(false);
   const [user, setUser] = useState(null);
+
+  // Afficher un message de confirmation temporaire
+  const showSavedMessage = (text = 'Préférences enregistrées ✓') => {
+    setSavedMessage(text);
+    setActionError('');
+    setTimeout(() => setSavedMessage(''), 2500);
+  };
 
   // Charger les données au montage du composant
   useEffect(() => {
@@ -57,7 +105,7 @@ const NotificationsPage = () => {
           getNotificationPreferences(),
           getCurrentUser()
         ]);
-        
+
         setNotifications(notificationsData.notifications || []);
         if (preferencesData.preferences) {
           setSettings(preferencesData.preferences);
@@ -74,42 +122,68 @@ const NotificationsPage = () => {
   }, []);
 
   const handleSwitch = async (key) => {
+    if (savingKey) return; // éviter les clics simultanés
+    const previousSettings = settings;
+    const newSettings = { ...settings, [key]: !settings[key] };
+    setSettings(newSettings);
+    setSavingKey(key);
+    setActionError('');
+
     try {
-      const newSettings = { ...settings, [key]: !settings[key] };
-      setSettings(newSettings);
-      
       // Mettre à jour les préférences sur le serveur
       await updateNotificationPreferences({
         preferences: newSettings
       });
+      showSavedMessage();
     } catch (err) {
-      setError(err.message || 'Erreur lors de la mise à jour des préférences');
       // Revenir à l'état précédent en cas d'erreur
-      setSettings(settings);
+      setSettings(previousSettings);
+      setActionError(err.message || 'Erreur lors de la mise à jour des préférences');
+      setSavedMessage('');
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  // Enregistrer explicitement toutes les préférences (bouton)
+  const handleSaveAll = async () => {
+    setSavingAll(true);
+    setActionError('');
+    try {
+      await updateNotificationPreferences({
+        preferences: settings
+      });
+      showSavedMessage();
+    } catch (err) {
+      setActionError(err.message || 'Erreur lors de la mise à jour des préférences');
+      setSavedMessage('');
+    } finally {
+      setSavingAll(false);
     }
   };
 
   const handleMarkAsRead = async (id) => {
     try {
       await markNotificationAsRead(id);
-      setNotifications(prev => 
-        prev.map(notif => 
+      setNotifications(prev =>
+        prev.map(notif =>
           notif._id === id ? { ...notif, isRead: true } : notif
         )
       );
     } catch (err) {
-      setError(err.message || 'Erreur lors du marquage de la notification');
+      setActionError(err.message || 'Erreur lors du marquage de la notification');
     }
   };
 
   const handleMarkAllAsRead = async () => {
     try {
       await markAllNotificationsAsRead();
-      setNotifications(prev => 
+      setNotifications(prev =>
         prev.map(notif => ({ ...notif, isRead: true }))
       );
+      showSavedMessage('Toutes les notifications sont lues ✓');
     } catch (err) {
-      setError(err.message || 'Erreur lors du marquage des notifications');
+      setActionError(err.message || 'Erreur lors du marquage des notifications');
     }
   };
 
@@ -118,7 +192,7 @@ const NotificationsPage = () => {
       await deleteNotification(id);
       setNotifications(prev => prev.filter(notif => notif._id !== id));
     } catch (err) {
-      setError(err.message || 'Erreur lors de la suppression de la notification');
+      setActionError(err.message || 'Erreur lors de la suppression de la notification');
     }
   };
 
@@ -168,10 +242,21 @@ const NotificationsPage = () => {
         {/* Main content */}
         <main className="flex-1 p-10">
           <h1 className="text-2xl font-bold mb-1">Notifications</h1>
-          <p className="text-gray-500 mb-8">
+          <p className="text-gray-500 mb-4">
             Gérez vos notifications et restez informé sur MyBudget+.
             {user && ` Bonjour ${user.name?.split(' ')[0] || 'Utilisateur'} !`}
           </p>
+          {/* Messages de confirmation / d'erreur des actions */}
+          {savedMessage && (
+            <div className="mb-4 px-4 py-2 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200">
+              {savedMessage}
+            </div>
+          )}
+          {actionError && (
+            <div className="mb-4 px-4 py-2 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
+              {actionError}
+            </div>
+          )}
           <div className="flex flex-wrap gap-8">
             {/* Notifications récentes */}
             <section className="bg-white rounded-xl shadow p-6 flex-1 min-w-[320px] max-w-lg">
@@ -243,80 +328,35 @@ const NotificationsPage = () => {
             <section className="bg-white rounded-xl shadow p-6 flex-1 min-w-[320px] max-w-md">
               <h2 className="font-semibold text-lg mb-4">Paramètres de Notification</h2>
               <div className="space-y-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Alertes Budgétaires</div>
-                    <div className="text-gray-500 text-sm">Recevez des notifications lorsque vous dépassez un budget défini ou que vous êtes proche de la limite.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" checked={settings.budget} onChange={() => handleSwitch('budget')} className="sr-only" />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings.budget ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings.budget ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Rappels de Factures</div>
-                    <div className="text-gray-500 text-sm">Soyez alerté avant la date d'échéance de vos factures récurrentes.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" checked={settings.bill} onChange={() => handleSwitch('bill')} className="sr-only" />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings.bill ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings.bill ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Alertes de Sécurité</div>
-                    <div className="text-gray-500 text-sm">Notifications importantes concernant la sécurité de votre compte et les activités suspectes.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" checked={settings.security} onChange={() => handleSwitch('security')} className="sr-only" />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings.security ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings.security ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Mises à Jour de l'Application</div>
-                    <div className="text-gray-500 text-sm">Recevez des nouvelles sur les améliorations de l'application, les nouvelles fonctionnalités et les correctifs.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" checked={settings.update} onChange={() => handleSwitch('update')} className="sr-only" />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings.update ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings.update ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">E-mails Marketing</div>
-                    <div className="text-gray-500 text-sm">Recevez des offres spéciales, des promotions et du contenu exclusif.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" checked={settings.marketing} onChange={() => handleSwitch('marketing')} className="sr-only" />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings.marketing ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings.marketing ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Rapports Hebdomadaires</div>
-                    <div className="text-gray-500 text-sm">Recevez un résumé de vos dépenses et de vos économies de la semaine par e-mail.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" checked={settings.weekly} onChange={() => handleSwitch('weekly')} className="sr-only" />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings.weekly ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings.weekly ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
+                {[
+                  { key: 'budget', label: 'Alertes Budgétaires', description: 'Recevez des notifications lorsque vous dépassez un budget défini ou que vous êtes proche de la limite.' },
+                  { key: 'bill', label: 'Rappels de Factures', description: 'Soyez alerté avant la date d\'échéance de vos factures récurrentes.' },
+                  { key: 'security', label: 'Alertes de Sécurité', description: 'Notifications importantes concernant la sécurité de votre compte et les activités suspectes.' },
+                  { key: 'update', label: 'Mises à Jour de l\'Application', description: 'Recevez des nouvelles sur les améliorations de l\'application, les nouvelles fonctionnalités et les correctifs.' },
+                  { key: 'marketing', label: 'E-mails Marketing', description: 'Recevez des offres spéciales, des promotions et du contenu exclusif.' },
+                  { key: 'weekly', label: 'Rapports Hebdomadaires', description: 'Recevez un résumé de vos dépenses et de vos économies de la semaine par e-mail.' },
+                ].map(({ key, label, description }) => (
+                  <SettingSwitch
+                    key={key}
+                    settingKey={key}
+                    label={label}
+                    description={description}
+                    value={!!settings[key]}
+                    saving={savingKey === key}
+                    onToggle={handleSwitch}
+                  />
+                ))}
               </div>
-              <button className="mt-8 w-full bg-[#1E73BE] text-white py-2 rounded-lg font-semibold">Enregistrer les préférences</button>
+              <button
+                onClick={handleSaveAll}
+                disabled={savingAll}
+                className={`mt-8 w-full py-2 rounded-lg font-semibold text-white transition-colors ${savingAll ? 'bg-[#155a8a] opacity-70 cursor-not-allowed' : 'bg-[#1E73BE] hover:bg-[#155a8a]'}`}
+              >
+                {savingAll ? 'Enregistrement…' : 'Enregistrer les préférences'}
+              </button>
+              <p className="mt-2 text-center text-gray-400 text-xs">
+                Vos changements sont aussi enregistrés automatiquement à chaque clic sur un réglage.
+              </p>
             </section>
           </div>
         </main>
