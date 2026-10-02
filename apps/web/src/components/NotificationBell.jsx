@@ -13,7 +13,7 @@ export default function NotificationBell() {
   useEffect(() => {
     const loadNotifications = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) return;
 
         const response = await getNotifications();

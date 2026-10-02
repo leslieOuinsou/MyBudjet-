@@ -235,60 +235,37 @@ const SignUpPage = () => {
       console.log('✅ Étape 7: INSCRIPTION RÉUSSIE!');
       console.log('📋 Données reçues:', data);
       console.log('📊 Status code:', res.status);
-      console.log('📊 res.ok:', res.ok);
-      console.log('🎯 Entrée dans le bloc de succès');
       
-      // Vérifier que les données sont valides
-      if (!data || (!data.message && !data.success)) {
-        console.warn('⚠️ Réponse sans message de succès, mais status OK');
+      if (data.token) {
+        sessionStorage.setItem('token', data.token);
+        localStorage.removeItem('rememberMe');
+        setSuccess("Inscription réussie ! Connexion automatique...");
+        setLoading(false);
+        setError("");
+        setRedirectCountdown(1);
+        setTimeout(() => {
+          navigate("/dashboard", { replace: true });
+        }, 800);
+        return;
       }
-      
-      // Afficher le message de succès IMMÉDIATEMENT
-      console.log('📝 Affichage du message de succès...');
-      const successMessage = data.message || "Inscription réussie ! Redirection vers la page de connexion...";
-      console.log('📝 Message de succès:', successMessage);
-      
-      setSuccess(successMessage);
-      console.log('✅ Message de succès défini dans le state');
-      
-      // Forcer le re-render pour afficher le message
-      setTimeout(() => {
-        console.log('🔄 Vérification du state success:', successMessage);
-      }, 100);
-      
+
+      // Fallback si le backend ne renvoie pas de token
+      setSuccess("Inscription réussie ! Redirection vers la page de connexion...");
       setLoading(false);
-      console.log('✅ Loading désactivé');
+      setError("");
       
-      setError(""); // S'assurer qu'il n'y a pas d'erreur affichée
-      console.log('✅ Erreur réinitialisée');
-      
-      // Compteur de redirection
       let countdown = 3;
       setRedirectCountdown(countdown);
-      console.log('⏳ Redirection vers /login dans 3s...');
-      
       const countdownInterval = setInterval(() => {
         countdown--;
         setRedirectCountdown(countdown);
-        console.log(`⏳ Redirection dans ${countdown}s...`);
-        if (countdown <= 0) {
-          clearInterval(countdownInterval);
-        }
+        if (countdown <= 0) clearInterval(countdownInterval);
       }, 1000);
       
-      // Redirection après 3 secondes
       setTimeout(() => {
-        console.log('🔄 Redirection en cours vers /login...');
         clearInterval(countdownInterval);
         setRedirectCountdown(null);
-        try {
-          navigate("/login", { replace: true });
-          console.log('✅ Redirection effectuée avec succès');
-        } catch (navError) {
-          console.error('❌ Erreur lors de la redirection:', navError);
-          // Fallback: redirection manuelle
-          window.location.href = "/login";
-        }
+        navigate("/login", { replace: true });
       }, 3000);
     } catch (err) {
       console.error('❌ ========== ERREUR CAPTURÉE ==========');

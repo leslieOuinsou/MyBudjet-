@@ -202,7 +202,11 @@ export default function AdminProfilePage() {
                   <div className="relative mb-4">
                     {user?.profilePicture ? (
                       <img
-                        src={user.profilePicture}
+                        src={
+                          user.profilePicture.startsWith('http')
+                            ? user.profilePicture
+                            : `${(import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/api\/?$/, '')}${user.profilePicture}`
+                        }
                         alt={user.name}
                         className="w-32 h-32 rounded-full object-cover border-4 border-purple-500"
                       />

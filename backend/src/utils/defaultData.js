@@ -1,5 +1,4 @@
-import Category from '../models/category.js';
-import Wallet from '../models/wallet.js';
+import prisma from '../lib/prisma.js';
 
 // Catégories par défaut pour les dépenses
 const DEFAULT_EXPENSE_CATEGORIES = [
@@ -36,30 +35,37 @@ const DEFAULT_WALLETS = [
   { name: 'Carte de crédit', balance: 0 }
 ];
 
+const DEFAULT_GOALS = [
+  { name: "Fonds d'urgence", targetAmount: 10000, currentAmount: 0, color: '#FDE6E6' },
+  { name: 'Épargne voyage', targetAmount: 5000, currentAmount: 0, color: '#FDF6E6' },
+  { name: 'Investissements', targetAmount: 20000, currentAmount: 0, color: '#E6F6FD' },
+];
+
 // Fonction pour initialiser les données par défaut pour un utilisateur
 export const initializeDefaultData = async (userId) => {
   try {
     console.log(`🔄 Initialisation des données par défaut pour l'utilisateur ${userId}`);
     
     // Vérifier si l'utilisateur a déjà des catégories
-    const existingCategories = await Category.find({ user: userId });
-    const existingWallets = await Wallet.find({ user: userId });
+    const existingCategories = await prisma.category.findMany({ where: { userId } });
+    const existingWallets = await prisma.wallet.findMany({ where: { userId } });
+    const existingGoals = await prisma.financialGoal.findMany({ where: { userId } });
     
     let categoriesCreated = 0;
     let walletsCreated = 0;
+    let goalsCreated = 0;
     
     // Créer les catégories par défaut si elles n'existent pas
     if (existingCategories.length === 0) {
       const allCategories = [...DEFAULT_EXPENSE_CATEGORIES, ...DEFAULT_INCOME_CATEGORIES];
       
-      for (const catData of allCategories) {
-        const category = new Category({
+      await prisma.category.createMany({
+        data: allCategories.map(catData => ({
           ...catData,
-          user: userId
-        });
-        await category.save();
-        categoriesCreated++;
-      }
+          userId
+        }))
+      });
+      categoriesCreated = allCategories.length;
       console.log(`✅ ${categoriesCreated} catégories créées`);
     } else {
       console.log(`ℹ️ L'utilisateur a déjà ${existingCategories.length} catégories`);
@@ -67,24 +73,34 @@ export const initializeDefaultData = async (userId) => {
     
     // Créer les portefeuilles par défaut si ils n'existent pas
     if (existingWallets.length === 0) {
-      for (const walletData of DEFAULT_WALLETS) {
-        const wallet = new Wallet({
+      await prisma.wallet.createMany({
+        data: DEFAULT_WALLETS.map(walletData => ({
           ...walletData,
-          user: userId
-        });
-        await wallet.save();
-        walletsCreated++;
-      }
+          userId
+        }))
+      });
+      walletsCreated = DEFAULT_WALLETS.length;
       console.log(`✅ ${walletsCreated} portefeuilles créés`);
     } else {
       console.log(`ℹ️ L'utilisateur a déjà ${existingWallets.length} portefeuilles`);
+    }
+
+    if (existingGoals.length === 0) {
+      await prisma.financialGoal.createMany({
+        data: DEFAULT_GOALS.map((goal) => ({ ...goal, userId })),
+      });
+      goalsCreated = DEFAULT_GOALS.length;
+      console.log(`✅ ${goalsCreated} objectifs créés`);
+    } else {
+      console.log(`ℹ️ L'utilisateur a déjà ${existingGoals.length} objectifs`);
     }
     
     return {
       success: true,
       categoriesCreated,
       walletsCreated,
-      message: `Données initialisées: ${categoriesCreated} catégories, ${walletsCreated} portefeuilles`
+      goalsCreated,
+      message: `Données initialisées: ${categoriesCreated} catégories, ${walletsCreated} portefeuilles, ${goalsCreated} objectifs`
     };
     
   } catch (error) {
@@ -99,7 +115,7 @@ export const initializeDefaultData = async (userId) => {
 // Fonction pour ajouter des catégories manquantes à un utilisateur existant
 export const addMissingCategories = async (userId) => {
   try {
-    const existingCategories = await Category.find({ user: userId });
+    const existingCategories = await prisma.category.findMany({ where: { userId } });
     const existingCategoryNames = existingCategories.map(cat => cat.name);
     
     let added = 0;
@@ -107,11 +123,12 @@ export const addMissingCategories = async (userId) => {
     // Vérifier les catégories de dépenses manquantes
     for (const catData of DEFAULT_EXPENSE_CATEGORIES) {
       if (!existingCategoryNames.includes(catData.name)) {
-        const category = new Category({
-          ...catData,
-          user: userId
+        await prisma.category.create({
+          data: {
+            ...catData,
+            userId
+          }
         });
-        await category.save();
         added++;
       }
     }
@@ -119,11 +136,12 @@ export const addMissingCategories = async (userId) => {
     // Vérifier les catégories de revenus manquantes
     for (const catData of DEFAULT_INCOME_CATEGORIES) {
       if (!existingCategoryNames.includes(catData.name)) {
-        const category = new Category({
-          ...catData,
-          user: userId
+        await prisma.category.create({
+          data: {
+            ...catData,
+            userId
+          }
         });
-        await category.save();
         added++;
       }
     }
@@ -139,18 +157,19 @@ export const addMissingCategories = async (userId) => {
 // Fonction pour ajouter des portefeuilles manquants à un utilisateur existant
 export const addMissingWallets = async (userId) => {
   try {
-    const existingWallets = await Wallet.find({ user: userId });
+    const existingWallets = await prisma.wallet.findMany({ where: { userId } });
     const existingWalletNames = existingWallets.map(wallet => wallet.name);
     
     let added = 0;
     
     for (const walletData of DEFAULT_WALLETS) {
       if (!existingWalletNames.includes(walletData.name)) {
-        const wallet = new Wallet({
-          ...walletData,
-          user: userId
+        await prisma.wallet.create({
+          data: {
+            ...walletData,
+            userId
+          }
         });
-        await wallet.save();
         added++;
       }
     }

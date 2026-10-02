@@ -1,54 +1,102 @@
-import Transaction from '../models/transaction.js';
-import Budget from '../models/budget.js';
-import Category from '../models/category.js';
-import Wallet from '../models/wallet.js';
+import prisma from '../lib/prisma.js';
+import { serialize, userId as getUserId } from '../lib/serialize.js';
 import { Parser } from 'json2csv';
 import PDFDocument from 'pdfkit';
+
+function getPeriodRange(period) {
+  const now = new Date();
+  let startDate;
+  const endDate = now;
+
+  switch (period) {
+    case 'week':
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case 'year':
+      startDate = new Date(now.getFullYear(), 0, 1);
+      break;
+    case 'month':
+    default:
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+
+  return { startDate, endDate: endDate, now };
+}
+
+function getISOWeek(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+async function sumByType(uid, type, startDate, endDate) {
+  const result = await prisma.transaction.aggregate({
+    where: {
+      userId: uid,
+      type,
+      date: { gte: startDate, lte: endDate },
+    },
+    _sum: { amount: true },
+    _count: true,
+  });
+  return {
+    total: result._sum.amount || 0,
+    count: result._count || 0,
+  };
+}
+
+async function categoryGroups(uid, type, startDate, endDate, withAvg = false) {
+  const groups = await prisma.transaction.groupBy({
+    by: ['categoryId'],
+    where: {
+      userId: uid,
+      type,
+      date: { gte: startDate, lte: endDate },
+    },
+    _sum: { amount: true },
+    _count: true,
+    ...(withAvg ? { _avg: { amount: true } } : {}),
+    orderBy: { _sum: { amount: 'desc' } },
+  });
+
+  const categories = await prisma.category.findMany({
+    where: { id: { in: groups.map((g) => g.categoryId).filter(Boolean) } },
+  });
+  const catMap = Object.fromEntries(categories.map((c) => [c.id, c]));
+
+  return groups.map((g) => ({
+    categoryId: g.categoryId,
+    categoryName: catMap[g.categoryId]?.name || 'Non catégorisé',
+    categoryColor: catMap[g.categoryId]?.color || '#CBD5E1',
+    total: g._sum.amount || 0,
+    count: g._count,
+    ...(withAvg
+      ? { avgAmount: Math.round((g._avg?.amount || 0) * 100) / 100 }
+      : {}),
+  }));
+}
 
 // Obtenir les statistiques financières générales
 export const getFinancialStats = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    const uid = getUserId(req.user);
     const { period = 'month' } = req.query;
+    const { startDate, endDate } = getPeriodRange(period);
 
-    // Calculer les dates selon la période
-    const now = new Date();
-    let startDate, endDate = now;
-    
-    switch (period) {
-      case 'week':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'year':
-        startDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      default:
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    }
-
-    // Statistiques de base
     const [incomeStats, expenseStats] = await Promise.all([
-      Transaction.aggregate([
-        { $match: { user: userId, type: 'income', date: { $gte: startDate, $lte: endDate } } },
-        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }
-      ]),
-      Transaction.aggregate([
-        { $match: { user: userId, type: 'expense', date: { $gte: startDate, $lte: endDate } } },
-        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }
-      ])
+      sumByType(uid, 'income', startDate, endDate),
+      sumByType(uid, 'expense', startDate, endDate),
     ]);
 
-    const totalIncome = incomeStats[0]?.total || 0;
-    const totalExpense = expenseStats[0]?.total || 0;
+    const totalIncome = incomeStats.total;
+    const totalExpense = expenseStats.total;
     const savings = totalIncome - totalExpense;
 
-    // Calculer les variations par rapport à la période précédente
     const previousStart = new Date(startDate);
     const previousEnd = new Date(startDate);
-    
+
     switch (period) {
       case 'week':
         previousStart.setDate(previousStart.getDate() - 7);
@@ -64,21 +112,14 @@ export const getFinancialStats = async (req, res) => {
     }
 
     const [previousIncomeStats, previousExpenseStats] = await Promise.all([
-      Transaction.aggregate([
-        { $match: { user: userId, type: 'income', date: { $gte: previousStart, $lte: previousEnd } } },
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-      ]),
-      Transaction.aggregate([
-        { $match: { user: userId, type: 'expense', date: { $gte: previousStart, $lte: previousEnd } } },
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-      ])
+      sumByType(uid, 'income', previousStart, previousEnd),
+      sumByType(uid, 'expense', previousStart, previousEnd),
     ]);
 
-    const previousIncome = previousIncomeStats[0]?.total || 0;
-    const previousExpense = previousExpenseStats[0]?.total || 0;
+    const previousIncome = previousIncomeStats.total;
+    const previousExpense = previousExpenseStats.total;
     const previousSavings = previousIncome - previousExpense;
 
-    // Calculer les variations en pourcentage
     const incomeVariation = previousIncome > 0 ? ((totalIncome - previousIncome) / previousIncome) * 100 : 0;
     const expenseVariation = previousExpense > 0 ? ((totalExpense - previousExpense) / previousExpense) * 100 : 0;
     const savingsVariation = previousSavings !== 0 ? ((savings - previousSavings) / Math.abs(previousSavings)) * 100 : 0;
@@ -92,7 +133,7 @@ export const getFinancialStats = async (req, res) => {
       savingsVariation: Math.round(savingsVariation * 100) / 100,
       period,
       startDate,
-      endDate
+      endDate,
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des statistiques', error: error.message });
@@ -102,55 +143,34 @@ export const getFinancialStats = async (req, res) => {
 // Obtenir l'analyse par catégorie
 export const getCategoryAnalytics = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    const uid = getUserId(req.user);
     const { startDate, endDate, type = 'expense' } = req.query;
-    
-    let dateFilter = {};
+
+    let rangeStart;
+    let rangeEnd;
+
     if (startDate && endDate) {
-      dateFilter = { date: { $gte: new Date(startDate), $lte: new Date(endDate) } };
+      rangeStart = new Date(startDate);
+      rangeEnd = new Date(endDate);
     } else {
-      // Par défaut, le mois courant
       const now = new Date();
-      dateFilter = { date: { $gte: new Date(now.getFullYear(), now.getMonth(), 1), $lte: now } };
+      rangeStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      rangeEnd = now;
     }
 
-    const categoryStats = await Transaction.aggregate([
-      { $match: { user: userId, type, ...dateFilter } },
-      { 
-        $group: { 
-          _id: '$category', 
-          total: { $sum: '$amount' }, 
-          count: { $sum: 1 },
-          avgAmount: { $avg: '$amount' }
-        } 
-      },
-      { $lookup: { from: 'categories', localField: '_id', foreignField: '_id', as: 'categoryInfo' } },
-      { $unwind: { path: '$categoryInfo', preserveNullAndEmptyArrays: true } },
-      { 
-        $project: {
-          categoryId: '$_id',
-          categoryName: { $ifNull: ['$categoryInfo.name', 'Non catégorisé'] },
-          categoryColor: { $ifNull: ['$categoryInfo.color', '#CBD5E1'] },
-          total: 1,
-          count: 1,
-          avgAmount: { $round: ['$avgAmount', 2] }
-        }
-      },
-      { $sort: { total: -1 } }
-    ]);
-
+    const categoryStats = await categoryGroups(uid, type, rangeStart, rangeEnd, true);
     const totalAmount = categoryStats.reduce((sum, cat) => sum + cat.total, 0);
-    
-    const analyticsWithPercentage = categoryStats.map(cat => ({
+
+    const analyticsWithPercentage = categoryStats.map((cat) => ({
       ...cat,
-      percentage: totalAmount > 0 ? Math.round((cat.total / totalAmount) * 100 * 100) / 100 : 0
+      percentage: totalAmount > 0 ? Math.round((cat.total / totalAmount) * 100 * 100) / 100 : 0,
     }));
 
     res.json({
       categories: analyticsWithPercentage,
       totalAmount,
       type,
-      period: { startDate, endDate }
+      period: { startDate, endDate },
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des analyses par catégorie', error: error.message });
@@ -160,71 +180,49 @@ export const getCategoryAnalytics = async (req, res) => {
 // Obtenir la comparaison budget vs réalisé
 export const getBudgetComparison = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    const uid = getUserId(req.user);
     const { period = 'month' } = req.query;
 
-    // Récupérer tous les budgets de l'utilisateur
-    const budgets = await Budget.find({ user: userId }).populate('category');
-    
-    // Calculer les dépenses réelles par catégorie pour la période
-    const now = new Date();
-    let startDate;
-    
-    switch (period) {
-      case 'week':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'year':
-        startDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      default:
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    }
+    const budgets = await prisma.budget.findMany({
+      where: { userId: uid },
+      include: { category: true },
+    });
 
-    const actualSpending = await Transaction.aggregate([
-      { 
-        $match: { 
-          user: userId, 
-          type: 'expense',
-          date: { $gte: startDate, $lte: now }
-        } 
+    const { startDate, now } = getPeriodRange(period);
+
+    const actualSpending = await prisma.transaction.groupBy({
+      by: ['categoryId'],
+      where: {
+        userId: uid,
+        type: 'expense',
+        date: { gte: startDate, lte: now },
       },
-      { 
-        $group: { 
-          _id: '$category', 
-          spent: { $sum: '$amount' } 
-        } 
-      }
-    ]);
+      _sum: { amount: true },
+    });
 
-    // Créer un map pour les dépenses réelles
     const spentMap = new Map();
-    actualSpending.forEach(item => {
-      if (item._id) {
-        spentMap.set(item._id.toString(), item.spent);
+    actualSpending.forEach((item) => {
+      if (item.categoryId) {
+        spentMap.set(item.categoryId, item._sum.amount || 0);
       }
     });
 
-    // Comparer budget vs réalisé
-    const comparison = budgets.map(budget => {
-      const categoryId = budget.category?._id?.toString();
+    const comparison = budgets.map((budget) => {
+      const categoryId = budget.category?.id || budget.categoryId;
       const spent = spentMap.get(categoryId) || 0;
       const budgetAmount = budget.amount || 0;
       const remaining = budgetAmount - spent;
       const percentage = budgetAmount > 0 ? (spent / budgetAmount) * 100 : 0;
 
       return {
-        categoryId: budget.category?._id,
+        categoryId: budget.category?.id || budget.categoryId,
         categoryName: budget.category?.name || 'Non catégorisé',
         categoryColor: budget.category?.color || '#CBD5E1',
         budgeted: budgetAmount,
         spent,
         remaining,
         percentage: Math.round(percentage * 100) / 100,
-        status: percentage > 100 ? 'over' : percentage > 80 ? 'warning' : 'good'
+        status: percentage > 100 ? 'over' : percentage > 80 ? 'warning' : 'good',
       };
     });
 
@@ -232,7 +230,7 @@ export const getBudgetComparison = async (req, res) => {
       comparison,
       period,
       totalBudgeted: budgets.reduce((sum, b) => sum + b.amount, 0),
-      totalSpent: Array.from(spentMap.values()).reduce((sum, spent) => sum + spent, 0)
+      totalSpent: Array.from(spentMap.values()).reduce((sum, spent) => sum + spent, 0),
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la comparaison des budgets', error: error.message });
@@ -242,109 +240,76 @@ export const getBudgetComparison = async (req, res) => {
 // Obtenir les tendances selon la période
 export const getMonthlyTrends = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    const uid = getUserId(req.user);
     const { period = 'month' } = req.query;
 
     const now = new Date();
-    let startDate, endDate = now;
-    let groupBy, dateFormat;
-    
-    // Définir la période et le groupement selon le paramètre
+    let startDate;
+    const endDate = now;
+    let dateFormat;
+
     switch (period) {
       case 'week':
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        groupBy = {
-          year: { $year: '$date' },
-          month: { $month: '$date' },
-          day: { $dayOfMonth: '$date' },
-          type: '$type'
-        };
         dateFormat = 'day';
-        break;
-      case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        groupBy = {
-          year: { $year: '$date' },
-          month: { $month: '$date' },
-          week: { $week: '$date' },
-          type: '$type'
-        };
-        dateFormat = 'week';
         break;
       case 'year':
         startDate = new Date(now.getFullYear(), 0, 1);
-        groupBy = {
-          year: { $year: '$date' },
-          month: { $month: '$date' },
-          type: '$type'
-        };
         dateFormat = 'month';
         break;
+      case 'month':
       default:
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        groupBy = {
-          year: { $year: '$date' },
-          month: { $month: '$date' },
-          week: { $week: '$date' },
-          type: '$type'
-        };
         dateFormat = 'week';
     }
 
-    const trends = await Transaction.aggregate([
-      { 
-        $match: { 
-          user: userId,
-          date: { $gte: startDate, $lte: endDate }
-        } 
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        userId: uid,
+        date: { gte: startDate, lte: endDate },
       },
-      {
-        $group: {
-          _id: groupBy,
-          total: { $sum: '$amount' }
-        }
-      },
-      { $sort: { '_id.year': 1, '_id.month': 1, '_id.week': 1, '_id.day': 1 } }
-    ]);
+      select: { amount: true, type: true, date: true },
+    });
 
-    // Organiser les données selon le format
     const organizedData = {};
-    trends.forEach(trend => {
+    transactions.forEach((t) => {
+      const d = new Date(t.date);
+      const year = d.getFullYear();
+      const month = d.getMonth() + 1;
       let key;
-      
+
       switch (dateFormat) {
         case 'day':
-          key = `${trend._id.year}-${String(trend._id.month).padStart(2, '0')}-${String(trend._id.day).padStart(2, '0')}`;
-          break;
-        case 'week':
-          key = `${trend._id.year}-${String(trend._id.month).padStart(2, '0')}-${String(trend._id.week).padStart(2, '0')}`;
+          key = `${year}-${String(month).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
           break;
         case 'month':
-          key = `${trend._id.year}-${String(trend._id.month).padStart(2, '0')}`;
+          key = `${year}-${String(month).padStart(2, '0')}`;
           break;
+        case 'week':
         default:
-          key = `${trend._id.year}-${String(trend._id.month).padStart(2, '0')}-${String(trend._id.week).padStart(2, '0')}`;
+          key = `${year}-${String(month).padStart(2, '0')}-${String(getISOWeek(d)).padStart(2, '0')}`;
       }
-      
+
       if (!organizedData[key]) {
         organizedData[key] = { income: 0, expense: 0, period: key };
       }
-      organizedData[key][trend._id.type] = trend.total;
+      organizedData[key][t.type] += t.amount;
     });
 
-    // Convertir en array et calculer les économies
-    const trendsArray = Object.values(organizedData).map(item => ({
-      ...item,
-      savings: item.income - item.expense,
-      savingsRate: item.income > 0 ? ((item.income - item.expense) / item.income) * 100 : 0
-    }));
+    const trendsArray = Object.values(organizedData)
+      .sort((a, b) => a.period.localeCompare(b.period))
+      .map((item) => ({
+        ...item,
+        savings: item.income - item.expense,
+        savingsRate: item.income > 0 ? ((item.income - item.expense) / item.income) * 100 : 0,
+      }));
 
     res.json({
       trends: trendsArray,
       period,
       dateFormat,
       startDate,
-      endDate
+      endDate,
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des tendances', error: error.message });
@@ -354,32 +319,36 @@ export const getMonthlyTrends = async (req, res) => {
 // Obtenir les top transactions
 export const getTopTransactions = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    const uid = getUserId(req.user);
     const { limit = 10, type = 'expense', startDate, endDate } = req.query;
 
-    let dateFilter = {};
+    let rangeStart;
+    let rangeEnd;
+
     if (startDate && endDate) {
-      dateFilter = { date: { $gte: new Date(startDate), $lte: new Date(endDate) } };
+      rangeStart = new Date(startDate);
+      rangeEnd = new Date(endDate);
     } else {
-      // Par défaut, le mois courant
       const now = new Date();
-      dateFilter = { date: { $gte: new Date(now.getFullYear(), now.getMonth(), 1), $lte: now } };
+      rangeStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      rangeEnd = now;
     }
 
-    const topTransactions = await Transaction.find({
-      user: userId,
-      type,
-      ...dateFilter
-    })
-    .populate('category')
-    .populate('wallet')
-    .sort({ amount: -1 })
-    .limit(parseInt(limit));
+    const topTransactions = await prisma.transaction.findMany({
+      where: {
+        userId: uid,
+        type,
+        date: { gte: rangeStart, lte: rangeEnd },
+      },
+      include: { category: true, wallet: true },
+      orderBy: { amount: 'desc' },
+      take: parseInt(limit, 10),
+    });
 
     res.json({
-      transactions: topTransactions,
+      transactions: serialize(topTransactions),
       type,
-      limit: parseInt(limit)
+      limit: parseInt(limit, 10),
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des top transactions', error: error.message });
@@ -389,27 +358,22 @@ export const getTopTransactions = async (req, res) => {
 // Exporter les données de rapport
 export const exportReportData = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    const uid = getUserId(req.user);
     const { format = 'csv', startDate, endDate, type } = req.query;
 
-    let dateFilter = {};
+    const where = { userId: uid };
     if (startDate && endDate) {
-      dateFilter = { date: { $gte: new Date(startDate), $lte: new Date(endDate) } };
+      where.date = { gte: new Date(startDate), lte: new Date(endDate) };
     }
-
-    let typeFilter = {};
     if (type && type !== 'all') {
-      typeFilter = { type };
+      where.type = type;
     }
 
-    const transactions = await Transaction.find({
-      user: userId,
-      ...dateFilter,
-      ...typeFilter
-    })
-    .populate('category')
-    .populate('wallet')
-    .sort({ date: -1 });
+    const transactions = await prisma.transaction.findMany({
+      where,
+      include: { category: true, wallet: true },
+      orderBy: { date: 'desc' },
+    });
 
     if (format === 'csv') {
       const fields = [
@@ -418,137 +382,93 @@ export const exportReportData = async (req, res) => {
         { label: 'Catégorie', value: 'category.name' },
         { label: 'Portefeuille', value: 'wallet.name' },
         { label: 'Type', value: 'type' },
-        { label: 'Montant', value: 'amount' }
+        { label: 'Montant', value: 'amount' },
       ];
-      
+
       const json2csvParser = new Parser({ fields });
       const csv = json2csvParser.parse(transactions);
-      
+
       res.header('Content-Type', 'text/csv');
       res.attachment(`rapport_transactions_${new Date().toISOString().split('T')[0]}.csv`);
       return res.send(csv);
-    } else if (format === 'pdf') {
+    }
+
+    if (format === 'pdf') {
       const doc = new PDFDocument();
       res.header('Content-Type', 'application/pdf');
       res.attachment(`rapport_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
-      
+
       doc.pipe(res);
-      
+
       doc.fontSize(20).text('Rapport de Transactions MyBudget+', 50, 50);
       doc.fontSize(12).text(`Généré le: ${new Date().toLocaleDateString('fr-FR')}`, 50, 80);
-      
+
       let yPosition = 120;
       doc.text('Date', 50, yPosition);
       doc.text('Description', 120, yPosition);
       doc.text('Catégorie', 250, yPosition);
       doc.text('Montant', 350, yPosition);
       doc.text('Type', 450, yPosition);
-      
+
       yPosition += 20;
-      
-      transactions.forEach(transaction => {
+
+      transactions.forEach((transaction) => {
         if (yPosition > 750) {
           doc.addPage();
           yPosition = 50;
         }
-        
+
         doc.text(new Date(transaction.date).toLocaleDateString('fr-FR'), 50, yPosition);
         doc.text(transaction.description || '', 120, yPosition);
         doc.text(transaction.category?.name || 'N/A', 250, yPosition);
         doc.text(`${transaction.amount.toFixed(2)} €`, 350, yPosition);
         doc.text(transaction.type, 450, yPosition);
-        
+
         yPosition += 15;
       });
-      
+
       doc.end();
-    } else {
-      return res.status(400).json({ message: 'Format non supporté' });
+      return;
     }
+
+    return res.status(400).json({ message: 'Format non supporté' });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de l\'export', error: error.message });
+    res.status(500).json({ message: "Erreur lors de l'export", error: error.message });
   }
 };
 
 // Obtenir toutes les données de rapport (endpoint principal)
 export const getReportsData = async (req, res) => {
   try {
-    const userId = req.user?._id;
+    const uid = getUserId(req.user);
     const { period = 'month' } = req.query;
+    const { startDate, endDate } = getPeriodRange(period);
 
-    // Calculer directement toutes les données dans cette fonction
-    const now = new Date();
-    let startDate, endDate = now;
-    
-    switch (period) {
-      case 'week':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'year':
-        startDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      default:
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    }
-
-    // Statistiques de base
     const [incomeStats, expenseStats] = await Promise.all([
-      Transaction.aggregate([
-        { $match: { user: userId, type: 'income', date: { $gte: startDate, $lte: endDate } } },
-        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }
-      ]),
-      Transaction.aggregate([
-        { $match: { user: userId, type: 'expense', date: { $gte: startDate, $lte: endDate } } },
-        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }
-      ])
+      sumByType(uid, 'income', startDate, endDate),
+      sumByType(uid, 'expense', startDate, endDate),
     ]);
 
-    const totalIncome = incomeStats[0]?.total || 0;
-    const totalExpense = expenseStats[0]?.total || 0;
+    const totalIncome = incomeStats.total;
+    const totalExpense = expenseStats.total;
     const savings = totalIncome - totalExpense;
 
-    // Top transactions
-    const topTransactions = await Transaction.find({
-      user: userId,
-      type: 'expense',
-      date: { $gte: startDate, $lte: endDate }
-    })
-    .populate('category')
-    .populate('wallet')
-    .sort({ amount: -1 })
-    .limit(5);
-
-    // Analyse par catégorie
-    const categoryStats = await Transaction.aggregate([
-      { $match: { user: userId, type: 'expense', date: { $gte: startDate, $lte: endDate } } },
-      { 
-        $group: { 
-          _id: '$category', 
-          total: { $sum: '$amount' }, 
-          count: { $sum: 1 }
-        } 
+    const topTransactions = await prisma.transaction.findMany({
+      where: {
+        userId: uid,
+        type: 'expense',
+        date: { gte: startDate, lte: endDate },
       },
-      { $lookup: { from: 'categories', localField: '_id', foreignField: '_id', as: 'categoryInfo' } },
-      { $unwind: { path: '$categoryInfo', preserveNullAndEmptyArrays: true } },
-      { 
-        $project: {
-          categoryId: '$_id',
-          categoryName: { $ifNull: ['$categoryInfo.name', 'Non catégorisé'] },
-          categoryColor: { $ifNull: ['$categoryInfo.color', '#CBD5E1'] },
-          total: 1,
-          count: 1
-        }
-      },
-      { $sort: { total: -1 } }
-    ]);
+      include: { category: true, wallet: true },
+      orderBy: { amount: 'desc' },
+      take: 5,
+    });
 
+    const categoryStats = await categoryGroups(uid, 'expense', startDate, endDate, false);
     const totalCategoryAmount = categoryStats.reduce((sum, cat) => sum + cat.total, 0);
-    const categoriesWithPercentage = categoryStats.map(cat => ({
+    const categoriesWithPercentage = categoryStats.map((cat) => ({
       ...cat,
-      percentage: totalCategoryAmount > 0 ? Math.round((cat.total / totalCategoryAmount) * 100 * 100) / 100 : 0
+      percentage: totalCategoryAmount > 0 ? Math.round((cat.total / totalCategoryAmount) * 100 * 100) / 100 : 0,
     }));
 
     res.json({
@@ -558,16 +478,16 @@ export const getReportsData = async (req, res) => {
         savings,
         period,
         startDate,
-        endDate
+        endDate,
       },
       categoryAnalytics: {
         categories: categoriesWithPercentage,
-        totalAmount: totalCategoryAmount
+        totalAmount: totalCategoryAmount,
       },
       topTransactions: {
-        transactions: topTransactions
+        transactions: serialize(topTransactions),
       },
-      generatedAt: new Date()
+      generatedAt: new Date(),
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des données de rapport', error: error.message });

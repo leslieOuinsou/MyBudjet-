@@ -1,60 +1,70 @@
-import Transaction from '../models/transaction.js';
-import Budget from '../models/budget.js';
-import Wallet from '../models/wallet.js';
+import prisma from '../lib/prisma.js';
+import { serialize, userId } from '../lib/serialize.js';
 import nodemailer from 'nodemailer';
 import {
   createBudgetAlertNotification,
   createBudgetExceededNotification,
-  createTransactionNotification
 } from '../utils/notificationGenerator.js';
 
 async function checkBudgetAndNotify(transaction) {
-  // Vérifie le budget par catégorie
-  if (transaction.type === 'expense' && transaction.category) {
+  if (transaction.type === 'expense' && transaction.categoryId) {
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const spent = await Transaction.aggregate([
-      { $match: { user: transaction.user, category: transaction.category, type: 'expense', date: { $gte: monthStart } } },
-      { $group: { _id: null, total: { $sum: '$amount' } } }
-    ]);
-    const totalSpent = spent[0]?.total || 0;
-    const budget = await Budget.findOne({ user: transaction.user, category: transaction.category, period: 'month' });
-    
+    const spent = await prisma.transaction.aggregate({
+      where: {
+        userId: transaction.userId,
+        categoryId: transaction.categoryId,
+        type: 'expense',
+        date: { gte: monthStart },
+      },
+      _sum: { amount: true },
+    });
+    const totalSpent = spent._sum.amount || 0;
+    const budget = await prisma.budget.findFirst({
+      where: {
+        userId: transaction.userId,
+        categoryId: transaction.categoryId,
+        period: 'month',
+      },
+    });
+
+    const category = await prisma.category.findUnique({
+      where: { id: transaction.categoryId },
+    });
+    const categoryLabel = category?.name || transaction.categoryId;
+
     if (budget) {
       const percentage = Math.round((totalSpent / budget.amount) * 100);
       const remaining = budget.amount - totalSpent;
-      
-      // Notification si 80% atteint
+
       if (percentage >= 80 && percentage < 100 && remaining > 0) {
         await createBudgetAlertNotification(
-          transaction.user,
-          transaction.category,
+          transaction.userId,
+          categoryLabel,
           percentage,
           Math.abs(remaining)
         );
       }
-      
-      // Notification si budget dépassé
+
       if (totalSpent > budget.amount) {
         const exceeded = totalSpent - budget.amount;
         await createBudgetExceededNotification(
-          transaction.user,
-          transaction.category,
+          transaction.userId,
+          categoryLabel,
           Math.abs(exceeded)
         );
-        
-        // Envoi d'alerte email (optionnel)
-        const user = await import('../models/user.js').then(m => m.default.findById(transaction.user));
+
+        const user = await prisma.user.findUnique({ where: { id: transaction.userId } });
         if (user?.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
           try {
             const transporter = nodemailer.createTransport({
               service: 'gmail',
-              auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+              auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
             });
             await transporter.sendMail({
               to: user.email,
               subject: 'Alerte budget dépassé',
-              text: `Vous avez dépassé votre budget pour la catégorie ${transaction.category} de ${exceeded.toFixed(2)}€`
+              text: `Vous avez dépassé votre budget pour la catégorie ${categoryLabel} de ${exceeded.toFixed(2)}€`,
             });
             console.log('✅ Email d\'alerte envoyé à', user.email);
           } catch (err) {
@@ -64,22 +74,21 @@ async function checkBudgetAndNotify(transaction) {
       }
     }
   }
-  // Notification si le solde devient négatif (sans crédit automatique)
-  if (transaction.wallet && transaction.type === 'expense') {
-    const wallet = await Wallet.findById(transaction.wallet);
+
+  if (transaction.walletId && transaction.type === 'expense') {
+    const wallet = await prisma.wallet.findUnique({ where: { id: transaction.walletId } });
     if (wallet && wallet.balance < 0) {
       console.log(`⚠️ Solde négatif détecté (${wallet.balance} €) pour le portefeuille ${wallet.name}`);
-      
-      // Envoyer une alerte par email si le solde est négatif
-      const user = await import('../models/user.js').then(m => m.default.findById(transaction.user));
-      
+
+      const user = await prisma.user.findUnique({ where: { id: transaction.userId } });
+
       if (user?.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
         try {
           const transporter = nodemailer.createTransport({
             service: 'gmail',
-            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
           });
-          
+
           await transporter.sendMail({
             to: user.email,
             subject: '⚠️ Alerte: Solde négatif',
@@ -92,7 +101,7 @@ async function checkBudgetAndNotify(transaction) {
                 <p><strong>Découvert autorisé:</strong> -${(wallet.overdraftLimit || 0).toFixed(2)} €</p>
               </div>
               <p style="color: #dc2626; font-weight: bold;">Veuillez approvisionner votre compte.</p>
-            `
+            `,
           });
           console.log('✅ Email d\'alerte solde négatif envoyé à', user.email);
         } catch (err) {
@@ -105,68 +114,72 @@ async function checkBudgetAndNotify(transaction) {
 
 export const getTransactions = async (req, res) => {
   const { category, wallet, startDate, endDate, search } = req.query;
-  let filter = { user: req.user?._id };
-  if (category) filter.category = category;
-  if (wallet) filter.wallet = wallet;
+  const where = { userId: userId(req.user) };
+  if (category) where.categoryId = category;
+  if (wallet) where.walletId = wallet;
   if (startDate || endDate) {
-    filter.date = {};
-    if (startDate) filter.date.$gte = new Date(startDate);
-    if (endDate) filter.date.$lte = new Date(endDate);
+    where.date = {};
+    if (startDate) where.date.gte = new Date(startDate);
+    if (endDate) where.date.lte = new Date(endDate);
   }
   if (search) {
-    filter.$or = [
-      { description: { $regex: search, $options: 'i' } },
-      { amount: isNaN(Number(search)) ? undefined : Number(search) }
-    ].filter(Boolean);
+    where.OR = [{ description: { contains: search, mode: 'insensitive' } }];
+    if (!isNaN(Number(search))) {
+      where.OR.push({ amount: Number(search) });
+    }
   }
-  const transactions = await Transaction.find(filter)
-    .populate('category')
-    .populate('wallet');
+  const transactions = serialize(
+    await prisma.transaction.findMany({
+      where,
+      include: { category: true, wallet: true },
+      orderBy: { date: 'desc' },
+    })
+  );
   res.json(transactions);
 };
 
 export const getTransaction = async (req, res) => {
-  const transaction = await Transaction.findById(req.params.id)
-    .populate('category')
-    .populate('wallet');
+  const transaction = await prisma.transaction.findUnique({
+    where: { id: req.params.id },
+    include: { category: true, wallet: true },
+  });
   if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
-  res.json(transaction);
+  res.json(serialize(transaction));
 };
 
 export const createTransaction = async (req, res) => {
-  // Mapper 'notes' (frontend) vers 'note' (backend)
   const { amount, type, category, wallet, date, description, note, notes } = req.body;
-  const finalNote = note || notes || ''; // Accepter les deux formats
+  const finalNote = note || notes || '';
   let attachment = req.file ? `/uploads/${req.file.filename}` : undefined;
-  
+  const uid = userId(req.user);
+  const categoryId = category || null;
+  const walletId = wallet || null;
+
   console.log('🔄 Création de transaction:', { amount, type, category, wallet, description, note: finalNote });
-  
-  // Vérifier le découvert autorisé AVANT de créer la transaction
-  if (type === 'expense' && wallet) {
+
+  if (type === 'expense' && walletId) {
     console.log('💰 Vérification du portefeuille pour dépense...');
-    const walletDoc = await Wallet.findById(wallet);
+    const walletDoc = await prisma.wallet.findUnique({ where: { id: walletId } });
     console.log('💳 Portefeuille trouvé:', walletDoc ? `${walletDoc.name} (${walletDoc.balance} €)` : 'Non trouvé');
-    
+
     if (walletDoc) {
       const expenseAmount = parseFloat(amount);
       const newBalance = walletDoc.balance - expenseAmount;
       const overdraftLimit = walletDoc.overdraftLimit || 0;
-      
-      // Vérifier si le découvert autorisé serait dépassé
+
       if (newBalance < -overdraftLimit) {
         const deficit = Math.abs(newBalance + overdraftLimit);
         console.log(`❌ Découvert autorisé dépassé ! Déficit: ${deficit}€`);
-        
-        const user = await import('../models/user.js').then(m => m.default.findById(req.user._id));
-        
-        // Envoyer un email d'alerte
+
+        const user = await prisma.user.findUnique({ where: { id: uid } });
+
         if (user?.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
           try {
             const transporter = nodemailer.createTransport({
               service: 'gmail',
-              auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+              auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
             });
-            
+
             await transporter.sendMail({
               to: user.email,
               subject: '🚨 Alerte: Découvert autorisé dépassé',
@@ -183,149 +196,154 @@ export const createTransaction = async (req, res) => {
                 </div>
                 <p style="color: #dc2626; font-weight: bold;">➡️ Cette dépense a été refusée pour protéger vos finances.</p>
                 <p>Veuillez approvisionner votre compte ou réduire le montant de la dépense.</p>
-              `
+              `,
             });
             console.log('✅ Email d\'alerte découvert envoyé à', user.email);
           } catch (err) {
             console.error('⚠️ Erreur envoi email:', err.message);
           }
         }
-        
-        return res.status(400).json({ 
-          message: `Dépense refusée : découvert autorisé dépassé de ${deficit.toFixed(2)}€. Solde actuel: ${walletDoc.balance.toFixed(2)}€, Découvert autorisé: -${overdraftLimit.toFixed(2)}€` 
+
+        return res.status(400).json({
+          message: `Dépense refusée : découvert autorisé dépassé de ${deficit.toFixed(2)}€. Solde actuel: ${walletDoc.balance.toFixed(2)}€, Découvert autorisé: -${overdraftLimit.toFixed(2)}€`,
         });
       }
-      
+
       console.log(`✅ Découvert OK. Nouveau solde: ${newBalance.toFixed(2)}€ (limite: -${overdraftLimit}€)`);
     }
   } else {
     console.log('ℹ️ Pas de vérification de portefeuille (pas une dépense ou pas de portefeuille)');
   }
-  
-  const transaction = new Transaction({
-    amount,
-    type,
-    category,
-    wallet,
-    user: req.user?._id,
-    date,
-    description: description || finalNote,
-    note: finalNote,
-    attachment,
+
+  const transaction = await prisma.transaction.create({
+    data: {
+      amount: parseFloat(amount),
+      type,
+      categoryId,
+      walletId,
+      userId: uid,
+      date: date ? new Date(date) : undefined,
+      description: description || finalNote || '',
+      note: finalNote,
+      attachment,
+    },
+    include: { category: true, wallet: true },
   });
-  await transaction.save();
-  
-  // Mettre à jour le solde du portefeuille après la création de la transaction
-  if (wallet && type) {
-    const walletToUpdate = await Wallet.findById(wallet);
+
+  if (walletId && type) {
+    const walletToUpdate = await prisma.wallet.findUnique({ where: { id: walletId } });
     if (walletToUpdate) {
       const oldBalance = walletToUpdate.balance;
       console.log(`💳 Portefeuille: ${walletToUpdate.name}`);
       console.log(`💳 Solde AVANT transaction: ${oldBalance}€`);
       console.log(`💰 Transaction: ${type} de ${amount}€`);
-      
-      if (type === 'expense') {
-        walletToUpdate.balance -= parseFloat(amount);
-        console.log(`➖ Retrait de ${amount}€`);
-      } else if (type === 'income') {
-        walletToUpdate.balance += parseFloat(amount);
-        console.log(`➕ Ajout de ${amount}€`);
+
+      const delta = type === 'expense' ? -parseFloat(amount) : type === 'income' ? parseFloat(amount) : 0;
+      if (delta !== 0) {
+        await prisma.wallet.update({
+          where: { id: walletId },
+          data: { balance: { increment: delta } },
+        });
+        console.log(`💰 Nouveau solde: ${oldBalance + delta}€`);
+        console.log(`📊 Calcul: ${oldBalance} ${type === 'expense' ? '-' : '+'} ${amount} = ${oldBalance + delta}`);
       }
-      
-      await walletToUpdate.save();
-      console.log(`💰 Nouveau solde: ${walletToUpdate.balance}€`);
-      console.log(`📊 Calcul: ${oldBalance} ${type === 'expense' ? '-' : '+'} ${amount} = ${walletToUpdate.balance}`);
     }
   }
-  
+
   await checkBudgetAndNotify(transaction);
-  res.status(201).json(transaction);
+  res.status(201).json(serialize(transaction));
 };
 
 export const updateTransaction = async (req, res) => {
-  // Mapper 'notes' (frontend) vers 'note' (backend)
   const { amount, type, category, wallet, date, description, note, notes } = req.body;
   const finalNote = note || notes || '';
-  
-  // Récupérer l'ancienne transaction pour restaurer le solde
-  const oldTransaction = await Transaction.findById(req.params.id);
-  
-  let update = { 
-    amount, 
-    type, 
-    category, 
-    wallet, 
-    date, 
+
+  const oldTransaction = await prisma.transaction.findUnique({ where: { id: req.params.id } });
+  if (!oldTransaction) return res.status(404).json({ message: 'Transaction not found' });
+
+  const data = {
+    amount: amount !== undefined ? parseFloat(amount) : undefined,
+    type,
+    categoryId: category !== undefined ? category || null : undefined,
+    walletId: wallet !== undefined ? wallet || null : undefined,
+    date: date ? new Date(date) : undefined,
     description: description || finalNote,
-    note: finalNote
+    note: finalNote,
   };
-  if (req.file) update.attachment = `/uploads/${req.file.filename}`;
-  const transaction = await Transaction.findByIdAndUpdate(
-    req.params.id,
-    update,
-    { new: true }
-  ).populate('category').populate('wallet');
-  if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
-  
-  // Mettre à jour le solde du portefeuille
-  if (oldTransaction && oldTransaction.wallet) {
-    const oldWallet = await Wallet.findById(oldTransaction.wallet);
-    if (oldWallet) {
-      // Restaurer l'ancien solde
-      if (oldTransaction.type === 'expense') {
-        oldWallet.balance += oldTransaction.amount;
-      } else if (oldTransaction.type === 'income') {
-        oldWallet.balance -= oldTransaction.amount;
-      }
-      await oldWallet.save();
+  if (req.file) data.attachment = `/uploads/${req.file.filename}`;
+
+  // Nettoyer les undefined
+  Object.keys(data).forEach((k) => data[k] === undefined && delete data[k]);
+
+  if (oldTransaction.walletId) {
+    const restoreDelta =
+      oldTransaction.type === 'expense'
+        ? oldTransaction.amount
+        : oldTransaction.type === 'income'
+          ? -oldTransaction.amount
+          : 0;
+    if (restoreDelta !== 0) {
+      await prisma.wallet.update({
+        where: { id: oldTransaction.walletId },
+        data: { balance: { increment: restoreDelta } },
+      });
     }
   }
-  
-  if (wallet && type) {
-    const walletToUpdate = await Wallet.findById(wallet);
-    if (walletToUpdate) {
-      if (type === 'expense') {
-        walletToUpdate.balance -= parseFloat(amount);
-      } else if (type === 'income') {
-        walletToUpdate.balance += parseFloat(amount);
-      }
-      await walletToUpdate.save();
+
+  const transaction = await prisma.transaction.update({
+    where: { id: req.params.id },
+    data,
+    include: { category: true, wallet: true },
+  });
+
+  const newWalletId = wallet !== undefined ? wallet || null : transaction.walletId;
+  const newType = type || transaction.type;
+  const newAmount = amount !== undefined ? parseFloat(amount) : transaction.amount;
+
+  if (newWalletId && newType) {
+    const delta = newType === 'expense' ? -newAmount : newType === 'income' ? newAmount : 0;
+    if (delta !== 0) {
+      const walletToUpdate = await prisma.wallet.update({
+        where: { id: newWalletId },
+        data: { balance: { increment: delta } },
+      });
       console.log(`💰 Solde du portefeuille ${walletToUpdate.name} mis à jour: ${walletToUpdate.balance}€`);
     }
   }
-  
+
   await checkBudgetAndNotify(transaction);
-  res.json(transaction);
+  res.json(serialize(transaction));
 };
 
 export const deleteTransaction = async (req, res) => {
-  const transaction = await Transaction.findById(req.params.id);
+  const transaction = await prisma.transaction.findUnique({ where: { id: req.params.id } });
   if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
-  
+
   console.log(`🗑️ Suppression de transaction: ${transaction.type} de ${transaction.amount}€`);
-  
-  // Restaurer le solde du portefeuille
-  if (transaction.wallet && transaction.type) {
-    const wallet = await Wallet.findById(transaction.wallet);
-    if (wallet) {
-      console.log(`💳 Solde AVANT suppression: ${wallet.balance}€`);
-      if (transaction.type === 'expense') {
-        wallet.balance += transaction.amount;
-        console.log(`➕ Ajout de ${transaction.amount}€ (dépense restaurée)`);
-      } else if (transaction.type === 'income') {
-        wallet.balance -= transaction.amount;
-        console.log(`➖ Retrait de ${transaction.amount}€ (revenu restauré)`);
+
+  if (transaction.walletId && transaction.type) {
+    const restoreDelta =
+      transaction.type === 'expense'
+        ? transaction.amount
+        : transaction.type === 'income'
+          ? -transaction.amount
+          : 0;
+    if (restoreDelta !== 0) {
+      try {
+        const wallet = await prisma.wallet.update({
+          where: { id: transaction.walletId },
+          data: { balance: { increment: restoreDelta } },
+        });
+        console.log(`💰 Solde APRÈS suppression: ${wallet.balance}€`);
+        console.log(`✅ Portefeuille ${wallet.name} - Solde restauré: ${wallet.balance}€`);
+      } catch {
+        console.log(`❌ Portefeuille ${transaction.walletId} non trouvé`);
       }
-      await wallet.save();
-      console.log(`💰 Solde APRÈS suppression: ${wallet.balance}€`);
-      console.log(`✅ Portefeuille ${wallet.name} - Solde restauré: ${wallet.balance}€`);
-    } else {
-      console.log(`❌ Portefeuille ${transaction.wallet} non trouvé`);
     }
   } else {
     console.log(`ℹ️ Pas de portefeuille associé à cette transaction`);
   }
-  
-  await Transaction.findByIdAndDelete(req.params.id);
+
+  await prisma.transaction.delete({ where: { id: req.params.id } });
   res.json({ message: 'Transaction deleted' });
 };

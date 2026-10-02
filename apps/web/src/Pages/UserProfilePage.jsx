@@ -5,9 +5,19 @@ import {
   getCurrentUser,
   updateUserProfile,
   getUserSettings,
-  updateUserSettings
+  updateUserSettings,
+  uploadProfilePicture,
+  deleteAvatar
 } from '../api.js';
 import { useTheme } from '../context/ThemeContext';
+
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/api\/?$/, '');
+
+const getAvatarUrl = (profilePicture) => {
+  if (!profilePicture) return null;
+  if (profilePicture.startsWith('http')) return profilePicture;
+  return `${API_BASE}${profilePicture}`;
+};
 
 const UserProfilePage = () => {
   const { isDarkMode } = useTheme();
@@ -17,6 +27,7 @@ const UserProfilePage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [tab, setTab] = useState("profile");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   
   // États pour les formulaires
   const [profileForm, setProfileForm] = useState({
@@ -58,11 +69,65 @@ const UserProfilePage = () => {
     e.preventDefault();
     try {
       setError('');
-      await updateUserProfile(profileForm);
+      const updated = await updateUserProfile(profileForm);
+      setUser((prev) => ({ ...prev, ...updated }));
       setSuccess('Profil mis à jour avec succès');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.message || 'Erreur lors de la mise à jour du profil');
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Veuillez sélectionner une image (JPG, PNG, GIF, WEBP)');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("L'image ne doit pas dépasser 5 Mo");
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      setError('');
+      const result = await uploadProfilePicture(file);
+      const profilePicture = result.profilePicture || result.user?.profilePicture;
+      setUser((prev) => ({ ...prev, profilePicture }));
+      window.dispatchEvent(new CustomEvent('avatar-updated', {
+        detail: { profilePicture },
+      }));
+      setSuccess('Photo de profil mise à jour');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.message || "Erreur lors de l'upload de la photo");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handlePhotoDelete = async () => {
+    if (!user?.profilePicture) return;
+    if (!window.confirm('Supprimer votre photo de profil ?')) return;
+
+    try {
+      setUploadingPhoto(true);
+      setError('');
+      await deleteAvatar();
+      setUser((prev) => ({ ...prev, profilePicture: null }));
+      window.dispatchEvent(new CustomEvent('avatar-updated', {
+        detail: { profilePicture: null },
+      }));
+      setSuccess('Photo de profil supprimée');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la suppression de la photo');
+    } finally {
+      setUploadingPhoto(false);
     }
   };
 
@@ -171,10 +236,52 @@ const UserProfilePage = () => {
             {/* Photo de profil */}
             <section className={`rounded-xl shadow p-4 md:p-6 flex flex-col items-center min-w-[240px] lg:min-w-[260px] lg:max-w-xs ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
               <h2 className={`font-semibold text-base md:text-lg mb-3 md:mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Photo de Profil</h2>
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-xl md:text-2xl mb-3 md:mb-4">
-                {user ? (user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U') : 'U'}
+              <div className="relative mb-3 md:mb-4">
+                {getAvatarUrl(user?.profilePicture) ? (
+                  <img
+                    src={getAvatarUrl(user.profilePicture)}
+                    alt={user?.name || 'Avatar'}
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-[#1E73BE]"
+                  />
+                ) : (
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-xl md:text-2xl">
+                    {user?.name ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
+                  </div>
+                )}
               </div>
-              <button className={`px-3 md:px-4 py-2 rounded font-medium text-xs md:text-sm ${isDarkMode ? 'bg-[#383838] text-gray-300' : 'bg-gray-100 text-gray-700'}`}>Changer la photo</button>
+              <input
+                id="profile-photo-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handlePhotoUpload}
+                disabled={uploadingPhoto}
+              />
+              <label
+                htmlFor="profile-photo-upload"
+                className={`px-3 md:px-4 py-2 rounded font-medium text-xs md:text-sm cursor-pointer ${
+                  uploadingPhoto
+                    ? 'opacity-60 cursor-not-allowed'
+                    : isDarkMode
+                      ? 'bg-[#383838] text-gray-300 hover:bg-[#454545]'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {uploadingPhoto ? 'Upload en cours…' : 'Changer la photo'}
+              </label>
+              {user?.profilePicture && (
+                <button
+                  type="button"
+                  onClick={handlePhotoDelete}
+                  disabled={uploadingPhoto}
+                  className={`mt-2 text-xs md:text-sm ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-700'}`}
+                >
+                  Supprimer
+                </button>
+              )}
+              <p className={`text-xs mt-2 text-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                JPG, PNG, GIF • max 5 Mo
+              </p>
             </section>
           </div>
           {/* Préférences */}

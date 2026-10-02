@@ -1,6 +1,5 @@
-import User from '../models/user.js';
-import ResetToken from '../models/resetToken.js';
-import Notification from '../models/notification.js';
+import prisma from '../lib/prisma.js';
+import { userId } from '../lib/serialize.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -20,7 +19,7 @@ export const register = async (req, res) => {
   }
   
     console.log('🔍 Vérification si l\'email existe déjà...');
-  const existing = await User.findOne({ email });
+  const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       console.warn('⚠️ Email déjà utilisé:', email);
       return res.status(400).json({ message: 'Email already in use' });
@@ -32,16 +31,15 @@ export const register = async (req, res) => {
     console.log('✅ Mot de passe hashé');
     
     console.log('👤 Création de l\'utilisateur...');
-  const user = new User({ name, email, password: hashedPassword });
+  const user = await prisma.user.create({
+    data: { name, email, password: hashedPassword }
+  });
     console.log('📋 Utilisateur créé:', { name: user.name, email: user.email });
-    
-    console.log('💾 Sauvegarde dans MongoDB...');
-  await user.save();
-    console.log('✅ Utilisateur sauvegardé avec ID:', user._id);
+    console.log('✅ Utilisateur sauvegardé avec ID:', user.id);
   
     console.log('📊 Initialisation des données par défaut...');
     try {
-  await initializeDefaultData(user._id);
+  await initializeDefaultData(user.id);
       console.log('✅ Données par défaut initialisées');
     } catch (defaultDataError) {
       console.error('⚠️ Erreur lors de l\'initialisation des données par défaut:', defaultDataError);
@@ -50,7 +48,7 @@ export const register = async (req, res) => {
   
     console.log('🔔 Création de la notification de bienvenue...');
     try {
-  await createWelcomeNotification(user._id, user.name);
+  await createWelcomeNotification(user.id, user.name);
       console.log('✅ Notification créée');
     } catch (notificationError) {
       console.error('⚠️ Erreur lors de la création de la notification:', notificationError);
@@ -59,10 +57,18 @@ export const register = async (req, res) => {
     
     console.log('✅ ========== INSCRIPTION RÉUSSIE ==========');
     console.log('📤 Envoi de la réponse 201...');
-    res.status(201).json({ 
-      message: 'User registered with default data initialized',
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.status(201).json({
+      message: 'Inscription réussie',
       success: true,
-      userId: user._id
+      token,
+      user: {
+        id: user.id,
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.error('❌ ========== ERREUR LORS DE L\'INSCRIPTION ==========');
@@ -71,18 +77,18 @@ export const register = async (req, res) => {
     console.error('❌ Stack:', error.stack);
     console.error('❌ Erreur complète:', error);
     
-    // Erreur MongoDB
-    if (error.name === 'MongoServerError' && error.code === 11000) {
+    // Erreur Prisma unique constraint (email déjà utilisé)
+    if (error.code === 'P2002') {
       console.error('📋 Erreur: Email déjà utilisé (duplicate key)');
       return res.status(400).json({ message: 'Email already in use' });
     }
     
-    // Erreur de validation Mongoose
-    if (error.name === 'ValidationError') {
-      console.error('📋 Erreur de validation Mongoose:', error.errors);
+    // Erreur de validation Prisma
+    if (error.name === 'PrismaClientValidationError') {
+      console.error('📋 Erreur de validation Prisma:', error.message);
       return res.status(400).json({ 
         message: 'Validation error',
-        errors: Object.values(error.errors).map(e => ({ field: e.path, message: e.message }))
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
       });
     }
     
@@ -98,7 +104,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   
-  const user = await User.findOne({ email });
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) return res.status(400).json({ message: 'Invalid credentials' });
   
   if (user.blocked) {
@@ -113,25 +119,30 @@ export const login = async (req, res) => {
   if (!valid) return res.status(400).json({ message: 'Invalid credentials' });
   
   // Vérifier si c'est la première connexion (pas de lastLogin ou créé récemment)
+  // Note: lastLogin a une valeur par défaut à la création, donc on s'appuie aussi sur createdAt
   const isFirstLogin = !user.lastLogin;
   const isNewUser = user.createdAt && (new Date() - new Date(user.createdAt)) < 24 * 60 * 60 * 1000; // Créé il y a moins de 24h
   
   // Update last login
-  user.lastLogin = new Date();
-  await user.save();
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLogin: new Date() }
+  });
   
   // Créer une notification de bienvenue si c'est la première connexion ou un nouvel utilisateur
   if (isFirstLogin || isNewUser) {
     try {
       // Vérifier s'il existe déjà une notification de bienvenue pour éviter les doublons
-      const existingWelcome = await Notification.findOne({
-        user: user._id,
-        type: 'system',
-        title: { $regex: /Bienvenue.*👋/i }
+      const existingWelcome = await prisma.notification.findFirst({
+        where: {
+          userId: user.id,
+          type: 'system',
+          title: { contains: 'Bienvenue', mode: 'insensitive' }
+        }
       });
       
       if (!existingWelcome) {
-        await createWelcomeNotification(user._id, user.name);
+        await createWelcomeNotification(user.id, user.name);
         console.log(`👋 Notification de bienvenue créée lors de la première connexion pour ${user.name}`);
       }
     } catch (notificationError) {
@@ -140,8 +151,8 @@ export const login = async (req, res) => {
     }
   }
   
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 };
 
 export const googleCallback = async (req, res) => {
@@ -157,18 +168,22 @@ export const googleCallback = async (req, res) => {
       return res.redirect(`${process.env.FRONTEND_URL}/login?error=account_blocked`);
     }
     
-    // Update last login
-    req.user.lastLogin = new Date();
-    await req.user.save();
+    const id = userId(req.user);
     
-    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    // Update last login
+    await prisma.user.update({
+      where: { id },
+      data: { lastLogin: new Date() }
+    });
+    
+    const token = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     
     console.log('✅ Google login successful for:', req.user.email);
     
     // Redirect to frontend with token
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.redirect(`${frontendUrl}/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
-      id: req.user._id,
+      id,
       name: req.user.name,
       email: req.user.email,
       role: req.user.role
@@ -183,13 +198,13 @@ export const googleCallback = async (req, res) => {
 // Fonction pour ajouter les données manquantes aux utilisateurs existants
 export const addMissingDefaultData = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const id = userId(req.user);
     
     // Ajouter les catégories manquantes
-    const categoriesResult = await addMissingCategories(userId);
+    const categoriesResult = await addMissingCategories(id);
     
     // Ajouter les portefeuilles manquants
-    const walletsResult = await addMissingWallets(userId);
+    const walletsResult = await addMissingWallets(id);
     
     res.json({
       success: true,
@@ -235,7 +250,7 @@ export const registerAdmin = async (req, res) => {
     }
     
     // Vérifier si l'email existe déjà
-    const existing = await User.findOne({ email: email.toLowerCase() });
+    const existing = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
     if (existing) {
       return res.status(400).json({ message: 'Cet email est déjà utilisé' });
     }
@@ -244,28 +259,28 @@ export const registerAdmin = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
     
     // Créer l'utilisateur avec le rôle admin
-    const newAdmin = new User({
-      name,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-      role: 'admin',
-      emailVerified: true // Admin vérifié par défaut
+    const newAdmin = await prisma.user.create({
+      data: {
+        name,
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        role: 'admin',
+        emailVerified: true // Admin vérifié par défaut
+      }
     });
-    
-    await newAdmin.save();
-    console.log('✅ Admin créé via inscription publique:', newAdmin._id);
+    console.log('✅ Admin créé via inscription publique:', newAdmin.id);
     
     // Initialiser les données par défaut
-    await initializeDefaultData(newAdmin._id);
+    await initializeDefaultData(newAdmin.id);
     
     // Créer notification de bienvenue
-    await createWelcomeNotification(newAdmin._id, newAdmin.name);
+    await createWelcomeNotification(newAdmin.id, newAdmin.name);
     
     res.status(201).json({
       success: true,
       message: 'Compte administrateur créé avec succès. Vous pouvez maintenant vous connecter.',
       user: {
-        id: newAdmin._id,
+        id: newAdmin.id,
         name: newAdmin.name,
         email: newAdmin.email,
         role: newAdmin.role
@@ -274,6 +289,9 @@ export const registerAdmin = async (req, res) => {
     
   } catch (error) {
     console.error('❌ Erreur inscription admin:', error);
+    if (error.code === 'P2002') {
+      return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+    }
     res.status(500).json({ 
       message: 'Erreur lors de la création du compte administrateur',
       error: error.message 
@@ -289,7 +307,7 @@ export const forgotPassword = async (req, res) => {
     console.log('🔐 Demande de réinitialisation:', { email });
 
     // Vérifier si l'utilisateur existe
-    const user = await User.findOne({ email });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       // Pour des raisons de sécurité, on ne révèle pas si l'email existe ou non
       return res.status(200).json({ 
@@ -301,16 +319,16 @@ export const forgotPassword = async (req, res) => {
     const resetToken = crypto.randomBytes(32).toString('hex');
     
     // Supprimer les anciens tokens de cet utilisateur
-    await ResetToken.deleteMany({ user: user._id });
+    await prisma.resetToken.deleteMany({ where: { userId: user.id } });
 
     // Créer un nouveau token de réinitialisation
-    const resetTokenDoc = new ResetToken({
-      token: resetToken,
-      user: user._id,
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000) // 1 heure
+    await prisma.resetToken.create({
+      data: {
+        token: resetToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000) // 1 heure
+      }
     });
-
-    await resetTokenDoc.save();
 
     // Envoyer l'email de réinitialisation (optionnel en développement)
     try {
@@ -361,11 +379,14 @@ export const resetPassword = async (req, res) => {
     }
 
     // Vérifier le token
-    const resetTokenDoc = await ResetToken.findOne({ 
-      token, 
-      used: false,
-      expiresAt: { $gt: new Date() }
-    }).populate('user');
+    const resetTokenDoc = await prisma.resetToken.findFirst({
+      where: {
+        token,
+        used: false,
+        expiresAt: { gt: new Date() }
+      },
+      include: { user: true }
+    });
 
     if (!resetTokenDoc) {
       return res.status(400).json({ 
@@ -377,20 +398,23 @@ export const resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Mettre à jour le mot de passe de l'utilisateur
-    await User.findByIdAndUpdate(resetTokenDoc.user._id, {
-      password: hashedPassword
+    await prisma.user.update({
+      where: { id: resetTokenDoc.userId },
+      data: { password: hashedPassword }
     });
 
     // Marquer le token comme utilisé
-    resetTokenDoc.used = true;
-    await resetTokenDoc.save();
+    await prisma.resetToken.update({
+      where: { id: resetTokenDoc.id },
+      data: { used: true }
+    });
 
     console.log(`✅ Mot de passe réinitialisé pour: ${resetTokenDoc.user.email}`);
 
     res.status(200).json({ 
       message: 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.',
       user: {
-        id: resetTokenDoc.user._id,
+        id: resetTokenDoc.user.id,
         email: resetTokenDoc.user.email,
         name: resetTokenDoc.user.name,
         role: resetTokenDoc.user.role

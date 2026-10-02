@@ -10,7 +10,7 @@ import {
   deleteProfilePicture
 } from '../controllers/settingsController.js';
 import { authenticateJWT } from '../middleware/auth.js';
-import { upload } from '../middleware/upload.js';
+import { uploadAvatar } from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.put('/preferences', updateUserPreferences);
 // Routes pour le profil
 router.put('/profile', updateProfile);
 router.put('/password', changePassword);
-router.post('/profile/picture', upload.single('avatar'), uploadProfilePicture);
+router.post('/profile/picture', uploadAvatar.single('avatar'), uploadProfilePicture);
 router.delete('/profile/picture', deleteProfilePicture);
 
 // Routes pour la gestion du compte

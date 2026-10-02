@@ -263,19 +263,16 @@ export async function uploadProfilePicture(file) {
     const formData = new FormData();
     formData.append('avatar', file);
     
-    const token = localStorage.getItem('token');
-    
     const response = await fetch(`${API_URL}/settings/profile/picture`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`
-        // Ne pas mettre Content-Type, le navigateur le fait automatiquement pour FormData
+        ...getAuthHeaders(false),
       },
       body: formData,
     });
     
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({ message: 'Erreur lors de l\'upload de la photo' }));
       throw new Error(errorData.message || 'Erreur lors de l\'upload de la photo');
     }
     
@@ -327,35 +324,31 @@ export async function uploadAvatar(file) {
   const formData = new FormData();
   formData.append('avatar', file);
   
-  const token = localStorage.getItem("token");
   const res = await fetch(`${API_URL}/settings/profile/picture`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${token}`,
-      // Ne pas définir Content-Type, le navigateur le fera automatiquement avec boundary
+      ...getAuthHeaders(false),
     },
     body: formData,
   });
   
   if (!res.ok) {
-    const errorData = await res.json();
+    const errorData = await res.json().catch(() => ({ message: "Erreur lors de l'upload de l'avatar" }));
     throw new Error(errorData.message || "Erreur lors de l'upload de l'avatar");
   }
   return res.json();
 }
 
 export async function deleteAvatar() {
-  const token = localStorage.getItem("token");
   const res = await fetch(`${API_URL}/settings/profile/picture`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(false),
     },
   });
   
   if (!res.ok) {
-    const errorData = await res.json();
+    const errorData = await res.json().catch(() => ({ message: "Erreur lors de la suppression de l'avatar" }));
     throw new Error(errorData.message || "Erreur lors de la suppression de l'avatar");
   }
   return res.json();
@@ -367,6 +360,40 @@ export async function getBudgets() {
   });
   if (!res.ok) throw new Error("Erreur lors du chargement des budgets");
   return res.json();
+}
+
+export async function getGoals() {
+  const res = await fetch(`${API_URL}/goals`, {
+    headers: { ...getAuthHeaders() },
+  });
+  if (!res.ok) throw new Error("Erreur lors du chargement des objectifs");
+  return res.json();
+}
+
+export async function addGoal(goal) {
+  const res = await fetch(`${API_URL}/goals`, {
+    method: 'POST',
+    headers: { ...getAuthHeaders() },
+    body: JSON.stringify(goal),
+  });
+  return handleApiResponse(res);
+}
+
+export async function updateGoal(id, data) {
+  const res = await fetch(`${API_URL}/goals/${id}`, {
+    method: 'PUT',
+    headers: { ...getAuthHeaders() },
+    body: JSON.stringify(data),
+  });
+  return handleApiResponse(res);
+}
+
+export async function deleteGoal(id) {
+  const res = await fetch(`${API_URL}/goals/${id}`, {
+    method: 'DELETE',
+    headers: { ...getAuthHeaders() },
+  });
+  return handleApiResponse(res);
 }
 
 export async function addBudget(budget) {
@@ -1229,6 +1256,44 @@ export async function getAllRecurringTransactionsAdmin() {
   } catch (error) {
     throw error;
   }
+}
+
+// ============================================
+// RECURRING TRANSACTIONS (user)
+// ============================================
+
+export async function getRecurringTransactions() {
+  const response = await fetch(`${API_URL}/recurring`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+  return await handleApiResponse(response);
+}
+
+export async function createRecurringTransaction(data) {
+  const response = await fetch(`${API_URL}/recurring`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  return await handleApiResponse(response);
+}
+
+export async function updateRecurringTransaction(id, data) {
+  const response = await fetch(`${API_URL}/recurring/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  return await handleApiResponse(response);
+}
+
+export async function deleteRecurringTransaction(id) {
+  const response = await fetch(`${API_URL}/recurring/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  return await handleApiResponse(response);
 }
 
 // ============================================

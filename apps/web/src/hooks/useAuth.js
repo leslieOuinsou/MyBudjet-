@@ -19,7 +19,7 @@ export function useAuthState() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         
         if (!token) {
           setUser(null);
@@ -35,6 +35,7 @@ export function useAuthState() {
         setUser(null);
         setError(err.message);
         localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
       } finally {
         setLoading(false);
       }
@@ -51,6 +52,7 @@ export function useAuthState() {
 
   const logout = () => {
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setUser(null);
     setError(null);
   };

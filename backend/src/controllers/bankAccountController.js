@@ -1,19 +1,34 @@
-import BankAccount from '../models/bankAccount.js';
+import prisma from '../lib/prisma.js';
+import { serialize, userId } from '../lib/serialize.js';
+
+function getMaskedAccountNumber(accountNumber) {
+  if (accountNumber && accountNumber.length > 4) {
+    const lastFour = accountNumber.slice(-4);
+    return `**** **** **** ${lastFour}`;
+  }
+  return accountNumber;
+}
+
+function withMasked(account) {
+  const serialized = serialize(account);
+  return {
+    ...serialized,
+    maskedAccountNumber: getMaskedAccountNumber(account.accountNumber),
+  };
+}
 
 // Obtenir tous les comptes bancaires de l'utilisateur connecté
 export const getBankAccounts = async (req, res) => {
   try {
-    const userId = req.user._id;
-    
-    const accounts = await BankAccount.find({ user: userId, isActive: true })
-      .sort({ isPrimary: -1, createdAt: -1 });
-    
-    // Ajouter les numéros masqués
-    const accountsWithMasked = accounts.map(account => ({
-      ...account.toObject(),
-      maskedAccountNumber: account.getMaskedAccountNumber(),
-    }));
-    
+    const uid = userId(req.user);
+
+    const accounts = await prisma.bankAccount.findMany({
+      where: { userId: uid, isActive: true },
+      orderBy: [{ isPrimary: 'desc' }, { createdAt: 'desc' }],
+    });
+
+    const accountsWithMasked = accounts.map(withMasked);
+
     res.json(accountsWithMasked);
   } catch (error) {
     console.error('❌ Erreur lors de la récupération des comptes bancaires:', error);
@@ -24,19 +39,18 @@ export const getBankAccounts = async (req, res) => {
 // Obtenir un compte bancaire spécifique
 export const getBankAccountById = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const uid = userId(req.user);
     const { id } = req.params;
-    
-    const account = await BankAccount.findOne({ _id: id, user: userId });
-    
+
+    const account = await prisma.bankAccount.findFirst({
+      where: { id, userId: uid },
+    });
+
     if (!account) {
       return res.status(404).json({ message: 'Compte bancaire introuvable' });
     }
-    
-    res.json({
-      ...account.toObject(),
-      maskedAccountNumber: account.getMaskedAccountNumber(),
-    });
+
+    res.json(withMasked(account));
   } catch (error) {
     console.error('❌ Erreur lors de la récupération du compte:', error);
     res.status(500).json({ message: 'Erreur serveur' });
@@ -46,7 +60,7 @@ export const getBankAccountById = async (req, res) => {
 // Créer un nouveau compte bancaire
 export const createBankAccount = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const uid = userId(req.user);
     const {
       bankName,
       accountType,
@@ -58,42 +72,45 @@ export const createBankAccount = async (req, res) => {
       icon,
       isPrimary,
     } = req.body;
-    
-    // Validation
+
     if (!bankName || !accountNumber) {
       return res.status(400).json({ message: 'Nom de la banque et numéro de compte requis' });
     }
-    
-    // Vérifier si c'est le premier compte (le définir comme principal automatiquement)
-    const existingAccounts = await BankAccount.countDocuments({ user: userId, isActive: true });
-    const isFirstAccount = existingAccounts === 0;
-    
-    // Masquer le numéro de compte (garder seulement les 4 derniers chiffres)
-    const lastFourDigits = accountNumber.slice(-4);
-    
-    const newAccount = new BankAccount({
-      user: userId,
-      bankName,
-      accountType: accountType || 'checking',
-      accountNumber: lastFourDigits, // Stocker seulement les 4 derniers chiffres
-      currency: currency || 'EUR',
-      balance: balance || 0,
-      description,
-      color: color || '#1E73BE',
-      icon: icon || '🏦',
-      isPrimary: isFirstAccount ? true : (isPrimary || false),
+
+    const existingAccounts = await prisma.bankAccount.count({
+      where: { userId: uid, isActive: true },
     });
-    
-    await newAccount.save();
-    
+    const isFirstAccount = existingAccounts === 0;
+    const lastFourDigits = accountNumber.slice(-4);
+    const makePrimary = isFirstAccount ? true : isPrimary || false;
+
+    if (makePrimary) {
+      await prisma.bankAccount.updateMany({
+        where: { userId: uid, isPrimary: true },
+        data: { isPrimary: false },
+      });
+    }
+
+    const newAccount = await prisma.bankAccount.create({
+      data: {
+        userId: uid,
+        bankName,
+        accountType: accountType || 'checking',
+        accountNumber: lastFourDigits,
+        currency: currency || 'EUR',
+        balance: balance || 0,
+        description,
+        color: color || '#1E73BE',
+        icon: icon || '🏦',
+        isPrimary: makePrimary,
+      },
+    });
+
     console.log(`✅ Compte bancaire créé: ${bankName} - ${lastFourDigits}`);
-    
+
     res.status(201).json({
       message: 'Compte bancaire créé avec succès',
-      account: {
-        ...newAccount.toObject(),
-        maskedAccountNumber: newAccount.getMaskedAccountNumber(),
-      },
+      account: withMasked(newAccount),
     });
   } catch (error) {
     console.error('❌ Erreur lors de la création du compte bancaire:', error);
@@ -104,37 +121,41 @@ export const createBankAccount = async (req, res) => {
 // Mettre à jour un compte bancaire
 export const updateBankAccount = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const uid = userId(req.user);
     const { id } = req.params;
-    const updates = req.body;
-    
-    // Ne pas permettre de modifier le numéro de compte complet
+    const updates = { ...req.body };
+
     delete updates.accountNumberFull;
     delete updates.user;
-    
-    const account = await BankAccount.findOne({ _id: id, user: userId });
-    
+    delete updates.userId;
+    delete updates.id;
+    delete updates._id;
+
+    const account = await prisma.bankAccount.findFirst({
+      where: { id, userId: uid },
+    });
+
     if (!account) {
       return res.status(404).json({ message: 'Compte bancaire introuvable' });
     }
-    
-    // Mettre à jour les champs autorisés
-    Object.keys(updates).forEach(key => {
-      if (updates[key] !== undefined) {
-        account[key] = updates[key];
-      }
+
+    if (updates.isPrimary === true) {
+      await prisma.bankAccount.updateMany({
+        where: { userId: uid, isPrimary: true, NOT: { id } },
+        data: { isPrimary: false },
+      });
+    }
+
+    const updated = await prisma.bankAccount.update({
+      where: { id },
+      data: updates,
     });
-    
-    await account.save();
-    
-    console.log(`✅ Compte bancaire mis à jour: ${account.bankName}`);
-    
+
+    console.log(`✅ Compte bancaire mis à jour: ${updated.bankName}`);
+
     res.json({
       message: 'Compte bancaire mis à jour avec succès',
-      account: {
-        ...account.toObject(),
-        maskedAccountNumber: account.getMaskedAccountNumber(),
-      },
+      account: withMasked(updated),
     });
   } catch (error) {
     console.error('❌ Erreur lors de la mise à jour du compte:', error);
@@ -145,35 +166,37 @@ export const updateBankAccount = async (req, res) => {
 // Supprimer un compte bancaire (soft delete)
 export const deleteBankAccount = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const uid = userId(req.user);
     const { id } = req.params;
-    
-    const account = await BankAccount.findOne({ _id: id, user: userId });
-    
+
+    const account = await prisma.bankAccount.findFirst({
+      where: { id, userId: uid },
+    });
+
     if (!account) {
       return res.status(404).json({ message: 'Compte bancaire introuvable' });
     }
-    
-    // Soft delete
-    account.isActive = false;
-    await account.save();
-    
-    // Si c'était le compte principal, définir un autre compte comme principal
+
+    await prisma.bankAccount.update({
+      where: { id },
+      data: { isActive: false, isPrimary: false },
+    });
+
     if (account.isPrimary) {
-      const nextAccount = await BankAccount.findOne({ 
-        user: userId, 
-        isActive: true,
-        _id: { $ne: id }
+      const nextAccount = await prisma.bankAccount.findFirst({
+        where: { userId: uid, isActive: true, NOT: { id } },
       });
-      
+
       if (nextAccount) {
-        nextAccount.isPrimary = true;
-        await nextAccount.save();
+        await prisma.bankAccount.update({
+          where: { id: nextAccount.id },
+          data: { isPrimary: true },
+        });
       }
     }
-    
+
     console.log(`✅ Compte bancaire supprimé: ${account.bankName}`);
-    
+
     res.json({ message: 'Compte bancaire supprimé avec succès' });
   } catch (error) {
     console.error('❌ Erreur lors de la suppression du compte:', error);
@@ -184,26 +207,35 @@ export const deleteBankAccount = async (req, res) => {
 // Définir un compte comme principal
 export const setPrimaryAccount = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const uid = userId(req.user);
     const { id } = req.params;
-    
-    const account = await BankAccount.findOne({ _id: id, user: userId, isActive: true });
-    
+
+    const account = await prisma.bankAccount.findFirst({
+      where: { id, userId: uid, isActive: true },
+    });
+
     if (!account) {
       return res.status(404).json({ message: 'Compte bancaire introuvable' });
     }
-    
-    account.isPrimary = true;
-    await account.save(); // Le hook pre-save gérera le retrait des autres comptes principaux
-    
-    console.log(`✅ Compte principal défini: ${account.bankName}`);
-    
-    res.json({ 
+
+    await prisma.$transaction([
+      prisma.bankAccount.updateMany({
+        where: { userId: uid, isPrimary: true },
+        data: { isPrimary: false },
+      }),
+      prisma.bankAccount.update({
+        where: { id },
+        data: { isPrimary: true },
+      }),
+    ]);
+
+    const updated = await prisma.bankAccount.findUnique({ where: { id } });
+
+    console.log(`✅ Compte principal défini: ${updated.bankName}`);
+
+    res.json({
       message: 'Compte défini comme principal',
-      account: {
-        ...account.toObject(),
-        maskedAccountNumber: account.getMaskedAccountNumber(),
-      },
+      account: withMasked(updated),
     });
   } catch (error) {
     console.error('❌ Erreur lors de la définition du compte principal:', error);
@@ -214,23 +246,25 @@ export const setPrimaryAccount = async (req, res) => {
 // Obtenir les statistiques des comptes bancaires
 export const getBankAccountsStats = async (req, res) => {
   try {
-    const userId = req.user._id;
-    
-    const accounts = await BankAccount.find({ user: userId, isActive: true });
-    
+    const uid = userId(req.user);
+
+    const accounts = await prisma.bankAccount.findMany({
+      where: { userId: uid, isActive: true },
+    });
+
     const stats = {
       totalAccounts: accounts.length,
       totalBalance: accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0),
       byType: {},
       byCurrency: {},
     };
-    
-    // Statistiques par type de compte
-    accounts.forEach(account => {
+
+    accounts.forEach((account) => {
       stats.byType[account.accountType] = (stats.byType[account.accountType] || 0) + 1;
-      stats.byCurrency[account.currency] = (stats.byCurrency[account.currency] || 0) + (account.balance || 0);
+      stats.byCurrency[account.currency] =
+        (stats.byCurrency[account.currency] || 0) + (account.balance || 0);
     });
-    
+
     res.json(stats);
   } catch (error) {
     console.error('❌ Erreur lors du calcul des statistiques:', error);
@@ -247,4 +281,3 @@ export default {
   setPrimaryAccount,
   getBankAccountsStats,
 };
-

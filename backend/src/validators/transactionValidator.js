@@ -1,6 +1,12 @@
 import Joi from 'joi';
 
-// Transaction validation schema
+/** IDs Prisma (cuid / uuid / mongo legacy) */
+const idSchema = Joi.string()
+  .pattern(/^[a-zA-Z0-9_-]{10,40}$/)
+  .messages({
+    'string.pattern.base': 'Invalid ID format',
+  });
+
 export const transactionSchema = Joi.object({
   amount: Joi.number()
     .positive()
@@ -8,44 +14,36 @@ export const transactionSchema = Joi.object({
     .messages({
       'number.base': 'Amount must be a number',
       'number.positive': 'Amount must be positive',
-      'any.required': 'Amount is required'
+      'any.required': 'Amount is required',
     }),
-  
+
   type: Joi.string()
     .valid('income', 'expense')
     .required()
     .messages({
       'string.empty': 'Type is required',
       'any.only': 'Type must be either income or expense',
-      'any.required': 'Type is required'
+      'any.required': 'Type is required',
     }),
-  
-  category: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
-    .required()
-    .messages({
-      'string.empty': 'Category is required',
-      'string.pattern.base': 'Invalid category ID',
-      'any.required': 'Category is required'
-    }),
-  
-  wallet: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
-    .required()
-    .messages({
-      'string.empty': 'Wallet is required',
-      'string.pattern.base': 'Invalid wallet ID',
-      'any.required': 'Wallet is required'
-    }),
-  
+
+  category: idSchema.required().messages({
+    'string.empty': 'Category is required',
+    'string.pattern.base': 'Invalid category ID',
+    'any.required': 'Category is required',
+  }),
+
+  wallet: idSchema.required().messages({
+    'string.empty': 'Wallet is required',
+    'string.pattern.base': 'Invalid wallet ID',
+    'any.required': 'Wallet is required',
+  }),
+
   date: Joi.date()
-    .max('now')
-    .default(Date.now)
+    .default(() => new Date())
     .messages({
       'date.base': 'Invalid date format',
-      'date.max': 'Date cannot be in the future'
     }),
-  
+
   description: Joi.string()
     .min(1)
     .max(500)
@@ -55,103 +53,90 @@ export const transactionSchema = Joi.object({
       'string.empty': 'Description is required',
       'string.min': 'Description is required',
       'string.max': 'Description cannot exceed 500 characters',
-      'any.required': 'Description is required'
+      'any.required': 'Description is required',
     }),
-  
+
   note: Joi.string()
     .max(1000)
-    .allow('')
+    .allow('', null)
     .trim()
     .messages({
-      'string.max': 'Note cannot exceed 1000 characters'
+      'string.max': 'Note cannot exceed 1000 characters',
     }),
-  
+
+  notes: Joi.string().max(1000).allow('', null).trim(),
+
+  tags: Joi.array().items(Joi.string()).default([]),
+
   attachment: Joi.string()
-    .uri()
-    .allow('')
+    .allow('', null)
     .messages({
-      'string.uri': 'Attachment must be a valid URL'
-    })
+      'string.base': 'Attachment must be a string',
+    }),
+
+  bankAccount: idSchema.allow(null, ''),
 });
 
-// Update transaction schema (all fields optional)
 export const updateTransactionSchema = Joi.object({
   amount: Joi.number()
     .positive()
     .messages({
       'number.base': 'Amount must be a number',
-      'number.positive': 'Amount must be positive'
+      'number.positive': 'Amount must be positive',
     }),
-  
+
   type: Joi.string()
     .valid('income', 'expense')
     .messages({
-      'any.only': 'Type must be either income or expense'
+      'any.only': 'Type must be either income or expense',
     }),
-  
-  category: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
-    .messages({
-      'string.pattern.base': 'Invalid category ID'
-    }),
-  
-  wallet: Joi.string()
-    .pattern(/^[0-9a-fA-F]{24}$/)
-    .messages({
-      'string.pattern.base': 'Invalid wallet ID'
-    }),
-  
-  date: Joi.date()
-    .max('now')
-    .messages({
-      'date.base': 'Invalid date format',
-      'date.max': 'Date cannot be in the future'
-    }),
-  
+
+  category: idSchema.messages({
+    'string.pattern.base': 'Invalid category ID',
+  }),
+
+  wallet: idSchema.messages({
+    'string.pattern.base': 'Invalid wallet ID',
+  }),
+
+  date: Joi.date().messages({
+    'date.base': 'Invalid date format',
+  }),
+
   description: Joi.string()
     .min(1)
     .max(500)
     .trim()
     .messages({
       'string.min': 'Description is required',
-      'string.max': 'Description cannot exceed 500 characters'
+      'string.max': 'Description cannot exceed 500 characters',
     }),
-  
-  note: Joi.string()
-    .max(1000)
-    .allow('')
-    .trim()
-    .messages({
-      'string.max': 'Note cannot exceed 1000 characters'
-    }),
-  
-  attachment: Joi.string()
-    .uri()
-    .allow('')
-    .messages({
-      'string.uri': 'Attachment must be a valid URL'
-    })
+
+  note: Joi.string().max(1000).allow('', null).trim(),
+  notes: Joi.string().max(1000).allow('', null).trim(),
+  tags: Joi.array().items(Joi.string()),
+  attachment: Joi.string().allow('', null),
+  bankAccount: idSchema.allow(null, ''),
 }).min(1).messages({
-  'object.min': 'At least one field must be provided for update'
+  'object.min': 'At least one field must be provided for update',
 });
 
-// Validation middleware
 export const validate = (schema) => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true
+      stripUnknown: true,
     });
 
     if (error) {
-      const errors = error.details.map(detail => ({
+      const errors = error.details.map((detail) => ({
         field: detail.path.join('.'),
-        message: detail.message
+        message: detail.message,
       }));
-      
+
       return res.status(400).json({
         message: 'Validation error',
-        errors
+        errors,
       });
     }
 
@@ -159,4 +144,3 @@ export const validate = (schema) => {
     next();
   };
 };
-

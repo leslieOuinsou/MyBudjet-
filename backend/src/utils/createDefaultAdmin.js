@@ -1,4 +1,4 @@
-import User from '../models/user.js';
+import prisma from '../lib/prisma.js';
 import bcrypt from 'bcryptjs';
 import { initializeDefaultData } from './defaultData.js';
 import { createWelcomeNotification } from './notificationGenerator.js';
@@ -11,7 +11,7 @@ import { createWelcomeNotification } from './notificationGenerator.js';
 export async function createDefaultAdmin() {
   try {
     // Vérifier si un admin existe déjà
-    const existingAdmin = await User.findOne({ role: 'admin' });
+    const existingAdmin = await prisma.user.findFirst({ where: { role: 'admin' } });
     
     if (existingAdmin) {
       console.log('✅ Un compte admin existe déjà:', existingAdmin.email);
@@ -26,15 +26,18 @@ export async function createDefaultAdmin() {
     const defaultName = 'Administrateur';
 
     // Vérifier si l'email existe déjà (avec un autre rôle)
-    const existingUser = await User.findOne({ email: defaultEmail });
+    const existingUser = await prisma.user.findUnique({ where: { email: defaultEmail } });
     if (existingUser) {
       console.log('⚠️  L\'email admin existe déjà avec le rôle:', existingUser.role);
       
       // Promouvoir l'utilisateur en admin si nécessaire
       if (existingUser.role !== 'admin') {
-        existingUser.role = 'admin';
-        await existingUser.save();
-        console.log('✅ Utilisateur promu en admin:', existingUser.email);
+        const promoted = await prisma.user.update({
+          where: { id: existingUser.id },
+          data: { role: 'admin' }
+        });
+        console.log('✅ Utilisateur promu en admin:', promoted.email);
+        return promoted;
       }
       
       return existingUser;
@@ -44,18 +47,18 @@ export async function createDefaultAdmin() {
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
     // Créer le compte admin
-    const admin = new User({
-      name: defaultName,
-      email: defaultEmail,
-      password: hashedPassword,
-      role: 'admin'
+    const admin = await prisma.user.create({
+      data: {
+        name: defaultName,
+        email: defaultEmail,
+        password: hashedPassword,
+        role: 'admin'
+      }
     });
 
-    await admin.save();
-
     // Initialiser les données par défaut
-    await initializeDefaultData(admin._id);
-    await createWelcomeNotification(admin._id, admin.name);
+    await initializeDefaultData(admin.id);
+    await createWelcomeNotification(admin.id, admin.name);
 
     console.log('✅ Compte admin créé avec succès !');
     console.log('📧 Email:', defaultEmail);

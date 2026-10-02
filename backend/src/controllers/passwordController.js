@@ -1,4 +1,4 @@
-import User from '../models/user.js';
+import prisma from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { sendPasswordResetEmail, sendPasswordChangedEmail } from '../utils/emailService.js';
@@ -6,7 +6,7 @@ import { sendPasswordResetEmail, sendPasswordChangedEmail } from '../utils/email
 export const requestPasswordReset = async (req, res) => {
   try {
     const { email, from } = req.body; // Récupérer le paramètre 'from' (admin ou user)
-    const user = await User.findOne({ email });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(404).json({ message: 'User not found' });
     
     // Vérifier que les credentials email sont configurés
@@ -17,7 +17,7 @@ export const requestPasswordReset = async (req, res) => {
       });
     }
     
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'mybudgetjwtsecret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || 'mybudgetjwtsecret', { expiresIn: '1h' });
     
     // Utiliser le service email centralisé avec le paramètre 'from'
     const emailResult = await sendPasswordResetEmail(user.email, token, from);
@@ -44,11 +44,11 @@ export const resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     
     // Mettre à jour le mot de passe et récupérer l'utilisateur
-    const user = await User.findByIdAndUpdate(
-      decoded.id, 
-      { password: hashedPassword },
-      { new: true } // Retourner l'utilisateur mis à jour
-    ).select('email role'); // Sélectionner uniquement les champs nécessaires
+    const user = await prisma.user.update({
+      where: { id: decoded.id },
+      data: { password: hashedPassword },
+      select: { email: true, role: true, name: true }
+    });
     
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur introuvable' });
@@ -73,6 +73,9 @@ export const resetPassword = async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Erreur lors de la réinitialisation du mot de passe:', err.message);
+    if (err.code === 'P2025') {
+      return res.status(404).json({ message: 'Utilisateur introuvable' });
+    }
     res.status(400).json({ message: 'Token invalide ou expiré' });
   }
 };

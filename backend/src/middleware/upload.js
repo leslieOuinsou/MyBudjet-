@@ -6,16 +6,12 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Sur Vercel (serverless), utiliser memoryStorage car on ne peut pas créer de dossiers persistants
-// En local, utiliser diskStorage
 let storage;
 
 if (process.env.VERCEL) {
-  // Sur Vercel, utiliser memoryStorage (fichiers en mémoire)
   storage = multer.memoryStorage();
   console.log('📦 Utilisation de memoryStorage (Vercel serverless)');
 } else {
-  // En local, utiliser diskStorage (fichiers sur disque)
   const uploadsDir = path.join(__dirname, '../../uploads');
   try {
     if (!fs.existsSync(uploadsDir)) {
@@ -37,12 +33,15 @@ if (process.env.VERCEL) {
   }
 }
 
-// Filtre pour valider les types de fichiers
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+const spreadsheetFilter = (req, file, cb) => {
+  const allowedTypes = [
+    'text/csv',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ];
   const ext = path.extname(file.originalname).toLowerCase();
   const allowedExts = ['.csv', '.xlsx', '.xls'];
-  
+
   if (allowedTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
     cb(null, true);
   } else {
@@ -50,10 +49,49 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-export const upload = multer({ 
-  storage,
-  fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB max
+const imageFilter = (req, file, cb) => {
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
+  const ext = path.extname(file.originalname).toLowerCase();
+  const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+
+  if (allowedTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Format de fichier non supporté. Utilisez une image (JPG, PNG, GIF, WEBP)'), false);
   }
+};
+
+const attachmentFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  const allowedExts = [
+    '.jpg', '.jpeg', '.png', '.gif', '.webp',
+    '.pdf', '.csv', '.xlsx', '.xls',
+    '.doc', '.docx',
+  ];
+  if (allowedExts.includes(ext) || file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Format de fichier non supporté'), false);
+  }
+};
+
+/** Import CSV / Excel */
+export const upload = multer({
+  storage,
+  fileFilter: spreadsheetFilter,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
+
+/** Photo de profil / avatar */
+export const uploadAvatar = multer({
+  storage,
+  fileFilter: imageFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+/** Pièces jointes transactions */
+export const uploadAttachment = multer({
+  storage,
+  fileFilter: attachmentFilter,
+  limits: { fileSize: 10 * 1024 * 1024 },
 });

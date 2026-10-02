@@ -1,5 +1,5 @@
-import User from '../models/user.js';
-import SMSVerification from '../models/smsVerification.js';
+import prisma from '../lib/prisma.js';
+import { serialize } from '../lib/serialize.js';
 import { sendVerificationCode, generateVerificationCode, validatePhoneNumber } from '../utils/twilioService.js';
 import jwt from 'jsonwebtoken';
 import { createWelcomeNotification } from '../utils/notificationGenerator.js';
@@ -26,11 +26,13 @@ export const sendSMSCode = async (req, res) => {
     }
     
     // Vérifier s'il existe un code non expiré récent (limiter les envois)
-    const recentCode = await SMSVerification.findOne({
-      phoneNumber: formattedPhone,
-      verified: false,
-      expiresAt: { $gt: new Date() },
-      createdAt: { $gt: new Date(Date.now() - 60000) } // Moins d'1 minute
+    const recentCode = await prisma.sMSVerification.findFirst({
+      where: {
+        phoneNumber: formattedPhone,
+        verified: false,
+        expiresAt: { gt: new Date() },
+        createdAt: { gt: new Date(Date.now() - 60000) } // Moins d'1 minute
+      }
     });
     
     if (recentCode) {
@@ -59,19 +61,21 @@ export const sendSMSCode = async (req, res) => {
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
     
     // Supprimer les anciens codes non vérifiés pour ce numéro
-    await SMSVerification.deleteMany({
-      phoneNumber: formattedPhone,
-      verified: false
+    await prisma.sMSVerification.deleteMany({
+      where: {
+        phoneNumber: formattedPhone,
+        verified: false
+      }
     });
     
     // Créer un nouveau code de vérification
-    const verification = new SMSVerification({
-      phoneNumber: formattedPhone,
-      code,
-      expiresAt
+    const verification = await prisma.sMSVerification.create({
+      data: {
+        phoneNumber: formattedPhone,
+        code,
+        expiresAt
+      }
     });
-    
-    await verification.save();
     
     // En développement, TOUJOURS logger le code pour faciliter les tests (même si l'envoi échoue)
     if (process.env.NODE_ENV === 'development') {
@@ -104,7 +108,7 @@ export const sendSMSCode = async (req, res) => {
       // En développement, NE PAS supprimer le code si l'envoi échoue
       // Cela permet de tester l'authentification même si Twilio n'envoie pas le SMS
       if (process.env.NODE_ENV !== 'development') {
-        await SMSVerification.findByIdAndDelete(verification._id);
+        await prisma.sMSVerification.delete({ where: { id: verification.id } });
       } else {
         console.log(`\n⚠️  MODE DÉVELOPPEMENT: Le code ${code} est conservé malgré l'erreur Twilio.`);
         console.log(`⚠️  Vous pouvez utiliser ce code pour tester l'authentification.\n`);
@@ -164,29 +168,37 @@ export const verifySMSCode = async (req, res) => {
     }
     
     // Trouver le code de vérification
-    const verification = await SMSVerification.findOne({
-      phoneNumber: formattedPhone,
-      code,
-      verified: false,
-      expiresAt: { $gt: new Date() }
+    const verification = await prisma.sMSVerification.findFirst({
+      where: {
+        phoneNumber: formattedPhone,
+        code,
+        verified: false,
+        expiresAt: { gt: new Date() }
+      }
     });
     
     if (!verification) {
       // Incrémenter les tentatives si le code existe mais est incorrect
-      const existingVerification = await SMSVerification.findOne({
-        phoneNumber: formattedPhone,
-        verified: false,
-        expiresAt: { $gt: new Date() }
+      const existingVerification = await prisma.sMSVerification.findFirst({
+        where: {
+          phoneNumber: formattedPhone,
+          verified: false,
+          expiresAt: { gt: new Date() }
+        }
       });
       
       if (existingVerification) {
-        existingVerification.attempts += 1;
-        await existingVerification.save();
+        const updated = await prisma.sMSVerification.update({
+          where: { id: existingVerification.id },
+          data: { attempts: existingVerification.attempts + 1 }
+        });
         
-        if (existingVerification.attempts >= 5) {
-          await SMSVerification.deleteMany({
-            phoneNumber: formattedPhone,
-            verified: false
+        if (updated.attempts >= 5) {
+          await prisma.sMSVerification.deleteMany({
+            where: {
+              phoneNumber: formattedPhone,
+              verified: false
+            }
           });
           return res.status(429).json({ 
             message: 'Trop de tentatives échouées. Veuillez demander un nouveau code.' 
@@ -200,11 +212,14 @@ export const verifySMSCode = async (req, res) => {
     }
     
     // Marquer le code comme vérifié
-    verification.verified = true;
-    await verification.save();
+    await prisma.sMSVerification.update({
+      where: { id: verification.id },
+      data: { verified: true }
+    });
     
     // Chercher ou créer l'utilisateur
-    let user = await User.findOne({ phoneNumber: formattedPhone });
+    let user = await prisma.user.findFirst({ where: { phoneNumber: formattedPhone } });
+    let isNewAccount = false;
     
     if (!user) {
       // Email obligatoire dans le schéma User : adresse technique unique par numéro (connexion SMS uniquement)
@@ -212,31 +227,32 @@ export const verifySMSCode = async (req, res) => {
       const syntheticEmail = `sms.${phoneDigits}@phone.mybudget.internal`;
 
       // Créer un nouvel utilisateur avec le numéro de téléphone
-      user = new User({
-        name: `Utilisateur ${formattedPhone.slice(-4)}`, // Nom par défaut avec les 4 derniers chiffres
-        email: syntheticEmail,
-        phoneNumber: formattedPhone,
-        emailVerified: true, // Considéré comme vérifié via SMS
-        role: 'user'
+      user = await prisma.user.create({
+        data: {
+          name: `Utilisateur ${formattedPhone.slice(-4)}`, // Nom par défaut avec les 4 derniers chiffres
+          email: syntheticEmail,
+          phoneNumber: formattedPhone,
+          emailVerified: true, // Considéré comme vérifié via SMS
+          role: 'user'
+        }
       });
-      
-      await user.save();
+      isNewAccount = true;
       
       // Initialiser les données par défaut
       try {
-        await initializeDefaultData(user._id);
+        await initializeDefaultData(user.id);
       } catch (defaultDataError) {
         console.error('⚠️ Erreur initialisation données par défaut:', defaultDataError);
       }
       
       // Créer notification de bienvenue
       try {
-        await createWelcomeNotification(user._id, user.name);
+        await createWelcomeNotification(user.id, user.name);
       } catch (notificationError) {
         console.error('⚠️ Erreur notification bienvenue:', notificationError);
       }
       
-      console.log('✅ Nouvel utilisateur créé via SMS:', user._id);
+      console.log('✅ Nouvel utilisateur créé via SMS:', user.id);
     } else {
       // Vérifier si le compte est bloqué
       if (user.blocked) {
@@ -247,33 +263,39 @@ export const verifySMSCode = async (req, res) => {
       
       // Mettre à jour le numéro de téléphone si nécessaire
       if (user.phoneNumber !== formattedPhone) {
-        user.phoneNumber = formattedPhone;
-        await user.save();
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: { phoneNumber: formattedPhone }
+        });
       }
     }
     
     // Mettre à jour la dernière connexion
-    user.lastLogin = new Date();
-    await user.save();
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() }
+    });
     
     // Générer un token JWT
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     
     // Supprimer le code de vérification utilisé
-    await SMSVerification.findByIdAndDelete(verification._id);
+    await prisma.sMSVerification.delete({ where: { id: verification.id } });
+    
+    const serialized = serialize(user);
     
     res.status(200).json({
       success: true,
-      message: user.createdAt && (new Date() - new Date(user.createdAt)) < 60000 
+      message: isNewAccount || (user.createdAt && (new Date() - new Date(user.createdAt)) < 60000)
         ? 'Compte créé et connecté avec succès' 
         : 'Connexion réussie',
       token,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role
+        id: serialized.id,
+        name: serialized.name,
+        email: serialized.email,
+        phoneNumber: serialized.phoneNumber,
+        role: serialized.role
       }
     });
     

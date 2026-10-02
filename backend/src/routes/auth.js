@@ -20,9 +20,27 @@ router.post('/reset-password', resetPassword);
 router.post('/sms/send-code', sendSMSCode);
 router.post('/sms/verify-code', verifySMSCode);
 
-// Google OAuth routes temporairement désactivées
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/google/callback', passport.authenticate('google', { session: false }), googleCallback);
+const isGoogleOAuthEnabled = Boolean(
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+);
+
+const googleOAuthNotConfigured = (req, res) => {
+  res.status(503).json({
+    message: 'Google OAuth non configuré. Ajoutez GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET dans backend/.env',
+  });
+};
+
+if (isGoogleOAuthEnabled) {
+  router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+  router.get(
+    '/google/callback',
+    passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=google` }),
+    googleCallback
+  );
+} else {
+  router.get('/google', googleOAuthNotConfigured);
+  router.get('/google/callback', googleOAuthNotConfigured);
+}
 
 // Route pour ajouter les données par défaut manquantes
 router.post('/add-default-data', authenticateJWT, addMissingDefaultData);

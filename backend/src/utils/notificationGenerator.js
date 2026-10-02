@@ -1,4 +1,4 @@
-import Notification from '../models/notification.js';
+import prisma from '../lib/prisma.js';
 
 /**
  * Générateur de notifications automatiques
@@ -7,16 +7,18 @@ import Notification from '../models/notification.js';
 // Créer une notification pour alerte budgétaire (80% atteint)
 export const createBudgetAlertNotification = async (userId, budgetName, percentage, remaining) => {
   try {
-    await Notification.create({
-      user: userId,
-      type: 'budget_alert',
-      title: `Alerte budgétaire`,
-      message: `Votre budget ${budgetName} a atteint ${percentage}%. Il vous reste ${remaining}€ pour ce mois.`,
-      priority: 'high',
+    await prisma.notification.create({
       data: {
-        budgetName,
-        percentage,
-        remaining
+        userId,
+        type: 'budget_alert',
+        title: `Alerte budgétaire`,
+        message: `Votre budget ${budgetName} a atteint ${percentage}%. Il vous reste ${remaining}€ pour ce mois.`,
+        priority: 'high',
+        data: {
+          budgetName,
+          percentage,
+          remaining
+        }
       }
     });
     console.log(`⚠️  Notification d'alerte budgétaire créée pour ${budgetName}`);
@@ -28,15 +30,17 @@ export const createBudgetAlertNotification = async (userId, budgetName, percenta
 // Créer une notification pour budget dépassé
 export const createBudgetExceededNotification = async (userId, budgetName, amount) => {
   try {
-    await Notification.create({
-      user: userId,
-      type: 'budget_exceeded',
-      title: `Budget dépassé !`,
-      message: `Attention ! Votre budget ${budgetName} a été dépassé de ${amount}€.`,
-      priority: 'high',
+    await prisma.notification.create({
       data: {
-        budgetName,
-        exceeded: amount
+        userId,
+        type: 'budget_exceeded',
+        title: `Budget dépassé !`,
+        message: `Attention ! Votre budget ${budgetName} a été dépassé de ${amount}€.`,
+        priority: 'high',
+        data: {
+          budgetName,
+          exceeded: amount
+        }
       }
     });
     console.log(`🚨 Notification de dépassement budgétaire créée pour ${budgetName}`);
@@ -48,16 +52,18 @@ export const createBudgetExceededNotification = async (userId, budgetName, amoun
 // Créer une notification pour nouvelle transaction
 export const createTransactionNotification = async (userId, amount, category, description) => {
   try {
-    await Notification.create({
-      user: userId,
-      type: 'transaction_reminder',
-      title: `Nouvelle transaction`,
-      message: `Transaction de ${amount}€ ajoutée dans ${category}${description ? `: ${description}` : ''}.`,
-      priority: 'medium',
+    await prisma.notification.create({
       data: {
-        amount,
-        category,
-        description
+        userId,
+        type: 'transaction_reminder',
+        title: `Nouvelle transaction`,
+        message: `Transaction de ${amount}€ ajoutée dans ${category}${description ? `: ${description}` : ''}.`,
+        priority: 'medium',
+        data: {
+          amount,
+          category,
+          description
+        }
       }
     });
     console.log(`💳 Notification de transaction créée: ${amount}€`);
@@ -69,15 +75,17 @@ export const createTransactionNotification = async (userId, amount, category, de
 // Créer une notification pour objectif atteint
 export const createGoalAchievedNotification = async (userId, goalName, amount) => {
   try {
-    await Notification.create({
-      user: userId,
-      type: 'goal_achieved',
-      title: `Objectif atteint ! 🎉`,
-      message: `Félicitations ! Vous avez atteint votre objectif "${goalName}" de ${amount}€.`,
-      priority: 'high',
+    await prisma.notification.create({
       data: {
-        goalName,
-        amount
+        userId,
+        type: 'goal_achieved',
+        title: `Objectif atteint ! 🎉`,
+        message: `Félicitations ! Vous avez atteint votre objectif "${goalName}" de ${amount}€.`,
+        priority: 'high',
+        data: {
+          goalName,
+          amount
+        }
       }
     });
     console.log(`🎯 Notification d'objectif atteint créée: ${goalName}`);
@@ -89,12 +97,14 @@ export const createGoalAchievedNotification = async (userId, goalName, amount) =
 // Créer une notification système
 export const createSystemNotification = async (userId, title, message) => {
   try {
-    await Notification.create({
-      user: userId,
-      type: 'system',
-      title,
-      message,
-      priority: 'medium'
+    await prisma.notification.create({
+      data: {
+        userId,
+        type: 'system',
+        title,
+        message,
+        priority: 'medium'
+      }
     });
     console.log(`ℹ️  Notification système créée`);
   } catch (error) {
@@ -108,12 +118,14 @@ export const createWelcomeNotification = async (userId, userName) => {
     // Extraire le prénom si le nom complet contient un espace
     const firstName = userName ? userName.split(' ')[0] : 'Utilisateur';
     
-    await Notification.create({
-      user: userId,
-      type: 'system',
-      title: `Bienvenue ${firstName} ! 👋`,
-      message: `Bonjour ${firstName}, nous sommes ravis de vous accueillir sur MyBudget+ ! Commencez par créer votre premier budget et gérez vos finances en toute simplicité.`,
-      priority: 'medium'
+    await prisma.notification.create({
+      data: {
+        userId,
+        type: 'system',
+        title: `Bienvenue ${firstName} ! 👋`,
+        message: `Bonjour ${firstName}, nous sommes ravis de vous accueillir sur MyBudget+ ! Commencez par créer votre premier budget et gérez vos finances en toute simplicité.`,
+        priority: 'medium'
+      }
     });
     console.log(`👋 Notification de bienvenue créée pour ${firstName}`);
   } catch (error) {
@@ -124,16 +136,18 @@ export const createWelcomeNotification = async (userId, userName) => {
 // Notification hebdomadaire de résumé
 export const createWeeklySummaryNotification = async (userId, totalSpent, totalIncome, savingsRate) => {
   try {
-    await Notification.create({
-      user: userId,
-      type: 'weekly',
-      title: `Résumé hebdomadaire 📊`,
-      message: `Cette semaine : ${totalSpent}€ dépensés, ${totalIncome}€ de revenus. Taux d'épargne : ${savingsRate}%.`,
-      priority: 'low',
+    await prisma.notification.create({
       data: {
-        totalSpent,
-        totalIncome,
-        savingsRate
+        userId,
+        type: 'weekly',
+        title: `Résumé hebdomadaire 📊`,
+        message: `Cette semaine : ${totalSpent}€ dépensés, ${totalIncome}€ de revenus. Taux d'épargne : ${savingsRate}%.`,
+        priority: 'low',
+        data: {
+          totalSpent,
+          totalIncome,
+          savingsRate
+        }
       }
     });
     console.log(`📊 Notification de résumé hebdomadaire créée`);
@@ -151,4 +165,3 @@ export default {
   createWelcomeNotification,
   createWeeklySummaryNotification
 };
-

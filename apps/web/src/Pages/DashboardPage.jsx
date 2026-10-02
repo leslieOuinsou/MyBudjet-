@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
-import { getDashboardData, getWallets, getTransactions, getBudgets, addBudget, addTransaction, getCurrentUser } from '../api.js';
+import { getDashboardData, getWallets, getTransactions, getBudgets, addBudget, addTransaction, getCurrentUser, getCategories, getGoals, addGoal, updateGoal, deleteGoal } from '../api.js';
 import NotificationBell from '../components/NotificationBell.jsx';
 
 // Icônes par catégorie
@@ -36,12 +36,17 @@ const getFirstName = (name) => {
 export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState(null);
   const [wallets, setWallets] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [showBudgetModal, setShowBudgetModal] = useState(false);
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [goals, setGoals] = useState([]);
+  const [editingGoalId, setEditingGoalId] = useState(null);
   const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
   
   // Form states
   const [newTransaction, setNewTransaction] = useState({
@@ -60,22 +65,33 @@ export default function DashboardPage() {
     period: 'month'
   });
 
+  const [goalForm, setGoalForm] = useState({
+    name: '',
+    targetAmount: '',
+    currentAmount: '',
+    deadline: '',
+  });
+
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
         setLoading(true);
-        const [dashboard, walletsData, transactions, budgets, userData] = await Promise.all([
+        const [dashboard, walletsData, transactions, budgets, userData, categoriesData, goalsData] = await Promise.all([
           getDashboardData(),
           getWallets(),
           getTransactions({ limit: 8, sort: '-date' }),
           getBudgets(),
-          getCurrentUser()
+          getCurrentUser(),
+          getCategories(),
+          getGoals()
         ]);
         
         setDashboardData(dashboard);
         setWallets(walletsData);
+        setCategories(categoriesData || []);
         setRecentTransactions(transactions);
         setUser(userData);
+        setGoals(Array.isArray(goalsData) ? goalsData : []);
         
         // Calculer le budget total et restant
         const totalBudget = budgets.reduce((sum, budget) => sum + (budget.amount || 0), 0);
@@ -104,26 +120,26 @@ export default function DashboardPage() {
   const handleAddTransaction = async (e) => {
     e.preventDefault();
     try {
-      setError('');
+      setFormError('');
       
       // Validation des champs requis
       if (!newTransaction.description || !newTransaction.description.trim()) {
-        setError('La description est requise');
+        setFormError('La description est requise');
         return;
       }
       
       if (!newTransaction.amount || parseFloat(newTransaction.amount) <= 0) {
-        setError('Le montant doit être supérieur à 0');
+        setFormError('Le montant doit être supérieur à 0');
         return;
       }
       
       if (!newTransaction.category) {
-        setError('Veuillez sélectionner une catégorie');
+        setFormError('Veuillez sélectionner une catégorie');
         return;
       }
       
       if (!newTransaction.wallet) {
-        setError('Veuillez sélectionner un portefeuille');
+        setFormError('Veuillez sélectionner un portefeuille');
         return;
       }
       
@@ -158,25 +174,33 @@ export default function DashboardPage() {
       window.location.reload();
     } catch (err) {
       console.error('❌ Erreur lors de l\'ajout de la transaction:', err);
-      const errorMessage = err.message || 'Erreur lors de l\'ajout de la transaction';
-      setError(errorMessage);
+      setFormError(err.message || 'Erreur lors de l\'ajout de la transaction');
     }
   };
 
   const handleAddBudget = async (e) => {
     e.preventDefault();
     try {
+      setFormError('');
+      if (!newBudget.amount || parseFloat(newBudget.amount) <= 0) {
+        setFormError('Le montant du budget doit être supérieur à 0');
+        return;
+      }
+
+      const selectedCategory = categories.find(
+        (c) => (c._id || c.id) === newBudget.category
+      );
+
       const budgetData = {
-        name: newBudget.name || newBudget.category || 'Budget sans nom',
+        name: newBudget.name || selectedCategory?.name || 'Budget sans nom',
         amount: parseFloat(newBudget.amount),
-        category: null, // On envoie null au lieu d'une chaîne de texte
-        period: newBudget.period
+        category: newBudget.category || null,
+        period: newBudget.period || 'month'
       };
       
       console.log('📤 Envoi du budget:', budgetData);
       await addBudget(budgetData);
       
-      // Réinitialiser le formulaire
       setNewBudget({
         name: '',
         amount: '',
@@ -185,12 +209,72 @@ export default function DashboardPage() {
       });
       
       setShowBudgetModal(false);
-      
-      // Recharger les données
       window.location.reload();
     } catch (err) {
       console.error('Erreur lors de l\'ajout du budget:', err);
-      setError('Erreur lors de l\'ajout du budget');
+      setFormError(err.message || 'Erreur lors de l\'ajout du budget');
+    }
+  };
+
+  const openCreateGoal = () => {
+    setEditingGoalId(null);
+    setGoalForm({ name: '', targetAmount: '', currentAmount: '0', deadline: '' });
+    setFormError('');
+    setShowGoalModal(true);
+  };
+
+  const openEditGoal = (goal) => {
+    setEditingGoalId(goal._id || goal.id);
+    setGoalForm({
+      name: goal.name || '',
+      targetAmount: goal.targetAmount ?? '',
+      currentAmount: goal.currentAmount ?? 0,
+      deadline: goal.deadline ? new Date(goal.deadline).toISOString().split('T')[0] : '',
+    });
+    setFormError('');
+    setShowGoalModal(true);
+  };
+
+  const handleSaveGoal = async (e) => {
+    e.preventDefault();
+    try {
+      setFormError('');
+      const payload = {
+        name: goalForm.name.trim(),
+        targetAmount: parseFloat(goalForm.targetAmount),
+        currentAmount: parseFloat(goalForm.currentAmount) || 0,
+        deadline: goalForm.deadline || null,
+      };
+      if (!payload.name) {
+        setFormError('Le nom est requis');
+        return;
+      }
+      if (!payload.targetAmount || payload.targetAmount <= 0) {
+        setFormError('Le montant cible doit être supérieur à 0');
+        return;
+      }
+
+      if (editingGoalId) {
+        await updateGoal(editingGoalId, payload);
+      } else {
+        await addGoal(payload);
+      }
+      const refreshed = await getGoals();
+      setGoals(Array.isArray(refreshed) ? refreshed : []);
+      setShowGoalModal(false);
+      setEditingGoalId(null);
+    } catch (err) {
+      setFormError(err.message || 'Erreur lors de la sauvegarde de l\'objectif');
+    }
+  };
+
+  const handleDeleteGoal = async (goalId) => {
+    if (!window.confirm('Supprimer cet objectif ?')) return;
+    try {
+      await deleteGoal(goalId);
+      setGoals((prev) => prev.filter((g) => (g._id || g.id) !== goalId));
+    } catch (err) {
+      setFormError(err.message || 'Erreur lors de la suppression');
     }
   };
 
@@ -385,36 +469,69 @@ export default function DashboardPage() {
               </Link>
             </div>
             <div className="flex flex-col gap-4">
-              <div className="font-semibold text-[#343A40] mb-2">Objectifs Financiers</div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="rounded-lg p-4 bg-gradient-to-br from-[#FDE6E6] to-[#F9D6D6] flex flex-col gap-2">
-                  <div className="font-semibold text-[#343A40]">Fonds d'urgence</div>
-                  <div className="text-[#343A40] text-sm">Actuel: €{dashboardData?.totalBalance ? Math.round(dashboardData.totalBalance * 0.3).toLocaleString('fr-FR') : '0'}</div>
-                  <div className="text-[#6C757D] text-xs">Cible: €10,000</div>
-                  <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
-                    <div className="h-2 bg-[#1E3A8A] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.3 / 10000) * 100 : 0)}%` }}></div>
-                  </div>
-                  <div className="text-xs text-[#6C757D]">{Math.min(100, dashboardData?.totalBalance ? Math.round((dashboardData.totalBalance * 0.3 / 10000) * 100) : 0)}% atteint</div>
-                </div>
-                <div className="rounded-lg p-4 bg-gradient-to-br from-[#FDF6E6] to-[#F9EED6] flex flex-col gap-2">
-                  <div className="font-semibold text-[#343A40]">Épargne voyage</div>
-                  <div className="text-[#343A40] text-sm">Actuel: €{dashboardData?.totalBalance ? Math.round(dashboardData.totalBalance * 0.1).toLocaleString('fr-FR') : '0'}</div>
-                  <div className="text-[#6C757D] text-xs">Cible: €5,000</div>
-                  <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
-                    <div className="h-2 bg-[#1E3A8A] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.1 / 5000) * 100 : 0)}%` }}></div>
-                  </div>
-                  <div className="text-xs text-[#6C757D]">{Math.min(100, dashboardData?.totalBalance ? Math.round((dashboardData.totalBalance * 0.1 / 5000) * 100) : 0)}% atteint</div>
-                </div>
-                <div className="rounded-lg p-4 bg-gradient-to-br from-[#E6F6FD] to-[#D6F2F9] flex flex-col gap-2">
-                  <div className="font-semibold text-[#343A40]">Investissements</div>
-                  <div className="text-[#343A40] text-sm">Actuel: €{dashboardData?.totalBalance ? Math.round(dashboardData.totalBalance * 0.15).toLocaleString('fr-FR') : '0'}</div>
-                  <div className="text-[#6C757D] text-xs">Cible: €20,000</div>
-                  <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
-                    <div className="h-2 bg-[#1E3A8A] rounded-full" style={{ width: `${Math.min(100, dashboardData?.totalBalance ? (dashboardData.totalBalance * 0.15 / 20000) * 100 : 0)}%` }}></div>
-                  </div>
-                  <div className="text-xs text-[#6C757D]">{Math.min(100, dashboardData?.totalBalance ? Math.round((dashboardData.totalBalance * 0.15 / 20000) * 100) : 0)}% atteint</div>
-                </div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-semibold text-[#343A40]">Objectifs Financiers</div>
+                <button
+                  type="button"
+                  onClick={openCreateGoal}
+                  className="text-sm text-[#1E73BE] font-semibold hover:underline"
+                >
+                  + Ajouter
+                </button>
               </div>
+              {goals.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-[#E5E7EB] p-6 text-center text-[#6C757D] text-sm">
+                  Aucun objectif. Créez votre premier objectif d&apos;épargne.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {goals.map((goal) => {
+                    const id = goal._id || goal.id;
+                    const percentage = goal.percentage ?? 0;
+                    const bg = goal.color || '#E6F6FD';
+                    return (
+                      <div
+                        key={id}
+                        className="rounded-lg p-4 flex flex-col gap-2"
+                        style={{ background: `linear-gradient(to bottom right, ${bg}, ${bg}cc)` }}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="font-semibold text-[#343A40]">{goal.name}</div>
+                          <div className="flex gap-2 shrink-0">
+                            <button type="button" onClick={() => openEditGoal(goal)} className="text-xs text-[#1E73BE] hover:underline">
+                              Modifier
+                            </button>
+                            <button type="button" onClick={() => handleDeleteGoal(id)} className="text-xs text-[#6C757D] hover:underline">
+                              Suppr.
+                            </button>
+                          </div>
+                        </div>
+                        <div className="text-[#343A40] text-sm">
+                          Actuel: €{Number(goal.currentAmount || 0).toLocaleString('fr-FR')}
+                        </div>
+                        <div className="text-[#6C757D] text-xs">
+                          Cible: €{Number(goal.targetAmount || 0).toLocaleString('fr-FR')}
+                        </div>
+                        {goal.deadline && (
+                          <div className="text-[#6C757D] text-xs">
+                            Échéance: {new Date(goal.deadline).toLocaleDateString('fr-FR')}
+                          </div>
+                        )}
+                        <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
+                          <div
+                            className={`h-2 rounded-full ${goal.achieved ? 'bg-[#22C55E]' : 'bg-[#1E3A8A]'}`}
+                            style={{ width: `${Math.min(100, percentage)}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs text-[#6C757D]">
+                          {percentage}% atteint
+                          {goal.achieved ? ' ✓' : ''}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </main>
@@ -427,12 +544,17 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[#343A40]">Ajouter une Transaction</h3>
               <button 
-                onClick={() => setShowTransactionModal(false)}
+                onClick={() => { setShowTransactionModal(false); setFormError(''); }}
                 className="text-[#6C757D] hover:text-[#343A40]"
               >
                 ✕
               </button>
             </div>
+            {formError && (
+              <div className="mb-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded px-3 py-2">
+                {formError}
+              </div>
+            )}
             <form onSubmit={handleAddTransaction} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[#343A40] mb-1">Description</label>
@@ -469,6 +591,40 @@ export default function DashboardPage() {
                 </select>
               </div>
               <div>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
+                <select
+                  value={newTransaction.category}
+                  onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
+                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  required
+                >
+                  <option value="">Sélectionner une catégorie</option>
+                  {categories
+                    .filter((c) => !c.type || c.type === newTransaction.type)
+                    .map((cat) => (
+                      <option key={cat._id || cat.id} value={cat._id || cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Portefeuille</label>
+                <select
+                  value={newTransaction.wallet}
+                  onChange={(e) => setNewTransaction({...newTransaction, wallet: e.target.value})}
+                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  required
+                >
+                  <option value="">Sélectionner un portefeuille</option>
+                  {wallets.map((wallet) => (
+                    <option key={wallet._id || wallet.id} value={wallet._id || wallet.id}>
+                      {wallet.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-[#343A40] mb-1">Date</label>
                 <input
                   type="date"
@@ -481,7 +637,7 @@ export default function DashboardPage() {
               <div className="flex gap-2 pt-4">
                 <button
                   type="button"
-                  onClick={() => setShowTransactionModal(false)}
+                  onClick={() => { setShowTransactionModal(false); setFormError(''); }}
                   className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
                 >
                   Annuler
@@ -505,12 +661,17 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[#343A40]">Créer un Budget</h3>
               <button 
-                onClick={() => setShowBudgetModal(false)}
+                onClick={() => { setShowBudgetModal(false); setFormError(''); }}
                 className="text-[#6C757D] hover:text-[#343A40]"
               >
                 ✕
               </button>
             </div>
+            {formError && (
+              <div className="mb-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded px-3 py-2">
+                {formError}
+              </div>
+            )}
             <form onSubmit={handleAddBudget} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[#343A40] mb-1">Nom du Budget</label>
@@ -520,7 +681,6 @@ export default function DashboardPage() {
                   onChange={(e) => setNewBudget({...newBudget, name: e.target.value})}
                   className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
                   placeholder="Ex: Alimentation"
-                  required
                 />
               </div>
               <div>
@@ -537,13 +697,20 @@ export default function DashboardPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
-                <input
-                  type="text"
+                <select
                   value={newBudget.category}
                   onChange={(e) => setNewBudget({...newBudget, category: e.target.value})}
                   className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
-                  placeholder="Ex: Nourriture"
-                />
+                >
+                  <option value="">Général (toutes catégories)</option>
+                  {categories
+                    .filter((c) => !c.type || c.type === 'expense')
+                    .map((cat) => (
+                      <option key={cat._id || cat.id} value={cat._id || cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#343A40] mb-1">Période</label>
@@ -552,15 +719,15 @@ export default function DashboardPage() {
                   onChange={(e) => setNewBudget({...newBudget, period: e.target.value})}
                   className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
                 >
-                  <option value="monthly">Mensuel</option>
-                  <option value="weekly">Hebdomadaire</option>
-                  <option value="yearly">Annuel</option>
+                  <option value="month">Mensuel</option>
+                  <option value="week">Hebdomadaire</option>
+                  <option value="year">Annuel</option>
                 </select>
               </div>
               <div className="flex gap-2 pt-4">
                 <button
                   type="button"
-                  onClick={() => setShowBudgetModal(false)}
+                  onClick={() => { setShowBudgetModal(false); setFormError(''); }}
                   className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
                 >
                   Annuler
@@ -577,212 +744,83 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Modal Ajouter Transaction */}
-      {showTransactionModal && (
+      {/* Modal Objectif financier */}
+      {showGoalModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40]">Ajouter une Transaction</h3>
-              <button 
-                onClick={() => setShowTransactionModal(false)}
+              <h3 className="text-lg font-semibold text-[#343A40]">
+                {editingGoalId ? 'Modifier l\'objectif' : 'Nouvel objectif'}
+              </h3>
+              <button
+                onClick={() => { setShowGoalModal(false); setFormError(''); }}
                 className="text-[#6C757D] hover:text-[#343A40]"
               >
                 ✕
               </button>
             </div>
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              try {
-                await addTransaction(newTransaction);
-                setShowTransactionModal(false);
-                setNewTransaction({ description: '', amount: '', category: '', type: 'expense', date: new Date().toISOString().split('T')[0] });
-                // Recharger les données
-                const [dashboard, wallets, transactions] = await Promise.all([
-                  getDashboardData(),
-                  getWallets(),
-                  getTransactions({ limit: 5 })
-                ]);
-                setDashboardData(dashboard);
-                setWallets(wallets);
-                setRecentTransactions(transactions);
-              } catch (err) {
-                setError(err.message);
-              }
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Description</label>
-                  <input
-                    type="text"
-                    value={newTransaction.description}
-                    onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                    placeholder="Ex: Achat épicerie"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Montant (€)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={newTransaction.amount}
-                    onChange={(e) => setNewTransaction({...newTransaction, amount: parseFloat(e.target.value)})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                    placeholder="0.00"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Type</label>
-                  <select
-                    value={newTransaction.type}
-                    onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                  >
-                    <option value="expense">Dépense</option>
-                    <option value="income">Revenu</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
-                  <select
-                    value={newTransaction.category}
-                    onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                  >
-                    <option value="">Sélectionner une catégorie</option>
-                    <option value="Nourriture">🍽️ Nourriture</option>
-                    <option value="Shopping">🛍️ Shopping</option>
-                    <option value="Transport">🚗 Transport</option>
-                    <option value="Loisirs">🎮 Loisirs</option>
-                    <option value="Santé">🏥 Santé</option>
-                    <option value="Autres">💳 Autres</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Date</label>
-                  <input
-                    type="date"
-                    value={newTransaction.date}
-                    onChange={(e) => setNewTransaction({...newTransaction, date: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                    required
-                  />
-                </div>
+            {formError && (
+              <div className="mb-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded px-3 py-2">
+                {formError}
               </div>
-              <div className="flex gap-3 mt-6">
+            )}
+            <form onSubmit={handleSaveGoal} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Nom</label>
+                <input
+                  type="text"
+                  value={goalForm.name}
+                  onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })}
+                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  placeholder="Ex: Fonds d'urgence"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant cible (€)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={goalForm.targetAmount}
+                  onChange={(e) => setGoalForm({ ...goalForm, targetAmount: e.target.value })}
+                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant actuel (€)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={goalForm.currentAmount}
+                  onChange={(e) => setGoalForm({ ...goalForm, currentAmount: e.target.value })}
+                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Échéance (optionnel)</label>
+                <input
+                  type="date"
+                  value={goalForm.deadline}
+                  onChange={(e) => setGoalForm({ ...goalForm, deadline: e.target.value })}
+                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowTransactionModal(false)}
-                  className="flex-1 px-4 py-2 border border-[#F5F7FA] text-[#343A40] rounded hover:bg-[#F5F7FA]"
+                  onClick={() => { setShowGoalModal(false); setFormError(''); }}
+                  className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-[#1E3A8A] text-white rounded hover:bg-[#1e40af]"
+                  className="flex-1 bg-[#1E3A8A] text-white py-2 rounded hover:bg-[#1e40af]"
                 >
-                  Ajouter
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Créer Budget */}
-      {showBudgetModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40]">Créer un Budget</h3>
-              <button 
-                onClick={() => setShowBudgetModal(false)}
-                className="text-[#6C757D] hover:text-[#343A40]"
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              try {
-                // Créer le budget avec le nom de la catégorie comme nom du budget
-                const budgetData = {
-                  name: newBudget.category || 'Budget sans nom',
-                  amount: parseFloat(newBudget.amount),
-                  category: null, // On envoie null au lieu d'une chaîne de texte
-                  period: newBudget.period
-                };
-                
-                console.log('📤 Envoi du budget:', budgetData);
-                await addBudget(budgetData);
-                setShowBudgetModal(false);
-                setNewBudget({ category: '', amount: '', period: 'month' });
-                // Recharger les données
-                const dashboard = await getDashboardData();
-                setDashboardData(dashboard);
-              } catch (err) {
-                console.error('❌ Erreur lors de la création du budget:', err);
-                setError(err.message);
-              }
-            }}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
-                  <select
-                    value={newBudget.category}
-                    onChange={(e) => setNewBudget({...newBudget, category: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                    required
-                  >
-                    <option value="">Sélectionner une catégorie</option>
-                    <option value="Nourriture">🍽️ Nourriture</option>
-                    <option value="Shopping">🛍️ Shopping</option>
-                    <option value="Transport">🚗 Transport</option>
-                    <option value="Loisirs">🎮 Loisirs</option>
-                    <option value="Santé">🏥 Santé</option>
-                    <option value="Autres">💳 Autres</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Montant (€)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={newBudget.amount}
-                    onChange={(e) => setNewBudget({...newBudget, amount: parseFloat(e.target.value)})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                    placeholder="0.00"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#343A40] mb-1">Période</label>
-                  <select
-                    value={newBudget.period}
-                    onChange={(e) => setNewBudget({...newBudget, period: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#F5F7FA] rounded bg-white text-[#343A40]"
-                  >
-                    <option value="month">Mensuel</option>
-                    <option value="week">Hebdomadaire</option>
-                    <option value="year">Annuel</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowBudgetModal(false)}
-                  className="flex-1 px-4 py-2 border border-[#F5F7FA] text-[#343A40] rounded hover:bg-[#F5F7FA]"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-[#1E3A8A] text-white rounded hover:bg-[#1e40af]"
-                >
-                  Créer
+                  {editingGoalId ? 'Enregistrer' : 'Créer'}
                 </button>
               </div>
             </form>

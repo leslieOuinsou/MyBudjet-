@@ -1,11 +1,16 @@
 import 'dotenv/config';
+
+// Empêche un DATABASE_URL exporté avec des guillemets (ex: "postgresql://...") de casser Prisma
+if (process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = process.env.DATABASE_URL.replace(/^["']|["']$/g, '');
+}
+
 import express from 'express';
 
-// Debug: Vérifier les variables d'environnement
 console.log('🔍 Debug - Variables d\'environnement:');
 console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ Configurée' : '❌ Non configurée');
 console.log('RECAPTCHA_SECRET_KEY:', process.env.RECAPTCHA_SECRET_KEY ? '✅ Configurée' : '❌ Non configurée');
-console.log('MONGO_URI:', process.env.MONGO_URI ? '✅ Configurée' : '❌ Non configurée');
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? '✅ Configurée' : '❌ Non configurée');
 console.log('EMAIL_USER:', process.env.EMAIL_USER ? `✅ ${process.env.EMAIL_USER}` : '❌ Non configurée');
 console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Configurée (masquée)' : '❌ Non configurée');
 console.log('PAYPAL_CLIENT_ID:', process.env.PAYPAL_CLIENT_ID ? '✅ Configurée' : '❌ Non configurée');
@@ -14,7 +19,8 @@ console.log('PAYPAL_MODE:', process.env.PAYPAL_MODE ? `✅ ${process.env.PAYPAL_
 console.log('TWILIO_ACCOUNT_SID:', process.env.TWILIO_ACCOUNT_SID ? '✅ Configurée' : '❌ Non configurée');
 console.log('TWILIO_AUTH_TOKEN:', process.env.TWILIO_AUTH_TOKEN ? '✅ Configurée' : '❌ Non configurée');
 console.log('TWILIO_PHONE_NUMBER:', process.env.TWILIO_PHONE_NUMBER ? `✅ ${process.env.TWILIO_PHONE_NUMBER}` : '❌ Non configurée');
-import mongoose from 'mongoose';
+
+import prisma from './lib/prisma.js';
 import helmet from 'helmet';
 import cors from 'cors';
 import passport from 'passport';
@@ -33,6 +39,7 @@ import transferRoutes from './routes/transfer.js';
 import importExportRoutes from './routes/importexport.js';
 import dashboardRoutes from './routes/dashboard.js';
 import budgetRoutes from './routes/budgets.js';
+import goalRoutes from './routes/goals.js';
 import billReminderRoutes from './routes/billreminders.js';
 import aiRoutes from './routes/ai.js';
 import adminRoutes from './routes/admin.js';
@@ -48,7 +55,6 @@ import { fileURLToPath } from 'url';
 
 const app = express();
 
-// Derrière le proxy Vercel (IP client, cookies sécurisés, rate-limit)
 if (process.env.VERCEL) {
   app.set('trust proxy', 1);
 }
@@ -56,89 +62,57 @@ if (process.env.VERCEL) {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Fonction pour initialiser la connexion MongoDB
-// Sur Vercel, cette fonction sera appelée à chaque invocation si la connexion n'existe pas
 let isConnecting = false;
 let connectionPromise = null;
+let isReady = false;
 
 async function connectDatabase() {
-  // Si déjà connecté, retourner
-  if (mongoose.connection.readyState === 1) {
-    return;
-  }
+  if (isReady) return;
+  if (isConnecting && connectionPromise) return connectionPromise;
 
-  // Si une connexion est en cours, attendre qu'elle se termine
-  if (isConnecting && connectionPromise) {
-    return connectionPromise;
-  }
-
-  const MONGO_URI = process.env.MONGO_URI;
-
-  // Validate required environment variables
-  if (!MONGO_URI) {
-    const error = '❌ MONGO_URI is not defined in environment variables';
+  if (!process.env.DATABASE_URL) {
+    const error = '❌ DATABASE_URL is not defined in environment variables';
     console.error(error);
-    if (!process.env.VERCEL) {
-      process.exit(1);
-    }
+    if (!process.env.VERCEL) process.exit(1);
     throw new Error(error);
   }
 
   if (!process.env.JWT_SECRET) {
     const error = '❌ JWT_SECRET is not defined in environment variables';
     console.error(error);
-    if (!process.env.VERCEL) {
-      process.exit(1);
-    }
+    if (!process.env.VERCEL) process.exit(1);
     throw new Error(error);
   }
 
   if (!process.env.SESSION_SECRET) {
     const error = '❌ SESSION_SECRET is not defined in environment variables';
     console.error(error);
-    if (!process.env.VERCEL) {
-      process.exit(1);
-    }
+    if (!process.env.VERCEL) process.exit(1);
     throw new Error(error);
   }
 
-  // Démarrer la connexion
   isConnecting = true;
-  
-  // Configuration optimisée pour Vercel serverless
-  const mongoOptions = {
-    serverSelectionTimeoutMS: 30000, // 30 secondes pour la sélection du serveur
-    socketTimeoutMS: 45000, // 45 secondes pour les opérations socket
-    connectTimeoutMS: 30000, // 30 secondes pour la connexion initiale
-    maxPoolSize: process.env.VERCEL ? 1 : 10, // Pool size minimal sur Vercel
-    minPoolSize: process.env.VERCEL ? 0 : 1,
-    maxIdleTimeMS: 10000, // Fermer les connexions inactives après 10s
-  };
-  
-  // Désactiver le buffering des commandes Mongoose pour éviter les timeouts
-  mongoose.set('bufferCommands', false);
-  mongoose.set('bufferTimeoutMS', 30000);
-  
-  console.log('🔄 Connexion à MongoDB...', process.env.VERCEL ? '(Vercel serverless)' : '(local)');
-  
-  connectionPromise = mongoose.connect(MONGO_URI, mongoOptions)
+  console.log('🔄 Connexion à PostgreSQL...', process.env.VERCEL ? '(Vercel serverless)' : '(local)');
+
+  connectionPromise = prisma.$connect()
     .then(async () => {
-      console.log('✅ MongoDB connected');
-      
-      // Créer un admin par défaut si aucun n'existe (seulement la première fois)
-      // Vérifier si c'est une nouvelle connexion
+      await prisma.$queryRaw`SELECT 1`;
+      console.log('✅ PostgreSQL connected');
+
       const { createDefaultAdmin } = await import('./utils/createDefaultAdmin.js');
       await createDefaultAdmin();
-      
+
+      isReady = true;
       isConnecting = false;
       return true;
     })
     .catch(err => {
       isConnecting = false;
       connectionPromise = null;
-      console.error('❌ MongoDB connection error:', err);
+      isReady = false;
+      console.error('❌ PostgreSQL connection error:', err);
       if (!process.env.VERCEL) {
-        console.error('💡 Make sure MongoDB is running (mongod or docker-compose up -d mongo)');
+        console.error('💡 Lancez PostgreSQL: docker compose up -d postgres');
         process.exit(1);
       }
       throw err;
@@ -147,38 +121,25 @@ async function connectDatabase() {
   return connectionPromise;
 }
 
-// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Plus permissif en développement
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'production' ? 100 : 1000,
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 login attempts per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   message: 'Too many login attempts, please try again later.',
   skipSuccessfulRequests: true,
 });
 
-// Configuration CORS - DOIT être AVANT express.json() et tous les autres middlewares
-// Configuration simplifiée et fonctionnelle pour Vercel
-
 const corsOptions = {
   origin: function (origin, callback) {
-    // Autoriser les requêtes sans origine (mobile apps, Postman, etc.)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
-    // Autoriser tous les domaines Vercel en production
-    if (origin.includes('vercel.app')) {
-      return callback(null, true);
-    }
-    
-    // Autoriser les URLs locales en développement
+    if (!origin) return callback(null, true);
+    if (origin.includes('vercel.app')) return callback(null, true);
     const localOrigins = [
       'http://localhost:5173',
       'http://localhost:5174',
@@ -186,17 +147,12 @@ const corsOptions = {
       'http://localhost:3000',
       'http://127.0.0.1:5173'
     ];
-    
     if (localOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
       return callback(null, true);
     }
-    
-    // Autoriser aussi FRONTEND_URL si configuré
     if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
       return callback(null, true);
     }
-    
-    // Par défaut, autoriser (pour faciliter le déploiement)
     callback(null, true);
   },
   credentials: true,
@@ -206,13 +162,8 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
-// Appliquer CORS AVANT express.json()
 app.use(cors(corsOptions));
-
-// Middlewares
 app.use(express.json());
-
-// Configuration Helmet pour autoriser les images (après CORS)
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   contentSecurityPolicy: {
@@ -224,14 +175,14 @@ app.use(helmet({
     },
   },
 }));
-app.use(session({ 
-  secret: process.env.SESSION_SECRET, 
-  resave: false, 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
 app.use(passport.initialize());
@@ -239,10 +190,6 @@ app.use(passport.session());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/', limiter);
 
-// CSRF Protection (must be before routes)
-// Désactivé temporairement car il cause des problèmes avec les requêtes API
-// Le JWT dans les headers Authorization est suffisant pour sécuriser l'API
-// CSRF est principalement utile pour les formulaires web, pas pour les APIs REST
 if (false && process.env.NODE_ENV === 'production') {
   const csrfProtection = csrf({ cookie: false });
   const csrfExcluded = [
@@ -252,7 +199,6 @@ if (false && process.env.NODE_ENV === 'production') {
     '/api/auth/google',
     '/api/auth/google/callback'
   ];
-
   app.use((req, res, next) => {
     if (
       req.method === 'GET' ||
@@ -269,26 +215,22 @@ if (false && process.env.NODE_ENV === 'production') {
   console.log('⚠️  CSRF Protection disabled (JWT authentication is used instead)');
 }
 
-// Apply rate limiting to auth routes
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
-// Middleware pour s'assurer que MongoDB est connecté AVANT de traiter les requêtes
-// DOIT être placé AVANT les routes
 app.use(async (req, res, next) => {
   try {
     await connectDatabase();
     next();
   } catch (err) {
-    console.error('❌ Erreur de connexion MongoDB dans le middleware:', err);
-    res.status(500).json({ 
+    console.error('❌ Erreur de connexion PostgreSQL dans le middleware:', err);
+    res.status(500).json({
       message: 'Database connection error',
       error: process.env.NODE_ENV === 'production' ? undefined : err.message
     });
   }
 });
 
-// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/wallets', walletRoutes);
@@ -300,21 +242,19 @@ app.use('/api/transfer', transferRoutes);
 app.use('/api/importexport', importExportRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/budgets', budgetRoutes);
+app.use('/api/goals', goalRoutes);
 app.use('/api/billreminders', billReminderRoutes);
 app.use('/api/bank-accounts', bankAccountRoutes);
 app.use('/api/import-bank', importBankRoutes);
 app.use('/api/paypal', paypalRoutes);
 
-// Route spéciale pour le callback PayPal
 app.get('/callback', (req, res) => {
   console.log('🔄 Callback PayPal reçu:', req.query);
   const { code, error } = req.query;
   if (code) {
-    const frontendUrl = `${process.env.FRONTEND_URL}/paypal?code=${code}`;
-    res.redirect(frontendUrl);
+    res.redirect(`${process.env.FRONTEND_URL}/paypal?code=${code}`);
   } else if (error) {
-    const frontendUrl = `${process.env.FRONTEND_URL}/paypal?error=${error}`;
-    res.redirect(frontendUrl);
+    res.redirect(`${process.env.FRONTEND_URL}/paypal?error=${error}`);
   } else {
     res.redirect(`${process.env.FRONTEND_URL}/paypal?error=unknown`);
   }
@@ -326,12 +266,12 @@ app.use('/api/forecasts', forecastRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/settings', settingsRoutes);
 
-// Route à la racine pour Vercel (avant /api)
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'MyBudget API Server',
     status: 'running',
     version: '1.0.0',
+    database: 'PostgreSQL + Prisma',
     endpoints: {
       health: '/api/health',
       auth: '/api/auth',
@@ -345,12 +285,10 @@ app.get('/', (req, res) => {
   });
 });
 
-// Route de test pour vérifier que le serveur fonctionne
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running', timestamp: new Date().toISOString() });
 });
 
-// Route de test pour vérifier que les routes reports sont chargées
 app.get('/api/test-reports', (req, res) => {
   res.json({ message: 'Reports routes are loaded', availableRoutes: ['/stats', '/categories', '/top-transactions'] });
 });
@@ -361,9 +299,8 @@ console.log('   - /api/reports/categories');
 console.log('   - /api/reports/top-transactions');
 console.log('   - /api/health (test)');
 
-// 404 Handler - Must be after all routes
 app.use((req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     message: 'Route not found',
     path: req.path,
     method: req.method,
@@ -380,58 +317,63 @@ app.use((req, res) => {
   });
 });
 
-// Global Error Handler - Must be last
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  
-  // CSRF Error
+
   if (err.code === 'EBADCSRFTOKEN') {
     return res.status(403).json({ message: 'Invalid CSRF token' });
   }
-  
-  // Mongoose Validation Error
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({ 
-      message: 'Validation error', 
-      errors: Object.values(err.errors).map(e => e.message) 
-    });
+
+  // Multer / upload errors
+  if (err.name === 'MulterError' || err.message?.includes('Format de fichier') || err.message?.includes('File too large')) {
+    return res.status(400).json({ message: err.message });
   }
-  
-  // Mongoose Duplicate Key Error
-  if (err.code === 11000) {
-    return res.status(400).json({ 
-      message: 'Duplicate entry', 
-      field: Object.keys(err.keyPattern)[0] 
-    });
+  if (err instanceof Error && err.message && (
+    err.message.includes('non supporté') ||
+    err.message.includes('CSV') ||
+    err.message.includes('image')
+  )) {
+    return res.status(400).json({ message: err.message });
   }
-  
-  // JWT Errors
+
+  // Prisma validation
+  if (err.name === 'PrismaClientValidationError') {
+    return res.status(400).json({ message: 'Validation error', error: err.message });
+  }
+
+  // Prisma unique constraint
+  if (err.code === 'P2002') {
+    const field = err.meta?.target?.[0] || 'field';
+    return res.status(400).json({ message: 'Duplicate entry', field });
+  }
+
+  // Prisma record not found
+  if (err.code === 'P2025') {
+    return res.status(404).json({ message: 'Record not found' });
+  }
+
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({ message: 'Invalid token' });
   }
-  
+
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({ message: 'Token expired' });
   }
-  
-  // Default Error
+
   const statusCode = err.statusCode || 500;
-  const message = process.env.NODE_ENV === 'production' 
-    ? 'Internal server error' 
+  const message = process.env.NODE_ENV === 'production'
+    ? 'Internal server error'
     : err.message;
-    
-  res.status(statusCode).json({ 
+
+  res.status(statusCode).json({
     message,
     ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
   });
 });
 
-// Démarrer le serveur seulement si on n'est pas sur Vercel
-// Sur Vercel, l'app est exportée et utilisée comme fonction serverless
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3001;
-  
-  // Initialiser la connexion et démarrer le serveur
+
   connectDatabase()
     .then(() => {
       app.listen(PORT, () => {
@@ -449,5 +391,4 @@ if (!process.env.VERCEL) {
     });
 }
 
-// Exporter l'application pour Vercel
 export default app;

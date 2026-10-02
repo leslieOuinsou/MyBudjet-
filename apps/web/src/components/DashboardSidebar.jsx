@@ -35,6 +35,7 @@ const menuSections = [
       { to: "/budgets", label: "Budgets", icon: MdAccountBalance },
       { to: "/categories", label: "Catégories & Portefeuilles", icon: MdCategory },
       { to: "/bills", label: "Rappels de factures", icon: MdEventNote },
+      { to: "/recurring", label: "Transactions récurrentes", icon: MdRepeat },
     ]
   },
   {

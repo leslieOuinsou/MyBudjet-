@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
-import { getBudgets, addBudget, updateBudget, deleteBudget } from '../api.js';
+import { getBudgets, addBudget, updateBudget, deleteBudget, getCategories } from '../api.js';
 import { 
   MdCheckCircle, MdWarning, MdError, MdShowChart, 
   MdEdit, MdDelete, MdAdd 
 } from 'react-icons/md';
 
-const CATEGORIES = [
-  "Alimentation",
-  "Logement",
-  "Transport",
-  "Divertissement",
-  "Épargne",
-];
 const PERIODS = ["Mensuel", "Annuel"];
+
+const categoryLabel = (category) => {
+  if (!category) return 'Général';
+  if (typeof category === 'string') return category;
+  return category.name || 'Général';
+};
 
 export default function BudgetsPage() {
   const [budgets, setBudgets] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [form, setForm] = useState({
@@ -26,13 +26,17 @@ export default function BudgetsPage() {
     amount: "",
     period: PERIODS[0],
     startDate: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+    alertThreshold: 80,
   });
   const [editingBudget, setEditingBudget] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
-    getBudgets()
-      .then(setBudgets)
+    Promise.all([getBudgets(), getCategories()])
+      .then(([budgetList, categoryList]) => {
+        setBudgets(budgetList);
+        setCategories((categoryList || []).filter((c) => c.type === 'expense' || !c.type));
+      })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
@@ -44,7 +48,7 @@ export default function BudgetsPage() {
     setEditingBudget(budget);
     setForm({
       name: budget.name || "",
-      category: budget.category?.name || "",
+      category: budget.category?._id || budget.categoryId || "",
       amount: budget.amount || "",
       period: budget.period === 'month' ? 'Mensuel' : budget.period === 'year' ? 'Annuel' : 'Mensuel',
       startDate: budget.startDate ? new Date(budget.startDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
@@ -71,7 +75,6 @@ export default function BudgetsPage() {
     e.preventDefault();
     try {
       setError('');
-      // Convertir la période en anglais selon le modèle Mongoose
       const periodMap = {
         'Mensuel': 'month',
         'Annuel': 'year'
@@ -80,26 +83,27 @@ export default function BudgetsPage() {
       const budgetData = {
         name: form.name,
         amount: parseFloat(form.amount),
-        category: null, // On envoie null au lieu d'une chaîne de texte
-        period: periodMap[form.period] || 'month', // Correction: 'month' au lieu de 'monthly'
-        alertThreshold: parseInt(form.alertThreshold) || 80
+        category: form.category || null,
+        period: periodMap[form.period] || 'month',
+        alertThreshold: parseInt(form.alertThreshold, 10) || 80
       };
       
       if (editingBudget) {
-        // Modification d'un budget existant
         console.log('📤 Modification du budget:', budgetData);
         const updatedBudget = await updateBudget(editingBudget._id, budgetData);
-        setBudgets(budgets.map(b => b._id === editingBudget._id ? updatedBudget : b));
+        // Recharger pour avoir spent/percentage
+        const refreshed = await getBudgets();
+        setBudgets(refreshed);
         setShowEditModal(false);
         setEditingBudget(null);
       } else {
-        // Création d'un nouveau budget
         console.log('📤 Création du budget:', budgetData);
-        const newBudget = await addBudget(budgetData);
-        setBudgets([...budgets, newBudget]);
+        await addBudget(budgetData);
+        const refreshed = await getBudgets();
+        setBudgets(refreshed);
       }
       
-      setForm({ name: "", category: "", amount: "", period: PERIODS[0], startDate: form.startDate });
+      setForm({ name: "", category: "", amount: "", period: PERIODS[0], startDate: form.startDate, alertThreshold: 80 });
     } catch (e) {
       console.error('❌ Erreur lors de la sauvegarde du budget:', e);
       setError(e.message);
@@ -132,9 +136,11 @@ export default function BudgetsPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-[#343A40] text-sm">Catégorie</label>
-                <select name="category" value={form.category} onChange={handleChange} className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" required>
-                  <option value="">Sélectionner une catégorie</option>
-                  {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+                <select name="category" value={form.category} onChange={handleChange} className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]">
+                  <option value="">Toutes / Générale</option>
+                  {categories.map((c) => (
+                    <option key={c._id || c.id} value={c._id || c.id}>{c.name}</option>
+                  ))}
                 </select>
               </div>
               <div className="flex flex-col gap-2">
@@ -223,7 +229,7 @@ export default function BudgetsPage() {
                       
                       return (
                         <tr key={b._id} className="even:bg-white odd:bg-[#F5F7FA]">
-                          <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-xs md:text-sm">{b.category || 'Général'}</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-xs md:text-sm">{categoryLabel(b.category)}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{b.name}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell">{b.period}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</td>
@@ -325,9 +331,9 @@ export default function BudgetsPage() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
                   >
-                    <option value="">Sélectionner une catégorie</option>
-                    {CATEGORIES.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
+                    <option value="">Toutes / Générale</option>
+                    {categories.map((c) => (
+                      <option key={c._id || c.id} value={c._id || c.id}>{c.name}</option>
                     ))}
                   </select>
                 </div>

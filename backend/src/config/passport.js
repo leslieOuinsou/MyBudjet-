@@ -1,7 +1,8 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import GoogleStrategy from 'passport-google-oauth20';
-import User from '../models/user.js';
+import prisma from '../lib/prisma.js';
+import { serialize } from '../lib/serialize.js';
 
 // Vérifier que JWT_SECRET est configuré
 if (!process.env.JWT_SECRET) {
@@ -14,8 +15,8 @@ passport.use(new JwtStrategy({
   secretOrKey: process.env.JWT_SECRET,
 }, async (jwt_payload, done) => {
   try {
-    const user = await User.findById(jwt_payload.id);
-    if (user && !user.blocked) return done(null, user);
+    const user = await prisma.user.findUnique({ where: { id: jwt_payload.id } });
+    if (user && !user.blocked) return done(null, serialize(user));
     return done(null, false);
   } catch (err) {
     return done(err, false);
@@ -58,7 +59,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         name: profile.name
       });
 
-      let user = await User.findOne({ googleId: profile.id });
+      let user = await prisma.user.findUnique({ where: { googleId: profile.id } });
       if (!user) {
         // Get email from profile
         const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null;
@@ -87,30 +88,34 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         console.log('✅ Extracted name:', name);
 
         // Check if user exists with same email
-        user = await User.findOne({ email });
+        user = await prisma.user.findUnique({ where: { email } });
         if (user) {
           console.log('🔗 Linking Google account to existing user');
-          // Link Google account to existing user
-          user.googleId = profile.id;
-          user.emailVerified = true;
-          // Update name if not already set or if it's empty
+          const updateData = {
+            googleId: profile.id,
+            emailVerified: true,
+          };
           if (!user.name || user.name.trim() === '') {
-            user.name = name;
+            updateData.name = name;
           }
-          await user.save();
+          user = await prisma.user.update({
+            where: { id: user.id },
+            data: updateData,
+          });
         } else {
           console.log('🆕 Creating new user with Google account');
-          // Create new user
-          user = await User.create({
-            googleId: profile.id,
-            email,
-            name,
-            emailVerified: true,
+          user = await prisma.user.create({
+            data: {
+              googleId: profile.id,
+              email,
+              name,
+              emailVerified: true,
+            },
           });
-          console.log('✅ User created:', user._id);
+          console.log('✅ User created:', user.id);
         }
       }
-      return done(null, user);
+      return done(null, serialize(user));
     } catch (err) {
       console.error('❌ Google OAuth error:', err);
       return done(err, false);
@@ -122,13 +127,13 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.id || user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
-    done(null, user);
+    const user = await prisma.user.findUnique({ where: { id } });
+    done(null, user ? serialize(user) : null);
   } catch (err) {
     done(err, null);
   }

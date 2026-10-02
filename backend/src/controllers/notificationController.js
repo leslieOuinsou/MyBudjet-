@@ -1,44 +1,84 @@
-import Notification from '../models/notification.js';
-import NotificationPreferences from '../models/notificationPreferences.js';
+import prisma from '../lib/prisma.js';
+import { serialize, userId as getUserId } from '../lib/serialize.js';
 
-// Récupérer toutes les notifications de l'utilisateur
+const DEFAULT_NOTIFICATION_PREFERENCES = {
+  preferences: {
+    budget: true,
+    bill: true,
+    security: true,
+    update: true,
+    marketing: false,
+    weekly: true,
+  },
+  email: {
+    enabled: true,
+    budget: true,
+    bill: true,
+    security: true,
+    weekly: true,
+  },
+  push: {
+    enabled: true,
+    budget: true,
+    bill: true,
+    security: true,
+  },
+  sms: {
+    enabled: false,
+    security: true,
+  },
+};
+
+async function getOrCreateNotificationPreferences(uid) {
+  let prefs = await prisma.notificationPreferences.findUnique({ where: { userId: uid } });
+  if (!prefs) {
+    prefs = await prisma.notificationPreferences.create({
+      data: {
+        userId: uid,
+        ...DEFAULT_NOTIFICATION_PREFERENCES,
+      },
+    });
+  }
+  return prefs;
+}
+
+function mergeJson(current, incoming) {
+  const base = current && typeof current === 'object' && !Array.isArray(current) ? current : {};
+  return { ...base, ...incoming };
+}
+
 export const getNotifications = async (req, res) => {
   try {
     const { page = 1, limit = 20, type, unread } = req.query;
-    const userId = req.user._id;
+    const uid = getUserId(req.user);
 
-    // Construire le filtre
-    const filter = { user: userId };
-    if (type) filter.type = type;
-    if (unread === 'true') filter.isRead = false;
+    const where = { userId: uid };
+    if (type) where.type = type;
+    if (unread === 'true') where.isRead = false;
 
-    // Calculer la pagination
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+    const take = parseInt(limit, 10);
 
-    const [notifications, total] = await Promise.all([
-      Notification.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .lean(),
-      Notification.countDocuments(filter)
+    const [notifications, total, unreadCount] = await Promise.all([
+      prisma.notification.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+      }),
+      prisma.notification.count({ where }),
+      prisma.notification.count({ where: { userId: uid, isRead: false } }),
     ]);
 
-    // Compter les notifications non lues
-    const unreadCount = await Notification.countDocuments({ 
-      user: userId, 
-      isRead: false 
-    });
-
     res.json({
-      notifications,
+      notifications: serialize(notifications),
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: parseInt(page, 10),
+        limit: take,
         total,
-        pages: Math.ceil(total / parseInt(limit))
+        pages: Math.ceil(total / take),
       },
-      unreadCount
+      unreadCount,
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des notifications:', error);
@@ -46,38 +86,39 @@ export const getNotifications = async (req, res) => {
   }
 };
 
-// Marquer une notification comme lue
 export const markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const uid = getUserId(req.user);
 
-    const notification = await Notification.findOneAndUpdate(
-      { _id: id, user: userId },
-      { isRead: true },
-      { new: true }
-    );
+    const existing = await prisma.notification.findFirst({
+      where: { id, userId: uid },
+    });
 
-    if (!notification) {
+    if (!existing) {
       return res.status(404).json({ message: 'Notification non trouvée' });
     }
 
-    res.json(notification);
+    const notification = await prisma.notification.update({
+      where: { id },
+      data: { isRead: true },
+    });
+
+    res.json(serialize(notification));
   } catch (error) {
     console.error('Erreur lors du marquage de la notification:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
-// Marquer toutes les notifications comme lues
 export const markAllAsRead = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const uid = getUserId(req.user);
 
-    await Notification.updateMany(
-      { user: userId, isRead: false },
-      { isRead: true }
-    );
+    await prisma.notification.updateMany({
+      where: { userId: uid, isRead: false },
+      data: { isRead: true },
+    });
 
     res.json({ message: 'Toutes les notifications ont été marquées comme lues' });
   } catch (error) {
@@ -86,20 +127,20 @@ export const markAllAsRead = async (req, res) => {
   }
 };
 
-// Supprimer une notification
 export const deleteNotification = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const uid = getUserId(req.user);
 
-    const notification = await Notification.findOneAndDelete({
-      _id: id,
-      user: userId
+    const existing = await prisma.notification.findFirst({
+      where: { id, userId: uid },
     });
 
-    if (!notification) {
+    if (!existing) {
       return res.status(404).json({ message: 'Notification non trouvée' });
     }
+
+    await prisma.notification.delete({ where: { id } });
 
     res.json({ message: 'Notification supprimée' });
   } catch (error) {
@@ -108,50 +149,69 @@ export const deleteNotification = async (req, res) => {
   }
 };
 
-// Récupérer les préférences de notification
 export const getNotificationPreferences = async (req, res) => {
   try {
-    const userId = req.user._id;
-
-    const preferences = await NotificationPreferences.getOrCreatePreferences(userId);
-    res.json(preferences);
+    const uid = getUserId(req.user);
+    const preferences = await getOrCreateNotificationPreferences(uid);
+    res.json(serialize(preferences));
   } catch (error) {
     console.error('Erreur lors de la récupération des préférences:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
-// Mettre à jour les préférences de notification
 export const updateNotificationPreferences = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const uid = getUserId(req.user);
     const preferences = req.body;
 
-    const userPreferences = await NotificationPreferences.getOrCreatePreferences(userId);
-    await userPreferences.updatePreferences(preferences);
+    let userPreferences = await getOrCreateNotificationPreferences(uid);
 
-    res.json(userPreferences);
+    const updateData = {};
+    if (preferences.preferences) {
+      updateData.preferences = mergeJson(userPreferences.preferences, preferences.preferences);
+    }
+    if (preferences.email) {
+      updateData.email = mergeJson(userPreferences.email, preferences.email);
+    }
+    if (preferences.push) {
+      updateData.push = mergeJson(userPreferences.push, preferences.push);
+    }
+    if (preferences.sms) {
+      updateData.sms = mergeJson(userPreferences.sms, preferences.sms);
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      userPreferences = await prisma.notificationPreferences.update({
+        where: { userId: uid },
+        data: updateData,
+      });
+    }
+
+    res.json(serialize(userPreferences));
   } catch (error) {
     console.error('Erreur lors de la mise à jour des préférences:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
-// Créer une nouvelle notification (pour les tests ou l'admin)
 export const createNotification = async (req, res) => {
   try {
     const { type, title, message, data, priority = 'medium' } = req.body;
-    const userId = req.user._id;
+    const uid = getUserId(req.user);
 
-    const notification = await Notification.createNotification(
-      userId,
-      type,
-      title,
-      message,
-      data
-    );
+    const notification = await prisma.notification.create({
+      data: {
+        userId: uid,
+        type,
+        title,
+        message,
+        data: data || {},
+        priority,
+      },
+    });
 
-    res.status(201).json(notification);
+    res.status(201).json(serialize(notification));
   } catch (error) {
     console.error('Erreur lors de la création de la notification:', error);
     res.status(500).json({ message: 'Erreur serveur' });

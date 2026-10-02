@@ -1,0 +1,357 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum TxType {
+  income
+  expense
+}
+
+enum BudgetPeriod {
+  day
+  week
+  month
+  year
+}
+
+enum RecurringFrequency {
+  daily
+  weekly
+  monthly
+  yearly
+}
+
+enum BankAccountType {
+  checking
+  savings
+  credit_card
+  investment
+  other
+}
+
+enum NotificationType {
+  budget
+  bill
+  security
+  update
+  transaction
+  marketing
+  weekly
+  budget_alert
+  budget_exceeded
+  transaction_reminder
+  goal_achieved
+  system
+  test
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+model User {
+  id                        String                     @id @default(cuid())
+  name                      String
+  email                     String                     @unique
+  password                  String?
+  googleId                  String?                    @unique
+  emailVerified             Boolean                    @default(false)
+  verificationToken         String?
+  verificationTokenExpires  DateTime?
+  resetPasswordToken        String?
+  resetPasswordExpires      DateTime?
+  lastLogin                 DateTime                   @default(now())
+  role                      Role                       @default(user)
+  blocked                   Boolean                    @default(false)
+  profilePicture            String?
+  phoneNumber               String?
+  preferences               Json?
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+
+  categories                Category[]
+  wallets                   Wallet[]
+  transactions              Transaction[]
+  budgets                   Budget[]
+  financialGoals            FinancialGoal[]
+  billReminders             BillReminder[]
+  recurringTransactions     RecurringTransaction[]
+  bankAccounts              BankAccount[]
+  notifications             Notification[]
+  userPreferences           UserPreferences?
+  notificationPreferences   NotificationPreferences?
+  paypalConnection          PayPalConnection?
+  resetTokens               ResetToken[]
+  smsVerifications          SMSVerification[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model Category {
+  id         String                   @id @default(cuid())
+  name       String
+  type       TxType
+  color      String?
+  icon       String?
+  userId     String
+  user       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions          Transaction[]
+  budgets               Budget[]
+  billReminders         BillReminder[]
+  recurringTransactions RecurringTransaction[]
+
+  @@index([userId])
+}
+
+model Wallet {
+  id             String                   @id @default(cuid())
+  name           String
+  balance        Float                    @default(0)
+  overdraftLimit Float                    @default(0)
+  userId         String
+  user           User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions          Transaction[]
+  budgets               Budget[]
+  billReminders         BillReminder[]
+  recurringTransactions RecurringTransaction[]
+
+  @@index([userId])
+}
+
+model Transaction {
+  id          String       @id @default(cuid())
+  amount      Float
+  type        TxType
+  description String
+  note        String?
+  notes       String?
+  tags        String[]     @default([])
+  attachment  String?
+  paypalData  Json?
+  date        DateTime     @default(now())
+  userId      String
+  categoryId  String?
+  walletId    String?
+  bankAccountId String?
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category    Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  wallet      Wallet?      @relation(fields: [walletId], references: [id], onDelete: SetNull)
+  bankAccount BankAccount? @relation(fields: [bankAccountId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([userId, date])
+  @@index([userId, type])
+  @@index([categoryId])
+  @@index([walletId])
+}
+
+model Budget {
+  id             String       @id @default(cuid())
+  name           String
+  amount         Float
+  period         BudgetPeriod @default(month)
+  startDate      DateTime     @default(now())
+  endDate        DateTime?
+  alertThreshold Float        @default(80)
+  userId         String
+  categoryId     String?
+  walletId       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  wallet   Wallet?   @relation(fields: [walletId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model FinancialGoal {
+  id            String    @id @default(cuid())
+  name          String
+  targetAmount  Float
+  currentAmount Float     @default(0)
+  deadline      DateTime?
+  color         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model RecurringTransaction {
+  id         String              @id @default(cuid())
+  amount     Float
+  type       TxType
+  note       String?
+  frequency  RecurringFrequency
+  nextDate   DateTime
+  endDate    DateTime?
+  attachment String?
+  createdAt  DateTime            @default(now())
+  userId     String
+  categoryId String?
+  walletId   String?
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  wallet   Wallet?   @relation(fields: [walletId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model BillReminder {
+  id         String    @id @default(cuid())
+  name       String
+  amount     Float
+  dueDate    DateTime
+  note       String?
+  reminded   Boolean   @default(false)
+  userId     String
+  categoryId String?
+  walletId   String?
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  wallet   Wallet?   @relation(fields: [walletId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model BankAccount {
+  id                String          @id @default(cuid())
+  bankName          String
+  accountType       BankAccountType @default(checking)
+  accountNumber     String
+  accountNumberFull String?
+  currency          String          @default("EUR")
+  balance           Float           @default(0)
+  description       String?
+  color             String          @default("#1E73BE")
+  icon              String          @default("🏦")
+  isActive          Boolean         @default(true)
+  isPrimary         Boolean         @default(false)
+  bankConnection    Json?
+  userId            String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId, isActive])
+  @@index([userId, isPrimary])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  priority  Priority         @default(medium)
+  data      Json?
+  expiresAt DateTime?
+  userId    String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt(sort: Desc)])
+}
+
+model UserPreferences {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  appearance Json?
+  privacy   Json?
+  security  Json?
+  notifications Json?
+  data      Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationPreferences {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  preferences Json?
+  email       Json?
+  push        Json?
+  sms         Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PayPalConnection {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  paypalUserId   String
+  paypalEmail    String?
+  accessToken    String
+  refreshToken   String?
+  tokenExpiresAt DateTime
+  isConnected    Boolean   @default(true)
+  lastSync       DateTime?
+  accountInfo    Json?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([paypalUserId])
+}
+
+model ResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, used])
+  @@index([token, used])
+}
+
+model SMSVerification {
+  id          String   @id @default(cuid())
+  phoneNumber String
+  code        String
+  userId      String?
+  verified    Boolean  @default(false)
+  expiresAt   DateTime
+  attempts    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([phoneNumber, verified])
+  @@index([expiresAt])
+}

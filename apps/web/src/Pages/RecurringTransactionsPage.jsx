@@ -1,76 +1,174 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import DashboardSidebar from "../components/DashboardSidebar.jsx";
+import {
+  getRecurringTransactions,
+  createRecurringTransaction,
+  updateRecurringTransaction,
+  deleteRecurringTransaction,
+  getCategories,
+  getWallets,
+} from "../api.js";
 
-const initialTransactions = [
-  { id: 1, title: "Abonnement Netflix", frequency: "Mensuel", amount: 12.99, category: "Divertissement", nextDue: "2024-07-15", status: "Actif" },
-  { id: 2, title: "Loyer Appartement", frequency: "Mensuel", amount: 1200.0, category: "Logement", nextDue: "2024-08-01", status: "Actif" },
-  { id: 3, title: "Assurance auto", frequency: "Semestriel", amount: 350.5, category: "Assurance", nextDue: "2024-09-20", status: "En attente" },
-  { id: 4, title: "Abonnement Gym", frequency: "Mensuel", amount: 45.0, category: "Santé", nextDue: "2024-07-05", status: "Actif" },
-  { id: 5, title: "Remboursement Prêt Étudiant", frequency: "Mensuel", amount: 250.0, category: "Remboursement de dette", nextDue: "2024-07-10", status: "Actif" },
-  { id: 6, title: "Service de streaming musical", frequency: "Mensuel", amount: 9.99, category: "Divertissement", nextDue: "2024-07-25", status: "Actif" },
-];
-const categories = [
-  "Divertissement",
-  "Logement",
-  "Assurance",
-  "Santé",
-  "Remboursement de dette",
-  "Autre",
-];
-const statusColors = {
-  "Actif": "bg-[#22C55E]/20 text-[#22C55E]",
-  "En attente": "bg-[#1E40AF]/20 text-[#1E40AF]",
+const FREQ_LABELS = {
+  daily: "Quotidien",
+  weekly: "Hebdomadaire",
+  monthly: "Mensuel",
+  yearly: "Annuel",
 };
 
+const emptyForm = () => ({
+  note: "",
+  amount: "",
+  type: "expense",
+  category: "",
+  wallet: "",
+  frequency: "monthly",
+  nextDate: new Date().toISOString().split("T")[0],
+});
+
 export default function RecurringTransactionsPage() {
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [wallets, setWallets] = useState([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState(emptyForm());
 
-  const filtered = transactions.filter(
-    (t) =>
-      t.title.toLowerCase().includes(search.toLowerCase()) &&
-      (!categoryFilter || t.category === categoryFilter)
-  );
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const [recs, cats, wals] = await Promise.all([
+        getRecurringTransactions(),
+        getCategories(),
+        getWallets(),
+      ]);
+      setTransactions(Array.isArray(recs) ? recs : []);
+      setCategories(Array.isArray(cats) ? cats : []);
+      setWallets(Array.isArray(wals) ? wals : []);
+    } catch (err) {
+      setError(err.message || "Erreur de chargement");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const filtered = transactions.filter((t) => {
+    const label = (t.note || t.description || "").toLowerCase();
+    const catName = t.category?.name || "";
+    const matchSearch = label.includes(search.toLowerCase());
+    const matchCat =
+      !categoryFilter ||
+      (t.category?._id || t.categoryId) === categoryFilter ||
+      catName === categoryFilter;
+    return matchSearch && matchCat;
+  });
+
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm(emptyForm());
+    setShowModal(true);
+  };
+
+  const openEditModal = (t) => {
+    setEditingId(t._id || t.id);
+    setForm({
+      note: t.note || "",
+      amount: t.amount ?? "",
+      type: t.type || "expense",
+      category: t.category?._id || t.categoryId || "",
+      wallet: t.wallet?._id || t.walletId || "",
+      frequency: t.frequency || "monthly",
+      nextDate: t.nextDate
+        ? new Date(t.nextDate).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+    setForm(emptyForm());
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      setError("");
+      const payload = {
+        note: form.note,
+        amount: parseFloat(form.amount),
+        type: form.type,
+        category: form.category || null,
+        wallet: form.wallet || null,
+        frequency: form.frequency,
+        nextDate: form.nextDate,
+      };
+
+      if (editingId) {
+        await updateRecurringTransaction(editingId, payload);
+      } else {
+        await createRecurringTransaction(payload);
+      }
+      closeModal();
+      await loadData();
+    } catch (err) {
+      setError(err.message || (editingId ? "Erreur lors de la modification" : "Erreur lors de la création"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Supprimer cette transaction récurrente ?")) return;
+    try {
+      await deleteRecurringTransaction(id);
+      setTransactions((prev) => prev.filter((t) => (t._id || t.id) !== id));
+    } catch (err) {
+      setError(err.message || "Erreur lors de la suppression");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
       <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-[#F5F7FA] py-8 px-6 hidden md:block">
-          <div className="mb-8">
-            <div className="text-xs text-[#6C757D] font-semibold mb-2">NAVIGATION</div>
-            <ul className="space-y-2">
-              <li><Link to="/dashboard" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Tableau de bord</Link></li>
-              <li><Link to="/categories" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Catégories & Portefeuilles</Link></li>
-              <li><Link to="/budgets" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Budgets</Link></li>
-              <li><Link to="/transactions" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Transactions</Link></li>
-              <li><Link to="/reports" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Rapports</Link></li>
-              <li><Link to="/importexport" className="block px-2 py-1 rounded bg-[#F5F7FA] text-[#1E73BE] font-semibold">Import/Export</Link></li>
-              <li><Link to="/forecasts" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Prévisions</Link></li>
-              <li><Link to="/notifications" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Notifications</Link></li>
-              <li><Link to="/settings" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Paramètres utilisateur</Link></li>
-              <li><Link to="/profile" className="block px-2 py-1 rounded hover:bg-[#F5F7FA] text-[#343A40]">Mon Profil</Link></li>
-            </ul>
-          </div>
-          <Link to="/login" className="mt-8 w-full bg-[#1E3A8A] text-white px-6 py-2 rounded font-semibold hover:bg-[#1e40af] flex items-center gap-2">
-            <span className="text-lg">⏻</span> Déconnexion
-          </Link>
-        </aside>
-        {/* Main */}
-        <main className="flex-1 px-12 py-10 flex flex-col">
-          <h1 className="text-3xl font-extrabold text-[#22292F] mb-8">Transactions récurrentes</h1>
+        <DashboardSidebar />
+        <main className="flex-1 px-4 md:px-12 py-6 md:py-10 flex flex-col pt-16 md:pt-10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-[#22292F] mb-6 md:mb-8">
+            Transactions récurrentes
+          </h1>
+
+          {error && (
+            <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded px-3 py-2">
+              {error}
+            </div>
+          )}
+
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            <button className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-5 py-2 rounded-lg shadow transition w-fit">
+            <button
+              onClick={openCreateModal}
+              className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-5 py-2 rounded-lg shadow transition w-fit"
+            >
               Ajouter une nouvelle transaction
             </button>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 placeholder="Rechercher des transactions..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] focus:border-[#1E73BE] w-72"
+                className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] focus:border-[#1E73BE] w-full sm:w-72"
               />
               <select
                 value={categoryFilter}
@@ -79,48 +177,167 @@ export default function RecurringTransactionsPage() {
               >
                 <option value="">Filtrer par catégorie</option>
                 {categories.map((c) => (
-                  <option key={c}>{c}</option>
+                  <option key={c._id || c.id} value={c._id || c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
+
           <div className="overflow-x-auto rounded-xl border border-[#EAF4FB] bg-white shadow">
-            <table className="min-w-full text-base">
-              <thead>
-                <tr className="bg-[#F5F7FA]">
-                  <th className="px-4 py-3 text-left text-[#343A40] font-bold">Nom de la transaction</th>
-                  <th className="px-4 py-3 text-left text-[#343A40] font-bold">Fréquence</th>
-                  <th className="px-4 py-3 text-left text-[#343A40] font-bold">Montant</th>
-                  <th className="px-4 py-3 text-left text-[#343A40] font-bold">Catégorie</th>
-                  <th className="px-4 py-3 text-left text-[#343A40] font-bold">Prochaine échéance</th>
-                  <th className="px-4 py-3 text-left text-[#343A40] font-bold">Statut</th>
-                  <th className="px-4 py-3 text-left text-[#343A40] font-bold">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((t) => (
-                  <tr key={t.id} className="even:bg-white odd:bg-[#F5F7FA]">
-                    <td className="px-4 py-3 font-medium">{t.title}</td>
-                    <td className="px-4 py-3">{t.frequency}</td>
-                    <td className="px-4 py-3">{t.amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</td>
-                    <td className="px-4 py-3">{t.category}</td>
-                    <td className="px-4 py-3">{t.nextDue}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${statusColors[t.status] || "bg-gray-200 text-gray-700"}`}>
-                        {t.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 flex gap-4">
-                      <button className="text-[#1E73BE] hover:underline text-sm">Modifier</button>
-                      <button className="text-[#6C757D] hover:underline text-sm">Supprimer</button>
-                    </td>
+            {loading ? (
+              <div className="p-8 text-center text-[#6C757D]">Chargement...</div>
+            ) : (
+              <table className="min-w-full text-base">
+                <thead>
+                  <tr className="bg-[#F5F7FA]">
+                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Nom</th>
+                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Fréquence</th>
+                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Montant</th>
+                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Catégorie</th>
+                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Prochaine échéance</th>
+                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Type</th>
+                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-[#6C757D]">
+                        Aucune transaction récurrente
+                      </td>
+                    </tr>
+                  ) : (
+                    filtered.map((t) => {
+                      const id = t._id || t.id;
+                      return (
+                        <tr key={id} className="even:bg-white odd:bg-[#F5F7FA]">
+                          <td className="px-4 py-3 font-medium">{t.note || "Sans titre"}</td>
+                          <td className="px-4 py-3">{FREQ_LABELS[t.frequency] || t.frequency}</td>
+                          <td className="px-4 py-3">
+                            {Number(t.amount || 0).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+                          </td>
+                          <td className="px-4 py-3">{t.category?.name || "—"}</td>
+                          <td className="px-4 py-3">
+                            {t.nextDate ? new Date(t.nextDate).toLocaleDateString("fr-FR") : "—"}
+                          </td>
+                          <td className="px-4 py-3">
+                            {t.type === "income" ? "Revenu" : "Dépense"}
+                          </td>
+                          <td className="px-4 py-3 flex gap-3">
+                            <button
+                              onClick={() => openEditModal(t)}
+                              className="text-[#1E73BE] hover:underline text-sm"
+                            >
+                              Modifier
+                            </button>
+                            <button
+                              onClick={() => handleDelete(id)}
+                              className="text-[#6C757D] hover:underline text-sm"
+                            >
+                              Supprimer
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </main>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-[#343A40]">
+                {editingId ? "Modifier la récurrence" : "Nouvelle récurrence"}
+              </h3>
+              <button onClick={closeModal} className="text-[#6C757D]">✕</button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input
+                type="text"
+                placeholder="Libellé (ex: Netflix)"
+                value={form.note}
+                onChange={(e) => setForm({ ...form, note: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Montant"
+                value={form.amount}
+                onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+              <select
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="expense">Dépense</option>
+                <option value="income">Revenu</option>
+              </select>
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="">Catégorie (optionnel)</option>
+                {categories.map((c) => (
+                  <option key={c._id || c.id} value={c._id || c.id}>{c.name}</option>
+                ))}
+              </select>
+              <select
+                value={form.wallet}
+                onChange={(e) => setForm({ ...form, wallet: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="">Portefeuille (optionnel)</option>
+                {wallets.map((w) => (
+                  <option key={w._id || w.id} value={w._id || w.id}>{w.name}</option>
+                ))}
+              </select>
+              <select
+                value={form.frequency}
+                onChange={(e) => setForm({ ...form, frequency: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="daily">Quotidien</option>
+                <option value="weekly">Hebdomadaire</option>
+                <option value="monthly">Mensuel</option>
+                <option value="yearly">Annuel</option>
+              </select>
+              <input
+                type="date"
+                value={form.nextDate}
+                onChange={(e) => setForm({ ...form, nextDate: e.target.value })}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+              <div className="flex gap-2 pt-2">
+                <button type="button" onClick={closeModal} className="flex-1 bg-[#F5F7FA] py-2 rounded">
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 bg-[#1E3A8A] text-white py-2 rounded disabled:opacity-60"
+                >
+                  {saving ? "Enregistrement..." : editingId ? "Enregistrer" : "Créer"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
