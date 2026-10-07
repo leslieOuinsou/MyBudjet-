@@ -70,6 +70,7 @@ export default {
   'install.text': 'Ajoutez l’application à votre écran d’accueil ou à votre ordinateur pour y accéder en un geste.',
   'install.button': 'Installer',
   'install.later': 'Plus tard',
+  'install.done': "Application installée. Retrouvez MyBudget dans votre menu d’applications, sur le bureau ou dans le Dock selon votre système.",
   'install.hint.ios': "Sur iPhone : touchez Partager puis « Sur l’écran d’accueil » pour installer MyBudget.",
   'install.hint.safari': "Sur Safari : menu Fichier puis « Ajouter au Dock » pour installer MyBudget.",
   'install.hint.firefox': "Firefox sur ordinateur ne permet pas d’installer l’application. Ouvrez MyBudget dans Chrome ou Edge, ou ajoutez-la à vos favoris.",

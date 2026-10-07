@@ -4,7 +4,7 @@ import { MdAccountBalanceWallet, MdAddCircle, MdEventNote, MdInstallMobile, MdSc
 import { loadDemoData } from '../api.js';
 import { currentOwner } from '../lib/offline.js';
 import { useI18n } from '../context/I18nContext.jsx';
-import { manualInstallHint, promptInstall, useCanInstall } from '../lib/install.js';
+import { manualInstallHint, promptInstall, useCanInstall, useIsInstalled } from '../lib/install.js';
 
 const STEPS = [
   { key: 'welcome', icon: MdWavingHand },
@@ -27,6 +27,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [demoState, setDemoState] = useState('idle'); // idle | loading | done | error
   const canInstall = useCanInstall();
+  const isInstalled = useIsInstalled();
 
   // Première visite du tableau de bord après connexion
   useEffect(() => {
@@ -80,6 +81,9 @@ export default function Onboarding() {
         <h2 id="tour-title" className="text-xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">{t(`tour.${key}Title`)}</h2>
         <p className="mt-2 text-gray-600 dark:text-[#CBD5E1]">{t(`tour.${key}Text`)}</p>
 
+        {key === 'install' && isInstalled && (
+          <p role="status" className="mt-4 text-sm font-semibold text-green-700 dark:text-[#4ADE80]">{t('install.done')}</p>
+        )}
         {key === 'install' && !canInstall && manualInstallHint() && (
           <p className="mt-3 text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC]">{t(`install.hint.${manualInstallHint()}`)}</p>
         )}
