@@ -4,7 +4,7 @@
 // 12,50 · 1 234,56 · 1234.56 — jamais une date comme 12.10.2026 ni un grand nombre sans décimales
 const AMOUNT_RE = /(?<![\d.,/])\d{1,3}(?:[  ]\d{3})*[.,]\d{2}(?![\d]|[.,/]\d)|(?<![\d.,/])\d+[.,]\d{2}(?![\d]|[.,/]\d)/g;
 
-const TOTAL_LINE_RE = /(total|net\s*[àa]\s*payer|[àa]\s*payer|montant\s*(d[uû]|ttc|total)?|somme|carte\s*(bancaire|bleue)?|cb)/i;
+const TOTAL_LINE_RE = /(total|ttc|net\s*[àa]\s*payer|[àa]\s*payer|montant\s*(d[uû]|ttc|total)?|somme|carte\s*(bancaire|bleue)?|cb)/i;
 const NOT_TOTAL_RE = /(sous[\s-]*total|total\s*ht|\bht\b|tva|[ée]conomie|remise|rendu|monnaie|esp[èe]ces|re[çc]u|points?|fid[ée]lit[ée]|article)/i;
 
 const toNumber = (raw) => {
@@ -60,6 +60,46 @@ export function parseMerchant(lines) {
     return name === name.toUpperCase() ? name.toLowerCase().replace(/(^|[\s'-])(\p{L})/gu, (_, a, b) => a + b.toUpperCase()) : name;
   }
   return '';
+}
+
+const MONTHS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+const MONTHS_ASCII = ['janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre'];
+const DUE_RE = /(date\s+d['’]?\s*[ée]ch[ée]ance|[ée]ch[ée]ance|[àa]\s+payer\s+avant|payable\s+(?:avant\s+)?le|[àa]\s+r[ée]gler\s+avant|date\s+limite|due\s+date|pr[ée]l[èe]vement\s+(?:le|pr[ée]vu))/i;
+
+// Date d'échéance : 15/11/2026, 15.11.26, 15 novembre 2026 ou 2026-11-15 (peut être dans le futur)
+function findDate(text) {
+  const iso = text.match(/\b(20\d{2})-(\d{2})-(\d{2})\b/);
+  const num = text.match(/\b(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4}|\d{2})\b/);
+  const word = text.match(/\b(\d{1,2})(?:er)?\s+([A-Za-zéûÉ]+)\s+(20\d{2})\b/);
+  let y; let m; let d;
+  if (iso) [, y, m, d] = iso.map(Number);
+  else if (num) { [, d, m, y] = num.map(Number); if (y < 100) y += 2000; }
+  else if (word) {
+    const name = word[2].toLowerCase();
+    const idx = MONTHS.indexOf(name) >= 0 ? MONTHS.indexOf(name) : MONTHS_ASCII.indexOf(name);
+    if (idx < 0) return null;
+    d = Number(word[1]); m = idx + 1; y = Number(word[3]);
+  } else return null;
+  const date = new Date(y, m - 1, d);
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) return null;
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+
+export function parseDueDate(text) {
+  const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  for (let i = 0; i < lines.length; i += 1) {
+    if (!DUE_RE.test(lines[i])) continue;
+    // la date est sur la même ligne ou sur la suivante
+    const found = findDate(lines[i]) || (lines[i + 1] ? findDate(lines[i + 1]) : null);
+    if (found) return found;
+  }
+  return null;
+}
+
+/** Facture : fournisseur, montant à payer, date d'échéance (si trouvée). */
+export function parseInvoice(text) {
+  const lines = String(text || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  return { name: parseMerchant(lines), amount: parseAmount(lines), dueDate: parseDueDate(text) };
 }
 
 export function parseReceipt(text, now = new Date()) {

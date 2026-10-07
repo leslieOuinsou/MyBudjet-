@@ -1,6 +1,6 @@
 // Lecture gratuite d'un ticket : OCR dans le navigateur (tesseract.js), rien n'est envoyé à un service payant
 // et la photo ne quitte pas l'appareil. La bibliothèque n'est chargée qu'au premier scan.
-import { parseReceipt } from './receiptParser.js';
+import { parseReceipt, parseInvoice } from './receiptParser.js';
 import { suggestCategory } from '../api.js';
 
 const MAX_SIDE = 1800;
@@ -84,16 +84,23 @@ async function ocr(canvas, onProgress) {
  * @param {(percent:number)=>void} onProgress
  * @returns {{description:string, amount:number, date:string|null, categoryId:string|null, categoryName:string|null}}
  */
-export async function scanReceiptLocal(file, onProgress = () => {}) {
-  let text = '';
+async function extractText(file, onProgress) {
   if (isPdf(file)) {
     const page = await openFirstPage(file);
-    text = await pdfText(page);
+    const text = await pdfText(page);
     // Peu ou pas de texte : c'est un scan enregistré en PDF, on passe par l'OCR
-    if (!parseReceipt(text).amount) text = await ocr(await pdfToCanvas(page), onProgress);
-  } else {
-    text = await ocr(await prepareImage(file), onProgress);
+    return text.replace(/\s/g, '').length > 40 ? text : ocr(await pdfToCanvas(page), onProgress);
   }
+  return ocr(await prepareImage(file), onProgress);
+}
+
+/** Lecture d'une facture (PDF ou photo) : fournisseur, montant, échéance. Aucune donnée n'est envoyée. */
+export async function scanInvoiceLocal(file, onProgress = () => {}) {
+  return parseInvoice(await extractText(file, onProgress));
+}
+
+export async function scanReceiptLocal(file, onProgress = () => {}) {
+  const text = await extractText(file, onProgress);
 
   const parsed = parseReceipt(text);
   if (!parsed.amount) {

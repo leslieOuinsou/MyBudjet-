@@ -3,9 +3,11 @@ import { trackEvent } from '../lib/analytics.js';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import {
   MdFolder, MdCloudUpload, MdPictureAsPdf, MdImage, MdDownload, MdOpenInNew, MdDelete, MdEdit,
-  MdSearch, MdEventBusy, MdErrorOutline, MdCheckCircle, MdClose, MdStorage, MdDescription,
+  MdSearch, MdEventBusy, MdNotificationAdd, MdErrorOutline, MdCheckCircle, MdClose, MdStorage, MdDescription,
 } from 'react-icons/md';
-import { getDocuments, uploadDocument, updateDocument, deleteDocument, fetchDocumentFile, downloadBlob } from '../api.js';
+import { Link } from 'react-router-dom';
+import { getDocuments, uploadDocument, updateDocument, deleteDocument, fetchDocumentFile, downloadBlob, createReminder } from '../api.js';
+import { scanInvoiceLocal } from '../lib/receiptOcr.js';
 import { formatDate } from '../lib/format.js';
 
 const MAX_SIZE = 4 * 1024 * 1024;
@@ -49,6 +51,8 @@ export default function DocumentsPage() {
   const [dragActive, setDragActive] = useState(false);
   const [editing, setEditing] = useState(null);
   const inputRef = useRef(null);
+  const [reminder, setReminder] = useState(null); // facture lue, en cours de confirmation
+  const [reading, setReading] = useState(null); // id du document en cours de lecture
 
   const notify = (text) => {
     setSuccess(text);
@@ -124,6 +128,40 @@ export default function DocumentsPage() {
       await deleteDocument(doc._id);
       notify('Document supprimé ✓');
       await load();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  // Lit la facture (PDF ou photo) sur l'appareil et propose un rappel pré-rempli
+  const startReminder = async (doc) => {
+    setError('');
+    setReading(doc._id);
+    try {
+      const blob = await fetchDocumentFile(doc._id);
+      const file = new File([blob], doc.originalName, { type: doc.mimeType });
+      const found = await scanInvoiceLocal(file);
+      setReminder({
+        docId: doc._id,
+        name: found.name || doc.name.replace(/\.[a-z0-9]+$/i, ''),
+        amount: found.amount ?? '',
+        dueDate: found.dueDate || doc.expiresAt?.slice(0, 10) || '',
+        note: `Facture : ${doc.name}`,
+        detected: Boolean(found.amount || found.dueDate),
+      });
+    } catch (err) {
+      setError(err.message || 'Impossible de lire ce document');
+    } finally {
+      setReading(null);
+    }
+  };
+
+  const saveReminder = async (e) => {
+    e.preventDefault();
+    try {
+      await createReminder({ name: reminder.name, amount: parseFloat(reminder.amount), dueDate: reminder.dueDate, note: reminder.note });
+      setReminder(null);
+      notify('Rappel de facture créé ✓');
     } catch (err) {
       setError(err.message);
     }
@@ -289,6 +327,9 @@ export default function DocumentsPage() {
                       {doc.note && <p className="text-xs text-[#64748B] dark:text-[#94A3B8] line-clamp-2">{doc.note}</p>}
                       <div className="flex gap-1 mt-auto pt-2 border-t border-gray-100 dark:border-[#334155]">
                         <button onClick={() => open(doc)} className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 rounded-lg text-sm font-semibold text-[#2563EB] dark:text-[#BFDBFE] hover:bg-[#DBEAFE] dark:hover:bg-[#1E40AF]"><MdOpenInNew /> Ouvrir</button>
+                        <button onClick={() => startReminder(doc)} disabled={reading === doc._id} className="w-9 h-9 rounded-lg flex items-center justify-center text-[#0F172A] dark:text-[#F8FAFC] hover:bg-gray-100 dark:hover:bg-[#334155] disabled:opacity-50" title="Créer un rappel de facture" aria-label="Créer un rappel de facture">
+                          {reading === doc._id ? <span className="h-4 w-4 rounded-full border-2 border-[#2563EB] border-t-transparent animate-spin" /> : <MdNotificationAdd />}
+                        </button>
                         <button onClick={() => download(doc)} className="w-9 h-9 rounded-lg flex items-center justify-center text-[#0F172A] dark:text-[#F8FAFC] hover:bg-gray-100 dark:hover:bg-[#334155]" title="Télécharger" aria-label="Télécharger"><MdDownload /></button>
                         <button onClick={() => setEditing({ ...doc })} className="w-9 h-9 rounded-lg flex items-center justify-center text-[#0F172A] dark:text-[#F8FAFC] hover:bg-gray-100 dark:hover:bg-[#334155]" title="Modifier" aria-label="Modifier"><MdEdit /></button>
                         <button onClick={() => remove(doc)} className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#DC2626] dark:hover:text-[#F87171] hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30" title="Supprimer" aria-label="Supprimer"><MdDelete /></button>
@@ -301,6 +342,36 @@ export default function DocumentsPage() {
           </section>
         </main>
       </div>
+
+      {reminder && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" onClick={() => setReminder(null)}>
+          <form onSubmit={saveReminder} onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Créer un rappel de facture</h3>
+              <button type="button" onClick={() => setReminder(null)} className="text-gray-500 hover:text-gray-800 dark:hover:text-white" aria-label="Fermer"><MdClose /></button>
+            </div>
+            <p className={`text-xs rounded-lg px-3 py-2 ${reminder.detected ? 'bg-[#DBEAFE] dark:bg-[#1E40AF] text-[#1E3A8A] dark:text-[#DBEAFE]' : 'bg-amber-100 dark:bg-[#78350F]/50 text-[#B45309] dark:text-[#FCD34D]'}`}>
+              {reminder.detected ? 'Informations lues sur la facture : vérifiez-les avant de valider.' : "Rien n'a pu être lu automatiquement : renseignez les champs."}
+            </p>
+            <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC]">Facture
+              <input value={reminder.name} onChange={(e) => setReminder({ ...reminder, name: e.target.value })} required maxLength={120} className={`${INPUT} w-full mt-1`} />
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC]">Montant
+                <input type="number" step="0.01" min="0.01" value={reminder.amount} onChange={(e) => setReminder({ ...reminder, amount: e.target.value })} required className={`${INPUT} w-full mt-1`} />
+              </label>
+              <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC]">À payer avant le
+                <input type="date" value={reminder.dueDate} onChange={(e) => setReminder({ ...reminder, dueDate: e.target.value })} required className={`${INPUT} w-full mt-1`} />
+              </label>
+            </div>
+            <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">Vous serez prévenu quelques jours avant l'échéance (voir <Link to="/bills" className="underline text-[#2563EB] dark:text-[#60A5FA]">Rappels de factures</Link>).</p>
+            <div className="flex justify-end gap-2">
+              <button type="button" onClick={() => setReminder(null)} className="px-4 py-2 rounded-xl border border-gray-300 dark:border-[#475569] text-sm text-[#0F172A] dark:text-[#F8FAFC]">Annuler</button>
+              <button className="px-5 py-2 rounded-xl bg-[#2563EB] dark:bg-[#3B82F6] text-white text-sm font-semibold hover:bg-[#1D4ED8]">Créer le rappel</button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {editing && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" onClick={() => setEditing(null)}>
