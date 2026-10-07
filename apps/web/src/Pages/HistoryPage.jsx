@@ -87,12 +87,12 @@ export default function HistoryPage() {
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex flex-col">
       <div className="flex flex-1">
         <DashboardSidebar />
-        <main className="flex-1 p-5 md:p-10 space-y-6 max-w-5xl">
-          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] dark:to-[#3B82F6] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
-            <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdHistory /></span>
+        <main className="flex-1 min-w-0 px-3 sm:px-5 md:px-10 pt-16 pb-6 md:pt-10 md:pb-10 space-y-4 md:space-y-6 max-w-5xl">
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] dark:to-[#3B82F6] text-white p-4 sm:p-6 md:p-8 shadow-sm flex items-center gap-3 md:gap-4">
+            <span className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-xl bg-white/20 flex items-center justify-center text-2xl md:text-3xl"><MdHistory /></span>
             <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold">Corbeille et historique</h1>
-              <p className="text-white/85 text-sm mt-1">Retrouvez une transaction supprimée par erreur et voyez qui a changé quoi.</p>
+              <h1 className="text-xl md:text-3xl font-extrabold">Corbeille et historique</h1>
+              <p className="text-white/85 text-xs md:text-sm mt-1">Retrouvez une transaction supprimée par erreur et voyez qui a changé quoi.</p>
             </div>
           </header>
 
@@ -124,13 +124,13 @@ export default function HistoryPage() {
               <span className="h-5 w-5 rounded-full border-2 border-[#2563EB] border-t-transparent animate-spin" /> Chargement…
             </div>
           ) : tab === 'trash' ? (
-            <section className={`${CARD} p-5 md:p-6`}>
+            <section className={`${CARD} p-3 sm:p-5 md:p-6`}>
               <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
                 <p className="text-sm text-[#64748B] dark:text-[#94A3B8]">Les transactions supprimées restent ici 30 jours, puis disparaissent définitivement. Restaurer remet aussi le solde du portefeuille.</p>
                 {trash.length > 0 && (
                   <button
                     onClick={() => window.confirm(`Supprimer définitivement ${trash.length} transaction(s) ?`) && act(emptyTrash, 'Corbeille vidée ✓')}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#DC2626] text-[#DC2626] dark:text-[#F87171] dark:border-[#F87171] text-sm font-semibold hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30"
+                    className="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#DC2626] text-[#DC2626] dark:text-[#F87171] dark:border-[#F87171] text-sm font-semibold hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30"
                   >
                     <MdDeleteSweep /> Vider la corbeille
                   </button>
@@ -144,23 +144,23 @@ export default function HistoryPage() {
               ) : (
                 <ul className="space-y-3">
                   {trash.map((t) => (
-                    <li key={t._id || t.id} className="flex items-center gap-3 flex-wrap rounded-xl border border-[#E2E8F0] dark:border-[#334155] p-4">
+                    <li key={t._id || t.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] p-3 sm:p-4">
                       <div className="min-w-0 flex-1">
-                        <div className="font-semibold text-[#0F172A] dark:text-[#F8FAFC] truncate">{t.description || 'Sans libellé'}</div>
+                        <div className="font-semibold text-[#0F172A] dark:text-[#F8FAFC] break-words sm:truncate">{t.description || 'Sans libellé'}</div>
                         <div className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">
                           {formatDate(t.date)} · {t.category?.name || 'Sans catégorie'}{t.wallet?.name ? ` · ${t.wallet.name}` : ''} · supprimée {timeAgo(t.deletedAt)} · {daysLeft(t.purgeAt)} j restants
                         </div>
                       </div>
-                      <div className={`font-bold ${t.type === 'income' ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'}`}>
+                      <div className={`font-bold text-lg sm:text-base ${t.type === 'income' ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'}`}>
                         {t.type === 'income' ? '+' : '-'}{formatMoney(t.amount)}
                       </div>
-                      <div className="flex gap-1">
-                        <button onClick={() => act(() => restoreTransaction(t._id || t.id), 'Transaction restaurée ✓')} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#DBEAFE] dark:hover:bg-[#1E40AF]">
+                      <div className="flex gap-2 sm:gap-1 items-center">
+                        <button onClick={() => act(() => restoreTransaction(t._id || t.id), 'Transaction restaurée ✓')} className="flex-1 sm:flex-none justify-center inline-flex items-center gap-1 px-3 py-2 sm:py-1.5 rounded-lg text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#DBEAFE] dark:hover:bg-[#1E40AF]">
                           <MdRestore /> Restaurer
                         </button>
                         <button
                           onClick={() => window.confirm('Supprimer définitivement cette transaction ?') && act(() => purgeTransaction(t._id || t.id), 'Supprimée définitivement ✓')}
-                          className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#DC2626] hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30"
+                          className="w-10 h-10 sm:w-9 sm:h-9 shrink-0 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#DC2626] hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30"
                           title="Supprimer définitivement"
                           aria-label="Supprimer définitivement"
                         >
@@ -173,7 +173,7 @@ export default function HistoryPage() {
               )}
             </section>
           ) : (
-            <section className={`${CARD} p-5 md:p-6`}>
+            <section className={`${CARD} p-3 sm:p-5 md:p-6`}>
               {activity.length === 0 ? (
                 <div className="text-center py-12 text-[#64748B] dark:text-[#94A3B8]">
                   <MdHistory className="mx-auto text-6xl text-gray-300 dark:text-[#475569] mb-2" />
