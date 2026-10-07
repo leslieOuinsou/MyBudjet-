@@ -38,6 +38,7 @@ import GoogleCallbackPage from "./Pages/GoogleCallbackPage.jsx";
 import useAutoSync from "./hooks/useAutoSync.js";
 import InsightsPage from "./Pages/InsightsPage.jsx";
 import ChallengesPage from "./Pages/ChallengesPage.jsx";
+import DocumentsPage from "./Pages/DocumentsPage.jsx";
 import SharedBudgetsPage from "./Pages/SharedBudgetsPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import PrivacyPolicyPage from "./Pages/PrivacyPolicyPage.jsx";
@@ -89,6 +90,7 @@ function AppContent() {
       <Route path="/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
       <Route path="/insights" element={<ProtectedRoute><InsightsPage /></ProtectedRoute>} />
+      <Route path="/documents" element={<ProtectedRoute><DocumentsPage /></ProtectedRoute>} />
       <Route path="/challenges" element={<ProtectedRoute><ChallengesPage /></ProtectedRoute>} />
       <Route path="/shared" element={<ProtectedRoute><SharedBudgetsPage /></ProtectedRoute>} />
       <Route path="/importexport" element={<ProtectedRoute><ImportExportPage /></ProtectedRoute>} />

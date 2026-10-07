@@ -101,6 +101,7 @@ model User {
   settlementsSent           SharedSettlement[]         @relation("SettlementFrom")
   settlementsReceived       SharedSettlement[]         @relation("SettlementTo")
   sessions                  UserSession[]
+  documents                 Document[]
   twoFactorChallenges       TwoFactorChallenge[]
 
   @@index([createdAt(sort: Desc)])
@@ -448,4 +449,21 @@ model TwoFactorChallenge {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, purpose])
+}
+
+model Document {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  originalName String
+  mimeType     String
+  size         Int
+  category     String   @default("autre")
+  note         String?
+  data         Bytes
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
 }

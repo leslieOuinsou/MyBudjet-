@@ -61,7 +61,7 @@ export default function SharedBudgetsPage() {
     <div className="flex min-h-screen bg-[#F5F7FA]">
       <DashboardSidebar />
       <main className="flex-1 p-5 md:p-10 space-y-6 max-w-5xl">
-        <header className="rounded-2xl bg-gradient-to-r from-[#6C5CE7] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
           <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdGroups /></span>
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold">Budgets partagés</h1>
@@ -153,7 +153,7 @@ export default function SharedBudgetsPage() {
                         <span><strong>{t.fromName}</strong> doit <strong className="text-[#EB6834]">{formatAmount(t.amount, selected.currency)}</strong> à <strong>{t.toName}</strong></span>
                         {t.from === me && (
                           <button
-                            className="px-3 py-1.5 rounded-lg bg-[#1BAF7A] text-white text-xs font-semibold hover:opacity-90"
+                            className="px-3 py-1.5 rounded-lg bg-[#28A745] text-white text-xs font-semibold hover:opacity-90"
                             onClick={() => run(async () => {
                               await addSharedSettlement(selected._id, { toUserId: t.to, amount: t.amount });
                               await refresh(selected._id);

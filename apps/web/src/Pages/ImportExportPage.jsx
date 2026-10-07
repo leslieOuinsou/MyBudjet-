@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
-import { MdSwapVert, MdCloudUpload, MdCloudDownload, MdDescription, MdErrorOutline, MdCheckCircle, MdTableChart, MdPictureAsPdf, MdGridOn, MdAssessment } from "react-icons/md";
+import { Link } from "react-router-dom";
+import { MdSwapVert, MdFolderOpen, MdCloudUpload, MdCloudDownload, MdDescription, MdErrorOutline, MdCheckCircle, MdTableChart, MdPictureAsPdf, MdGridOn, MdAssessment } from "react-icons/md";
 import { 
   importTransactions, 
   exportTransactionsCSV, 
@@ -8,7 +9,8 @@ import {
   exportTransactionsPDF, 
   exportFinancialReport,
   downloadBlob,
-  downloadText
+  downloadText,
+  uploadDocument
 } from '../api.js';
 
 export default function ImportExportPage() {
@@ -65,6 +67,12 @@ export default function ImportExportPage() {
 
   // Validation du fichier
   const validateFile = (file) => {
+    if (importFormat === 'document') {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['pdf', 'jpg', 'jpeg', 'png', 'webp'].includes(ext)) throw new Error('Format invalide. Importez un PDF, JPG, PNG ou WebP.');
+      if (file.size > 4 * 1024 * 1024) throw new Error('Le document dépasse 4 Mo.');
+      return;
+    }
     const allowedTypes = {
       csv: ['text/csv', 'application/csv', 'text/plain'],
       excel: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'],
@@ -114,6 +122,17 @@ export default function ImportExportPage() {
         setUploadProgress(prev => Math.min(prev + 10, 90));
       }, 100);
       
+      if (importFormat === 'document') {
+        clearInterval(progressInterval);
+        await uploadDocument(selectedFile, { category: 'autre' });
+        setUploadProgress(100);
+        setSuccess('Document importé ! Retrouvez-le dans « Mes documents ».');
+        setSelectedFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        setTimeout(() => { setSuccess(''); setUploadProgress(0); }, 5000);
+        return;
+      }
+
       const result = await importTransactions(selectedFile, importFormat);
       
       clearInterval(progressInterval);
@@ -228,7 +247,7 @@ export default function ImportExportPage() {
     { id: 'excel', label: 'Excel', icon: MdGridOn },
     { id: 'pdf', label: 'PDF', icon: MdPictureAsPdf },
   ];
-  const importFormats = FORMATS.filter((f) => f.id !== 'pdf');
+  const importFormats = [FORMATS[0], FORMATS[1], { id: 'document', label: 'Document PDF', icon: MdPictureAsPdf }];
   const FormatPicker = ({ value, onChange, options }) => (
     <div className="grid grid-cols-3 gap-2" role="radiogroup">
       {options.map(({ id, label, icon: Icon }) => (
@@ -251,7 +270,7 @@ export default function ImportExportPage() {
       <div className="flex flex-1">
         <DashboardSidebar />
         <main className="flex-1 p-5 md:p-10 space-y-6 max-w-6xl">
-          <header className="rounded-2xl bg-gradient-to-r from-[#1E73BE] to-[#1BAF7A] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
             <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdSwapVert /></span>
             <div>
               <h1 className="text-2xl md:text-3xl font-extrabold">Importer et exporter des données</h1>
@@ -277,7 +296,7 @@ export default function ImportExportPage() {
                 <span className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl"><MdCloudUpload /></span>
                 <h2 className="text-xl font-bold text-[#22292F]">Importer des données</h2>
               </div>
-              <p className="text-gray-500 text-sm mb-5">Sélectionnez un fichier pour importer vos transactions. Formats supportés : CSV et Excel, correctement formatés.</p>
+              <p className="text-gray-500 text-sm mb-5">Importez vos transactions depuis un fichier CSV ou Excel, ou rangez un document (PDF, photo) dans votre espace personnel.</p>
 
               <div className="mb-4">
                 <label className="block text-[#22292F] text-sm font-medium mb-2">Format du fichier</label>
@@ -299,7 +318,7 @@ export default function ImportExportPage() {
                   type="file"
                   className="hidden"
                   onChange={handleFileSelect}
-                  accept={importFormat === 'csv' ? '.csv' : importFormat === 'excel' ? '.xlsx,.xls' : '.pdf'}
+                  accept={importFormat === 'csv' ? '.csv' : importFormat === 'excel' ? '.xlsx,.xls' : '.pdf,.jpg,.jpeg,.png,.webp'}
                 />
                 {selectedFile ? (
                   <div className="text-center">
@@ -322,6 +341,12 @@ export default function ImportExportPage() {
                   </div>
                 )}
               </div>
+
+              {importFormat === 'document' && (
+                <Link to="/documents" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[#1E73BE] hover:underline">
+                  <MdFolderOpen /> Voir tous mes documents
+                </Link>
+              )}
 
               {importResults && (
                 <div className="mb-5 p-4 bg-[#F5F7FA] rounded-xl">
@@ -349,7 +374,7 @@ export default function ImportExportPage() {
                 onClick={handleImport}
                 disabled={loading || !selectedFile}
               >
-                {loading ? 'Import en cours...' : 'Importer les données'}
+                {loading ? 'Import en cours...' : importFormat === 'document' ? 'Importer le document' : 'Importer les données'}
               </button>
             </section>
 
@@ -400,7 +425,7 @@ export default function ImportExportPage() {
                 </button>
                 <button
                   className={`w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-3 rounded-xl transition ${
-                    loading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'border border-[#1BAF7A] text-[#168a61] hover:bg-green-50'
+                    loading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'border border-[#28A745] text-[#1e7e34] hover:bg-green-50'
                   }`}
                   onClick={handleExportReport}
                   disabled={loading}

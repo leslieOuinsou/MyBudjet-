@@ -21,7 +21,8 @@ import {
   MdGroup,
   MdInsights,
   MdEmojiEvents,
-  MdUnfoldMore
+  MdUnfoldMore,
+  MdFolderOpen
 } from "react-icons/md";
 
 // Organisation des menus en sections logiques
@@ -52,6 +53,12 @@ const menuSections = [
       { to: "/challenges", label: "Défis d'épargne", icon: MdEmojiEvents },
       { to: "/forecasts", label: "Prévisions", icon: MdTrendingUp },
       { to: "/importexport", label: "Import/Export", icon: MdFolder },
+    ]
+  },
+  {
+    title: "Documents",
+    items: [
+      { to: "/documents", label: "Mes documents", icon: MdFolderOpen },
     ]
   },
   {

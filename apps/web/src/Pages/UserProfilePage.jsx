@@ -202,7 +202,7 @@ const UserProfilePage = () => {
         <DashboardSidebar />
         <main className="flex-1 p-4 md:p-8 lg:p-10 pt-16 md:pt-10 space-y-6 max-w-5xl">
           {/* Bandeau profil */}
-          <header className="rounded-2xl bg-gradient-to-r from-[#1E73BE] to-[#6C5CE7] text-white p-6 md:p-8 shadow-sm flex items-center gap-5 flex-wrap">
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-5 flex-wrap">
             {avatar ? (
               <img src={avatar} alt={user?.name || 'Avatar'} className="w-20 h-20 rounded-full object-cover border-4 border-white/40" />
             ) : (
@@ -257,7 +257,7 @@ const UserProfilePage = () => {
               {avatar ? (
                 <img src={avatar} alt={user?.name || 'Avatar'} className="w-28 h-28 rounded-full object-cover border-4 border-[#E8F1FA] shadow" />
               ) : (
-                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#6C5CE7] text-white flex items-center justify-center font-extrabold text-3xl shadow">{initials}</div>
+                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#1E73BE] text-white flex items-center justify-center font-extrabold text-3xl shadow">{initials}</div>
               )}
               <input id="profile-photo-upload" type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploadingPhoto} />
               <label

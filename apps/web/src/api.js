@@ -1594,3 +1594,31 @@ export const disableTwoFactor = (password) => apiCall('POST', '/settings/2fa/dis
 export const getSessions = () => apiCall('GET', '/settings/sessions');
 export const revokeSession = (id) => apiCall('DELETE', `/settings/sessions/${id}`);
 export const revokeOtherSessions = () => apiCall('DELETE', '/settings/sessions');
+
+// ============================================
+// DOCUMENTS (PDF, images)
+// ============================================
+export const getDocuments = (params = {}) => {
+  const qs = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString();
+  return apiCall('GET', `/documents${qs ? `?${qs}` : ''}`);
+};
+
+export async function uploadDocument(file, { name, category, note } = {}) {
+  const form = new FormData();
+  form.append('file', file);
+  if (name) form.append('name', name);
+  if (category) form.append('category', category);
+  if (note) form.append('note', note);
+  const response = await fetch(`${API_URL}/documents`, { method: 'POST', headers: getAuthHeaders(false), body: form });
+  return handleApiResponse(response);
+}
+
+export const updateDocument = (id, data) => apiCall('PUT', `/documents/${id}`, data);
+export const deleteDocument = (id) => apiCall('DELETE', `/documents/${id}`);
+
+/** Récupère le fichier (avec le jeton) sous forme de Blob pour l'ouvrir ou le télécharger. */
+export async function fetchDocumentFile(id) {
+  const response = await fetch(`${API_URL}/documents/${id}/file`, { headers: getAuthHeaders(false) });
+  if (!response.ok) throw new Error('Impossible de récupérer le document');
+  return response.blob();
+}

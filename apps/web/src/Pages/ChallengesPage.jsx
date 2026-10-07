@@ -17,7 +17,7 @@ const CHALLENGES = [
     stepAmount: (n) => n,
     unit: 'semaine',
     days: 7,
-    gradient: 'from-[#1E73BE] to-[#2A9DF4]',
+    gradient: 'from-[#1E3A8A] to-[#1E73BE]',
     level: 'Progressif',
   },
   {
@@ -29,7 +29,7 @@ const CHALLENGES = [
     stepAmount: (n) => n,
     unit: 'jour',
     days: 1,
-    gradient: 'from-[#EB6834] to-[#F59E0B]',
+    gradient: 'from-[#1E73BE] to-[#4DA3E0]',
     level: 'Intense',
   },
   {
@@ -41,7 +41,7 @@ const CHALLENGES = [
     stepAmount: () => 20,
     unit: 'semaine',
     days: 7,
-    gradient: 'from-[#1BAF7A] to-[#34D399]',
+    gradient: 'from-[#28A745] to-[#5FCB78]',
     level: 'Régulier',
   },
 ];
@@ -115,7 +115,7 @@ export default function ChallengesPage() {
     <div className="flex min-h-screen bg-[#F5F7FA]">
       <DashboardSidebar />
       <main className="flex-1 p-5 md:p-10 space-y-8 max-w-6xl">
-        <header className="rounded-2xl bg-gradient-to-r from-[#1BAF7A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
           <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdEmojiEvents /></span>
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold">Défis d’épargne</h1>

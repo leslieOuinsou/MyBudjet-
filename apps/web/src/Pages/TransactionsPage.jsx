@@ -11,6 +11,7 @@ import {
   MdEdit, MdDelete, MdAccountBalance, MdRefresh
 } from 'react-icons/md';
 
+import { uploadDocument } from '../api.js';
 import { scanReceiptLocal } from '../lib/receiptOcr.js';
 import { formatMoney, formatDate, currencySymbol } from '../lib/format.js';
 export default function TransactionsPage() {
@@ -208,6 +209,10 @@ export default function TransactionsPage() {
         category: r.categoryId || prev.category,
         ...(r.date ? { date: r.date } : {}),
       }));
+      // Le ticket est rangé dans « Mes documents » (facultatif : n'empêche jamais la saisie)
+      if (file.size <= 4 * 1024 * 1024) {
+        uploadDocument(file, { name: `Ticket ${r.description || ''} ${r.date || ''}`.trim(), category: 'ticket' }).catch(() => {});
+      }
       setCategoryHint(r.categoryName ? `Catégorie suggérée : ${r.categoryName}. Vérifie les champs avant de valider.` : 'Ticket lu : vérifie le montant et la date avant de valider.');
     } catch (err) {
       setError(err.message);

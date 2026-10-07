@@ -270,7 +270,7 @@ const NotificationsPage = () => {
       <div className="flex flex-1">
         <DashboardSidebar />
         <main className="flex-1 p-5 md:p-10 space-y-6 max-w-6xl">
-          <header className="rounded-2xl bg-gradient-to-r from-[#1E73BE] to-[#6C5CE7] text-white p-6 md:p-8 shadow-sm flex items-center justify-between gap-4 flex-wrap">
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
               <span className="relative w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl">
                 <MdNotifications />
