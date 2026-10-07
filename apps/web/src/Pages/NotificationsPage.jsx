@@ -11,6 +11,7 @@ import {
   getCurrentUser
 } from '../api.js';
 
+import { formatDate } from '../lib/format.js';
 const initialSettings = {
   budget: true,
   bill: true,
@@ -205,7 +206,7 @@ const NotificationsPage = () => {
     if (diffInSeconds < 3600) return `il y a ${Math.floor(diffInSeconds / 60)} minutes`;
     if (diffInSeconds < 86400) return `il y a ${Math.floor(diffInSeconds / 3600)} heures`;
     if (diffInSeconds < 2592000) return `il y a ${Math.floor(diffInSeconds / 86400)} jours`;
-    return date.toLocaleDateString('fr-FR');
+    return formatDate(date);
   };
 
   if (loading) {

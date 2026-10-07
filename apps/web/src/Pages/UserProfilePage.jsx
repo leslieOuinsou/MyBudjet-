@@ -11,6 +11,7 @@ import {
 } from '../api.js';
 import { useTheme } from '../context/ThemeContext';
 
+import { setDisplayPrefs } from '../lib/format.js';
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/api\/?$/, '');
 
 const getAvatarUrl = (profilePicture) => {
@@ -146,6 +147,7 @@ const UserProfilePage = () => {
       console.log('📥 Paramètres rechargés:', updatedSettings);
       
       setSettings(updatedSettings);
+      setDisplayPrefs({ ...updatedSettings?.appearance, autoSync: Boolean(updatedSettings?.data?.autoBackup) });
       console.log('🔄 State settings mis à jour');
       
       setSuccess('Paramètres mis à jour avec succès');

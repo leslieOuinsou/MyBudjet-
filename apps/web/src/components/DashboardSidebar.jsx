@@ -16,7 +16,10 @@ import {
   MdSettings,
   MdPerson,
   MdRepeat,
-  MdEventNote
+  MdEventNote,
+  MdGroup,
+  MdInsights,
+  MdEmojiEvents
 } from "react-icons/md";
 
 // Organisation des menus en sections logiques
@@ -32,6 +35,7 @@ const menuSections = [
     items: [
       { to: "/transactions", label: "Transactions", icon: MdReceipt },
       { to: "/expenses", label: "Dépenses", icon: MdShoppingCart },
+      { to: "/shared", label: "Budgets partagés", icon: MdGroup },
       { to: "/budgets", label: "Budgets", icon: MdAccountBalance },
       { to: "/categories", label: "Catégories & Portefeuilles", icon: MdCategory },
       { to: "/bills", label: "Rappels de factures", icon: MdEventNote },
@@ -42,6 +46,8 @@ const menuSections = [
     title: "Analyse & Rapports",
     items: [
       { to: "/reports", label: "Rapports", icon: MdBarChart },
+      { to: "/insights", label: "Analyse", icon: MdInsights },
+      { to: "/challenges", label: "Défis d'épargne", icon: MdEmojiEvents },
       { to: "/forecasts", label: "Prévisions", icon: MdTrendingUp },
       { to: "/importexport", label: "Import/Export", icon: MdFolder },
     ]

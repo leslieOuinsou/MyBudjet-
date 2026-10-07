@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../api';
+import { login, verifyTwoFactorLogin } from '../api';
+import TwoFactorPrompt from '../components/TwoFactorPrompt.jsx';
 import { 
   MdAdminPanelSettings, 
   MdEmail, 
@@ -19,6 +20,7 @@ export default function AdminLoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [twoFactor, setTwoFactor] = useState(null);
 
   // Charger l'email admin sauvegardé au démarrage
   useEffect(() => {
@@ -41,42 +43,62 @@ export default function AdminLoginPage() {
     try {
       console.log('🔐 Tentative de connexion admin:', { email });
       const response = await login(email, password, rememberMe);
-      
-      // Vérifier que l'utilisateur est bien admin
-      if (response.user.role !== 'admin') {
-        setError('⚠️ Accès refusé : Ce portail est réservé aux administrateurs uniquement.');
-        localStorage.removeItem('token');
+      if (response.requiresTwoFactor) {
+        setTwoFactor(response);
         setLoading(false);
         return;
       }
-      
-      console.log('✅ Connexion admin réussie');
-      
-      // Sauvegarder l'email admin si "Se souvenir de moi" est coché
-      if (rememberMe) {
-        localStorage.setItem('savedAdminEmail', email);
-        localStorage.setItem('savedAdminRememberMe', 'true');
-        console.log('💾 Email admin sauvegardé:', email);
-      } else {
-        localStorage.removeItem('savedAdminEmail');
-        localStorage.removeItem('savedAdminRememberMe');
-        console.log('🗑️ Email admin effacé');
-      }
-      
-      navigate('/admin');
+      await finishAdminLogin(response);
     } catch (err) {
-      console.error('❌ Erreur connexion admin:', err);
-      let errorMessage = err.message || 'Identifiants incorrects';
-      
-      // Message personnalisé pour les comptes Google
-      if (errorMessage.includes('social login') || errorMessage.includes('reset your password')) {
-        errorMessage = 'Ce compte a été créé avec Google. Créez d\'abord un mot de passe via "Mot de passe oublié" sur la page de connexion utilisateur.';
-      }
-      
-      setError(errorMessage);
+      handleLoginError(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTwoFactorSubmit = async (code) => {
+    setError('');
+    setLoading(true);
+    try {
+      await finishAdminLogin(await verifyTwoFactorLogin(twoFactor.challengeId, code, rememberMe));
+    } catch (err) {
+      setError(err.message || 'Code invalide');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const finishAdminLogin = async (response) => {
+    // Vérifier que l'utilisateur est bien admin
+    if (response.user.role !== 'admin') {
+      setError('⚠️ Accès refusé : Ce portail est réservé aux administrateurs uniquement.');
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+      return;
+    }
+
+    // Sauvegarder l'email admin si "Se souvenir de moi" est coché
+    if (rememberMe) {
+      localStorage.setItem('savedAdminEmail', email);
+      localStorage.setItem('savedAdminRememberMe', 'true');
+    } else {
+      localStorage.removeItem('savedAdminEmail');
+      localStorage.removeItem('savedAdminRememberMe');
+    }
+
+    navigate('/admin');
+  };
+
+  const handleLoginError = (err) => {
+    console.error('❌ Erreur connexion admin:', err);
+    let errorMessage = err.message || 'Identifiants incorrects';
+
+    // Message personnalisé pour les comptes Google
+    if (errorMessage.includes('social login') || errorMessage.includes('reset your password')) {
+      errorMessage = 'Ce compte a été créé avec Google. Créez d\'abord un mot de passe via "Mot de passe oublié" sur la page de connexion utilisateur.';
+    }
+
+    setError(errorMessage);
   };
 
   return (
@@ -117,6 +139,15 @@ export default function AdminLoginPage() {
             </div>
           )}
 
+          {twoFactor ? (
+            <TwoFactorPrompt
+              emailHint={twoFactor.emailHint}
+              devCode={twoFactor.devCode}
+              loading={loading}
+              onSubmit={handleTwoFactorSubmit}
+              onCancel={() => { setTwoFactor(null); setError(''); }}
+            />
+          ) : (
           <form
             className="flex flex-col gap-4"
             onSubmit={handleSubmit}
@@ -196,6 +227,7 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
+          )}
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="text-center space-y-3">

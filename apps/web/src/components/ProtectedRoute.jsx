@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../api';
+import { loadDisplayPrefs } from '../lib/format.js';
 
 export default function ProtectedRoute({ children, adminOnly = false }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +31,8 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
         console.log('📡 Vérification de l\'utilisateur avec le backend...');
         const user = await getCurrentUser();
         console.log('✅ Utilisateur authentifié:', user.email, 'Rôle:', user.role);
+        // Devise / format de date / langue du compte, appliqués avant l'affichage des pages
+        await loadDisplayPrefs().catch(() => {});
         setIsAuthenticated(true);
         setUserRole(user.role);
         

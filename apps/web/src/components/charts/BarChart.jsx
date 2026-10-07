@@ -1,156 +1,81 @@
 import React from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { SERIES, BLUE_SOFT, CRITICAL, INK, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function BarChart({ data, title }) {
-  // Couleurs pour le thème clair - Palette Fintech
-  const theme = {
-    spent: '#6C757D',      // Gris anthracite pour dépenses (sérieux)
-    budget: '#1E73BE',     // Bleu pour budget (confiance, sécurité)
-    exceeded: '#495057',   // Gris foncé pour dépassement (au lieu d'orange)
-    grid: '#F5F7FA',       // Gris clair pour grille
-    text: '#343A40',       // Anthracite pour texte
-    background: '#FFFFFF'  // Blanc pour fond
-  };
+  const budgets = data?.budget || [];
+  const spent = data?.spent || [];
 
   const chartData = {
     labels: data?.labels || [],
     datasets: [
       {
-        label: 'Budget Alloué',
-        data: data?.budget || [],
-        backgroundColor: theme.budget,
-        borderColor: theme.budget,
-        borderWidth: 1,
-        borderRadius: 4,
-        borderSkipped: false,
+        label: 'Budget alloué',
+        data: budgets,
+        backgroundColor: BLUE_SOFT,
+        hoverBackgroundColor: '#6DA7EC',
+        borderRadius: { topLeft: 4, topRight: 4 },
+        borderSkipped: 'bottom',
+        maxBarThickness: 26,
       },
       {
-        label: 'Dépenses Réelles',
-        data: data?.spent || [],
-        backgroundColor: data?.spent?.map((spent, index) => {
-          const budget = data?.budget?.[index] || 0;
-          return spent > budget ? theme.exceeded : theme.spent;
-        }) || theme.spent,
-        borderColor: data?.spent?.map((spent, index) => {
-          const budget = data?.budget?.[index] || 0;
-          return spent > budget ? theme.exceeded : theme.spent;
-        }) || theme.spent,
-        borderWidth: 1,
-        borderRadius: 4,
-        borderSkipped: false,
-      }
-    ]
+        label: 'Dépenses réelles',
+        data: spent,
+        // Dépassement : couleur de statut, doublée d'un libellé dans l'infobulle
+        backgroundColor: spent.map((s, i) => (s > (budgets[i] || 0) ? CRITICAL : SERIES[0])),
+        hoverBackgroundColor: spent.map((s, i) => (s > (budgets[i] || 0) ? '#B92F2F' : '#1F66BD')),
+        borderRadius: { topLeft: 4, topRight: 4 },
+        borderSkipped: 'bottom',
+        maxBarThickness: 26,
+      },
+    ],
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    animation: { duration: 700, easing: 'easeOutQuart' },
+    categoryPercentage: 0.7,
+    barPercentage: 0.9,
+    datasets: { bar: { borderColor: '#FFFFFF', borderWidth: { top: 0, left: 1, right: 1, bottom: 0 } } },
     plugins: {
       legend: {
-        position: 'top',
+        ...legendStyle('rectRounded'),
+        onClick: () => {}, // légende informative : le 3e repère n'est pas une série
         labels: {
-          color: theme.text,
-          font: {
-            size: 12,
-            weight: '500'
-          },
-          usePointStyle: true,
-          pointStyle: 'rect'
-        }
+          ...legendStyle('rectRounded').labels,
+          generateLabels: () => [
+            { text: 'Budget alloué', fillStyle: BLUE_SOFT, strokeStyle: BLUE_SOFT, pointStyle: 'rectRounded', fontColor: INK.secondary },
+            { text: 'Dépenses réelles', fillStyle: SERIES[0], strokeStyle: SERIES[0], pointStyle: 'rectRounded', fontColor: INK.secondary },
+            { text: 'Budget dépassé', fillStyle: CRITICAL, strokeStyle: CRITICAL, pointStyle: 'rectRounded', fontColor: INK.secondary },
+          ],
+        },
       },
-      title: {
-        display: !!title,
-        text: title,
-        color: theme.text,
-        font: {
-          size: 16,
-          weight: 'bold'
-        }
-      },
+      title: { display: !!title, text: title, color: INK.primary, font: { size: 15, weight: '600' } },
       tooltip: {
-        backgroundColor: '#FFFFFF',
-        titleColor: theme.text,
-        bodyColor: theme.text,
-        borderColor: '#F5F7FA',
-        borderWidth: 1,
-        cornerRadius: 8,
-        displayColors: true,
+        ...tooltipStyle,
         callbacks: {
-          label: function(context) {
-            const label = context.dataset.label || '';
-            const value = context.parsed.y || 0;
-            return `${label}: €${value.toLocaleString('fr-FR')}`;
+          label: (c) => ` ${c.dataset.label} : ${euro(c.parsed.y)}`,
+          afterLabel: (c) => {
+            if (c.datasetIndex !== 1) return '';
+            const budget = budgets[c.dataIndex] || 0;
+            if (budget <= 0) return '';
+            const pct = Math.round((c.parsed.y / budget) * 100);
+            return c.parsed.y > budget ? `  ⚠ Dépassé (${pct} % du budget)` : `  ✓ Respecté (${pct} % du budget)`;
           },
-          afterLabel: function(context) {
-            if (context.datasetIndex === 1) { // Dépenses réelles
-              const spent = context.parsed.y;
-              const budgetIndex = context.dataIndex;
-              const budget = data?.budget?.[budgetIndex] || 0;
-              
-              if (budget > 0) {
-                const percentage = ((spent / budget) * 100).toFixed(1);
-                const status = spent > budget ? '⚠️ Dépassé' : '✅ Respecté';
-                return `${status} (${percentage}% du budget)`;
-              }
-            }
-            return '';
-          }
-        }
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          color: theme.grid,
-          borderColor: theme.grid
         },
-        ticks: {
-          color: theme.text,
-          font: {
-            size: 11
-          }
-        }
       },
-      y: {
-        grid: {
-          color: theme.grid,
-          borderColor: theme.grid
-        },
-        ticks: {
-          color: theme.text,
-          font: {
-            size: 11
-          },
-          callback: function(value) {
-            return `€${value.toLocaleString('fr-FR')}`;
-          }
-        },
-        beginAtZero: true
-      }
     },
-    interaction: {
-      intersect: false,
-      mode: 'index'
-    }
+    scales: axisStyle,
   };
+
+  if (!hasValues([budgets, spent])) {
+    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500">Aucun budget à comparer.</div>;
+  }
 
   return (
     <div className="relative h-64 w-full">

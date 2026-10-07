@@ -55,6 +55,9 @@ export async function login(email, password, rememberMe = false) {
     }
     
     const data = await response.json();
+
+    // Double authentification : pas encore de jeton, l'appelant doit demander le code
+    if (data.requiresTwoFactor) return data;
     
     // Stockage du token selon l'option "Se souvenir de moi"
     if (rememberMe) {
@@ -1503,3 +1506,91 @@ export async function getPayPalTransactions() {
     throw error;
   }
 }
+
+// ============================================
+// ANALYSE : abonnements & score de santé
+// ============================================
+
+export async function getSubscriptions() {
+  const response = await fetch(`${API_URL}/ai/subscriptions`, { headers: getAuthHeaders() });
+  return handleApiResponse(response);
+}
+
+export async function getHealthScore() {
+  const response = await fetch(`${API_URL}/ai/health-score`, { headers: getAuthHeaders() });
+  return handleApiResponse(response);
+}
+
+export async function suggestCategory(description, type = 'expense') {
+  const params = new URLSearchParams({ description, type });
+  const response = await fetch(`${API_URL}/ai/suggest-category?${params}`, { headers: getAuthHeaders() });
+  return handleApiResponse(response);
+}
+
+// ============================================
+// BUDGETS PARTAGÉS, DEVISES, IA
+// ============================================
+
+async function apiCall(method, path, body) {
+  const response = await fetch(`${API_URL}${path}`, {
+    method,
+    headers: getAuthHeaders(),
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  });
+  return handleApiResponse(response);
+}
+
+export const getSharedBudgets = () => apiCall('GET', '/shared-budgets');
+export const createSharedBudget = (data) => apiCall('POST', '/shared-budgets', data);
+export const getSharedBudget = (id) => apiCall('GET', `/shared-budgets/${id}`);
+export const deleteSharedBudget = (id) => apiCall('DELETE', `/shared-budgets/${id}`);
+export const addSharedMember = (id, email) => apiCall('POST', `/shared-budgets/${id}/members`, { email });
+export const addSharedExpense = (id, data) => apiCall('POST', `/shared-budgets/${id}/expenses`, data);
+export const deleteSharedExpense = (id, expenseId) => apiCall('DELETE', `/shared-budgets/${id}/expenses/${expenseId}`);
+export const addSharedSettlement = (id, data) => apiCall('POST', `/shared-budgets/${id}/settlements`, data);
+
+export const getAccountsSummary = (base = 'EUR') => apiCall('GET', `/currency/accounts-summary?base=${base}`);
+export const getAiStatus = () => apiCall('GET', '/ai/status');
+export const askAssistant = (question) => apiCall('POST', '/ai/ask', { question });
+
+export async function scanReceipt(file) {
+  const form = new FormData();
+  form.append('receipt', file);
+  const response = await fetch(`${API_URL}/ai/scan-receipt`, {
+    method: 'POST',
+    headers: getAuthHeaders(false),
+    body: form,
+  });
+  return handleApiResponse(response);
+}
+
+// ============================================
+// DOUBLE AUTHENTIFICATION & SESSIONS
+// ============================================
+
+// Deuxième étape de connexion : code reçu par email
+export async function verifyTwoFactorLogin(challengeId, code, rememberMe = false) {
+  const response = await fetch(`${API_URL}/auth/login/2fa`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ challengeId, code }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.message || 'Code invalide');
+
+  if (rememberMe) {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('rememberMe', 'true');
+  } else {
+    sessionStorage.setItem('token', data.token);
+    localStorage.removeItem('rememberMe');
+  }
+  return data;
+}
+
+export const sendTwoFactorEnableCode = () => apiCall('POST', '/settings/2fa/send-code');
+export const enableTwoFactor = (challengeId, code) => apiCall('POST', '/settings/2fa/enable', { challengeId, code });
+export const disableTwoFactor = (password) => apiCall('POST', '/settings/2fa/disable', { password });
+export const getSessions = () => apiCall('GET', '/settings/sessions');
+export const revokeSession = (id) => apiCall('DELETE', `/settings/sessions/${id}`);
+export const revokeOtherSessions = () => apiCall('DELETE', '/settings/sessions');

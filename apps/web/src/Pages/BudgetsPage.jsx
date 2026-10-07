@@ -7,6 +7,7 @@ import {
   MdEdit, MdDelete, MdAdd 
 } from 'react-icons/md';
 
+import { formatMoney, currencySymbol } from '../lib/format.js';
 const PERIODS = ["Mensuel", "Annuel"];
 
 const categoryLabel = (category) => {
@@ -232,17 +233,17 @@ export default function BudgetsPage() {
                           <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-xs md:text-sm">{categoryLabel(b.category)}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{b.name}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell">{b.period}</td>
-                          <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{amount.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{formatMoney(amount)}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden md:table-cell">
                             <div className="flex items-center gap-1">
-                              <span>{spent.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €</span>
+                              <span>{formatMoney(spent)}</span>
                               {b.alertMessage && (
                                 <span className="text-xs" title={b.alertMessage}>💡</span>
                               )}
                             </div>
                           </td>
                           <td className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell ${reste < 0 ? "text-[#495057] font-semibold" : ""}`}>
-                            {reste < 0 ? `-${Math.abs(reste).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €` : reste.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+                            {reste < 0 ? `-${formatMoney(Math.abs(reste))}` : reste.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3">
                             <div className="flex items-center gap-2">
@@ -339,7 +340,7 @@ export default function BudgetsPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Montant (€)</label>
+                  <label className="block text-sm font-medium text-[#22292F] mb-1">Montant ({currencySymbol()})</label>
                   <input
                     type="number"
                     name="amount"

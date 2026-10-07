@@ -32,8 +32,17 @@ import {
   exportUserData,
   getCurrentUser,
   uploadAvatar,
-  deleteAvatar
+  deleteAvatar,
+  getNotificationPreferences,
+  updateNotificationPreferences,
+  sendTwoFactorEnableCode,
+  enableTwoFactor,
+  disableTwoFactor,
+  getSessions,
+  revokeSession,
+  revokeOtherSessions
 } from '../api.js';
+import { setDisplayPrefs, formatMoney, formatDate } from '../lib/format.js';
 
 export default function SettingsPage() {
   const [user, setUser] = useState(null);
@@ -62,6 +71,15 @@ export default function SettingsPage() {
     confirmation: ''
   });
 
+  // Alertes budgétaires = préférence de notification « budget » (la même que sur la page Notifications)
+  const [budgetAlerts, setBudgetAlerts] = useState(true);
+
+  // Double authentification : activation par code email, désactivation par mot de passe
+  const [twoFactorFlow, setTwoFactorFlow] = useState({ step: null, challengeId: '', emailHint: '', devCode: '', code: '', password: '', busy: false });
+
+  // Sessions actives
+  const [sessionsModal, setSessionsModal] = useState({ open: false, loading: false, list: [] });
+
   const [syncStatus, setSyncStatus] = useState({
     lastSync: null,
     isSyncing: false
@@ -72,13 +90,15 @@ export default function SettingsPage() {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [userData, settingsData] = await Promise.all([
+        const [userData, settingsData, notifPrefs] = await Promise.all([
           getCurrentUser(),
-          getUserSettings()
+          getUserSettings(),
+          getNotificationPreferences().catch(() => null)
         ]);
         
         setUser(userData);
         setSettings(settingsData);
+        setBudgetAlerts(notifPrefs?.preferences?.budget ?? true);
         
         // Initialiser le formulaire de profil
         setProfileForm({
@@ -195,6 +215,10 @@ export default function SettingsPage() {
       
       await updateUserSettings({ [category]: newSettings });
       setSettings(prev => ({ ...prev, [category]: { ...prev[category], ...newSettings } }));
+
+      // Applique tout de suite devise / format de date / langue / synchro auto à l'ensemble de l'appli
+      if (category === 'appearance') setDisplayPrefs(newSettings);
+      if (category === 'data' && newSettings.autoBackup !== undefined) setDisplayPrefs({ autoSync: newSettings.autoBackup });
       
       // Toast de confirmation
       addToast('✅ Préférence enregistrée avec succès !', 'success');
@@ -209,6 +233,99 @@ export default function SettingsPage() {
       setError(`❌ ${errorMessage}`);
       setTimeout(() => setError(''), 5000);
     }
+  };
+
+  const toggleBudgetAlerts = async () => {
+    const next = !budgetAlerts;
+    setBudgetAlerts(next);
+    try {
+      await updateNotificationPreferences({ preferences: { budget: next } });
+      addToast(next ? '✅ Alertes budgétaires activées' : '🔕 Alertes budgétaires désactivées', 'success');
+    } catch (err) {
+      setBudgetAlerts(!next);
+      addToast(`❌ ${err.message}`, 'error');
+    }
+  };
+
+  const patchTwoFactor = (patch) => setTwoFactorFlow((prev) => ({ ...prev, ...patch }));
+
+  // Clic sur l'interrupteur : démarre l'activation (code par email) ou la désactivation (mot de passe)
+  const handleTwoFactorToggle = async () => {
+    const enabled = settings?.security?.twoFactorAuth?.enabled;
+    if (enabled) {
+      patchTwoFactor({ step: 'disable', password: '' });
+      return;
+    }
+    patchTwoFactor({ busy: true });
+    try {
+      const res = await sendTwoFactorEnableCode();
+      patchTwoFactor({ step: 'code', challengeId: res.challengeId, emailHint: res.emailHint, devCode: res.devCode || '', code: '', busy: false });
+    } catch (err) {
+      patchTwoFactor({ busy: false });
+      addToast(`❌ ${err.message}`, 'error');
+    }
+  };
+
+  const confirmTwoFactor = async (e) => {
+    e.preventDefault();
+    patchTwoFactor({ busy: true });
+    try {
+      if (twoFactorFlow.step === 'code') {
+        await enableTwoFactor(twoFactorFlow.challengeId, twoFactorFlow.code);
+        setSettings((prev) => ({ ...prev, security: { ...prev.security, twoFactorAuth: { ...prev.security?.twoFactorAuth, enabled: true } } }));
+        addToast('✅ Double authentification activée', 'success');
+      } else {
+        await disableTwoFactor(twoFactorFlow.password);
+        setSettings((prev) => ({ ...prev, security: { ...prev.security, twoFactorAuth: { ...prev.security?.twoFactorAuth, enabled: false } } }));
+        addToast('Double authentification désactivée', 'success');
+      }
+      patchTwoFactor({ step: null, busy: false, code: '', password: '' });
+    } catch (err) {
+      patchTwoFactor({ busy: false });
+      addToast(`❌ ${err.message}`, 'error');
+    }
+  };
+
+  const openSessions = async () => {
+    setSessionsModal({ open: true, loading: true, list: [] });
+    try {
+      setSessionsModal({ open: true, loading: false, list: await getSessions() });
+    } catch (err) {
+      setSessionsModal({ open: false, loading: false, list: [] });
+      addToast(`❌ ${err.message}`, 'error');
+    }
+  };
+
+  const handleRevokeSession = async (id) => {
+    try {
+      const res = await revokeSession(id);
+      if (res.loggedOut) {
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        window.location.href = '/login';
+        return;
+      }
+      setSessionsModal((prev) => ({ ...prev, list: prev.list.filter((x) => x._id !== id) }));
+      addToast('Session déconnectée', 'success');
+    } catch (err) {
+      addToast(`❌ ${err.message}`, 'error');
+    }
+  };
+
+  const handleRevokeOthers = async () => {
+    try {
+      const res = await revokeOtherSessions();
+      setSessionsModal((prev) => ({ ...prev, list: prev.list.filter((x) => x.current) }));
+      addToast(`✅ ${res.message}`, 'success');
+    } catch (err) {
+      addToast(`❌ ${err.message}`, 'error');
+    }
+  };
+
+  const describeDevice = (ua = '') => {
+    const browser = /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) ? 'Chrome' : /Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'Navigateur';
+    const os = /Windows/.test(ua) ? 'Windows' : /Android/.test(ua) ? 'Android' : /iPhone|iPad/.test(ua) ? 'iOS' : /Mac OS/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : '';
+    return os ? `${browser} sur ${os}` : browser;
   };
 
   const handleSync = async () => {
@@ -230,6 +347,7 @@ export default function SettingsPage() {
       
       setUser(userData);
       setSettings(settingsData);
+      setDisplayPrefs({ ...settingsData?.appearance, autoSync: Boolean(settingsData?.data?.autoBackup) });
       
       // Mettre à jour la date de dernière synchronisation
       const now = new Date();
@@ -584,13 +702,11 @@ export default function SettingsPage() {
                     <input 
                       type="checkbox" 
                       className="sr-only" 
-                      checked={settings?.notifications?.email || false} 
-                      onChange={() => handleSettingsUpdate('notifications', { 
-                        email: !settings?.notifications?.email 
-                      })} 
+                      checked={budgetAlerts} 
+                      onChange={toggleBudgetAlerts} 
                     />
-                    <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${settings?.notifications?.email ? 'bg-gradient-to-r from-[#1E73BE] to-[#155a8a]' : 'bg-gray-300'}`}>
-                      <span className={`bg-white w-5 h-5 rounded-full shadow-lg transform duration-300 transition-all ${settings?.notifications?.email ? 'translate-x-6' : 'translate-x-0'}`}></span>
+                    <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${budgetAlerts ? 'bg-gradient-to-r from-[#1E73BE] to-[#155a8a]' : 'bg-gray-300'}`}>
+                      <span className={`bg-white w-5 h-5 rounded-full shadow-lg transform duration-300 transition-all ${budgetAlerts ? 'translate-x-6' : 'translate-x-0'}`}></span>
                     </span>
                   </label>
                 </div>
@@ -609,6 +725,9 @@ export default function SettingsPage() {
                     <option value="GBP">Livre Sterling (£)</option>
                     <option value="JPY">Yen (¥)</option>
                   </select>
+                  <p className="text-xs text-gray-500">
+                    Exemple : {formatMoney(1234.5)}. Change le symbole affiché ; les montants déjà saisis ne sont pas convertis.
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
@@ -624,6 +743,7 @@ export default function SettingsPage() {
                     <option value="MM/DD/YYYY">MM/DD/YYYY (07/26/2024)</option>
                     <option value="YYYY-MM-DD">YYYY-MM-DD (2024-07-26)</option>
                   </select>
+                  <p className="text-xs text-gray-500">Aujourd’hui : {formatDate(new Date())}</p>
                 </div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
@@ -640,6 +760,9 @@ export default function SettingsPage() {
                     <option value="es">Español</option>
                     <option value="de">Deutsch</option>
                   </select>
+                  <p className="text-xs text-gray-500">
+                    Change le format des nombres et des mois. Les textes de l’interface restent en français pour l’instant.
+                  </p>
                 </div>
                 <div className="pt-6 border-t-2 border-gray-200 mt-6">
                   <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100">
@@ -668,7 +791,7 @@ export default function SettingsPage() {
                     <MdSync className="text-green-600 mt-1 flex-shrink-0" size={20} />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">Synchronisation automatique</div>
-                      <div className="text-gray-600 text-sm">Activer la synchronisation automatique de vos données entre les plateformes web et mobile.</div>
+                      <div className="text-gray-600 text-sm">Recharge automatiquement l’application quand vous y revenez après quelques minutes d’absence, pour retrouver les modifications faites depuis un autre appareil.</div>
                     </div>
                   </div>
                   <label className="inline-flex items-center cursor-pointer ml-4">
@@ -859,7 +982,27 @@ export default function SettingsPage() {
                     <MdVerifiedUser className="text-blue-600 mt-1 flex-shrink-0" size={20} />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">Authentification à deux facteurs</div>
-                      <div className="text-gray-600 text-sm">Ajoutez une couche de sécurité supplémentaire à votre compte.</div>
+                      <div className="text-gray-600 text-sm">Un code envoyé par email vous est demandé à chaque connexion avec mot de passe.</div>
+                      {twoFactorFlow.step && (
+                        <form onSubmit={confirmTwoFactor} className="mt-3 space-y-2">
+                          {twoFactorFlow.step === 'code' ? (
+                            <>
+                              <p className="text-sm text-gray-700">Entrez le code envoyé à <strong>{twoFactorFlow.emailHint}</strong> pour activer.</p>
+                              {twoFactorFlow.devCode && <p className="text-xs bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg p-2">Mode développement (email non configuré) : code <strong>{twoFactorFlow.devCode}</strong></p>}
+                              <input type="text" inputMode="numeric" maxLength={6} value={twoFactorFlow.code} onChange={(e) => patchTwoFactor({ code: e.target.value.replace(/\D/g, '') })} placeholder="000000" className="border-2 border-gray-200 rounded-xl px-3 py-2 w-40 text-center tracking-widest" autoFocus />
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-sm text-gray-700">Confirmez avec votre mot de passe pour désactiver.</p>
+                              <input type="password" value={twoFactorFlow.password} onChange={(e) => patchTwoFactor({ password: e.target.value })} placeholder="Mot de passe" className="border-2 border-gray-200 rounded-xl px-3 py-2 w-64" autoFocus />
+                            </>
+                          )}
+                          <div className="flex gap-2">
+                            <button type="submit" disabled={twoFactorFlow.busy || (twoFactorFlow.step === 'code' ? twoFactorFlow.code.length !== 6 : !twoFactorFlow.password)} className="px-4 py-2 rounded-xl bg-[#1E73BE] text-white text-sm font-semibold disabled:opacity-50">{twoFactorFlow.step === 'code' ? 'Activer' : 'Désactiver'}</button>
+                            <button type="button" onClick={() => patchTwoFactor({ step: null })} className="px-4 py-2 rounded-xl border text-sm">Annuler</button>
+                          </div>
+                        </form>
+                      )}
                     </div>
                   </div>
                   <label className="inline-flex items-center cursor-pointer ml-4">
@@ -867,12 +1010,8 @@ export default function SettingsPage() {
                       type="checkbox" 
                       className="sr-only" 
                       checked={settings?.security?.twoFactorAuth?.enabled || false} 
-                      onChange={() => handleSettingsUpdate('security', { 
-                        twoFactorAuth: { 
-                          ...settings?.security?.twoFactorAuth, 
-                          enabled: !settings?.security?.twoFactorAuth?.enabled 
-                        } 
-                      })} 
+                      disabled={twoFactorFlow.busy}
+                      onChange={handleTwoFactorToggle} 
                     />
                     <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${settings?.security?.twoFactorAuth?.enabled ? 'bg-gradient-to-r from-blue-500 to-blue-600' : 'bg-gray-300'}`}>
                       <span className={`bg-white w-5 h-5 rounded-full shadow-lg transform duration-300 transition-all ${settings?.security?.twoFactorAuth?.enabled ? 'translate-x-6' : 'translate-x-0'}`}></span>
@@ -887,7 +1026,7 @@ export default function SettingsPage() {
                       <div className="text-gray-600 text-sm">Gérez les appareils connectés à votre compte.</div>
                     </div>
                   </div>
-                  <button className="bg-white text-[#1E73BE] px-6 py-2 rounded-xl font-semibold border-2 border-[#1E73BE] hover:bg-blue-50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <button onClick={openSessions} className="bg-white text-[#1E73BE] px-6 py-2 rounded-xl font-semibold border-2 border-[#1E73BE] hover:bg-blue-50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                     Voir les sessions
                   </button>
                 </div>
@@ -950,6 +1089,44 @@ export default function SettingsPage() {
               </button>
             </form>
           </section>
+          {sessionsModal.open && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-label="Sessions actives">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-bold text-gray-900">Sessions actives</h3>
+                  <button onClick={() => setSessionsModal({ open: false, loading: false, list: [] })} className="text-gray-500 hover:text-gray-800" aria-label="Fermer">✕</button>
+                </div>
+                {sessionsModal.loading ? (
+                  <p className="text-gray-500">Chargement…</p>
+                ) : (
+                  <>
+                    <ul className="divide-y divide-gray-200">
+                      {sessionsModal.list.map((x) => (
+                        <li key={x._id} className="py-3 flex items-center justify-between gap-3">
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {describeDevice(x.userAgent)} {x.current && <span className="ml-2 text-xs bg-green-100 text-green-700 rounded-full px-2 py-0.5">Cet appareil</span>}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {x.ip || 'IP inconnue'} · connecté le {formatDate(x.createdAt)} · dernière activité {new Date(x.lastSeenAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} le {formatDate(x.lastSeenAt)}
+                            </div>
+                          </div>
+                          {!x.current && (
+                            <button onClick={() => handleRevokeSession(x._id)} className="text-sm text-red-600 hover:underline whitespace-nowrap">Déconnecter</button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    {sessionsModal.list.length > 1 && (
+                      <button onClick={handleRevokeOthers} className="mt-4 w-full py-2 rounded-xl border-2 border-red-200 text-red-600 font-semibold hover:bg-red-50">
+                        Déconnecter tous les autres appareils
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </main>
         {/* Sidebar mobile (déconnexion) */}
         <aside className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#F5F7FA] p-4 flex justify-center">

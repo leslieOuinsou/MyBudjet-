@@ -8,6 +8,7 @@ import {
   MdTrendingUp, MdTrendingDown, MdRefresh
 } from 'react-icons/md';
 
+import { formatMoney, currencySymbol } from '../lib/format.js';
 // Définition des icônes de catégories
 const categoryIcons = {
   '💳': '💳',
@@ -227,7 +228,7 @@ export default function CategoriesPage() {
 				setError('');
 				const result = await recalculateWalletBalance(id);
 				console.log('Résultat du recalcul:', result);
-				alert(`Solde recalculé avec succès !\nAncien solde: ${result.oldBalance.toFixed(2)}€\nNouveau solde: ${result.newBalance.toFixed(2)}€`);
+				alert(`Solde recalculé avec succès !\nAncien solde: ${formatMoney(result.oldBalance)}\nNouveau solde: ${formatMoney(result.newBalance)}`);
 				loadData();
 			} catch (err) {
 				setError(err.message || 'Erreur lors du recalcul du solde');
@@ -429,12 +430,12 @@ export default function CategoriesPage() {
 													</div>
 													<div className={`text-sm md:text-base font-bold mt-1 ${w.balance >= 0 ? 'text-[#22C55E]' : 'text-[#374151]'}`}>
 														{w.balance !== undefined && w.balance !== null 
-															? `${w.balance < 0 ? '-' : ''}${Math.abs(w.balance).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`
-															: '0,00 €'}
+															? formatMoney(w.balance)
+																							: formatMoney(0)}
 													</div>
 													{w.overdraftLimit > 0 && (
 														<div className='text-[10px] md:text-xs font-medium text-[#1E3A8A] mt-1 px-1.5 md:px-2 py-0.5 bg-[#E3F2FD] rounded md:rounded-lg inline-block'>
-															Découvert: -{w.overdraftLimit.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€
+															Découvert: -{formatMoney(w.overdraftLimit)}
 														</div>
 													)}
 												</div>
@@ -621,7 +622,7 @@ export default function CategoriesPage() {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-semibold text-gray-800 mb-2">Solde initial (€)</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Solde initial ({currencySymbol()})</label>
 								<input
 									type="number"
 									step="0.01"
@@ -633,7 +634,7 @@ export default function CategoriesPage() {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm font-semibold text-gray-800 mb-2">Découvert autorisé (€)</label>
+								<label className="block text-sm font-semibold text-gray-800 mb-2">Découvert autorisé ({currencySymbol()})</label>
 								<input
 									type="number"
 									step="0.01"

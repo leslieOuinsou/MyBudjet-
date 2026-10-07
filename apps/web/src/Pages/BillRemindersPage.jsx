@@ -19,6 +19,7 @@ import {
   MdAttachMoney
 } from 'react-icons/md';
 
+import { formatMoney, formatDate } from '../lib/format.js';
 export default function BillRemindersPage() {
   const { isDarkMode } = useTheme();
   
@@ -303,7 +304,7 @@ export default function BillRemindersPage() {
                             <div>
                               <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Montant</div>
                               <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                {reminder.amount?.toFixed(2)} €
+                                {formatMoney(reminder.amount)}
                               </div>
                             </div>
                           </div>
@@ -313,7 +314,7 @@ export default function BillRemindersPage() {
                             <div>
                               <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Date d'échéance</div>
                               <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                {new Date(reminder.dueDate).toLocaleDateString('fr-FR')}
+                                {formatDate(reminder.dueDate)}
                               </div>
                             </div>
                           </div>

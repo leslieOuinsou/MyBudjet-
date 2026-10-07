@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { getDashboardData, getWallets, getTransactions, getBudgets, addBudget, addTransaction, getCurrentUser, getCategories, getGoals, addGoal, updateGoal, deleteGoal } from '../api.js';
+import LineChart from '../components/charts/LineChart.jsx';
+import DoughnutChart from '../components/charts/DoughnutChart.jsx';
 import NotificationBell from '../components/NotificationBell.jsx';
 
+import { formatMoney, formatDate, currencySymbol } from '../lib/format.js';
 // Icônes par catégorie
 const categoryIcons = {
   'Nourriture': '🍽️',
@@ -318,24 +321,24 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Revenu Total</div>
-              <div className="text-xl md:text-2xl font-bold text-[#1E73BE]">€{dashboardData?.incomeThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
+              <div className="text-xl md:text-2xl font-bold text-[#1E73BE]">{formatMoney(dashboardData?.incomeThisMonth)}</div>
               <div className="text-xs text-[#22C55E]">Ce mois-ci</div>
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Dépenses Totales</div>
-              <div className="text-xl md:text-2xl font-bold text-[#6C757D]">€{dashboardData?.spentThisMonth?.toLocaleString('fr-FR') || '0.00'}</div>
+              <div className="text-xl md:text-2xl font-bold text-[#6C757D]">{formatMoney(dashboardData?.spentThisMonth)}</div>
               <div className="text-xs text-[#6C757D]">Ce mois-ci</div>
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Solde Total</div>
-              <div className="text-xl md:text-2xl font-bold text-[#343A40]">€{dashboardData?.totalBalance?.toLocaleString('fr-FR') || '0.00'}</div>
+              <div className="text-xl md:text-2xl font-bold text-[#343A40]">{formatMoney(dashboardData?.totalBalance)}</div>
               <div className="text-xs text-[#22C55E]">Tous portefeuilles</div>
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
               <div className="text-[#6C757D] text-xs md:text-sm">Solde des portefeuilles</div>
               <ul className="text-[#343A40] text-xs md:text-sm mt-2 space-y-1">
                 {wallets.map((w, i) => (
-                  <li key={i} className="flex justify-between"><span className="truncate pr-2">{w.name}</span><span className="font-semibold whitespace-nowrap">€{w.balance?.toLocaleString('fr-FR') || '0'}</span></li>
+                  <li key={i} className="flex justify-between"><span className="truncate pr-2">{w.name}</span><span className="font-semibold whitespace-nowrap">{formatMoney(w.balance)}</span></li>
                 ))}
               </ul>
             </div>
@@ -348,12 +351,16 @@ export default function DashboardPage() {
                 <span className="text-[#6C757D] text-xs">Budget du mois</span>
               </div>
               <div className="text-2xl font-bold text-[#1E73BE] mb-2">
-                €{dashboardData?.budgetRemaining?.toLocaleString('fr-FR') || '0.00'}
+                {formatMoney(dashboardData?.budgetRemaining)}
               </div>
               <div className="w-full h-2 bg-[#F5F7FA] rounded-full mb-2">
                 <div 
-                  className={`h-2 rounded-full ${dashboardData?.budgetPercentage > 90 ? 'bg-[#495057]' : dashboardData?.budgetPercentage > 70 ? 'bg-[#6C757D]' : 'bg-[#1E3A8A]'}`}
-                  style={{ width: `${dashboardData?.budgetPercentage || 0}%` }}
+                  className="h-2 rounded-full"
+                  style={{
+                    width: `${Math.min(100, dashboardData?.budgetPercentage || 0)}%`,
+                    backgroundColor: dashboardData?.budgetPercentage > 90 ? '#D03B3B' : dashboardData?.budgetPercentage > 70 ? '#EB6834' : '#2A78D6',
+                    transition: 'width 700ms ease',
+                  }}
                 ></div>
               </div>
               <div className="flex justify-between items-center">
@@ -361,32 +368,25 @@ export default function DashboardPage() {
                   {Math.round(dashboardData?.budgetPercentage || 0)}% utilisé
                 </div>
                 <div className="text-xs text-[#6C757D]">
-                  Budget total: €{dashboardData?.totalBudget?.toLocaleString('fr-FR') || '0'}
+                  Budget total: {formatMoney(dashboardData?.totalBudget)}
                 </div>
               </div>
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
               <div className="font-semibold text-[#343A40] mb-2">Dépenses par Catégorie</div>
               <div className="text-[#6C757D] text-xs mb-2">Ce mois-ci</div>
-              <div className="h-32">
-                {dashboardData?.byCategory && Object.keys(dashboardData.byCategory).length > 0 ? (
-                  <div className="space-y-2">
-                    {Object.entries(dashboardData.byCategory).slice(0, 4).map(([category, amount], i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{categoryIcons[category] || '💳'}</span>
-                          <span className="text-sm text-[#343A40]">{category}</span>
-                        </div>
-                        <span className="text-sm font-semibold text-[#6C757D]">€{Math.abs(amount).toLocaleString('fr-FR')}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#E9F7FB] to-[#F5F7FA] rounded flex items-center justify-center text-[#6C757D] text-sm">
-                    Aucune donnée disponible
-                  </div>
-                )}
-              </div>
+              {dashboardData?.byCategory && Object.keys(dashboardData.byCategory).length > 0 ? (
+                <DoughnutChart
+                  data={{
+                    labels: Object.keys(dashboardData.byCategory),
+                    values: Object.values(dashboardData.byCategory).map((v) => Math.abs(v)),
+                  }}
+                />
+              ) : (
+                <div className="h-32 w-full bg-gradient-to-br from-[#E9F7FB] to-[#F5F7FA] rounded flex items-center justify-center text-[#6C757D] text-sm">
+                  Aucune donnée disponible
+                </div>
+              )}
             </div>
           </div>
           {/* Net worth graph & Recent activity */}
@@ -394,33 +394,19 @@ export default function DashboardPage() {
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
               <div className="font-semibold text-[#343A40] mb-2">Évolution Revenus/Dépenses</div>
               <div className="text-[#6C757D] text-xs mb-2">6 derniers mois</div>
-              <div className="h-32">
-                {dashboardData?.stats && dashboardData.stats.length > 0 ? (
-                  <div className="flex items-end justify-between h-full gap-1">
-                    {dashboardData.stats.slice(-6).map((stat, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center">
-                        <div className="flex flex-col items-center gap-1 mb-1">
-                          <div 
-                            className="bg-[#22C55E] rounded-t" 
-                            style={{ height: `${(stat.income / Math.max(...dashboardData.stats.map(s => Math.max(s.income, s.expense)))) * 80}px`, minHeight: '4px', width: '12px' }}
-                          ></div>
-                          <div 
-                            className="bg-[#6C757D] rounded-b" 
-                            style={{ height: `${(stat.expense / Math.max(...dashboardData.stats.map(s => Math.max(s.income, s.expense)))) * 80}px`, minHeight: '4px', width: '12px' }}
-                          ></div>
-                        </div>
-                        <span className="text-xs text-[#6C757D] transform -rotate-45 origin-bottom-left">
-                          {stat.month?.substring(0, 3) || ''}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#E9F7FB] to-[#F5F7FA] rounded flex items-center justify-center text-[#6C757D] text-sm">
-                    Aucune donnée disponible
-                  </div>
-                )}
-              </div>
+              {dashboardData?.stats && dashboardData.stats.length > 0 ? (
+                <LineChart
+                  data={{
+                    labels: dashboardData.stats.slice(-6).map((stat) => (stat.month || '').split(' ')[0]),
+                    income: dashboardData.stats.slice(-6).map((stat) => stat.income),
+                    expense: dashboardData.stats.slice(-6).map((stat) => stat.expense),
+                  }}
+                />
+              ) : (
+                <div className="h-32 w-full bg-gradient-to-br from-[#E9F7FB] to-[#F5F7FA] rounded flex items-center justify-center text-[#6C757D] text-sm">
+                  Aucune donnée disponible
+                </div>
+              )}
             </div>
             <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
               <div className="flex justify-between items-center mb-2">
@@ -435,10 +421,10 @@ export default function DashboardPage() {
                       <span className="text-[#343A40] text-sm">{transaction.description || transaction.category?.name || 'Transaction'}</span>
                     </div>
                     <span className={`font-semibold ${transaction.type === 'expense' ? 'text-[#374151]' : 'text-[#22C55E]'}`}>
-                      {transaction.type === 'expense' ? '-' : '+'}€{transaction.amount?.toLocaleString('fr-FR') || '0'}
+                      {transaction.type === 'expense' ? '-' : '+'}{formatMoney(transaction.amount)}
                     </span>
                     <span className="text-[#6C757D] text-xs w-24 text-right">
-                      {new Date(transaction.date).toLocaleDateString('fr-FR')}
+                      {formatDate(transaction.date)}
                     </span>
                   </li>
                 ))}
@@ -507,14 +493,14 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div className="text-[#343A40] text-sm">
-                          Actuel: €{Number(goal.currentAmount || 0).toLocaleString('fr-FR')}
+                          Actuel: {formatMoney(Number(goal.currentAmount || 0))}
                         </div>
                         <div className="text-[#6C757D] text-xs">
-                          Cible: €{Number(goal.targetAmount || 0).toLocaleString('fr-FR')}
+                          Cible: {formatMoney(Number(goal.targetAmount || 0))}
                         </div>
                         {goal.deadline && (
                           <div className="text-[#6C757D] text-xs">
-                            Échéance: {new Date(goal.deadline).toLocaleDateString('fr-FR')}
+                            Échéance: {formatDate(goal.deadline)}
                           </div>
                         )}
                         <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
@@ -568,7 +554,7 @@ export default function DashboardPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant (€)</label>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -684,7 +670,7 @@ export default function DashboardPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant (€)</label>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -777,7 +763,7 @@ export default function DashboardPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant cible (€)</label>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant cible ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"
@@ -789,7 +775,7 @@ export default function DashboardPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant actuel (€)</label>
+                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant actuel ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"

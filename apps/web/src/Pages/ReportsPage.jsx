@@ -6,6 +6,7 @@ import LineChart from '../components/charts/LineChart.jsx';
 import DoughnutChart from '../components/charts/DoughnutChart.jsx';
 import BarChart from '../components/charts/BarChart.jsx';
 
+import { formatMoney, formatDate, getLocale } from '../lib/format.js';
 const chartPlaceholder = (text = "Graphique") => (
   <div className="flex items-center justify-center h-56 w-full bg-[#F5F7FA] border border-[#EAF4FB] rounded-xl text-[#6C757D] text-lg font-bold">
     {text}
@@ -105,11 +106,11 @@ export default function ReportsPage() {
       // Utiliser les données réelles des tendances
       trendsChartData.labels = trendsData.trends.map(trend => {
         if (period === 'week') {
-          return new Date(trend.month).toLocaleDateString('fr-FR', { weekday: 'short' });
+          return new Date(trend.month).toLocaleDateString(getLocale(), { weekday: 'short' });
         } else if (period === 'month') {
           return `Sem ${trendsData.trends.indexOf(trend) + 1}`;
         } else if (period === 'year') {
-          return new Date(trend.month).toLocaleDateString('fr-FR', { month: 'short' });
+          return new Date(trend.month).toLocaleDateString(getLocale(), { month: 'short' });
         }
         return trend.month;
       });
@@ -348,7 +349,7 @@ export default function ReportsPage() {
             <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
               <span className="text-[#6C757D] text-xs md:text-sm">Revenu Total</span>
               <div className="flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold text-[#22C55E]">
-                {stats.totalIncome.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                {formatMoney(stats.totalIncome)}
               </div>
               <span className={`text-[10px] md:text-xs ${stats.incomeVariation >= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
                 {stats.incomeVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.incomeVariation || 0).toFixed(1)}% 
@@ -358,7 +359,7 @@ export default function ReportsPage() {
             <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
               <span className="text-[#6C757D] text-xs md:text-sm">Dépenses Totales</span>
               <div className="flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold text-[#DC2626]">
-                {stats.totalExpense.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                {formatMoney(stats.totalExpense)}
               </div>
               <span className={`text-[10px] md:text-xs ${stats.expenseVariation <= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
                 {stats.expenseVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.expenseVariation || 0).toFixed(1)}% 
@@ -368,7 +369,7 @@ export default function ReportsPage() {
             <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2 sm:col-span-2 md:col-span-1">
               <span className="text-[#6C757D] text-xs md:text-sm">Épargne Nette</span>
               <div className={`flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold ${stats.savings >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
-                {stats.savings >= 0 ? '+' : ''} {stats.savings.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                {stats.savings >= 0 ? '+' : ''} {formatMoney(stats.savings)}
               </div>
               <span className={`text-[10px] md:text-xs ${stats.savingsVariation >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
                 {stats.savingsVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.savingsVariation || 0).toFixed(1)}% 
@@ -402,7 +403,7 @@ export default function ReportsPage() {
                       {cat.categoryName}
                     </span>
                     <span className="font-semibold">
-                      {cat.total.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} € ({cat.percentage}%)
+                      {formatMoney(cat.total)} ({cat.percentage}%)
                     </span>
                   </div>
                 ))}
@@ -442,7 +443,7 @@ export default function ReportsPage() {
                       topTransactions.transactions.map((transaction, index) => (
                         <tr key={transaction._id} className="even:bg-white odd:bg-[#F5F7FA] hover:bg-[#EAF4FB] transition">
                           <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-[#343A40] text-xs md:text-sm">
-                            {new Date(transaction.date).toLocaleDateString('fr-FR')}
+                            {formatDate(transaction.date)}
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-[#343A40] text-xs md:text-sm truncate max-w-[150px] md:max-w-none">{transaction.description}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 hidden md:table-cell">
@@ -451,7 +452,7 @@ export default function ReportsPage() {
                             </span>
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3 font-semibold text-[#DC2626] text-xs md:text-sm">
-                            - {transaction.amount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                            - {formatMoney(transaction.amount)}
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3 hidden lg:table-cell">
                             <span className="bg-[#E0F2FE] border border-[#B3E5FC] rounded px-2 py-1 text-[10px] md:text-xs text-[#1E73BE]">

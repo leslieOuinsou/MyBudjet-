@@ -9,6 +9,7 @@ import {
   getWallets,
 } from "../api.js";
 
+import { formatMoney, formatDate } from '../lib/format.js';
 const FREQ_LABELS = {
   daily: "Quotidien",
   weekly: "Hebdomadaire",
@@ -216,11 +217,11 @@ export default function RecurringTransactionsPage() {
                           <td className="px-4 py-3 font-medium">{t.note || "Sans titre"}</td>
                           <td className="px-4 py-3">{FREQ_LABELS[t.frequency] || t.frequency}</td>
                           <td className="px-4 py-3">
-                            {Number(t.amount || 0).toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+                            {formatMoney(Number(t.amount || 0))}
                           </td>
                           <td className="px-4 py-3">{t.category?.name || "—"}</td>
                           <td className="px-4 py-3">
-                            {t.nextDate ? new Date(t.nextDate).toLocaleDateString("fr-FR") : "—"}
+                            {t.nextDate ? formatDate(t.nextDate) : "—"}
                           </td>
                           <td className="px-4 py-3">
                             {t.type === "income" ? "Revenu" : "Dépense"}

@@ -1,155 +1,80 @@
 import React from 'react';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
+  Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { SERIES, SURFACE, INK, areaGradient, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+
+const [INCOME, EXPENSE] = SERIES;
+
+// Trait vertical qui suit la souris : on lit les deux valeurs d'un même mois d'un coup d'œil
+const crosshair = {
+  id: 'crosshair',
+  afterDatasetsDraw(chart) {
+    const active = chart.getActiveElements();
+    if (!active.length) return;
+    const { ctx, chartArea } = chart;
+    const x = active[0].element.x;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, chartArea.top);
+    ctx.lineTo(x, chartArea.bottom);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#C9C8C2';
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.restore();
+  },
+};
+
+const series = (label, values, color) => ({
+  label,
+  data: values || [],
+  borderColor: color,
+  backgroundColor: areaGradient(color, 0.16),
+  borderWidth: 2,
+  fill: true,
+  tension: 0.35,
+  pointRadius: 0,
+  pointHoverRadius: 6,
+  pointHoverBorderWidth: 2,
+  pointBackgroundColor: color,
+  pointHoverBackgroundColor: color,
+  pointBorderColor: SURFACE,
+  pointHoverBorderColor: SURFACE,
+});
 
 export default function LineChart({ data, title }) {
-  // Couleurs pour le thème clair - Palette Fintech
-  const theme = {
-    income: '#28A745',    // Vert pour revenus (croissance, succès financier)
-    expense: '#6C757D',   // Gris anthracite pour dépenses (sérieux, sobriété)
-    grid: '#F5F7FA',      // Gris clair pour grille
-    text: '#343A40',      // Anthracite pour texte
-    background: '#FFFFFF' // Blanc pour fond
-  };
-
   const chartData = {
     labels: data?.labels || [],
-    datasets: [
-      {
-        label: 'Revenus',
-        data: data?.income || [],
-        borderColor: theme.income,
-        backgroundColor: `${theme.income}20`,
-        borderWidth: 3,
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: theme.income,
-        pointBorderColor: theme.background,
-        pointBorderWidth: 2,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-      },
-      {
-        label: 'Dépenses',
-        data: data?.expense || [],
-        borderColor: theme.expense,
-        backgroundColor: `${theme.expense}20`,
-        borderWidth: 3,
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: theme.expense,
-        pointBorderColor: theme.background,
-        pointBorderWidth: 2,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-      }
-    ]
+    datasets: [series('Revenus', data?.income, INCOME), series('Dépenses', data?.expense, EXPENSE)],
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    animation: { duration: 700, easing: 'easeOutQuart' },
     plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          color: theme.text,
-          font: {
-            size: 12,
-            weight: '500'
-          },
-          usePointStyle: true,
-          pointStyle: 'circle'
-        }
-      },
-      title: {
-        display: !!title,
-        text: title,
-        color: theme.text,
-        font: {
-          size: 16,
-          weight: 'bold'
-        }
-      },
+      legend: legendStyle('circle'),
+      title: { display: !!title, text: title, color: INK.primary, font: { size: 15, weight: '600' } },
       tooltip: {
-        backgroundColor: '#FFFFFF',
-        titleColor: theme.text,
-        bodyColor: theme.text,
-        borderColor: '#F5F7FA',
-        borderWidth: 1,
-        cornerRadius: 8,
-        displayColors: true,
-        callbacks: {
-          label: function(context) {
-            return `${context.dataset.label}: €${context.parsed.y.toLocaleString('fr-FR')}`;
-          }
-        }
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          color: theme.grid,
-          borderColor: theme.grid
-        },
-        ticks: {
-          color: theme.text,
-          font: {
-            size: 11
-          }
-        }
+        ...tooltipStyle,
+        callbacks: { label: (c) => ` ${c.dataset.label} : ${euro(c.parsed.y)}` },
       },
-      y: {
-        grid: {
-          color: theme.grid,
-          borderColor: theme.grid
-        },
-        ticks: {
-          color: theme.text,
-          font: {
-            size: 11
-          },
-          callback: function(value) {
-            return `€${value.toLocaleString('fr-FR')}`;
-          }
-        }
-      }
     },
-    interaction: {
-      intersect: false,
-      mode: 'index'
-    },
-    elements: {
-      point: {
-        hoverBorderWidth: 3
-      }
-    }
+    scales: axisStyle,
   };
+
+  if (!hasValues([data?.income, data?.expense])) {
+    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500">Aucune donnée sur cette période.</div>;
+  }
 
   return (
     <div className="relative h-64 w-full">
-      <Line data={chartData} options={options} />
+      <Line data={chartData} options={options} plugins={[crosshair]} />
     </div>
   );
 }

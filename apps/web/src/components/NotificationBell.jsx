@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getNotifications, markNotificationAsRead } from '../api.js';
 
+import { formatDate } from '../lib/format.js';
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -104,7 +105,7 @@ export default function NotificationBell() {
     if (diffMins < 60) return `Il y a ${diffMins} min`;
     if (diffHours < 24) return `Il y a ${diffHours}h`;
     if (diffDays < 7) return `Il y a ${diffDays}j`;
-    return notifDate.toLocaleDateString('fr-FR');
+    return formatDate(notifDate);
   };
 
   return (

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { 
-  getTransactions, getCategories, getWallets, addTransaction, updateTransaction, deleteTransaction,
+  getTransactions, getCategories, getWallets, addTransaction, suggestCategory, scanReceipt, getAiStatus, updateTransaction, deleteTransaction,
   getPayPalAuthUrl, getPayPalStatus, getPayPalBalance, getPayPalTransactions, disconnectPayPal, handlePayPalCallback
 } from '../api.js';
 import { 
@@ -11,11 +11,15 @@ import {
   MdEdit, MdDelete, MdAccountBalance, MdRefresh
 } from 'react-icons/md';
 
+import { formatMoney, formatDate, currencySymbol } from '../lib/format.js';
 export default function TransactionsPage() {
   const [searchParams] = useSearchParams();
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [wallets, setWallets] = useState([]);
+  const [categoryHint, setCategoryHint] = useState('');
+  const [aiReady, setAiReady] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -175,6 +179,49 @@ export default function TransactionsPage() {
       setError(err.message || 'Erreur lors du chargement des données');
     } finally {
       setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAiStatus().then((st) => setAiReady(st.configured)).catch(() => {});
+  }, []);
+
+  // Pré-remplit le formulaire depuis une photo de ticket (rien n'est enregistré avant validation)
+  const handleReceiptScan = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setScanning(true);
+    setError('');
+    try {
+      const r = await scanReceipt(file);
+      setNewTransaction((prev) => ({
+        ...prev,
+        type: 'expense',
+        description: r.description || prev.description,
+        amount: String(r.amount),
+        category: r.categoryId || prev.category,
+        ...(r.date ? { date: r.date } : {}),
+      }));
+      setCategoryHint(r.categoryName ? `Catégorie lue sur le ticket : ${r.categoryName}` : 'Vérifie les champs avant de valider.');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  // Propose une catégorie d'après l'historique quand on quitte le champ description
+  const handleDescriptionBlur = async () => {
+    if (editingTransaction || newTransaction.category || !newTransaction.description.trim()) return;
+    try {
+      const { suggestion } = await suggestCategory(newTransaction.description, newTransaction.type || 'expense');
+      if (suggestion && categories.some((c) => c._id === suggestion.categoryId)) {
+        setNewTransaction((prev) => (prev.category ? prev : { ...prev, category: suggestion.categoryId }));
+        setCategoryHint(`Catégorie suggérée : ${suggestion.name}`);
+      }
+    } catch {
+      // suggestion facultative : on ignore les erreurs
     }
   };
 
@@ -547,7 +594,7 @@ export default function TransactionsPage() {
                     filtered.map((t) => (
                       <tr key={t._id} className="even:bg-white odd:bg-[#F5F7FA] hover:bg-[#EAF4FB] transition">
                         <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-xs md:text-sm">
-                          {new Date(t.date).toLocaleDateString('fr-FR')}
+                          {formatDate(t.date)}
                         </td>
                         <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm truncate max-w-[150px] md:max-w-none">{t.description}</td>
                         <td className="px-2 md:px-4 py-2 md:py-3 hidden md:table-cell">
@@ -564,7 +611,7 @@ export default function TransactionsPage() {
                           t.type === 'expense' ? 'text-[#374151]' : 'text-[#22C55E]'
                         }`}>
                           {t.type === 'income' ? '+ ' : '- '}
-                          {Math.abs(t.amount).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                          {formatMoney(Math.abs(t.amount))}
                         </td>
                         <td className="px-2 md:px-4 py-2 md:py-3 hidden lg:table-cell">
                           <span className={`rounded px-2 py-1 text-[10px] md:text-xs font-semibold ${
@@ -607,12 +654,19 @@ export default function TransactionsPage() {
                    {editingTransaction ? 'Modifier la transaction' : 'Ajouter une transaction'}
                  </h3>
                 <form onSubmit={handleAddTransaction}>
+                  {aiReady && !editingTransaction && (
+                    <label className="mb-3 md:mb-4 flex items-center justify-center gap-2 border border-dashed border-[#1E73BE] text-[#1E73BE] rounded-lg px-3 py-2 text-sm cursor-pointer hover:bg-[#EAF4FB]">
+                      {scanning ? 'Lecture du ticket…' : '📷 Scanner un ticket de caisse'}
+                      <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="hidden" onChange={handleReceiptScan} disabled={scanning} />
+                    </label>
+                  )}
                   <div className="mb-3 md:mb-4">
                     <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Description</label>
                     <input
                       type="text"
                       value={newTransaction.description}
-                      onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
+                      onChange={(e) => { setCategoryHint(''); setNewTransaction({...newTransaction, description: e.target.value}); }}
+                      onBlur={handleDescriptionBlur}
                       className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 text-sm md:text-base bg-white text-[#22292F] focus:border-[#1E73BE]"
                       placeholder="Description de la transaction"
                       required
@@ -620,7 +674,7 @@ export default function TransactionsPage() {
                   </div>
                   
                   <div className="mb-3 md:mb-4">
-                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Montant (€)</label>
+                    <label className="block text-xs md:text-sm font-medium text-[#343A40] mb-2">Montant ({currencySymbol()})</label>
                     <input
                       type="number"
                       step="0.01"
@@ -658,6 +712,7 @@ export default function TransactionsPage() {
                         <option key={cat._id} value={cat._id}>{cat.name}</option>
                       ))}
                     </select>
+                    {categoryHint && <p className="text-xs text-[#1E73BE] mt-1">{categoryHint}</p>}
                   </div>
                   
                   <div className="mb-3 md:mb-4">

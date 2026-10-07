@@ -8,6 +8,7 @@ import {
   MdTrendingUp, MdTrendingDown, MdAttachMoney 
 } from 'react-icons/md';
 
+import { formatMoney, formatDate, currencySymbol } from '../lib/format.js';
 // Catégories prédéfinies avec icônes - Palette Fintech
 const EXPENSE_CATEGORIES = [
   { name: 'Alimentation', icon: 'MdRestaurant', color: '#1E73BE' },
@@ -267,7 +268,7 @@ export default function ExpensesPage() {
       };
       
       await addTransaction(expenseData);
-      setSuccess(`${quickExpense.name} ajouté(e) pour ${quickExpense.amount}€ !`);
+      setSuccess(`${quickExpense.name} ajouté(e) pour ${formatMoney(Number(quickExpense.amount))} !`);
       
       setShowQuickAddModal(false);
       loadData();
@@ -411,7 +412,7 @@ export default function ExpensesPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Aujourd'hui</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{stats.totalToday.toFixed(2)}€</p>
+                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.totalToday)}</p>
                 </div>
                 <MdAttachMoney className="text-[#1E73BE]" size={32} />
               </div>
@@ -421,7 +422,7 @@ export default function ExpensesPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Cette semaine</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{stats.totalThisWeek.toFixed(2)}€</p>
+                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.totalThisWeek)}</p>
                 </div>
                 <MdTrendingDown className="text-[#F87171]" size={32} />
               </div>
@@ -431,7 +432,7 @@ export default function ExpensesPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Ce mois</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{stats.totalThisMonth.toFixed(2)}€</p>
+                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.totalThisMonth)}</p>
                 </div>
                 <MdAttachMoney className="text-[#10B981]" size={32} />
               </div>
@@ -441,7 +442,7 @@ export default function ExpensesPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-[#6C757D]">Moyenne/jour</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{stats.averagePerDay.toFixed(2)}€</p>
+                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.averagePerDay)}</p>
                 </div>
                 <MdTrendingUp className="text-[#6366F1]" size={32} />
               </div>
@@ -611,7 +612,7 @@ export default function ExpensesPage() {
                         <div>
                           <h4 className="font-semibold text-[#22292F]">{expense.description}</h4>
                           <p className="text-sm text-[#6C757D]">
-                            {expense.category?.name || 'Non catégorisé'} • {new Date(expense.date).toLocaleDateString('fr-FR')}
+                            {expense.category?.name || 'Non catégorisé'} • {formatDate(expense.date)}
                           </p>
                           {expense.notes && (
                             <p className="text-xs text-[#9CA3AF] mt-1">{expense.notes}</p>
@@ -622,7 +623,7 @@ export default function ExpensesPage() {
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
                           <p className="text-lg font-bold text-[#22292F]">
-                            -{expense.amount?.toFixed(2)}€
+                            -{formatMoney(expense.amount)}
                           </p>
                           <p className="text-xs text-[#6C757D]">
                             {expense.wallet?.name || 'Portefeuille'}
@@ -685,7 +686,7 @@ export default function ExpensesPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Montant (€)</label>
+                  <label className="block text-sm font-medium text-[#22292F] mb-1">Montant ({currencySymbol()})</label>
                   <input
                     type="number"
                     value={newExpense.amount}
@@ -795,7 +796,7 @@ export default function ExpensesPage() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xl">{expense.icon}</span>
-                    <span className="font-semibold text-[#22292F]">{expense.amount}€</span>
+                    <span className="font-semibold text-[#22292F]">{formatMoney(expense.amount)}</span>
                   </div>
                   <p className="text-sm text-[#22292F]">{expense.name}</p>
                   <p className="text-xs text-[#6C757D]">{expense.category}</p>

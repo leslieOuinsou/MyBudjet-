@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { sendSMSCode, verifySMSCode } from '../api';
+import { sendSMSCode, verifySMSCode, verifyTwoFactorLogin } from '../api';
+import TwoFactorPrompt from '../components/TwoFactorPrompt.jsx';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,10 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const navigate = useNavigate();
+
+  // Double authentification : défi en cours après un mot de passe correct
+  const [twoFactor, setTwoFactor] = useState(null);
+  const [twoFactorLoading, setTwoFactorLoading] = useState(false);
 
   // Connexion par SMS
   const [loginMethod, setLoginMethod] = useState('email'); // 'email' | 'sms'
@@ -78,6 +83,10 @@ export default function LoginPage() {
       }
 
       const data = await res.json();
+      if (data.requiresTwoFactor) {
+        setTwoFactor(data);
+        return;
+      }
       storeTokenAndRedirect(data);
     } catch (err) {
       let errorMessage = err.message || 'Erreur lors de la connexion';
@@ -91,6 +100,19 @@ export default function LoginPage() {
       }
 
       setError(errorMessage);
+    }
+  };
+
+  const handleTwoFactorSubmit = async (code) => {
+    setError('');
+    setTwoFactorLoading(true);
+    try {
+      const data = await verifyTwoFactorLogin(twoFactor.challengeId, code, rememberMe);
+      storeTokenAndRedirect(data);
+    } catch (err) {
+      setError(err.message || 'Code invalide');
+    } finally {
+      setTwoFactorLoading(false);
     }
   };
 
@@ -190,6 +212,7 @@ export default function LoginPage() {
           </div>
 
           {/* Sélecteur de méthode de connexion */}
+          {!twoFactor && (
           <div className="flex bg-gray-100 rounded-xl p-1 mb-6" role="tablist">
             <button
               type="button"
@@ -218,6 +241,7 @@ export default function LoginPage() {
               Téléphone
             </button>
           </div>
+          )}
 
           {error && (
             <div className="mb-4 p-4 bg-red-50 border-l-4 border-[#DC3545] rounded-lg">
@@ -251,7 +275,15 @@ export default function LoginPage() {
             </div>
           )}
 
-          {loginMethod === 'email' ? (
+          {twoFactor ? (
+            <TwoFactorPrompt
+              emailHint={twoFactor.emailHint}
+              devCode={twoFactor.devCode}
+              loading={twoFactorLoading}
+              onSubmit={handleTwoFactorSubmit}
+              onCancel={() => { setTwoFactor(null); setError(''); }}
+            />
+          ) : loginMethod === 'email' ? (
             <>
               <form className="flex flex-col gap-3 md:gap-4" onSubmit={handleSubmit}>
                 <div>

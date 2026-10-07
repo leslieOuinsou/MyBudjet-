@@ -9,6 +9,7 @@ import {
   getForecastOverview 
 } from '../api.js';
 
+import { formatMoney, getLocale } from '../lib/format.js';
 export default function ForecastsPage() {
   const { isDarkMode } = useTheme();
   
@@ -58,10 +59,7 @@ export default function ForecastsPage() {
 
   // Fonction pour formater les montants
   const formatAmount = (amount) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount || 0);
+    return formatMoney(amount);
   };
 
   // Fonction pour obtenir la couleur selon le type de conseil
@@ -91,7 +89,7 @@ export default function ForecastsPage() {
 
     const labels = chartData.projections.map(proj => {
       const date = new Date(proj.month + '-01');
-      return date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+      return date.toLocaleDateString(getLocale(), { month: 'short', year: 'numeric' });
     });
 
     // Utiliser les bons champs de l'API: income, expenses, cumulativeBalance

@@ -1,131 +1,108 @@
 import React from 'react';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import { SERIES, OTHER, SURFACE, INK, tooltipStyle, euro } from './chartTheme.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function DoughnutChart({ data, title }) {
-  // Couleurs pour le thème clair uniquement
-  const theme = {
-    background: '#FFFFFF',
-    text: '#343A40',
-    grid: '#F5F7FA'
-  };
+const MAX_SLICES = SERIES.length - 1; // 7 couleurs + « Autres » ; jamais de 9e teinte inventée
 
-  // Couleurs prédéfinies pour les catégories - Palette Fintech
-  // Bleu (confiance), Gris/Anthracite (sérieux), Vert (croissance)
-  const categoryColors = [
-    '#1E73BE', // Bleu principal
-    '#6C757D', // Gris anthracite
-    '#28A745', // Vert croissance
-    '#495057', // Gris foncé
-    '#155a8a', // Bleu foncé
-    '#ADB5BD', // Gris moyen
-    '#343A40', // Anthracite
-    '#CED4DA', // Gris clair
-    '#1E73BE', // Répétition bleu
-    '#6C757D', // Répétition gris
-    '#28A745', // Répétition vert
-    '#495057'  // Répétition gris foncé
-  ];
+// Regroupe les plus petites parts dans « Autres » et trie par montant décroissant
+const prepare = (labels = [], values = []) => {
+  const rows = labels.map((label, i) => ({ label, value: Number(values[i]) || 0 })).filter((r) => r.value > 0);
+  rows.sort((a, b) => b.value - a.value);
+  if (rows.length <= SERIES.length) return { rows, colors: rows.map((_, i) => SERIES[i]) };
+  const head = rows.slice(0, MAX_SLICES);
+  const rest = rows.slice(MAX_SLICES).reduce((s, r) => s + r.value, 0);
+  return { rows: [...head, { label: 'Autres', value: rest }], colors: [...SERIES.slice(0, MAX_SLICES), OTHER] };
+};
+
+// Total affiché au centre du donut
+const centerText = {
+  id: 'centerText',
+  afterDraw(chart) {
+    const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+    const meta = chart.getDatasetMeta(0).data[0];
+    if (!meta) return;
+    const { ctx } = chart;
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = INK.muted;
+    ctx.font = '500 12px system-ui, sans-serif';
+    ctx.fillText('Total', meta.x, meta.y - 12);
+    ctx.fillStyle = INK.primary;
+    ctx.font = '700 20px system-ui, sans-serif';
+    ctx.fillText(euro(total, true), meta.x, meta.y + 10);
+    ctx.restore();
+  },
+};
+
+export default function DoughnutChart({ data, title }) {
+  const { rows, colors } = prepare(data?.labels, data?.values);
+  const total = rows.reduce((s, r) => s + r.value, 0);
+
+  if (rows.length === 0) {
+    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500">Aucune dépense sur cette période.</div>;
+  }
 
   const chartData = {
-    labels: data?.labels || [],
-    datasets: [
-      {
-        data: data?.values || [],
-        backgroundColor: categoryColors.slice(0, data?.labels?.length || 0),
-        borderColor: '#FFFFFF',
-        borderWidth: 2,
-        hoverBorderWidth: 3,
-        hoverBorderColor: '#F5F7FA'
-      }
-    ]
+    labels: rows.map((r) => r.label),
+    datasets: [{
+      data: rows.map((r) => r.value),
+      backgroundColor: colors,
+      borderColor: SURFACE,
+      borderWidth: 3, // l'écart entre parts est la couleur du fond
+      hoverOffset: 6,
+      borderRadius: 4,
+    }],
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    cutout: '68%',
+    // Légende sous le graphique sur petit écran
+    onResize: (chart, size) => {
+      chart.options.plugins.legend.position = size.width < 420 ? 'bottom' : 'right';
+    },
+    animation: { animateRotate: true, duration: 800, easing: 'easeOutQuart' },
     plugins: {
+      title: { display: !!title, text: title, color: INK.primary, font: { size: 15, weight: '600' } },
       legend: {
-        position: 'bottom',
+        position: 'right',
         labels: {
-          color: theme.text,
-          font: {
-            size: 11,
-            weight: '500'
-          },
+          color: INK.secondary,
+          font: { size: 12, weight: '500' },
           usePointStyle: true,
           pointStyle: 'circle',
-          padding: 15,
-          generateLabels: function(chart) {
-            const data = chart.data;
-            if (data.labels.length && data.datasets.length) {
-              return data.labels.map((label, i) => {
-                const dataset = data.datasets[0];
-                const value = dataset.data[i];
-                const total = dataset.data.reduce((a, b) => a + b, 0);
-                const percentage = ((value / total) * 100).toFixed(1);
-                
-                return {
-                  text: `${label} (${percentage}%)`,
-                  fillStyle: dataset.backgroundColor[i],
-                  strokeStyle: dataset.borderColor,
-                  lineWidth: dataset.borderWidth,
-                  pointStyle: 'circle',
-                  hidden: false,
-                  index: i
-                };
-              });
-            }
-            return [];
-          }
-        }
-      },
-      title: {
-        display: !!title,
-        text: title,
-        color: theme.text,
-        font: {
-          size: 16,
-          weight: 'bold'
-        }
+          boxWidth: 8,
+          boxHeight: 8,
+          padding: 12,
+          generateLabels: (chart) =>
+            chart.data.labels.map((label, i) => ({
+              text: `${label} · ${Math.round((chart.data.datasets[0].data[i] / total) * 100)} %`,
+              fillStyle: colors[i],
+              strokeStyle: colors[i],
+              fontColor: INK.secondary,
+              pointStyle: 'circle',
+              index: i,
+              hidden: !chart.getDataVisibility(i),
+            })),
+        },
       },
       tooltip: {
-        backgroundColor: '#FFFFFF',
-        titleColor: theme.text,
-        bodyColor: theme.text,
-        borderColor: '#F5F7FA',
-        borderWidth: 1,
-        cornerRadius: 8,
-        displayColors: true,
+        ...tooltipStyle,
         callbacks: {
-          label: function(context) {
-            const label = context.label || '';
-            const value = context.parsed || 0;
-            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-            const percentage = ((value / total) * 100).toFixed(1);
-            return `${label}: €${value.toLocaleString('fr-FR')} (${percentage}%)`;
-          }
-        }
-      }
+          label: (c) => ` ${c.label} : ${euro(c.parsed)} (${Math.round((c.parsed / total) * 100)} %)`,
+        },
+      },
     },
-    cutout: '60%',
-    elements: {
-      arc: {
-        borderWidth: 2
-      }
-    }
   };
 
   return (
     <div className="relative h-64 w-full">
-      <Doughnut data={chartData} options={options} />
+      <Doughnut data={chartData} options={options} plugins={[centerText]} />
     </div>
   );
 }
