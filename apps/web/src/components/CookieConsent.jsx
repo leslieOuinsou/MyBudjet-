@@ -151,17 +151,17 @@ export default function CookieConsent() {
       <div className={`fixed bottom-0 left-0 right-0 z-[9999] transform transition-all duration-500 ${
         showBanner ? 'translate-y-0' : 'translate-y-full'
       }`}>
-        <div className={`max-w-7xl mx-auto m-4 rounded-2xl shadow-2xl border-2 ${
+        <div className={`max-w-7xl mx-auto m-2 md:m-4 max-h-[88dvh] overflow-y-auto rounded-2xl shadow-2xl border-2 ${
           isDarkMode 
             ? 'bg-gray-800 border-blue-500/30' 
             : 'bg-white dark:bg-[#1E293B] border-blue-500/50'
         }`}>
           
           {/* Contenu principal de la bannière */}
-          <div className="p-6 md:p-8">
-            <div className="flex items-start gap-4 mb-6">
+          <div className="p-4 md:p-8">
+            <div className="flex items-start gap-3 md:gap-4 mb-4 md:mb-6">
               {/* Icône cookie */}
-              <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
+              <div className={`hidden sm:flex flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
                 isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100 dark:bg-[#1E40AF]/50'
               }`}>
                 <MdCookie className="text-3xl text-blue-500 dark:text-[#60A5FA]" />
@@ -169,12 +169,12 @@ export default function CookieConsent() {
               
               {/* Texte principal */}
               <div className="flex-1">
-                <h3 className={`text-xl font-bold mb-2 ${
+                <h3 className={`text-base md:text-xl font-bold mb-1 md:mb-2 ${
                   isDarkMode ? 'text-white' : 'text-gray-900 dark:text-[#F8FAFC]'
                 }`}>
                   🍪 Nous respectons votre vie privée
                 </h3>
-                <p className={`text-sm leading-relaxed ${
+                <p className={`text-xs md:text-sm leading-relaxed ${
                   isDarkMode ? 'text-gray-300' : 'text-gray-600 dark:text-[#CBD5E1]'
                 }`}>
                   Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic et personnaliser le contenu. 
@@ -194,7 +194,7 @@ export default function CookieConsent() {
             </div>
             
             {/* Boutons d'action */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="grid grid-cols-2 sm:flex sm:flex-row gap-2 md:gap-3">
               {/* Bouton Accepter tout */}
               <button
                 onClick={handleAcceptAll}
@@ -207,7 +207,7 @@ export default function CookieConsent() {
               {/* Bouton Refuser tout */}
               <button
                 onClick={handleRejectAll}
-                className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
+                className={`flex-1 px-3 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
                   isDarkMode
                     ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600'
                     : 'bg-gray-100 dark:bg-[#334155] border-gray-300 dark:border-[#475569] text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-200 dark:hover:bg-[#475569]'
@@ -220,7 +220,7 @@ export default function CookieConsent() {
               {/* Bouton Personnaliser */}
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
+                className={`col-span-2 sm:col-span-1 flex-1 px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
                   isDarkMode
                     ? 'bg-transparent border-blue-500 text-blue-400 hover:bg-blue-500/10'
                     : 'bg-transparent border-blue-500 text-blue-600 dark:text-[#60A5FA] hover:bg-blue-50 dark:hover:bg-[#1E40AF]/25'

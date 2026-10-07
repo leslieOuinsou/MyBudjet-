@@ -502,19 +502,19 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 dark:from-[#0F172A] via-white dark:via-[#1E293B] to-gray-50 dark:to-[#0F172A] flex flex-col overflow-hidden">
+    <div className="h-[100dvh] md:h-screen bg-gradient-to-br from-gray-50 dark:from-[#0F172A] via-white dark:via-[#1E293B] to-gray-50 dark:to-[#0F172A] flex flex-col overflow-hidden">
       <div className="flex flex-1 min-h-0">
         <DashboardSidebar />
         {/* Main content */}
-        <main className="flex-1 py-8 px-4 md:px-8 lg:px-12 max-w-7xl mx-auto w-full overflow-y-auto">
+        <main className="flex-1 min-w-0 py-8 px-4 md:px-8 lg:px-12 max-w-7xl mx-auto w-full overflow-y-auto">
           {/* Header moderne */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-gradient-to-br from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] rounded-xl shadow-lg">
+              <div className="p-3 shrink-0 bg-gradient-to-br from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] rounded-xl shadow-lg">
                 <MdSettings className="text-white" size={28} />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] bg-clip-text text-transparent">
                   Paramètres
                 </h1>
                 <p className="text-gray-600 dark:text-[#CBD5E1] text-sm">
@@ -558,14 +558,14 @@ export default function SettingsPage() {
           )}
 
           {/* Gestion du profil */}
-          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-4 sm:p-8 mb-6 sm:mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 dark:to-[#3B82F6] rounded-lg">
                 <MdPerson className="text-white" size={24} />
               </div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-[#F8FAFC]">Gestion du profil</h2>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 p-6 bg-gradient-to-br from-[#DBEAFE] dark:from-[#1E40AF] to-[#BFDBFE] dark:to-[#1E40AF] rounded-xl border border-[#2563EB]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-br from-[#DBEAFE] dark:from-[#1E40AF] to-[#BFDBFE] dark:to-[#1E40AF] rounded-xl border border-[#2563EB]">
               {/* Avatar avec option d'upload */}
               <div className="relative group">
                 {user?.profilePicture ? (
@@ -597,10 +597,10 @@ export default function SettingsPage() {
                   className="hidden"
                 />
               </div>
-              <div className="flex-1">
-                <div className="font-bold text-gray-900 dark:text-[#F8FAFC] text-xl mb-1">{user?.name || 'Utilisateur'}</div>
-                <div className="text-gray-600 dark:text-[#CBD5E1] text-sm mb-4 flex items-center gap-2">
-                  <MdEmail size={16} className="text-[#2563EB] dark:text-[#60A5FA]" />
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-gray-900 dark:text-[#F8FAFC] text-xl mb-1 break-words">{user?.name || 'Utilisateur'}</div>
+                <div className="text-gray-600 dark:text-[#CBD5E1] text-sm mb-4 flex items-start gap-2 break-all">
+                  <MdEmail size={16} className="text-[#2563EB] dark:text-[#60A5FA] mt-0.5 shrink-0" />
                   {user?.email || 'email@exemple.com'}
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -671,7 +671,7 @@ export default function SettingsPage() {
               <div className="md:col-span-3 flex justify-end">
                 <button 
                   type="submit" 
-                  className="bg-gradient-to-r from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#1D4ED8] dark:hover:from-[#2563EB] hover:to-[#1E40AF] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+                  className="bg-gradient-to-r from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] text-white w-full sm:w-auto justify-center px-8 py-3 rounded-xl font-semibold hover:from-[#1D4ED8] dark:hover:from-[#2563EB] hover:to-[#1E40AF] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
                 >
                   <MdCheckCircle size={20} />
                   Mettre à jour le profil
@@ -681,14 +681,14 @@ export default function SettingsPage() {
           </section>
 
           {/* Préférences de l'application */}
-          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-4 sm:p-8 mb-6 sm:mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-gradient-to-br from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] rounded-lg">
                 <MdSettings className="text-white" size={24} />
               </div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-[#F8FAFC]">Préférences de l'application</h2>
             </div>
-            <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex flex-col md:flex-row gap-5 md:gap-8">
               <div className="flex-1 space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#334155]/50 rounded-xl hover:bg-gray-100 dark:hover:bg-[#334155] transition-colors">
                   <div className="flex items-start gap-3 flex-1">
@@ -777,14 +777,14 @@ export default function SettingsPage() {
           </section>
 
           {/* Options de synchronisation */}
-          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-4 sm:p-8 mb-6 sm:mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">
                 <MdSync className="text-white" size={24} />
               </div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-[#F8FAFC]">Options de synchronisation</h2>
             </div>
-            <div className="flex flex-col md:flex-row gap-8 items-center">
+            <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-center">
               <div className="flex-1 space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#334155]/50 rounded-xl hover:bg-gray-100 dark:hover:bg-[#334155] transition-colors mb-4">
                   <div className="flex items-start gap-3 flex-1">
@@ -863,7 +863,7 @@ export default function SettingsPage() {
           </section>
 
           {/* Sécurité du compte */}
-          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+          <section className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-lg p-4 sm:p-8 mb-6 sm:mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-gradient-to-br from-[#334155] to-[#0F172A] rounded-lg">
                 <MdSecurity className="text-white" size={24} />
@@ -872,7 +872,7 @@ export default function SettingsPage() {
             </div>
             
             {/* Formulaire de changement de mot de passe */}
-            <form onSubmit={handlePasswordChange} className="mb-8 p-6 bg-gradient-to-br from-[#DBEAFE] dark:from-[#1E40AF] to-[#BFDBFE] dark:to-[#1E40AF] rounded-xl border border-[#2563EB]">
+            <form onSubmit={handlePasswordChange} className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-br from-[#DBEAFE] dark:from-[#1E40AF] to-[#BFDBFE] dark:to-[#1E40AF] rounded-xl border border-[#2563EB]">
               <div className="flex items-center gap-2 mb-4">
                 <MdLock className="text-[#2563EB] dark:text-[#60A5FA]" size={20} />
                 <h3 className="font-semibold text-gray-900 dark:text-[#F8FAFC]">Changer le mot de passe</h3>
@@ -925,7 +925,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit" 
-                className="bg-[#1E3A8A] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#1e40af] disabled:bg-[#94A3B8] disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
+                className="bg-[#1E3A8A] text-white w-full sm:w-auto justify-center px-8 py-3 rounded-xl font-semibold hover:bg-[#1e40af] disabled:bg-[#94A3B8] disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
                 disabled={!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword || isChangingPassword}
               >
                 {isChangingPassword ? (
@@ -961,7 +961,7 @@ export default function SettingsPage() {
             </form>
 
             {/* Export des données */}
-            <div className="mb-8 p-6 bg-gradient-to-br from-green-50 dark:from-[#14532D]/30 to-emerald-50 dark:to-[#14532D]/30 rounded-xl border border-green-200 dark:border-[#166534]">
+            <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-br from-green-50 dark:from-[#14532D]/30 to-emerald-50 dark:to-[#14532D]/30 rounded-xl border border-green-200 dark:border-[#166534]">
               <div className="flex items-center gap-2 mb-3">
                 <MdDownload className="text-green-600 dark:text-[#22C55E]" size={20} />
                 <h3 className="font-semibold text-gray-900 dark:text-[#F8FAFC]">Export des données</h3>
@@ -975,7 +975,7 @@ export default function SettingsPage() {
                 Exporter mes données
               </button>
             </div>
-            <div className="flex flex-col md:flex-row gap-8 items-center">
+            <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-center">
               <div className="flex-1 space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#334155]/50 rounded-xl hover:bg-gray-100 dark:hover:bg-[#334155] transition-colors mb-4">
                   <div className="flex items-start gap-3 flex-1">
@@ -1018,7 +1018,7 @@ export default function SettingsPage() {
                     </span>
                   </label>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#334155]/50 rounded-xl hover:bg-gray-100 dark:hover:bg-[#334155] transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gray-50 dark:bg-[#334155]/50 rounded-xl hover:bg-gray-100 dark:hover:bg-[#334155] transition-colors">
                   <div className="flex items-start gap-3 flex-1">
                     <MdDevices className="text-[#2563EB] dark:text-[#60A5FA] mt-1 flex-shrink-0" size={20} />
                     <div>
@@ -1026,7 +1026,7 @@ export default function SettingsPage() {
                       <div className="text-gray-600 dark:text-[#CBD5E1] text-sm">Gérez les appareils connectés à votre compte.</div>
                     </div>
                   </div>
-                  <button onClick={openSessions} className="bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] px-6 py-2 rounded-xl font-semibold border-2 border-[#2563EB] hover:bg-blue-50 dark:hover:bg-[#1E40AF]/25 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <button onClick={openSessions} className="w-full sm:w-auto bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] px-6 py-2 rounded-xl font-semibold border-2 border-[#2563EB] hover:bg-blue-50 dark:hover:bg-[#1E40AF]/25 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                     Voir les sessions
                   </button>
                 </div>
@@ -1035,7 +1035,7 @@ export default function SettingsPage() {
           </section>
 
           {/* Zone de Danger */}
-          <section className="bg-gradient-to-br from-gray-50 dark:from-[#0F172A] via-gray-100 dark:via-[#334155] to-gray-50 dark:to-[#0F172A] rounded-2xl border-2 border-[#334155] shadow-lg p-8 mb-8">
+          <section className="bg-gradient-to-br from-gray-50 dark:from-[#0F172A] via-gray-100 dark:via-[#334155] to-gray-50 dark:to-[#0F172A] rounded-2xl border-2 border-[#334155] shadow-lg p-4 sm:p-8 mb-6 sm:mb-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-gradient-to-br from-[#334155] to-[#0F172A] rounded-lg">
                 <MdWarning className="text-white" size={24} />
@@ -1081,7 +1081,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit"
-                className="bg-gradient-to-r from-[#334155] to-[#0F172A] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#0F172A] hover:to-[#0F172A] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
+                className="bg-gradient-to-r from-[#334155] to-[#0F172A] text-white w-full sm:w-auto justify-center px-8 py-3 rounded-xl font-semibold hover:from-[#0F172A] hover:to-[#0F172A] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
                 disabled={deleteForm.confirmation !== 'DELETE'}
               >
                 <MdDelete size={20} />
@@ -1128,12 +1128,6 @@ export default function SettingsPage() {
             </div>
           )}
         </main>
-        {/* Sidebar mobile (déconnexion) */}
-        <aside className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1E293B] border-t border-[#E2E8F0] dark:border-[#334155] p-4 flex justify-center">
-          <button className="bg-[#DC2626] text-white px-6 py-2 rounded font-semibold hover:bg-[#B91C1C] flex items-center gap-2">
-            <span className="text-lg">⏻</span> Déconnexion
-          </button>
-        </aside>
       </div>
 
       {/* Toasts pour les notifications */}
