@@ -31,3 +31,14 @@ export async function promptInstall() {
   const choice = await event.userChoice.catch(() => null);
   return choice?.outcome === 'accepted';
 }
+
+/** Consigne d'installation manuelle quand le navigateur ne propose pas de bouton (null si rien à dire). */
+export function manualInstallHint() {
+  if (isStandalone()) return null;
+  const ua = navigator.userAgent;
+  if (isIOS()) return 'ios';
+  if (/android/i.test(ua)) return /firefox/i.test(ua) ? 'firefoxAndroid' : null;
+  if (/firefox/i.test(ua)) return 'firefox';
+  if (/safari/i.test(ua) && !/chrome|chromium|edg|opr/i.test(ua) && /mac/i.test(ua)) return 'safari';
+  return null;
+}

@@ -70,7 +70,10 @@ export default {
   'install.text': 'Add the app to your home screen or computer to open it in one click.',
   'install.button': 'Install',
   'install.later': 'Not now',
-  'install.iosText': 'On iPhone: tap Share then “Add to Home Screen” to install MyBudget.',
+  'install.hint.ios': "On iPhone: tap Share then “Add to Home Screen” to install MyBudget.",
+  'install.hint.safari': "On Safari: File menu then “Add to Dock” to install MyBudget.",
+  'install.hint.firefox': "Firefox on desktop can’t install the app. Open MyBudget in Chrome or Edge, or bookmark it.",
+  'install.hint.firefoxAndroid': "On Firefox: open the menu (⋮) then “Install”.",
 
   // Push
   'push.title': 'Push notifications on this device',
