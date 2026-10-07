@@ -198,7 +198,8 @@ export default function TransactionsPage() {
     try {
       // IA Claude si le serveur est configuré, sinon lecture gratuite sur l'appareil
       setScanProgress(0);
-      const r = aiReady ? await scanReceipt(file) : await scanReceiptLocal(file, setScanProgress);
+      const isPdf = file.type === 'application/pdf';
+      const r = aiReady && !isPdf ? await scanReceipt(file) : await scanReceiptLocal(file, setScanProgress);
       setNewTransaction((prev) => ({
         ...prev,
         type: 'expense',
@@ -661,8 +662,8 @@ export default function TransactionsPage() {
                 <form onSubmit={handleAddTransaction}>
                   {!editingTransaction && (
                     <label className="mb-3 md:mb-4 flex items-center justify-center gap-2 border border-dashed border-[#1E73BE] text-[#1E73BE] rounded-lg px-3 py-2 text-sm cursor-pointer hover:bg-[#EAF4FB]">
-                      {scanning ? `Lecture du ticket…${scanProgress ? ` ${scanProgress} %` : ''}` : '📷 Scanner un ticket de caisse'}
-                      <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="hidden" onChange={handleReceiptScan} disabled={scanning} />
+                      {scanning ? `Lecture du ticket…${scanProgress ? ` ${scanProgress} %` : ''}` : '📷 Scanner un ticket (photo ou PDF)'}
+                      <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" capture="environment" className="hidden" onChange={handleReceiptScan} disabled={scanning} />
                     </label>
                   )}
                   <div className="mb-3 md:mb-4">

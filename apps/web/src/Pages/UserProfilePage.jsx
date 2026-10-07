@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { MdPerson, MdPhotoCamera, MdDelete, MdEmail, MdPhone, MdBadge, MdTune, MdNotifications, MdSecurity, MdLock, MdCheckCircle, MdErrorOutline } from "react-icons/md";
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { 
   getCurrentUser,
@@ -169,247 +169,194 @@ const UserProfilePage = () => {
     );
   }
 
+  const t = isDarkMode
+    ? { page: 'bg-[#1a1a1a]', card: 'bg-[#2d2d2d] border-[#404040]', title: 'text-white', muted: 'text-gray-400', input: 'bg-[#383838] border-[#404040] text-white placeholder-gray-500', tabOff: 'bg-[#383838] text-gray-300 hover:bg-[#454545]', soft: 'bg-[#383838]' }
+    : { page: 'bg-[#F5F7FA]', card: 'bg-white border-gray-100', title: 'text-[#22292F]', muted: 'text-gray-500', input: 'bg-white border-gray-200 text-[#22292F]', tabOff: 'bg-gray-100 text-gray-600 hover:bg-gray-200', soft: 'bg-[#F5F7FA]' };
+  const CARD = `rounded-2xl border shadow-sm p-5 md:p-6 ${t.card}`;
+  const INPUT = `w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E73BE]/40 ${t.input}`;
+  const LABEL = `block text-sm font-medium mb-1 ${t.title}`;
+  const initials = user?.name ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) : 'U';
+  const avatar = getAvatarUrl(user?.profilePicture);
+
+  const TABS = [
+    { id: 'profile', label: 'Affichage', icon: MdTune },
+    { id: 'notifications', label: 'Notifications', icon: MdNotifications },
+    { id: 'securite', label: 'Sécurité', icon: MdSecurity },
+    { id: 'confidentialite', label: 'Confidentialité', icon: MdLock },
+  ];
+
+  const NOTIF_ROWS = [
+    { key: 'email', label: 'Notifications par e-mail', description: 'Recevez des mises à jour importantes et des résumés par e-mail.' },
+    { key: 'sms', label: 'Notifications par SMS', description: 'Recevez des alertes rapides sur vos dépenses importantes.' },
+    { key: 'push', label: 'Notifications push', description: 'Recevez des alertes directement sur votre appareil mobile ou votre navigateur.' },
+  ];
+
+  const selectOptions = (list) => list.map(([value, label]) => (
+    <option key={value} value={value} style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>{label}</option>
+  ));
+
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
+    <div className={`min-h-screen flex flex-col ${t.page}`}>
       <div className="flex flex-1">
         <DashboardSidebar />
-        {/* Main content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10 pt-16 md:pt-10">
-          <h1 className={`text-xl md:text-2xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Mon Profil</h1>
-          <p className={`mb-4 md:mb-6 lg:mb-8 text-sm md:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            Gérez vos informations personnelles, votre photo de profil et vos préférences.
-            {user && ` Bonjour ${user.name?.split(' ')[0] || 'Utilisateur'} !`}
-          </p>
+        <main className="flex-1 p-4 md:p-8 lg:p-10 pt-16 md:pt-10 space-y-6 max-w-5xl">
+          {/* Bandeau profil */}
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E73BE] to-[#6C5CE7] text-white p-6 md:p-8 shadow-sm flex items-center gap-5 flex-wrap">
+            {avatar ? (
+              <img src={avatar} alt={user?.name || 'Avatar'} className="w-20 h-20 rounded-full object-cover border-4 border-white/40" />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-white/20 border-4 border-white/40 flex items-center justify-center text-2xl font-extrabold">{initials}</div>
+            )}
+            <div className="min-w-0">
+              <h1 className="text-2xl md:text-3xl font-extrabold truncate">{user?.name || 'Mon profil'}</h1>
+              <p className="text-white/85 text-sm mt-0.5 truncate">{user?.email}</p>
+              <p className="text-white/75 text-xs mt-1">Gérez vos informations personnelles, votre photo de profil et vos préférences.</p>
+            </div>
+          </header>
 
-          {/* Messages d'erreur et de succès */}
           {error && (
-            <div className={`border px-4 py-3 rounded mb-4 ${isDarkMode ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-100 border-red-400 text-red-700'}`}>
-              {error}
+            <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-50 border-red-200 text-red-700'}`}>
+              <MdErrorOutline className="text-xl shrink-0" /> {error}
             </div>
           )}
           {success && (
-            <div className={`border px-4 py-3 rounded mb-4 ${isDarkMode ? 'bg-green-900/20 border-green-700 text-green-400' : 'bg-green-100 border-green-400 text-green-700'}`}>
-              {success}
+            <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-green-900/20 border-green-700 text-green-400' : 'bg-green-50 border-green-200 text-green-700'}`}>
+              <MdCheckCircle className="text-xl shrink-0" /> {success}
             </div>
           )}
-          <div className="flex flex-col lg:flex-row flex-wrap gap-4 md:gap-6 lg:gap-8 mb-4 md:mb-6 lg:mb-8">
+
+          <div className="grid gap-6 lg:grid-cols-3">
             {/* Infos personnelles */}
-            <section className={`rounded-xl shadow p-4 md:p-6 flex-1 min-w-[280px] lg:min-w-[320px] lg:max-w-md ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
-              <div className="flex justify-between items-center mb-3 md:mb-4">
-                <h2 className={`font-semibold text-base md:text-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>Informations Personnelles</h2>
-                <button className="text-[#1E73BE] text-xs md:text-sm font-medium">Modifier</button>
-              </div>
-              <form onSubmit={handleProfileUpdate} className="space-y-3">
+            <section className={`${CARD} lg:col-span-2`}>
+              <h2 className={`flex items-center gap-2 font-bold text-lg mb-4 ${t.title}`}><MdPerson className="text-[#1E73BE] text-2xl" /> Informations personnelles</h2>
+              <form onSubmit={handleProfileUpdate} className="space-y-4">
                 <div>
-                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Nom complet</label>
-                  <input 
-                    type="text"
-                    value={profileForm.name}
-                    onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-                    className={`border rounded px-3 py-2 text-sm md:text-base w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
-                    placeholder="Votre nom complet"
-                  />
+                  <label className={LABEL}><MdBadge className="inline mr-1 text-gray-400" />Nom complet</label>
+                  <input type="text" value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} className={INPUT} placeholder="Votre nom complet" />
                 </div>
-                <div>
-                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Email</label>
-                  <input 
-                    type="email"
-                    value={profileForm.email}
-                    onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
-                    className={`border rounded px-3 py-2 text-sm md:text-base w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
-                    placeholder="votre@email.com"
-                  />
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className={LABEL}><MdEmail className="inline mr-1 text-gray-400" />Email</label>
+                    <input type="email" value={profileForm.email} onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} className={INPUT} placeholder="votre@email.com" />
+                  </div>
+                  <div>
+                    <label className={LABEL}><MdPhone className="inline mr-1 text-gray-400" />Téléphone</label>
+                    <input type="tel" value={profileForm.phoneNumber} onChange={(e) => setProfileForm({ ...profileForm, phoneNumber: e.target.value })} className={INPUT} placeholder="+33 6 12 34 56 78" />
+                  </div>
                 </div>
-                <div>
-                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Téléphone</label>
-                  <input 
-                    type="tel"
-                    value={profileForm.phoneNumber}
-                    onChange={(e) => setProfileForm({...profileForm, phoneNumber: e.target.value})}
-                    className={`border rounded px-3 py-2 text-sm md:text-base w-full focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
-                    placeholder="+33 6 12 34 56 78"
-                  />
-                </div>
-                <button type="submit" className="w-full bg-[#1E73BE] text-white px-3 md:px-4 py-2 rounded font-semibold text-sm md:text-base hover:bg-[#155a8a]">
+                <button type="submit" className="px-6 py-2.5 rounded-xl bg-[#1E73BE] text-white font-semibold text-sm hover:bg-[#155a8a]">
                   Mettre à jour le profil
                 </button>
               </form>
             </section>
+
             {/* Photo de profil */}
-            <section className={`rounded-xl shadow p-4 md:p-6 flex flex-col items-center min-w-[240px] lg:min-w-[260px] lg:max-w-xs ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
-              <h2 className={`font-semibold text-base md:text-lg mb-3 md:mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>Photo de Profil</h2>
-              <div className="relative mb-3 md:mb-4">
-                {getAvatarUrl(user?.profilePicture) ? (
-                  <img
-                    src={getAvatarUrl(user.profilePicture)}
-                    alt={user?.name || 'Avatar'}
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-[#1E73BE]"
-                  />
-                ) : (
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-semibold text-xl md:text-2xl">
-                    {user?.name ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
-                  </div>
-                )}
-              </div>
-              <input
-                id="profile-photo-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handlePhotoUpload}
-                disabled={uploadingPhoto}
-              />
+            <section className={`${CARD} flex flex-col items-center text-center`}>
+              <h2 className={`flex items-center gap-2 font-bold text-lg mb-4 ${t.title}`}><MdPhotoCamera className="text-[#1E73BE] text-2xl" /> Photo de profil</h2>
+              {avatar ? (
+                <img src={avatar} alt={user?.name || 'Avatar'} className="w-28 h-28 rounded-full object-cover border-4 border-[#E8F1FA] shadow" />
+              ) : (
+                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#6C5CE7] text-white flex items-center justify-center font-extrabold text-3xl shadow">{initials}</div>
+              )}
+              <input id="profile-photo-upload" type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploadingPhoto} />
               <label
                 htmlFor="profile-photo-upload"
-                className={`px-3 md:px-4 py-2 rounded font-medium text-xs md:text-sm cursor-pointer ${
-                  uploadingPhoto
-                    ? 'opacity-60 cursor-not-allowed'
-                    : isDarkMode
-                      ? 'bg-[#383838] text-gray-300 hover:bg-[#454545]'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className={`mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm ${uploadingPhoto ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${t.tabOff}`}
               >
-                {uploadingPhoto ? 'Upload en cours…' : 'Changer la photo'}
+                <MdPhotoCamera /> {uploadingPhoto ? 'Envoi en cours…' : 'Changer la photo'}
               </label>
               {user?.profilePicture && (
-                <button
-                  type="button"
-                  onClick={handlePhotoDelete}
-                  disabled={uploadingPhoto}
-                  className={`mt-2 text-xs md:text-sm ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-700'}`}
-                >
-                  Supprimer
+                <button type="button" onClick={handlePhotoDelete} disabled={uploadingPhoto} className="mt-2 inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700">
+                  <MdDelete /> Supprimer
                 </button>
               )}
-              <p className={`text-xs mt-2 text-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                JPG, PNG, GIF • max 5 Mo
-              </p>
+              <p className={`text-xs mt-3 ${t.muted}`}>JPG, PNG, GIF • max 5 Mo</p>
             </section>
           </div>
+
           {/* Préférences */}
-          <section className={`rounded-xl shadow p-4 md:p-6 mt-2 md:mt-4 ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
-            <h2 className={`font-semibold text-base md:text-lg mb-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>Préférences</h2>
-            <p className={`mb-3 md:mb-4 text-sm md:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Gérez vos paramètres de notification, de sécurité et de confidentialité.</p>
-            <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-              <button onClick={() => setTab("profile")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "profile" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Profil</button>
-              <button onClick={() => setTab("notifications")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "notifications" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Notifications</button>
-              <button onClick={() => setTab("securite")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "securite" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Sécurité</button>
-              <button onClick={() => setTab("confidentialite")} className={`px-3 md:px-4 py-2 rounded-t font-medium text-xs md:text-sm ${tab === "confidentialite" ? "bg-[#1E73BE] text-white" : isDarkMode ? "bg-[#383838] text-gray-300" : "bg-gray-100 text-gray-600"}`}>Confidentialité</button>
+          <section className={CARD}>
+            <h2 className={`font-bold text-lg mb-1 ${t.title}`}>Préférences</h2>
+            <p className={`mb-4 text-sm ${t.muted}`}>Gérez vos paramètres d’affichage, de notification, de sécurité et de confidentialité.</p>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {TABS.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => setTab(id)}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full font-semibold text-sm transition-colors ${tab === id ? 'bg-[#1E73BE] text-white' : t.tabOff}`}
+                >
+                  <Icon /> {label}
+                </button>
+              ))}
             </div>
-            {tab === "profile" && (
-              <div className="space-y-3 md:space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+
+            {tab === 'profile' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Devise par défaut</label>
-                    <select 
+                    <label className={LABEL}>Devise par défaut</label>
+                    <select
                       value={settings?.appearance?.currency || 'EUR'}
                       onChange={(e) => handleSettingsUpdate({ appearance: { currency: e.target.value } })}
-                      className={`w-full border rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-[#F5F7FA] text-black'}`}
+                      className={INPUT}
                       style={isDarkMode ? { colorScheme: 'dark' } : {}}
                     >
-                      <option value="EUR" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>Euro (€)</option>
-                      <option value="USD" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>Dollar ($)</option>
-                      <option value="GBP" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>Livre Sterling (£)</option>
+                      {selectOptions([['EUR', 'Euro (€)'], ['USD', 'Dollar ($)'], ['GBP', 'Livre Sterling (£)']])}
                     </select>
                   </div>
                   <div>
-                    <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Format de date</label>
-                    <select 
+                    <label className={LABEL}>Format de date</label>
+                    <select
                       value={settings?.appearance?.dateFormat || 'DD/MM/YYYY'}
                       onChange={(e) => handleSettingsUpdate({ appearance: { dateFormat: e.target.value } })}
-                      className={`w-full border rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-[#F5F7FA] text-black'}`}
+                      className={INPUT}
                       style={isDarkMode ? { colorScheme: 'dark' } : {}}
                     >
-                      <option value="DD/MM/YYYY" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>DD/MM/YYYY (26/07/2024)</option>
-                      <option value="MM/DD/YYYY" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>MM/DD/YYYY (07/26/2024)</option>
-                      <option value="YYYY-MM-DD" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>YYYY-MM-DD (2024-07-26)</option>
+                      {selectOptions([['DD/MM/YYYY', 'DD/MM/YYYY (26/07/2024)'], ['MM/DD/YYYY', 'MM/DD/YYYY (07/26/2024)'], ['YYYY-MM-DD', 'YYYY-MM-DD (2024-07-26)']])}
                     </select>
                   </div>
                 </div>
-                <div>
-                  <label className={`block text-xs md:text-sm mb-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>Langue</label>
-                  <select 
+                <div className="md:max-w-sm">
+                  <label className={LABEL}>Langue</label>
+                  <select
                     value={settings?.appearance?.language || 'fr'}
-                    onChange={(e) => {
-                      console.log('🌍 Changement de langue:', e.target.value);
-                      handleSettingsUpdate({ appearance: { language: e.target.value } });
-                    }}
-                    className={`w-full border rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE] ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-[#F5F7FA] text-black'}`}
+                    onChange={(e) => handleSettingsUpdate({ appearance: { language: e.target.value } })}
+                    className={INPUT}
                     style={isDarkMode ? { colorScheme: 'dark' } : {}}
                   >
-                    <option value="fr" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>Français</option>
-                    <option value="en" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>English</option>
-                    <option value="es" style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>Español</option>
+                    {selectOptions([['fr', 'Français'], ['en', 'English'], ['es', 'Español']])}
                   </select>
-                  <div className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Langue actuelle: {settings?.appearance?.language || 'fr'}
-                  </div>
                 </div>
               </div>
             )}
-            {tab === "notifications" && (
-              <div className="space-y-4 md:space-y-5">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <div className="flex-1">
-                    <div className={`font-medium text-sm md:text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications par e-mail</div>
-                    <div className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des mises à jour importantes et des résumés par e-mail.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={settings?.notifications?.email || false} 
-                      onChange={() => handleSettingsUpdate({ notifications: { email: !settings?.notifications?.email } })} 
-                      className="sr-only" 
-                    />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings?.notifications?.email ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings?.notifications?.email ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <div className="flex-1">
-                    <div className={`font-medium text-sm md:text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications par SMS</div>
-                    <div className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des alertes rapides sur vos dépenses importantes.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={settings?.notifications?.sms || false} 
-                      onChange={() => handleSettingsUpdate({ notifications: { sms: !settings?.notifications?.sms } })} 
-                      className="sr-only" 
-                    />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings?.notifications?.sms ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings?.notifications?.sms ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <div className="flex-1">
-                    <div className={`font-medium text-sm md:text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>Notifications push</div>
-                    <div className={`text-xs md:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Recevez des alertes directement sur votre appareil mobile ou votre navigateur.</div>
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      checked={settings?.notifications?.push || false} 
-                      onChange={() => handleSettingsUpdate({ notifications: { push: !settings?.notifications?.push } })} 
-                      className="sr-only" 
-                    />
-                    <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${settings?.notifications?.push ? 'bg-[#1E73BE]' : ''}`}>
-                      <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${settings?.notifications?.push ? 'translate-x-5' : ''}`}></span>
-                    </span>
-                  </label>
-                </div>
+
+            {tab === 'notifications' && (
+              <div className={`divide-y ${isDarkMode ? 'divide-[#404040]' : 'divide-gray-100'}`}>
+                {NOTIF_ROWS.map(({ key, label, description }) => {
+                  const on = Boolean(settings?.notifications?.[key]);
+                  return (
+                    <div key={key} className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                      <div>
+                        <div className={`font-semibold ${t.title}`}>{label}</div>
+                        <div className={`text-sm mt-0.5 ${t.muted}`}>{description}</div>
+                      </div>
+                      <label className="inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" checked={on} onChange={() => handleSettingsUpdate({ notifications: { [key]: !on } })} className="sr-only" aria-label={label} />
+                        <span className={`w-12 h-7 flex items-center rounded-full p-1 duration-300 ${on ? 'bg-green-500' : 'bg-gray-300'}`}>
+                          <span className={`bg-white w-5 h-5 rounded-full shadow transform duration-300 ${on ? 'translate-x-5' : ''}`}></span>
+                        </span>
+                      </label>
+                    </div>
+                  );
+                })}
               </div>
             )}
-            {tab === "securite" && (
-              <div className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Paramètres de sécurité à venir...</div>
+
+            {tab === 'securite' && (
+              <div className={`rounded-xl p-5 text-sm ${t.soft} ${t.muted}`}>Paramètres de sécurité à venir...</div>
             )}
-            {tab === "confidentialite" && (
-              <div className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Paramètres de confidentialité à venir...</div>
-            )}
-            {tab === "theme" && (
-              <div className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Personnalisation du thème à venir...</div>
+            {tab === 'confidentialite' && (
+              <div className={`rounded-xl p-5 text-sm ${t.soft} ${t.muted}`}>Paramètres de confidentialité à venir...</div>
             )}
           </section>
         </main>
