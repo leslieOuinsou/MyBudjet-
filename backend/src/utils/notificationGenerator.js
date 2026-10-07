@@ -156,6 +156,24 @@ export const createBillReminderNotification = async (userId, billName, amount, d
   return created;
 };
 
+// Document (garantie, contrat, assurance…) bientôt expiré
+export const createDocumentExpiryNotification = async (userId, documentName, expiresAt, daysLeft) => {
+  const date = new Date(expiresAt).toLocaleDateString('fr-FR');
+  const message = daysLeft < 0
+    ? `Le document « ${documentName} » a expiré le ${date}.`
+    : daysLeft === 0
+      ? `Le document « ${documentName} » expire aujourd'hui.`
+      : `Le document « ${documentName} » expire dans ${daysLeft} jour${daysLeft > 1 ? 's' : ''} (${date}).`;
+  return createIfAllowed({
+    userId,
+    type: 'document',
+    title: daysLeft < 0 ? 'Document expiré' : 'Document bientôt expiré',
+    message,
+    priority: daysLeft <= 7 ? 'high' : 'medium',
+    data: { documentName, expiresAt },
+  });
+};
+
 // Créer une notification pour objectif atteint
 export const createGoalAchievedNotification = async (userId, goalName, amount) => {
   const created = await createIfAllowed({
@@ -226,6 +244,7 @@ export default {
   createBudgetAlertNotification,
   createBudgetExceededNotification,
   createBillReminderNotification,
+  createDocumentExpiryNotification,
   createGoalAchievedNotification,
   createSystemNotification,
   createWelcomeNotification,

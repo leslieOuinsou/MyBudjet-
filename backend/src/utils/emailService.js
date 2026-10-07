@@ -277,6 +277,7 @@ const TYPE_STYLES = {
   budget_exceeded: { icon: '🚨', label: 'Budget dépassé', color: '#DC2626' },
   bill: { icon: '🧾', label: 'Rappel de facture', color: '#16A34A' },
   goal_achieved: { icon: '🏆', label: 'Objectif atteint', color: '#16A34A' },
+  document: { icon: '📄', label: 'Document à renouveler', color: '#F59E0B' },
   weekly: { icon: '📊', label: 'Résumé hebdomadaire', color: '#3B82F6' },
   security: { icon: '🔒', label: 'Sécurité', color: '#EAB308' },
   system: { icon: '🔔', label: 'Notification', color: '#2563EB' },

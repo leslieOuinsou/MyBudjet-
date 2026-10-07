@@ -1603,12 +1603,13 @@ export const getDocuments = (params = {}) => {
   return apiCall('GET', `/documents${qs ? `?${qs}` : ''}`);
 };
 
-export async function uploadDocument(file, { name, category, note } = {}) {
+export async function uploadDocument(file, { name, category, note, expiresAt } = {}) {
   const form = new FormData();
   form.append('file', file);
   if (name) form.append('name', name);
   if (category) form.append('category', category);
   if (note) form.append('note', note);
+  if (expiresAt) form.append('expiresAt', expiresAt);
   const response = await fetch(`${API_URL}/documents`, { method: 'POST', headers: getAuthHeaders(false), body: form });
   return handleApiResponse(response);
 }

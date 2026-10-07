@@ -3,7 +3,7 @@ import { trackEvent } from '../lib/analytics.js';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import {
   MdFolder, MdCloudUpload, MdPictureAsPdf, MdImage, MdDownload, MdOpenInNew, MdDelete, MdEdit,
-  MdSearch, MdErrorOutline, MdCheckCircle, MdClose, MdStorage, MdDescription,
+  MdSearch, MdEventBusy, MdErrorOutline, MdCheckCircle, MdClose, MdStorage, MdDescription,
 } from 'react-icons/md';
 import { getDocuments, uploadDocument, updateDocument, deleteDocument, fetchDocumentFile, downloadBlob } from '../api.js';
 import { formatDate } from '../lib/format.js';
@@ -20,6 +20,17 @@ const labelOf = (id) => CATEGORIES.find((c) => c.id === id)?.label || 'Autres';
 
 const formatSize = (bytes) => (bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} Mo` : `${Math.max(1, Math.round(bytes / 1024))} Ko`);
 
+const DAY = 86400000;
+// État d'échéance d'un document : null si aucune date
+const expiryState = (iso) => {
+  if (!iso) return null;
+  const days = Math.ceil((new Date(iso).getTime() - Date.now()) / DAY);
+  if (days < 0) return { days, tone: 'bg-red-100 text-[#DC2626] dark:bg-[#7F1D1D]/50 dark:text-[#FCA5A5]', label: `Expiré depuis ${-days} j` };
+  if (days <= 30) return { days, tone: 'bg-amber-100 text-[#B45309] dark:bg-[#78350F]/50 dark:text-[#FCD34D]', label: days === 0 ? "Expire aujourd'hui" : `Expire dans ${days} j` };
+  return { days, tone: 'bg-gray-100 text-[#64748B] dark:bg-[#334155] dark:text-[#CBD5E1]', label: `Valable jusqu'au ${formatDate(iso)}` };
+};
+const toDateInput = (iso) => (iso ? new Date(iso).toISOString().slice(0, 10) : '');
+
 const CARD = 'bg-white dark:bg-[#1E293B] rounded-2xl border border-[#E2E8F0] dark:border-[#334155] shadow-sm';
 const INPUT = 'border border-gray-200 dark:border-[#334155] rounded-xl px-4 py-2.5 text-sm bg-white dark:bg-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40';
 
@@ -30,6 +41,8 @@ export default function DocumentsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [category, setCategory] = useState('');
+  const [expiring, setExpiring] = useState(false);
+  const [uploadExpiry, setUploadExpiry] = useState('');
   const [query, setQuery] = useState('');
   const [uploadCategory, setUploadCategory] = useState('autre');
   const [uploading, setUploading] = useState(false);
@@ -44,7 +57,7 @@ export default function DocumentsPage() {
 
   const load = useCallback(async () => {
     try {
-      const data = await getDocuments({ category, q: query.trim() });
+      const data = await getDocuments({ category, q: query.trim(), expiring: expiring ? '1' : '' });
       setDocuments(data.documents || []);
       setTotalSize(data.totalSize || 0);
       setError('');
@@ -53,7 +66,7 @@ export default function DocumentsPage() {
     } finally {
       setLoading(false);
     }
-  }, [category, query]);
+  }, [category, query, expiring]);
 
   useEffect(() => {
     const timer = setTimeout(load, query ? 250 : 0);
@@ -72,7 +85,7 @@ export default function DocumentsPage() {
         continue;
       }
       try {
-        await uploadDocument(file, { category: uploadCategory });
+        await uploadDocument(file, { category: uploadCategory, expiresAt: uploadExpiry });
         trackEvent('document_uploaded', { category: uploadCategory });
         done += 1;
       } catch (err) {
@@ -119,7 +132,7 @@ export default function DocumentsPage() {
   const saveEdit = async (e) => {
     e.preventDefault();
     try {
-      await updateDocument(editing._id, { name: editing.name, category: editing.category, note: editing.note || '' });
+      await updateDocument(editing._id, { name: editing.name, category: editing.category, note: editing.note || '', expiresAt: editing.expiresAt ? toDateInput(editing.expiresAt) : '' });
       setEditing(null);
       notify('Document modifié ✓');
       await load();
@@ -129,6 +142,7 @@ export default function DocumentsPage() {
   };
 
   const pdfCount = documents.filter((d) => d.mimeType === 'application/pdf').length;
+  const expiringCount = documents.filter((d) => d.expiresAt && new Date(d.expiresAt).getTime() - Date.now() <= 30 * DAY).length;
   const drag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -162,7 +176,7 @@ export default function DocumentsPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             {[
               { icon: MdDescription, label: 'Documents', value: documents.length },
-              { icon: MdPictureAsPdf, label: 'Fichiers PDF', value: pdfCount },
+              { icon: MdEventBusy, label: 'À renouveler (30 j)', value: expiringCount },
               { icon: MdStorage, label: 'Espace utilisé', value: formatSize(totalSize) },
             ].map(({ icon: Icon, label, value }) => (
               <div key={label} className={`${CARD} p-5 flex items-center gap-4`}>
@@ -179,12 +193,18 @@ export default function DocumentsPage() {
           <section className={`${CARD} p-5 md:p-6`}>
             <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
               <h2 className="font-bold text-lg text-[#0F172A] dark:text-[#F8FAFC]">Importer un document</h2>
-              <label className="flex items-center gap-2 text-sm text-[#0F172A] dark:text-[#F8FAFC]">
-                Ranger dans
-                <select value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)} className={INPUT}>
-                  {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-                </select>
-              </label>
+              <div className="flex items-center gap-3 flex-wrap">
+                <label className="flex items-center gap-2 text-sm text-[#0F172A] dark:text-[#F8FAFC]">
+                  Ranger dans
+                  <select value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)} className={INPUT}>
+                    {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+                  </select>
+                </label>
+                <label className="flex items-center gap-2 text-sm text-[#0F172A] dark:text-[#F8FAFC]" title="Garantie, contrat, assurance… vous serez prévenu 30 jours avant">
+                  Expire le
+                  <input type="date" value={uploadExpiry} onChange={(e) => setUploadExpiry(e.target.value)} className={INPUT} />
+                </label>
+              </div>
             </div>
             <div
               className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl py-10 px-4 cursor-pointer transition ${
@@ -225,6 +245,13 @@ export default function DocumentsPage() {
                     {c.label}
                   </button>
                 ))}
+                <button
+                  onClick={() => setExpiring((v) => !v)}
+                  aria-pressed={expiring}
+                  className={`inline-flex items-center gap-1 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${expiring ? 'bg-[#F59E0B] text-[#0F172A]' : 'bg-[#F8FAFC] dark:bg-[#334155]/50 text-[#0F172A] dark:text-[#F8FAFC] hover:bg-amber-100 dark:hover:bg-[#78350F]/50'}`}
+                >
+                  <MdEventBusy /> Expire bientôt
+                </button>
               </div>
               <div className="relative">
                 <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
@@ -254,6 +281,9 @@ export default function DocumentsPage() {
                           <div className="font-semibold text-[#0F172A] dark:text-[#F8FAFC] truncate" title={doc.name}>{doc.name}</div>
                           <div className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">{formatSize(doc.size)} · {formatDate(doc.createdAt)}</div>
                           <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-[#DBEAFE] dark:bg-[#1E40AF] text-[#2563EB] dark:text-[#BFDBFE] text-xs font-semibold">{labelOf(doc.category)}</span>
+                          {expiryState(doc.expiresAt) && (
+                            <span className={`inline-block mt-1.5 ml-1.5 px-2 py-0.5 rounded-full text-xs font-semibold ${expiryState(doc.expiresAt).tone}`}>{expiryState(doc.expiresAt).label}</span>
+                          )}
                         </div>
                       </div>
                       {doc.note && <p className="text-xs text-[#64748B] dark:text-[#94A3B8] line-clamp-2">{doc.note}</p>}
@@ -286,6 +316,9 @@ export default function DocumentsPage() {
               <select value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className={`${INPUT} w-full mt-1`}>
                 {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
               </select>
+            </label>
+            <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC]">Date d'expiration (facultatif)
+              <input type="date" value={toDateInput(editing.expiresAt)} onChange={(e) => setEditing({ ...editing, expiresAt: e.target.value })} className={`${INPUT} w-full mt-1`} />
             </label>
             <label className="block text-sm font-medium text-[#0F172A] dark:text-[#F8FAFC]">Note
               <textarea value={editing.note || ''} onChange={(e) => setEditing({ ...editing, note: e.target.value })} maxLength={500} rows={3} className={`${INPUT} w-full mt-1`} />

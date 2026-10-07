@@ -53,6 +53,7 @@ enum NotificationType {
   goal_achieved
   system
   test
+  document
 }
 
 enum Priority {
@@ -460,10 +461,13 @@ model Document {
   size         Int
   category     String   @default("autre")
   note         String?
+  expiresAt    DateTime?
+  expiryRemindedAt DateTime?
   data         Bytes
   createdAt    DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt(sort: Desc)])
+  @@index([expiresAt])
 }

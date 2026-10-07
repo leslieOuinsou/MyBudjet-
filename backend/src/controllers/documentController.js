@@ -22,18 +22,27 @@ export const uploadDocument = multer({
 });
 
 // Pas de `data` dans les listes : seuls les métadonnées transitent
-const PUBLIC_FIELDS = { id: true, name: true, originalName: true, mimeType: true, size: true, category: true, note: true, createdAt: true };
+const PUBLIC_FIELDS = { id: true, name: true, originalName: true, mimeType: true, size: true, category: true, note: true, expiresAt: true, createdAt: true };
 const toJson = (d) => ({ ...d, _id: d.id });
+
+// '' / null = pas d'échéance ; date invalide = ignorée
+const parseExpiry = (value) => {
+  if (value === undefined) return undefined;
+  if (value === null || value === '') return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? undefined : d;
+};
 
 export const listDocuments = async (req, res) => {
   try {
     const uid = getUserId(req.user);
-    const { category, q } = req.query;
+    const { category, q, expiring } = req.query;
     const documents = await prisma.document.findMany({
       where: {
         userId: uid,
         ...(category && CATEGORIES.includes(category) ? { category } : {}),
         ...(q ? { name: { contains: String(q), mode: 'insensitive' } } : {}),
+        ...(expiring ? { expiresAt: { not: null, lte: new Date(Date.now() + 30 * 86400000) } } : {}),
       },
       select: PUBLIC_FIELDS,
       orderBy: { createdAt: 'desc' },
@@ -68,6 +77,7 @@ export const createDocument = async (req, res) => {
         size: file.size,
         category,
         note: req.body.note ? String(req.body.note).slice(0, 500) : null,
+        expiresAt: parseExpiry(req.body.expiresAt) ?? null,
         data: file.buffer,
       },
       select: PUBLIC_FIELDS,
@@ -107,6 +117,11 @@ export const updateDocument = async (req, res) => {
     if (typeof req.body.name === 'string' && req.body.name.trim()) data.name = req.body.name.trim().slice(0, 120);
     if (CATEGORIES.includes(req.body.category)) data.category = req.body.category;
     if (typeof req.body.note === 'string') data.note = req.body.note.slice(0, 500) || null;
+    const expiry = parseExpiry(req.body.expiresAt);
+    if (expiry !== undefined) {
+      data.expiresAt = expiry;
+      data.expiryRemindedAt = null; // nouvelle échéance : on re-prévient
+    }
 
     const doc = await prisma.document.update({ where: { id: existing.id }, data, select: PUBLIC_FIELDS });
     res.json(toJson(doc));
