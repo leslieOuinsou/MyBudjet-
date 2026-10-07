@@ -43,6 +43,7 @@ import SharedBudgetsPage from "./Pages/SharedBudgetsPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import PrivacyPolicyPage from "./Pages/PrivacyPolicyPage.jsx";
 import CookieConsent from "./components/CookieConsent.jsx";
+import AnalyticsTracker from "./components/AnalyticsTracker.jsx";
 
 // Composant pour gérer la logique de chargement initial
 function AppContent() {
@@ -117,6 +118,7 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
+      <AnalyticsTracker />
       <AppContent />
       
       {/* Bannière de consentement des cookies RGPD */}

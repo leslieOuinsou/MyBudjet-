@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { setAnalyticsConsent, trackPageView } from '../lib/analytics.js';
 import {
   MdCookie,
   MdSettings,
@@ -53,11 +54,20 @@ export default function CookieConsent() {
     }
   }, []);
 
+  // Rouvrir le choix depuis le pied de page (« Gérer les cookies »)
+  useEffect(() => {
+    const reopen = () => { setShowBanner(true); setShowSettings(true); };
+    window.addEventListener('open-cookie-settings', reopen);
+    return () => window.removeEventListener('open-cookie-settings', reopen);
+  }, []);
+
   // Fonction pour sauvegarder les préférences dans localStorage
   const savePreferences = (prefs) => {
     localStorage.setItem('cookieConsent', JSON.stringify(prefs));
     localStorage.setItem('cookieConsentDate', new Date().toISOString());
-    console.log('✅ Préférences cookies sauvegardées:', prefs);
+    setAnalyticsConsent(Boolean(prefs.analytics));
+    // la page courante est comptée dès l'acceptation
+    if (prefs.analytics) trackPageView(window.location.pathname);
   };
 
   // Fonction pour accepter tous les cookies

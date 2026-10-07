@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { trackEvent } from '../lib/analytics.js';
 import { useNavigate, Link } from "react-router-dom";
 
 const SignUpPage = () => {
@@ -244,6 +245,7 @@ const SignUpPage = () => {
         setError("");
         setRedirectCountdown(1);
         setTimeout(() => {
+          trackEvent('sign_up', { method: 'password' });
           navigate("/dashboard", { replace: true });
         }, 800);
         return;

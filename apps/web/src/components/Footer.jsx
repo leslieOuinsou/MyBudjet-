@@ -287,6 +287,13 @@ const Footer = () => {
               >
                 Confidentialité
               </Link>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new Event('open-cookie-settings'))}
+                className="hover:text-[#1E73BE] transition-colors font-medium"
+              >
+                Gérer les cookies
+              </button>
               <a 
                 href="#" 
                 className="hover:text-[#1E73BE] transition-colors font-medium"

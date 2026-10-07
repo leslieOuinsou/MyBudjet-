@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { trackEvent } from '../lib/analytics.js';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import {
   MdFolder, MdCloudUpload, MdPictureAsPdf, MdImage, MdDownload, MdOpenInNew, MdDelete, MdEdit,
@@ -72,6 +73,7 @@ export default function DocumentsPage() {
       }
       try {
         await uploadDocument(file, { category: uploadCategory });
+        trackEvent('document_uploaded', { category: uploadCategory });
         done += 1;
       } catch (err) {
         setError(err.message);

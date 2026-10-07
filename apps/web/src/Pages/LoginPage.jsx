@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { trackEvent } from '../lib/analytics.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { sendSMSCode, verifySMSCode, verifyTwoFactorLogin } from '../api';
 import TwoFactorPrompt from '../components/TwoFactorPrompt.jsx';
@@ -57,6 +58,7 @@ export default function LoginPage() {
 
     const isAdmin = data.user?.role === 'admin';
     setTimeout(() => {
+      trackEvent('login', { method: 'password' });
       navigate(isAdmin ? '/admin' : '/dashboard', { replace: true });
     }, 100);
   };

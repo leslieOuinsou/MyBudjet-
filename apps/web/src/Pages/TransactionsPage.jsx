@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { trackEvent } from '../lib/analytics.js';
 import { Link, useSearchParams } from "react-router-dom";
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { 
@@ -209,6 +210,7 @@ export default function TransactionsPage() {
         category: r.categoryId || prev.category,
         ...(r.date ? { date: r.date } : {}),
       }));
+      trackEvent('receipt_scanned', { format: isPdf ? 'pdf' : 'image' });
       // Le ticket est rangé dans « Mes documents » (facultatif : n'empêche jamais la saisie)
       if (file.size <= 4 * 1024 * 1024) {
         uploadDocument(file, { name: `Ticket ${r.description || ''} ${r.date || ''}`.trim(), category: 'ticket' }).catch(() => {});
@@ -280,6 +282,7 @@ export default function TransactionsPage() {
         setSuccess('Transaction modifiée avec succès !');
       } else {
         await addTransaction(transactionData);
+        trackEvent('transaction_added', { type: transactionData.type });
         setSuccess('Transaction ajoutée avec succès !');
       }
       
