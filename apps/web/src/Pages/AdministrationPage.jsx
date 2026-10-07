@@ -121,17 +121,17 @@ export default function AdministrationPage() {
 	
 	if (loading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+			<div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-[#0F172A]">
 				<div className="text-center">
 					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E3A8A] mx-auto mb-4"></div>
-					<p className="text-[#64748B]">Chargement du tableau de bord admin...</p>
+					<p className="text-[#64748B] dark:text-[#94A3B8]">Chargement du tableau de bord admin...</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+		<div className="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#0F172A]">
 			<AdminHeader />
 			
 			<div className="flex flex-1">
@@ -141,7 +141,7 @@ export default function AdministrationPage() {
 				<main className="flex-1 px-4 md:px-8 lg:px-12 py-6 md:py-10 flex flex-col pt-16 md:pt-10">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
 						<div>
-							<h1 className="text-2xl md:text-3xl font-extrabold text-[#0F172A]">
+							<h1 className="text-2xl md:text-3xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC]">
 								Tableau de Bord Administration
 							</h1>
 							<div className="text-xs mt-2 flex items-center gap-2 text-gray-400">
@@ -163,93 +163,93 @@ export default function AdministrationPage() {
 					
 					{/* Messages d'erreur et de succès */}
 					{error && (
-						<div className="mb-4 p-4 rounded-lg bg-red-100 border border-red-300 text-red-700">
+						<div className="mb-4 p-4 rounded-lg bg-red-100 dark:bg-[#7F1D1D]/50 border border-red-300 dark:border-[#991B1B] text-red-700 dark:text-[#FCA5A5]">
 							❌ {error}
 						</div>
 					)}
 					{success && (
-						<div className="mb-4 p-4 rounded-lg bg-[#DCFCE7] border border-[#16A34A] text-[#166534]">
+						<div className="mb-4 p-4 rounded-lg bg-[#DCFCE7] dark:bg-[#14532D]/50 border border-[#16A34A] text-[#166534] dark:text-[#86EFAC]">
 							✅ {success}
 						</div>
 					)}
 					
 					{/* Statistiques Clés */}
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#64748B]">
+								<span className="text-sm text-[#64748B] dark:text-[#94A3B8]">
 									Total Utilisateurs
 								</span>
-								<MdPeople size={24} className="text-[#2563EB]" />
+								<MdPeople size={24} className="text-[#2563EB] dark:text-[#60A5FA]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 								{stats?.userCount || 0}
 							</div>
-							<span className="text-xs text-[#16A34A]">
+							<span className="text-xs text-[#16A34A] dark:text-[#22C55E]">
 								Utilisateurs inscrits
 							</span>
 						</div>
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#64748B]">
+								<span className="text-sm text-[#64748B] dark:text-[#94A3B8]">
 									Transactions
 								</span>
-								<MdAttachMoney size={24} className="text-[#16A34A]" />
+								<MdAttachMoney size={24} className="text-[#16A34A] dark:text-[#22C55E]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 								{stats?.txCount || 0}
 							</div>
-							<span className="text-xs text-[#64748B]">
+							<span className="text-xs text-[#64748B] dark:text-[#94A3B8]">
 								Transactions enregistrées
 							</span>
 						</div>
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#64748B]">
+								<span className="text-sm text-[#64748B] dark:text-[#94A3B8]">
 									Budgets Actifs
 								</span>
-								<MdAccountBalance size={24} className="text-[#2563EB]" />
+								<MdAccountBalance size={24} className="text-[#2563EB] dark:text-[#60A5FA]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 								{stats?.budgetCount || 0}
 							</div>
-							<span className="text-xs text-[#16A34A]">
+							<span className="text-xs text-[#16A34A] dark:text-[#22C55E]">
 								Budgets créés
 							</span>
 						</div>
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#64748B]">
+								<span className="text-sm text-[#64748B] dark:text-[#94A3B8]">
 									Rappels de Factures
 								</span>
-								<MdNotifications size={24} className="text-[#64748B]" />
+								<MdNotifications size={24} className="text-[#64748B] dark:text-[#94A3B8]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 								{stats?.reminderCount || 0}
 							</div>
-							<span className="text-xs text-[#2563EB]">Rappels actifs</span>
+							<span className="text-xs text-[#2563EB] dark:text-[#60A5FA]">Rappels actifs</span>
 						</div>
 					</div>
 					{/* Gestion des Utilisateurs */}
-					<section className="rounded-xl shadow p-6 border mb-8 bg-white border-[#E2E8F0]">
+					<section className="rounded-xl shadow p-6 border mb-8 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 						<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
 							<div>
-								<h2 className="text-xl font-bold text-[#0F172A]">
+								<h2 className="text-xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 									Gestion des Utilisateurs ({filteredUsers.length})
 								</h2>
-								<p className="text-sm mt-1 text-[#64748B]">
+								<p className="text-sm mt-1 text-[#64748B] dark:text-[#94A3B8]">
 									Gérez les comptes utilisateurs et leurs accès
 								</p>
 							</div>
 							<div className="flex gap-3">
 								<div className="relative">
-									<MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
+									<MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-[#94A3B8]" size={20} />
 									<input
 										type="text"
 										placeholder="Rechercher..."
 										value={searchTerm}
 										onChange={(e) => setSearchTerm(e.target.value)}
-										className="pl-10 pr-4 py-2 rounded-lg border bg-white border-gray-300 text-black"
+										className="pl-10 pr-4 py-2 rounded-lg border bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]"
 									/>
 								</div>
 							</div>
@@ -257,20 +257,20 @@ export default function AdministrationPage() {
 						<div className="overflow-x-auto rounded-xl">
 							<table className="min-w-full text-base">
 								<thead>
-									<tr className="bg-[#F8FAFC]">
-										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
+									<tr className="bg-[#F8FAFC] dark:bg-[#334155]/50">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 											NOM
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 											EMAIL
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 											RÔLE
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 											STATUT
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 											ACTIONS
 										</th>
 									</tr>
@@ -280,12 +280,12 @@ export default function AdministrationPage() {
 										filteredUsers.map((user) => (
 											<tr
 												key={user._id}
-												className="even:bg-white odd:bg-[#F8FAFC] hover:bg-gray-100"
+												className="even:bg-white dark:even:bg-[#1E293B] odd:bg-[#F8FAFC] dark:odd:bg-[#334155]/50 hover:bg-gray-100 dark:hover:bg-[#334155]"
 											>
-												<td className="px-4 py-3 font-medium text-black">{user.name}</td>
-												<td className="px-4 py-3 text-gray-700">{user.email}</td>
-												<td className="px-4 py-3 text-gray-700">
-													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E3A8A] text-white' : 'bg-[#DBEAFE] text-[#1E3A8A]'}`}>
+												<td className="px-4 py-3 font-medium text-black dark:text-[#F8FAFC]">{user.name}</td>
+												<td className="px-4 py-3 text-gray-700 dark:text-[#E2E8F0]">{user.email}</td>
+												<td className="px-4 py-3 text-gray-700 dark:text-[#E2E8F0]">
+													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E3A8A] text-white' : 'bg-[#DBEAFE] dark:bg-[#1E40AF] text-[#1E3A8A] dark:text-[#BFDBFE]'}`}>
 														{user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
 													</span>
 												</td>
@@ -294,7 +294,7 @@ export default function AdministrationPage() {
 														className={`px-3 py-1 rounded-full text-xs font-bold ${
 															user.blocked 
 																? 'bg-[#64748B] text-white' 
-																: 'bg-[#DCFCE7] text-[#166534]'
+																: 'bg-[#DCFCE7] dark:bg-[#14532D]/50 text-[#166534] dark:text-[#86EFAC]'
 														}`}
 													>
 														{user.blocked ? 'Bloqué' : 'Actif'}
@@ -305,7 +305,7 @@ export default function AdministrationPage() {
 														{user.blocked ? (
 															<button 
 																onClick={() => handleUnblockUser(user._id)}
-																className="flex items-center gap-1 text-[#16A34A] hover:text-[#15803D] text-sm"
+																className="flex items-center gap-1 text-[#16A34A] dark:text-[#22C55E] hover:text-[#15803D] dark:hover:text-[#4ADE80] text-sm"
 																title="Débloquer"
 															>
 																<MdCheckCircle size={18} />
@@ -314,7 +314,7 @@ export default function AdministrationPage() {
 														) : (
 															<button 
 																onClick={() => handleBlockUser(user._id)}
-																className="flex items-center gap-1 text-orange-600 hover:text-orange-800 text-sm"
+																className="flex items-center gap-1 text-orange-600 dark:text-[#FBBF24] hover:text-orange-800 dark:hover:text-[#FDBA74] text-sm"
 																title="Bloquer"
 															>
 																<MdBlock size={18} />
@@ -323,7 +323,7 @@ export default function AdministrationPage() {
 														)}
 														<button 
 															onClick={() => handleDeleteUser(user._id)}
-															className="flex items-center gap-1 text-[#64748B] hover:text-[#334155] text-sm"
+															className="flex items-center gap-1 text-[#64748B] dark:text-[#94A3B8] hover:text-[#334155] dark:hover:text-[#E2E8F0] text-sm"
 															title="Supprimer"
 														>
 															<MdDelete size={18} />
@@ -335,7 +335,7 @@ export default function AdministrationPage() {
 										))
 									) : (
 										<tr>
-											<td colSpan="5" className="px-4 py-8 text-center text-[#64748B]">
+											<td colSpan="5" className="px-4 py-8 text-center text-[#64748B] dark:text-[#94A3B8]">
 												{searchTerm ? 'Aucun utilisateur trouvé' : 'Aucun utilisateur'}
 											</td>
 										</tr>
@@ -346,16 +346,16 @@ export default function AdministrationPage() {
 					</section>
 					{/* Actions Rapides */}
 					<section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#E2E8F0]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 							<div className="flex items-center gap-3">
-								<div className="p-3 bg-[#DBEAFE] rounded-lg">
-									<MdPeople size={24} className="text-[#2563EB]" />
+								<div className="p-3 bg-[#DBEAFE] dark:bg-[#1E40AF] rounded-lg">
+									<MdPeople size={24} className="text-[#2563EB] dark:text-[#60A5FA]" />
 								</div>
 								<div>
-									<h3 className="text-lg font-bold text-[#0F172A]">
+									<h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 										Utilisateurs
 									</h3>
-									<p className="text-sm text-[#64748B]">
+									<p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
 										{stats?.userCount || 0} comptes
 									</p>
 								</div>
@@ -368,16 +368,16 @@ export default function AdministrationPage() {
 							</Link>
 						</div>
 						
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#E2E8F0]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 							<div className="flex items-center gap-3">
-								<div className="p-3 bg-yellow-100 rounded-lg">
-									<MdNotifications size={24} className="text-yellow-600" />
+								<div className="p-3 bg-yellow-100 dark:bg-[#78350F]/50 rounded-lg">
+									<MdNotifications size={24} className="text-yellow-600 dark:text-[#FBBF24]" />
 								</div>
 								<div>
-									<h3 className="text-lg font-bold text-[#0F172A]">
+									<h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 										Rappels
 									</h3>
-									<p className="text-sm text-[#64748B]">
+									<p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
 										{stats?.reminderCount || 0} rappels
 									</p>
 								</div>
@@ -390,16 +390,16 @@ export default function AdministrationPage() {
 							</Link>
 						</div>
 						
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#E2E8F0]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white dark:bg-[#1E293B] border-[#E2E8F0] dark:border-[#334155]">
 							<div className="flex items-center gap-3">
-								<div className="p-3 bg-[#DCFCE7] rounded-lg">
-									<MdAccountBalance size={24} className="text-[#16A34A]" />
+								<div className="p-3 bg-[#DCFCE7] dark:bg-[#14532D]/50 rounded-lg">
+									<MdAccountBalance size={24} className="text-[#16A34A] dark:text-[#22C55E]" />
 								</div>
 								<div>
-									<h3 className="text-lg font-bold text-[#0F172A]">
+									<h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">
 										Budgets
 									</h3>
-									<p className="text-sm text-[#64748B]">
+									<p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
 										{stats?.budgetCount || 0} budgets
 									</p>
 								</div>

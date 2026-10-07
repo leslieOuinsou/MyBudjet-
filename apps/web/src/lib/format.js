@@ -4,7 +4,7 @@
 import { getUserSettings } from '../api.js';
 
 const KEY = 'mybudget_display_prefs';
-const DEFAULTS = { currency: 'EUR', dateFormat: 'DD/MM/YYYY', language: 'fr', autoSync: false };
+const DEFAULTS = { currency: 'EUR', dateFormat: 'DD/MM/YYYY', language: 'fr', autoSync: false, theme: 'light' };
 const LOCALES = { fr: 'fr-FR', en: 'en-GB', es: 'es-ES', de: 'de-DE' };
 
 const read = () => {
@@ -31,6 +31,8 @@ export function setDisplayPrefs(partial) {
     // stockage indisponible : les préférences restent valables pour la session
   }
   if (typeof document !== 'undefined') document.documentElement.lang = prefs.language;
+  // Le thème du compte est appliqué par ThemeProvider
+  if (partial?.theme && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('theme-pref', { detail: partial.theme }));
 }
 
 /** Récupère les préférences du compte (appearance + data.autoBackup) et les applique. */

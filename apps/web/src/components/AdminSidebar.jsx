@@ -41,12 +41,12 @@ export default function AdminSidebar() {
       {/* Bouton hamburger mobile */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg shadow-lg border bg-white border-gray-200"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg shadow-lg border bg-white dark:bg-[#1E293B] border-gray-200 dark:border-[#334155]"
       >
         {mobileMenuOpen ? (
-          <MdClose size={24} className="text-gray-800" />
+          <MdClose size={24} className="text-gray-800 dark:text-[#F8FAFC]" />
         ) : (
-          <MdMenu size={24} className="text-gray-800" />
+          <MdMenu size={24} className="text-gray-800 dark:text-[#F8FAFC]" />
         )}
       </button>
       
@@ -65,11 +65,11 @@ export default function AdminSidebar() {
         h-screen
         transition-transform duration-300 ease-in-out
         z-40
-        bg-white border-r border-gray-200
+        bg-white dark:bg-[#1E293B] border-r border-gray-200 dark:border-[#334155]
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
       <div className="mb-8">
-        <div className="text-xs font-semibold mb-4 text-[#64748B]">
+        <div className="text-xs font-semibold mb-4 text-[#64748B] dark:text-[#94A3B8]">
           ADMINISTRATION
         </div>
         <ul className="space-y-2">
@@ -85,7 +85,7 @@ export default function AdminSidebar() {
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg transition ${
                     active
                       ? 'bg-[#1E3A8A] text-white font-semibold shadow-md'
-                      : 'text-[#0F172A] hover:bg-gray-100 hover:text-[#1E3A8A]'
+                      : 'text-[#0F172A] dark:text-[#F8FAFC] hover:bg-gray-100 dark:hover:bg-[#334155] hover:text-[#1E3A8A] dark:hover:text-[#60A5FA]'
                   }`}
                 >
                   <Icon size={20} />

@@ -102,22 +102,22 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col px-4 py-6 md:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 dark:from-[#0F172A] via-white dark:via-[#1E293B] to-gray-50 dark:to-[#0F172A] flex flex-col px-4 py-6 md:py-12">
       <div className="flex-grow flex items-center justify-center">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200">
+        <div className="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200 dark:border-[#334155]">
           {/* Logo et titre */}
           <div className="flex flex-col items-center mb-8">
             <div className="relative mb-4">
               <div className="absolute inset-0 bg-[#1E3A8A] rounded-full blur-xl opacity-20 animate-pulse"></div>
-              <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] dark:to-[#2563EB] rounded-2xl flex items-center justify-center shadow-lg">
                 <MdAdminPanelSettings className="text-white text-2xl" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-2">
-              MyBudget<span className="text-[#1E3A8A]">+</span>
+            <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] dark:text-[#F8FAFC] mb-2">
+              MyBudget<span className="text-[#1E3A8A] dark:text-[#60A5FA]">+</span>
             </h1>
-            <h2 className="text-xl md:text-2xl font-semibold text-[#0F172A] mt-2 mb-2">Connexion Admin</h2>
-            <p className="text-[#64748B] text-center text-sm md:text-base">
+            <h2 className="text-xl md:text-2xl font-semibold text-[#0F172A] dark:text-[#F8FAFC] mt-2 mb-2">Connexion Admin</h2>
+            <p className="text-[#64748B] dark:text-[#94A3B8] text-center text-sm md:text-base">
               Accédez au panneau d'administration
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function AdminLoginPage() {
           <div className="mb-4">
             <Link 
               to="/" 
-              className="inline-flex items-center gap-2 text-sm text-[#64748B] hover:text-[#1E3A8A] transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[#64748B] dark:text-[#94A3B8] hover:text-[#1E3A8A] dark:hover:text-[#60A5FA] transition-colors"
             >
               <MdArrowBack size={18} />
               <span>Retour à l'accueil</span>
@@ -134,7 +134,7 @@ export default function AdminLoginPage() {
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-800 rounded-lg text-sm font-medium">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-[#7F1D1D]/30 border-l-4 border-red-500 text-red-800 dark:text-[#FCA5A5] rounded-lg text-sm font-medium">
               {error}
             </div>
           )}
@@ -153,12 +153,12 @@ export default function AdminLoginPage() {
             onSubmit={handleSubmit}
           >
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email Administrateur</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-[#E2E8F0] mb-2">Email Administrateur</label>
               <div className="relative">
                 <MdEmail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 text-sm transition-all duration-200 border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A] focus:outline-none focus:ring-4 focus:ring-blue-100"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 text-sm transition-all duration-200 border-gray-200 dark:border-[#334155] hover:border-gray-300 dark:hover:border-[#475569] focus:border-[#1E3A8A] focus:outline-none focus:ring-4 focus:ring-blue-100"
                   placeholder="admin@mybudget.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -168,12 +168,12 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-[#E2E8F0] mb-2">Mot de passe</label>
               <div className="relative">
                 <MdLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full pl-10 pr-12 py-3 rounded-xl border-2 text-sm transition-all duration-200 border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A] focus:outline-none focus:ring-4 focus:ring-blue-100"
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border-2 text-sm transition-all duration-200 border-gray-200 dark:border-[#334155] hover:border-gray-300 dark:hover:border-[#475569] focus:border-[#1E3A8A] focus:outline-none focus:ring-4 focus:ring-blue-100"
                   placeholder="Votre mot de passe"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
@@ -182,7 +182,7 @@ export default function AdminLoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors duration-200"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-[#CBD5E1] focus:outline-none transition-colors duration-200"
                 >
                   {showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
                 </button>
@@ -196,9 +196,9 @@ export default function AdminLoginPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="mr-2 h-4 w-4 text-[#1E3A8A] focus:ring-[#1E3A8A] border-gray-300 rounded"
+                  className="mr-2 h-4 w-4 text-[#1E3A8A] dark:text-[#60A5FA] focus:ring-[#1E3A8A] border-gray-300 dark:border-[#475569] rounded"
                 />
-                <span className="text-sm text-gray-600">Se souvenir de moi</span>
+                <span className="text-sm text-gray-600 dark:text-[#CBD5E1]">Se souvenir de moi</span>
               </label>
             </div>
             
@@ -207,8 +207,8 @@ export default function AdminLoginPage() {
               disabled={loading}
               className={`w-full font-semibold py-3 rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 ${
                 loading
-                  ? 'bg-gray-400 cursor-not-allowed text-white'
-                  : 'bg-gradient-to-r from-[#1E3A8A] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E3A8A] text-white hover:shadow-xl transform hover:scale-[1.01]'
+                  ? 'bg-gray-400 dark:bg-[#475569] cursor-not-allowed text-white'
+                  : 'bg-gradient-to-r from-[#1E3A8A] to-[#1D4ED8] dark:to-[#2563EB] hover:from-[#1D4ED8] dark:hover:from-[#2563EB] hover:to-[#1E3A8A] text-white hover:shadow-xl transform hover:scale-[1.01]'
               }`}
             >
               {loading ? (
@@ -229,26 +229,26 @@ export default function AdminLoginPage() {
           </form>
           )}
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-[#334155]">
             <div className="text-center space-y-3">
               <Link
                 to="/forgot-password?from=admin"
-                className="block text-sm text-[#1E3A8A] hover:text-[#1D4ED8] hover:underline transition-colors"
+                className="block text-sm text-[#1E3A8A] dark:text-[#60A5FA] hover:text-[#1D4ED8] dark:hover:text-[#60A5FA] hover:underline transition-colors"
               >
                 Mot de passe oublié ?
               </Link>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 dark:text-[#CBD5E1]">
                 Pas encore de compte admin ?{' '}
                 <Link
                   to="/admin/signup"
-                  className="text-[#1E3A8A] hover:text-[#1D4ED8] hover:underline font-semibold transition-colors"
+                  className="text-[#1E3A8A] dark:text-[#60A5FA] hover:text-[#1D4ED8] dark:hover:text-[#60A5FA] hover:underline font-semibold transition-colors"
                 >
                   Créer un compte
                 </Link>
               </div>
               <Link
                 to="/login"
-                className="block text-sm text-[#1E3A8A] hover:text-[#1D4ED8] hover:underline transition-colors"
+                className="block text-sm text-[#1E3A8A] dark:text-[#60A5FA] hover:text-[#1D4ED8] dark:hover:text-[#60A5FA] hover:underline transition-colors"
               >
                 Connexion utilisateur standard →
               </Link>
@@ -256,10 +256,10 @@ export default function AdminLoginPage() {
           </div>
 
           {/* Avertissement de sécurité */}
-          <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
+          <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-[#1E40AF]/25 border border-blue-200 dark:border-[#1E40AF]">
             <div className="flex items-start gap-3">
-              <MdLock size={20} className="text-[#1E3A8A] mt-0.5 flex-shrink-0" />
-              <div className="text-xs text-blue-700">
+              <MdLock size={20} className="text-[#1E3A8A] dark:text-[#60A5FA] mt-0.5 flex-shrink-0" />
+              <div className="text-xs text-blue-700 dark:text-[#60A5FA]">
                 <div className="font-semibold mb-1">Accès Sécurisé</div>
                 <div>
                   Cette interface est réservée aux administrateurs autorisés. 

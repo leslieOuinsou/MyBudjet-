@@ -58,11 +58,11 @@ export default function GoogleCallbackPage() {
   }, [searchParams, navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white rounded-lg shadow p-8 text-center">
+    <div className="min-h-screen bg-gray-100 dark:bg-[#0F172A] flex items-center justify-center">
+      <div className="max-w-md w-full bg-white dark:bg-[#1E293B] rounded-lg shadow p-8 text-center">
         {error ? (
           <>
-            <div className="text-red-600 mb-4">
+            <div className="text-red-600 dark:text-[#F87171] mb-4">
               <svg
                 className="w-16 h-16 mx-auto mb-4"
                 fill="none"
@@ -76,16 +76,16 @@ export default function GoogleCallbackPage() {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Erreur</h2>
-              <p className="text-gray-600">{error}</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-[#F8FAFC] mb-2">Erreur</h2>
+              <p className="text-gray-600 dark:text-[#CBD5E1]">{error}</p>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-[#94A3B8]">
               Redirection vers la page de connexion...
             </p>
           </>
         ) : (
           <>
-            <div className="text-blue-600 mb-4">
+            <div className="text-blue-600 dark:text-[#60A5FA] mb-4">
               <svg
                 className="animate-spin w-16 h-16 mx-auto mb-4"
                 fill="none"
@@ -105,18 +105,18 @@ export default function GoogleCallbackPage() {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-[#F8FAFC] mb-2">
                 Connexion avec Google
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-[#CBD5E1]">
                 Finalisation de votre connexion...
               </p>
             </div>
             <div className="mt-6 flex items-center justify-center">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce delay-100"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce delay-200"></div>
+                <div className="w-2 h-2 bg-blue-600 dark:bg-[#3B82F6] rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-blue-600 dark:bg-[#3B82F6] rounded-full animate-bounce delay-100"></div>
+                <div className="w-2 h-2 bg-blue-600 dark:bg-[#3B82F6] rounded-full animate-bounce delay-200"></div>
               </div>
             </div>
           </>

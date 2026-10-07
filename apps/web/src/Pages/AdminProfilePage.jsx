@@ -139,17 +139,17 @@ export default function AdminProfilePage() {
   
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#0F172A]' : 'bg-[#F8FAFC] dark:bg-[#0F172A]'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B]'}>Chargement du profil...</p>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B] dark:text-[#94A3B8]'}>Chargement du profil...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#0F172A]' : 'bg-[#F8FAFC] dark:bg-[#0F172A]'}`}>
       <AdminHeader />
       
       <div className="flex flex-1">
@@ -157,34 +157,34 @@ export default function AdminProfilePage() {
         
         <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 pt-16 md:pt-8">
           <div className="max-w-4xl mx-auto">
-            <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
+            <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#0F172A] dark:text-[#F8FAFC]'}`}>
               Mon Profil Administrateur
             </h1>
-            <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
+            <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B] dark:text-[#94A3B8]'}`}>
               Gérez vos informations personnelles et vos identifiants
             </p>
             
             {/* Messages */}
             {error && (
-              <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700 text-red-400' : 'bg-red-100 border border-red-300 text-red-700'}`}>
+              <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700 text-red-400' : 'bg-red-100 dark:bg-[#7F1D1D]/50 border border-red-300 dark:border-[#991B1B] text-red-700 dark:text-[#FCA5A5]'}`}>
                 ❌ {error}
               </div>
             )}
             {success && (
-              <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-green-100 border border-green-300 text-green-700'}`}>
+              <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-green-100 dark:bg-[#14532D]/50 border border-green-300 dark:border-[#166534] text-green-700 dark:text-[#4ADE80]'}`}>
                 ✅ {success}
               </div>
             )}
             
             {/* Badge Admin */}
-            <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gradient-to-r from-purple-900/20 to-purple-700/20 border border-purple-700' : 'bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200'}`}>
+            <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gradient-to-r from-purple-900/20 to-purple-700/20 border border-purple-700' : 'bg-gradient-to-r from-purple-50 dark:from-[#4C1D95]/30 to-purple-100 dark:to-[#4C1D95]/40 border border-purple-200'}`}>
               <div className="flex items-center gap-3">
-                <MdAdminPanelSettings size={32} className="text-purple-600" />
+                <MdAdminPanelSettings size={32} className="text-purple-600 dark:text-[#A78BFA]" />
                 <div>
                   <h3 className={`text-lg font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-900'}`}>
                     Compte Administrateur
                   </h3>
-                  <p className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
+                  <p className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700 dark:text-[#A78BFA]'}`}>
                     Vous disposez des privilèges administrateur complets sur la plateforme
                   </p>
                 </div>
@@ -193,8 +193,8 @@ export default function AdminProfilePage() {
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Photo de profil */}
-              <div className={`lg:col-span-1 p-6 rounded-lg h-fit ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
-                <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+              <div className={`lg:col-span-1 p-6 rounded-lg h-fit ${isDarkMode ? 'bg-[#1E293B] border border-[#334155]' : 'bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155]'}`}>
+                <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                   Photo de Profil
                 </h3>
                 
@@ -221,7 +221,7 @@ export default function AdminProfilePage() {
                       className="absolute bottom-0 right-0 p-2 bg-purple-600 text-white rounded-full cursor-pointer hover:bg-purple-700 transition shadow-lg"
                     >
                       {uploadingPhoto ? (
-                        <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
+                        <div className="animate-spin w-5 h-5 border-2 border-white dark:border-[#334155] border-t-transparent rounded-full"></div>
                       ) : (
                         <MdCamera size={20} />
                       )}
@@ -236,25 +236,25 @@ export default function AdminProfilePage() {
                     />
                   </div>
                   
-                  <p className={`text-center text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-center text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
                     Cliquez sur l'appareil photo pour changer votre photo
                   </p>
-                  <p className={`text-center text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                  <p className={`text-center text-xs mt-1 ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-400'}`}>
                     Max 5 Mo • JPG, PNG, GIF
                   </p>
                 </div>
               </div>
               
               {/* Informations personnelles */}
-              <div className={`lg:col-span-2 p-6 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
+              <div className={`lg:col-span-2 p-6 rounded-lg ${isDarkMode ? 'bg-[#1E293B] border border-[#334155]' : 'bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155]'}`}>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                     Informations Personnelles
                   </h3>
                   {!editing && (
                     <button
                       onClick={() => setEditing(true)}
-                      className="flex items-center gap-2 text-[#2563EB] hover:underline"
+                      className="flex items-center gap-2 text-[#2563EB] dark:text-[#60A5FA] hover:underline"
                     >
                       <MdEdit size={18} />
                       Modifier
@@ -266,73 +266,73 @@ export default function AdminProfilePage() {
                   <form onSubmit={handleSubmit}>
                     <div className="space-y-4">
                       <div>
-                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                           Nom complet *
                         </label>
                         <input
                           type="text"
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                           required
                         />
                       </div>
                       
                       <div>
-                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                           Email
                         </label>
                         <input
                           type="email"
                           value={formData.email}
                           disabled
-                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-gray-500' : 'bg-gray-100 border-gray-300 text-gray-500'}`}
+                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-gray-500 dark:text-[#94A3B8]' : 'bg-gray-100 dark:bg-[#334155] border-gray-300 dark:border-[#475569] text-gray-500 dark:text-[#94A3B8]'}`}
                         />
-                        <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                        <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-400'}`}>
                           L'email ne peut pas être modifié
                         </p>
                       </div>
                       
-                      <hr className={`my-4 ${isDarkMode ? 'border-[#404040]' : 'border-gray-200'}`} />
+                      <hr className={`my-4 ${isDarkMode ? 'border-[#334155]' : 'border-gray-200 dark:border-[#334155]'}`} />
                       
-                      <h4 className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                      <h4 className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                         Changer le mot de passe (optionnel)
                       </h4>
                       
                       <div>
-                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                           Mot de passe actuel
                         </label>
                         <input
                           type="password"
                           value={formData.currentPassword}
                           onChange={(e) => setFormData({...formData, currentPassword: e.target.value})}
-                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                         />
                       </div>
                       
                       <div>
-                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                           Nouveau mot de passe
                         </label>
                         <input
                           type="password"
                           value={formData.newPassword}
                           onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
-                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                           minLength={12}
                         />
                       </div>
                       
                       <div>
-                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                           Confirmer le nouveau mot de passe
                         </label>
                         <input
                           type="password"
                           value={formData.confirmPassword}
                           onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                          className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                         />
                       </div>
                     </div>
@@ -340,7 +340,7 @@ export default function AdminProfilePage() {
                     <div className="flex gap-3 mt-6">
                       <button
                         type="submit"
-                        className="flex items-center gap-2 bg-[#2563EB] text-white px-6 py-2 rounded-lg hover:bg-[#1D4ED8] transition"
+                        className="flex items-center gap-2 bg-[#2563EB] dark:bg-[#3B82F6] text-white px-6 py-2 rounded-lg hover:bg-[#1D4ED8] dark:hover:bg-[#2563EB] transition"
                       >
                         <MdSave size={20} />
                         Enregistrer
@@ -357,7 +357,7 @@ export default function AdminProfilePage() {
                             confirmPassword: ''
                           });
                         }}
-                        className={`flex items-center gap-2 px-6 py-2 rounded-lg ${isDarkMode ? 'bg-[#383838] text-gray-300 hover:bg-[#404040]' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                        className={`flex items-center gap-2 px-6 py-2 rounded-lg ${isDarkMode ? 'bg-[#334155] text-gray-300 hover:bg-[#334155]' : 'bg-gray-200 dark:bg-[#475569] text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-300 dark:hover:bg-[#475569]'}`}
                       >
                         <MdCancel size={20} />
                         Annuler
@@ -366,46 +366,46 @@ export default function AdminProfilePage() {
                   </form>
                 ) : (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-                      <MdPerson size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#334155]/50">
+                      <MdPerson size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'} />
                       <div className="flex-1">
-                        <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Nom</div>
-                        <div className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                        <div className={`text-xs ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-500 dark:text-[#94A3B8]'}`}>Nom</div>
+                        <div className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                           {user?.name}
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-                      <MdEmail size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#334155]/50">
+                      <MdEmail size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'} />
                       <div className="flex-1">
-                        <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Email</div>
-                        <div className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                        <div className={`text-xs ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-500 dark:text-[#94A3B8]'}`}>Email</div>
+                        <div className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                           {user?.email}
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-                      <MdAdminPanelSettings size={24} className="text-purple-600" />
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#334155]/50">
+                      <MdAdminPanelSettings size={24} className="text-purple-600 dark:text-[#A78BFA]" />
                       <div className="flex-1">
-                        <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Rôle</div>
+                        <div className={`text-xs ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-500 dark:text-[#94A3B8]'}`}>Rôle</div>
                         <div className="flex items-center gap-2">
-                          <span className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                          <span className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                             Administrateur
                           </span>
-                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-bold">
+                          <span className="px-2 py-0.5 bg-purple-100 dark:bg-[#4C1D95]/40 text-purple-700 dark:text-[#A78BFA] text-xs rounded-full font-bold">
                             ADMIN
                           </span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50">
-                      <MdCalendarToday size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600'} />
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 dark:bg-[#334155]/50">
+                      <MdCalendarToday size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'} />
                       <div className="flex-1">
-                        <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Membre depuis</div>
-                        <div className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                        <div className={`text-xs ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-500 dark:text-[#94A3B8]'}`}>Membre depuis</div>
+                        <div className={`text-md font-semibold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                           {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR', { 
                             year: 'numeric', 
                             month: 'long', 
@@ -420,55 +420,55 @@ export default function AdminProfilePage() {
             </div>
             
             {/* Statistiques Admin */}
-            <div className={`mt-6 p-6 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
-              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            <div className={`mt-6 p-6 rounded-lg ${isDarkMode ? 'bg-[#1E293B] border border-[#334155]' : 'bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155]'}`}>
+              <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                 Privilèges Administrateur
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-start gap-3">
-                  <MdCheckCircle size={20} className="text-green-600 mt-0.5" />
+                  <MdCheckCircle size={20} className="text-green-600 dark:text-[#22C55E] mt-0.5" />
                   <div>
-                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                       Gestion des utilisateurs
                     </div>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
                       Bloquer, débloquer, supprimer des comptes
                     </div>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <MdCheckCircle size={20} className="text-green-600 mt-0.5" />
+                  <MdCheckCircle size={20} className="text-green-600 dark:text-[#22C55E] mt-0.5" />
                   <div>
-                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                       Statistiques globales
                     </div>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
                       Accès aux données de tous les utilisateurs
                     </div>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <MdCheckCircle size={20} className="text-green-600 mt-0.5" />
+                  <MdCheckCircle size={20} className="text-green-600 dark:text-[#22C55E] mt-0.5" />
                   <div>
-                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                       Gestion des rôles
                     </div>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
                       Promouvoir/rétrograder des administrateurs
                     </div>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-3">
-                  <MdCheckCircle size={20} className="text-green-600 mt-0.5" />
+                  <MdCheckCircle size={20} className="text-green-600 dark:text-[#22C55E] mt-0.5" />
                   <div>
-                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                    <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                       Support technique
                     </div>
-                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
                       Accès au support et à la documentation
                     </div>
                   </div>

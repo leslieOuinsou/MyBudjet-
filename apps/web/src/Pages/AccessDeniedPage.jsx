@@ -7,27 +7,27 @@ export default function AccessDeniedPage() {
   const { isDarkMode } = useTheme();
 
   return (
-    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
-      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
+    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100 dark:bg-[#0F172A]'}`}>
+      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl ${isDarkMode ? 'bg-[#0F172A]' : 'bg-white dark:bg-[#1E293B]'}`}>
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-orange-600 rounded-full mb-4">
             <MdLock className="text-white text-2xl" />
           </div>
-          <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+          <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800 dark:text-[#F8FAFC]'}`}>
             Accès refusé
           </h1>
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
             Vous n'avez pas les autorisations nécessaires pour accéder à cette page
           </p>
         </div>
 
         {/* Contenu */}
-        <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-          <h2 className={`text-lg font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+        <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100 dark:bg-[#334155]'}`}>
+          <h2 className={`text-lg font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-800 dark:text-[#F8FAFC]'}`}>
             Que pouvez-vous faire ?
           </h2>
-          <ul className={`space-y-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <ul className={`space-y-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
             <li className="flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
               Vérifiez que vous êtes connecté avec le bon compte
@@ -47,7 +47,7 @@ export default function AccessDeniedPage() {
         <div className="space-y-3">
           <Link
             to="/login"
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 transform hover:scale-[1.02]"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 dark:to-[#3B82F6] hover:from-blue-600 dark:hover:from-[#3B82F6] hover:to-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 transform hover:scale-[1.02]"
           >
             <MdLogin size={20} />
             Se connecter
@@ -71,9 +71,9 @@ export default function AccessDeniedPage() {
         </div>
 
         {/* Informations de sécurité */}
-        <div className={`mt-8 p-4 rounded-lg text-sm ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
+        <div className={`mt-8 p-4 rounded-lg text-sm ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 dark:bg-[#334155] text-gray-600 dark:text-[#CBD5E1]'}`}>
           <div className="flex items-start gap-2">
-            <MdLock className="text-red-500 mt-0.5" size={16} />
+            <MdLock className="text-red-500 dark:text-[#F87171] mt-0.5" size={16} />
             <div>
               <p className="font-semibold mb-1">Sécurité :</p>
               <ul className="space-y-1 text-xs">

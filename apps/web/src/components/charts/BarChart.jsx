@@ -1,11 +1,16 @@
 import React from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { PRIMARY, WARNING, BLUE_SOFT, CRITICAL, INK, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
+import { useTheme } from '../../context/ThemeContext.jsx';
+import { T, INK, setChartTheme, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function BarChart({ data, title }) {
+  const { isDarkMode } = useTheme();
+  setChartTheme(isDarkMode);
+  const { PRIMARY, WARNING, BLUE_SOFT } = T;
+  const CRITICAL = T.EXPENSE;
   const budgets = data?.budget || [];
   const spent = data?.spent || [];
 
@@ -16,7 +21,7 @@ export default function BarChart({ data, title }) {
         label: 'Budget alloué',
         data: budgets,
         backgroundColor: BLUE_SOFT,
-        hoverBackgroundColor: '#93C5FD',
+        hoverBackgroundColor: T.BLUE_SOFT_HOVER,
         borderRadius: { topLeft: 4, topRight: 4 },
         borderSkipped: 'bottom',
         maxBarThickness: 26,
@@ -32,8 +37,8 @@ export default function BarChart({ data, title }) {
         }),
         hoverBackgroundColor: spent.map((s, i) => {
           const limit = budgets[i] || 0;
-          if (s > limit) return '#B91C1C';
-          return limit > 0 && s >= limit * 0.8 ? '#D97706' : '#1D4ED8';
+          if (s > limit) return T.CRITICAL_HOVER;
+          return limit > 0 && s >= limit * 0.8 ? T.WARNING_HOVER : T.PRIMARY_HOVER;
         }),
         borderRadius: { topLeft: 4, topRight: 4 },
         borderSkipped: 'bottom',
@@ -49,7 +54,7 @@ export default function BarChart({ data, title }) {
     animation: { duration: 700, easing: 'easeOutQuart' },
     categoryPercentage: 0.7,
     barPercentage: 0.9,
-    datasets: { bar: { borderColor: '#FFFFFF', borderWidth: { top: 0, left: 1, right: 1, bottom: 0 } } },
+    datasets: { bar: { borderColor: T.SURFACE, borderWidth: { top: 0, left: 1, right: 1, bottom: 0 } } },
     plugins: {
       legend: {
         ...legendStyle('rectRounded'),
@@ -66,7 +71,7 @@ export default function BarChart({ data, title }) {
       },
       title: { display: !!title, text: title, color: INK.primary, font: { size: 15, weight: '600' } },
       tooltip: {
-        ...tooltipStyle,
+        ...tooltipStyle(),
         callbacks: {
           label: (c) => ` ${c.dataset.label} : ${euro(c.parsed.y)}`,
           afterLabel: (c) => {
@@ -79,11 +84,11 @@ export default function BarChart({ data, title }) {
         },
       },
     },
-    scales: axisStyle,
+    scales: axisStyle(),
   };
 
   if (!hasValues([budgets, spent])) {
-    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500">Aucun budget à comparer.</div>;
+    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500 dark:text-[#94A3B8]">Aucun budget à comparer.</div>;
   }
 
   return (

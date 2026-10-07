@@ -113,12 +113,12 @@ export default function NotificationBell() {
       {/* Bouton cloche */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+        className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#334155] transition-colors"
         aria-label="Notifications"
       >
         {/* Icône cloche */}
         <svg 
-          className="w-6 h-6 text-[#0F172A]" 
+          className="w-6 h-6 text-[#0F172A] dark:text-[#F8FAFC]" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -133,7 +133,7 @@ export default function NotificationBell() {
 
         {/* Badge de compteur */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-[#2563EB] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-[#2563EB] dark:bg-[#3B82F6] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -141,13 +141,13 @@ export default function NotificationBell() {
 
       {/* Dropdown des notifications */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-[#E2E8F0] z-50 max-h-[500px] overflow-hidden flex flex-col">
+        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-[#1E293B] rounded-lg shadow-xl border border-[#E2E8F0] dark:border-[#334155] z-50 max-h-[500px] overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b border-[#E2E8F0] flex justify-between items-center">
-            <h3 className="font-semibold text-[#0F172A]">
+          <div className="p-4 border-b border-[#E2E8F0] dark:border-[#334155] flex justify-between items-center">
+            <h3 className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
               Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 text-xs bg-[#DBEAFE] text-[#2563EB] px-2 py-1 rounded-full">
+                <span className="ml-2 text-xs bg-[#DBEAFE] dark:bg-[#1E40AF] text-[#2563EB] dark:text-[#BFDBFE] px-2 py-1 rounded-full">
                   {unreadCount} nouvelles
                 </span>
               )}
@@ -155,7 +155,7 @@ export default function NotificationBell() {
             <Link 
               to="/notifications" 
               onClick={() => setIsOpen(false)}
-              className="text-xs text-[#2563EB] hover:underline"
+              className="text-xs text-[#2563EB] dark:text-[#60A5FA] hover:underline"
             >
               Tout voir
             </Link>
@@ -164,22 +164,22 @@ export default function NotificationBell() {
           {/* Liste des notifications */}
           <div className="overflow-y-auto flex-1">
             {loading ? (
-              <div className="p-4 text-center text-[#64748B]">
+              <div className="p-4 text-center text-[#64748B] dark:text-[#94A3B8]">
                 Chargement...
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="text-4xl mb-2">🔔</div>
-                <p className="text-[#64748B]">Aucune notification</p>
+                <p className="text-[#64748B] dark:text-[#94A3B8]">Aucune notification</p>
               </div>
             ) : (
-              <div className="divide-y divide-[#F8FAFC]">
+              <div className="divide-y divide-[#F8FAFC] dark:divide-[#334155]">
                 {notifications.slice(0, 5).map((notification) => (
                   <div
                     key={notification._id}
                     onClick={() => !notification.isRead && handleMarkAsRead(notification._id)}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                      !notification.isRead ? 'bg-blue-50' : ''
+                    className={`p-4 hover:bg-gray-50 dark:hover:bg-[#334155]/50 cursor-pointer transition-colors ${
+                      !notification.isRead ? 'bg-blue-50 dark:bg-[#1E40AF]/25' : ''
                     }`}
                   >
                     <div className="flex gap-3">
@@ -192,12 +192,12 @@ export default function NotificationBell() {
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm ${
                           !notification.isRead 
-                            ? 'font-semibold text-[#0F172A]' 
-                            : 'text-[#64748B]'
+                            ? 'font-semibold text-[#0F172A] dark:text-[#F8FAFC]' 
+                            : 'text-[#64748B] dark:text-[#94A3B8]'
                         }`}>
                           {notification.message}
                         </p>
-                        <p className="text-xs text-[#64748B] mt-1">
+                        <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1">
                           {getTimeAgo(notification.createdAt)}
                         </p>
                       </div>
@@ -215,11 +215,11 @@ export default function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-[#E2E8F0] bg-gray-50">
+            <div className="p-3 border-t border-[#E2E8F0] dark:border-[#334155] bg-gray-50 dark:bg-[#334155]/50">
               <Link
                 to="/notifications"
                 onClick={() => setIsOpen(false)}
-                className="block text-center text-sm text-[#2563EB] hover:underline font-medium"
+                className="block text-center text-sm text-[#2563EB] dark:text-[#60A5FA] hover:underline font-medium"
               >
                 Voir toutes les notifications →
               </Link>

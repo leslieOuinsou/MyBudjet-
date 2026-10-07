@@ -17,7 +17,7 @@ const CHALLENGES = [
     stepAmount: (n) => n,
     unit: 'semaine',
     days: 7,
-    gradient: 'from-[#1E3A8A] to-[#2563EB]',
+    gradient: 'from-[#1E3A8A] to-[#2563EB] dark:to-[#3B82F6]',
     level: 'Progressif',
   },
   {
@@ -29,7 +29,7 @@ const CHALLENGES = [
     stepAmount: (n) => n,
     unit: 'jour',
     days: 1,
-    gradient: 'from-[#2563EB] to-[#60A5FA]',
+    gradient: 'from-[#2563EB] dark:from-[#3B82F6] to-[#60A5FA]',
     level: 'Intense',
   },
   {
@@ -112,10 +112,10 @@ export default function ChallengesPage() {
   const doneCount = goals.filter((g) => g.achieved).length;
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
+    <div className="flex min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A]">
       <DashboardSidebar />
       <main className="flex-1 p-5 md:p-10 space-y-8 max-w-6xl">
-        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] dark:to-[#3B82F6] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
           <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdEmojiEvents /></span>
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold">Défis d’épargne</h1>
@@ -123,9 +123,9 @@ export default function ChallengesPage() {
           </div>
         </header>
 
-        {error && <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+        {error && <div className="px-4 py-3 rounded-xl bg-red-50 dark:bg-[#7F1D1D]/30 border border-red-200 dark:border-[#7F1D1D] text-red-700 dark:text-[#FCA5A5] text-sm">{error}</div>}
         {loading && (
-          <div className="flex items-center gap-3 text-gray-500">
+          <div className="flex items-center gap-3 text-gray-500 dark:text-[#94A3B8]">
             <span className="h-5 w-5 rounded-full border-2 border-[#2563EB] border-t-transparent animate-spin" /> Chargement…
           </div>
         )}
@@ -133,15 +133,15 @@ export default function ChallengesPage() {
         {goals.length > 0 && (
           <div className="grid gap-4 sm:grid-cols-3">
             {[
-              { icon: MdLocalFireDepartment, label: 'Défis en cours', value: goals.length - doneCount, tone: 'bg-orange-100 text-orange-600' },
-              { icon: MdSavings, label: 'Déjà épargné', value: formatAmount(totalSaved), tone: 'bg-green-100 text-green-600' },
-              { icon: MdFlag, label: 'Objectif cumulé', value: formatAmount(totalTarget), tone: 'bg-blue-100 text-blue-600' },
+              { icon: MdLocalFireDepartment, label: 'Défis en cours', value: goals.length - doneCount, tone: 'bg-orange-100 dark:bg-[#78350F]/50 text-orange-600 dark:text-[#FBBF24]' },
+              { icon: MdSavings, label: 'Déjà épargné', value: formatAmount(totalSaved), tone: 'bg-green-100 dark:bg-[#14532D]/50 text-green-600 dark:text-[#22C55E]' },
+              { icon: MdFlag, label: 'Objectif cumulé', value: formatAmount(totalTarget), tone: 'bg-blue-100 dark:bg-[#1E40AF]/50 text-blue-600 dark:text-[#BFDBFE]' },
             ].map(({ icon: Icon, label, value, tone }) => (
-              <div key={label} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+              <div key={label} className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-100 dark:border-[#334155] shadow-sm p-5 flex items-center gap-4">
                 <span className={`w-11 h-11 rounded-xl flex items-center justify-center text-2xl ${tone}`}><Icon /></span>
                 <div>
-                  <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</div>
-                  <div className="text-xl font-extrabold text-[#0F172A]">{value}</div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-[#94A3B8]">{label}</div>
+                  <div className="text-xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC]">{value}</div>
                 </div>
               </div>
             ))}
@@ -150,7 +150,7 @@ export default function ChallengesPage() {
 
         {goals.length > 0 && (
           <section className="space-y-4">
-            <h2 className="text-lg font-bold text-[#0F172A]">Mes défis en cours</h2>
+            <h2 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Mes défis en cours</h2>
             {goals.map((goal) => {
               const challenge = findChallenge(goal);
               if (!challenge) return null;
@@ -160,36 +160,36 @@ export default function ChallengesPage() {
               const nextAmount = challenge.stepAmount(step);
               const pct = Math.min(100, Math.round(goal.percentage || 0));
               return (
-                <div key={goal._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div key={goal._id} className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-100 dark:border-[#334155] shadow-sm overflow-hidden">
                   <div className={`h-1.5 bg-gradient-to-r ${challenge.gradient}`} />
                   <div className="p-5 md:p-6">
                     <div className="flex justify-between flex-wrap gap-3">
                       <div>
-                        <div className="font-bold text-lg text-[#0F172A]">{challenge.title}</div>
-                        <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                        <div className="font-bold text-lg text-[#0F172A] dark:text-[#F8FAFC]">{challenge.title}</div>
+                        <div className="text-sm text-gray-500 dark:text-[#94A3B8] mt-0.5 flex items-center gap-2 flex-wrap">
                           <MdTimeline /> {challenge.unit} {step}/{challenge.steps}
-                          <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs">{challenge.level}</span>
+                          <span className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-[#334155] text-xs">{challenge.level}</span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-extrabold text-[#0F172A]">{pct} %</div>
-                        <div className="text-xs text-gray-500">{formatAmount(goal.currentAmount)} / {formatAmount(goal.targetAmount)}</div>
+                        <div className="text-2xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC]">{pct} %</div>
+                        <div className="text-xs text-gray-500 dark:text-[#94A3B8]">{formatAmount(goal.currentAmount)} / {formatAmount(goal.targetAmount)}</div>
                       </div>
                     </div>
-                    <div className="h-3 bg-[#E2E8F0] rounded-full mt-4 overflow-hidden">
+                    <div className="h-3 bg-[#E2E8F0] dark:bg-[#334155] rounded-full mt-4 overflow-hidden">
                       <div className={`h-3 rounded-full bg-gradient-to-r ${challenge.gradient}`} style={{ width: `${pct}%`, transition: 'width 700ms ease' }} />
                     </div>
                     {goal.achieved ? (
-                      <p className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-green-50 text-green-700 font-semibold">
+                      <p className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-green-50 dark:bg-[#14532D]/30 text-green-700 dark:text-[#4ADE80] font-semibold">
                         <MdCheckCircle /> Défi réussi, bravo !
                       </p>
                     ) : (
                       <div className="mt-4 flex items-center justify-between flex-wrap gap-3 text-sm">
-                        <span className={`px-3 py-1.5 rounded-full font-medium ${gap > 0 ? 'bg-amber-50 text-amber-700' : 'bg-green-50 text-green-700'}`}>
+                        <span className={`px-3 py-1.5 rounded-full font-medium ${gap > 0 ? 'bg-amber-50 dark:bg-[#78350F]/30 text-amber-700 dark:text-[#FCD34D]' : 'bg-green-50 dark:bg-[#14532D]/30 text-green-700 dark:text-[#4ADE80]'}`}>
                           {gap > 0 ? `${formatAmount(gap)} de retard sur le rythme` : 'Tu es à jour'}
                         </span>
                         <div className="flex items-center gap-3">
-                          <button onClick={() => remove(goal)} className="text-sm text-gray-500 hover:text-red-600">Abandonner</button>
+                          <button onClick={() => remove(goal)} className="text-sm text-gray-500 dark:text-[#94A3B8] hover:text-red-600 dark:hover:text-[#F87171]">Abandonner</button>
                           <button
                             onClick={() => deposit(goal, gap > 0 ? gap : nextAmount)}
                             className={`px-4 py-2 rounded-xl bg-gradient-to-r ${challenge.gradient} text-white font-semibold hover:opacity-90`}
@@ -200,7 +200,7 @@ export default function ChallengesPage() {
                       </div>
                     )}
                     {goal.achieved && (
-                      <button onClick={() => remove(goal)} className="mt-3 text-sm text-gray-500 hover:text-red-600">Retirer ce défi</button>
+                      <button onClick={() => remove(goal)} className="mt-3 text-sm text-gray-500 dark:text-[#94A3B8] hover:text-red-600 dark:hover:text-[#F87171]">Retirer ce défi</button>
                     )}
                   </div>
                 </div>
@@ -210,22 +210,22 @@ export default function ChallengesPage() {
         )}
 
         <section className="space-y-4">
-          <h2 className="text-lg font-bold text-[#0F172A]">Choisir un défi</h2>
+          <h2 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Choisir un défi</h2>
           <div className="grid gap-5 md:grid-cols-3">
             {CHALLENGES.map((c) => (
-              <div key={c.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+              <div key={c.id} className="bg-white dark:bg-[#1E293B] rounded-2xl border border-gray-100 dark:border-[#334155] shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
                 <div className={`bg-gradient-to-br ${c.gradient} text-white p-5`}>
                   <MdEmojiEvents className="text-3xl mb-2" />
                   <div className="font-bold text-lg leading-snug">{c.title}</div>
                   <div className="text-white/85 text-xs mt-1">{c.level} · {c.steps} {c.unit}s</div>
                 </div>
                 <div className="p-5 flex flex-col flex-1">
-                  <p className="text-sm text-gray-600 flex-1">{c.description}</p>
-                  <div className="mt-3 text-sm font-bold text-[#0F172A]">Objectif : {formatAmount(c.target)}</div>
+                  <p className="text-sm text-gray-600 dark:text-[#CBD5E1] flex-1">{c.description}</p>
+                  <div className="mt-3 text-sm font-bold text-[#0F172A] dark:text-[#F8FAFC]">Objectif : {formatAmount(c.target)}</div>
                   <button
                     disabled={activeIds.has(c.id)}
                     onClick={() => start(c)}
-                    className="mt-4 px-4 py-2.5 rounded-xl bg-[#2563EB] text-white font-semibold hover:bg-[#1D4ED8] disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
+                    className="mt-4 px-4 py-2.5 rounded-xl bg-[#2563EB] dark:bg-[#3B82F6] text-white font-semibold hover:bg-[#1D4ED8] dark:hover:bg-[#2563EB] disabled:bg-gray-200 dark:disabled:bg-[#475569] disabled:text-gray-500 dark:disabled:text-[#94A3B8] disabled:cursor-not-allowed"
                   >
                     {activeIds.has(c.id) ? 'Déjà en cours' : 'Commencer'}
                   </button>

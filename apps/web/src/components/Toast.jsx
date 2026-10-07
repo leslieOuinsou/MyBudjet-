@@ -83,7 +83,7 @@ const Toast = ({ message, type = 'success', duration = 5000, onClose }) => {
           </button>
         </div>
         {/* Barre de progression */}
-        <div className="mt-3 h-1 bg-white bg-opacity-30 rounded-full overflow-hidden">
+        <div className="mt-3 h-1 bg-white dark:bg-[#1E293B] bg-opacity-30 rounded-full overflow-hidden">
           <div
             className={`h-full ${currentStyle.progressBg} transition-all duration-100 ease-linear`}
             style={{ width: `${progress}%` }}

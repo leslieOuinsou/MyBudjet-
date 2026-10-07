@@ -46,8 +46,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
-      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
+    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100 dark:bg-[#0F172A]'}`}>
+      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl ${isDarkMode ? 'bg-[#0F172A]' : 'bg-white dark:bg-[#1E293B]'}`}>
         {/* Header */}
         <div className="text-center mb-8">
           <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
@@ -61,24 +61,24 @@ export default function ForgotPasswordPage() {
               <MdSecurity className="text-white text-2xl" />
             )}
           </div>
-          <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+          <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800 dark:text-[#F8FAFC]'}`}>
             Mot de passe oublié {isAdmin && '(Admin)'}
           </h1>
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
             Entrez votre adresse email {isAdmin && 'administrateur'} pour recevoir un lien de réinitialisation
           </p>
         </div>
 
         {/* Messages d'état */}
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
-            <MdWarning className="text-red-500" size={20} />
+          <div className="bg-red-100 dark:bg-[#7F1D1D]/50 border border-red-400 text-red-700 dark:text-[#FCA5A5] px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+            <MdWarning className="text-red-500 dark:text-[#F87171]" size={20} />
             <span className="text-sm">{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+          <div className="bg-green-100 dark:bg-[#14532D]/50 border border-green-400 text-green-700 dark:text-[#4ADE80] px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
             <MdCheckCircle className="text-green-500" size={20} />
             <span className="text-sm">{success}</span>
           </div>
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label htmlFor="email" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
               Adresse email
             </label>
             <div className="relative">
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
                 className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                   isDarkMode 
                     ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                    : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500'
+                    : 'bg-gray-50 dark:bg-[#334155]/50 border-gray-300 dark:border-[#475569] text-gray-900 dark:text-[#F8FAFC] placeholder-gray-500'
                 }`}
                 placeholder="votre@email.com"
                 value={email}
@@ -113,8 +113,8 @@ export default function ForgotPasswordPage() {
             type="submit"
             className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
               loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transform hover:scale-[1.02]'
+                ? 'bg-gray-400 dark:bg-[#475569] cursor-not-allowed'
+                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 dark:hover:from-[#3B82F6] hover:to-purple-700 transform hover:scale-[1.02]'
             } text-white shadow-lg`}
             disabled={loading}
           >
@@ -141,7 +141,7 @@ export default function ForgotPasswordPage() {
             <Link
               to={isAdmin ? "/admin/login" : "/login"}
               className={`inline-flex items-center gap-2 hover:underline text-sm font-medium transition-colors ${
-                isAdmin ? 'text-purple-600 hover:text-purple-700' : 'text-blue-600 hover:text-blue-700'
+                isAdmin ? 'text-purple-600 dark:text-[#A78BFA] hover:text-purple-700 dark:hover:text-[#A78BFA]' : 'text-blue-600 dark:text-[#60A5FA] hover:text-blue-700 dark:hover:text-[#60A5FA]'
               }`}
             >
               <MdArrowBack size={16} />
@@ -150,12 +150,12 @@ export default function ForgotPasswordPage() {
           </div>
 
           <div className="text-center">
-            <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
               Pas encore de compte {isAdmin && 'admin'} ?{' '}
               <Link
                 to={isAdmin ? "/admin/signup" : "/signup"}
                 className={`hover:underline font-medium transition-colors ${
-                  isAdmin ? 'text-purple-600 hover:text-purple-700' : 'text-blue-600 hover:text-blue-700'
+                  isAdmin ? 'text-purple-600 dark:text-[#A78BFA] hover:text-purple-700 dark:hover:text-[#A78BFA]' : 'text-blue-600 dark:text-[#60A5FA] hover:text-blue-700 dark:hover:text-[#60A5FA]'
                 }`}
               >
                 Créer un compte
@@ -165,9 +165,9 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Informations de sécurité */}
-        <div className={`mt-8 p-4 rounded-lg text-sm ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
+        <div className={`mt-8 p-4 rounded-lg text-sm ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 dark:bg-[#334155] text-gray-600 dark:text-[#CBD5E1]'}`}>
           <div className="flex items-start gap-2">
-            <MdSecurity className="text-blue-500 mt-0.5" size={16} />
+            <MdSecurity className="text-blue-500 dark:text-[#60A5FA] mt-0.5" size={16} />
             <div>
               <p className="font-semibold mb-1">Informations importantes :</p>
               <ul className="space-y-1 text-xs">

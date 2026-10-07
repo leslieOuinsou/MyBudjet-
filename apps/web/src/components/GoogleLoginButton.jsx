@@ -20,7 +20,7 @@ const GoogleLoginButton = ({ text = "Continuer avec Google" }) => {
     <button
       type="button"
       onClick={handleGoogleLogin}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-[#475569] rounded-lg shadow-sm bg-white dark:bg-[#1E293B] text-sm font-medium text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-50 dark:hover:bg-[#334155]/50 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
     >
       {/* Logo Google SVG */}
       <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">

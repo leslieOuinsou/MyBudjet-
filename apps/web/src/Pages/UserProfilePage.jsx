@@ -10,6 +10,7 @@ import {
   deleteAvatar
 } from '../api.js';
 import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle.jsx';
 
 import { setDisplayPrefs } from '../lib/format.js';
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/api\/?$/, '');
@@ -161,18 +162,18 @@ const UserProfilePage = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#0F172A]' : 'bg-gray-100 dark:bg-[#0F172A]'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>Chargement du profil...</p>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600 dark:text-[#CBD5E1]'}>Chargement du profil...</p>
         </div>
       </div>
     );
   }
 
   const t = isDarkMode
-    ? { page: 'bg-[#1a1a1a]', card: 'bg-[#2d2d2d] border-[#404040]', title: 'text-white', muted: 'text-gray-400', input: 'bg-[#383838] border-[#404040] text-white placeholder-gray-500', tabOff: 'bg-[#383838] text-gray-300 hover:bg-[#454545]', soft: 'bg-[#383838]' }
-    : { page: 'bg-[#F8FAFC]', card: 'bg-white border-gray-100', title: 'text-[#0F172A]', muted: 'text-gray-500', input: 'bg-white border-gray-200 text-[#0F172A]', tabOff: 'bg-gray-100 text-gray-600 hover:bg-gray-200', soft: 'bg-[#F8FAFC]' };
+    ? { page: 'bg-[#0F172A]', card: 'bg-[#1E293B] border-[#334155]', title: 'text-white', muted: 'text-gray-400', input: 'bg-[#334155] border-[#334155] text-white placeholder-gray-500', tabOff: 'bg-[#334155] text-gray-300 hover:bg-[#475569]', soft: 'bg-[#334155]' }
+    : { page: 'bg-[#F8FAFC] dark:bg-[#334155]/50', card: 'bg-white dark:bg-[#1E293B] border-gray-100 dark:border-[#334155]', title: 'text-[#0F172A] dark:text-[#F8FAFC]', muted: 'text-gray-500 dark:text-[#94A3B8]', input: 'bg-white dark:bg-[#1E293B] border-gray-200 dark:border-[#334155] text-[#0F172A] dark:text-[#F8FAFC]', tabOff: 'bg-gray-100 dark:bg-[#334155] text-gray-600 dark:text-[#CBD5E1] hover:bg-gray-200 dark:hover:bg-[#475569]', soft: 'bg-[#F8FAFC] dark:bg-[#334155]/50' };
   const CARD = `rounded-2xl border shadow-sm p-5 md:p-6 ${t.card}`;
   const INPUT = `w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 ${t.input}`;
   const LABEL = `block text-sm font-medium mb-1 ${t.title}`;
@@ -193,7 +194,7 @@ const UserProfilePage = () => {
   ];
 
   const selectOptions = (list) => list.map(([value, label]) => (
-    <option key={value} value={value} style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>{label}</option>
+    <option key={value} value={value} style={isDarkMode ? { backgroundColor: '#334155', color: 'white' } : {}}>{label}</option>
   ));
 
   return (
@@ -202,7 +203,7 @@ const UserProfilePage = () => {
         <DashboardSidebar />
         <main className="flex-1 p-4 md:p-8 lg:p-10 pt-16 md:pt-10 space-y-6 max-w-5xl">
           {/* Bandeau profil */}
-          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 shadow-sm flex items-center gap-5 flex-wrap">
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] dark:to-[#3B82F6] text-white p-6 md:p-8 shadow-sm flex items-center gap-5 flex-wrap">
             {avatar ? (
               <img src={avatar} alt={user?.name || 'Avatar'} className="w-20 h-20 rounded-full object-cover border-4 border-white/40" />
             ) : (
@@ -216,12 +217,12 @@ const UserProfilePage = () => {
           </header>
 
           {error && (
-            <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-50 border-red-200 text-red-700'}`}>
+            <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-red-900/20 border-red-700 text-red-400' : 'bg-red-50 dark:bg-[#7F1D1D]/30 border-red-200 dark:border-[#7F1D1D] text-red-700 dark:text-[#FCA5A5]'}`}>
               <MdErrorOutline className="text-xl shrink-0" /> {error}
             </div>
           )}
           {success && (
-            <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-green-900/20 border-green-700 text-green-400' : 'bg-green-50 border-green-200 text-green-700'}`}>
+            <div className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm ${isDarkMode ? 'bg-green-900/20 border-green-700 text-green-400' : 'bg-green-50 dark:bg-[#14532D]/30 border-green-200 dark:border-[#166534] text-green-700 dark:text-[#4ADE80]'}`}>
               <MdCheckCircle className="text-xl shrink-0" /> {success}
             </div>
           )}
@@ -229,7 +230,7 @@ const UserProfilePage = () => {
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Infos personnelles */}
             <section className={`${CARD} lg:col-span-2`}>
-              <h2 className={`flex items-center gap-2 font-bold text-lg mb-4 ${t.title}`}><MdPerson className="text-[#2563EB] text-2xl" /> Informations personnelles</h2>
+              <h2 className={`flex items-center gap-2 font-bold text-lg mb-4 ${t.title}`}><MdPerson className="text-[#2563EB] dark:text-[#60A5FA] text-2xl" /> Informations personnelles</h2>
               <form onSubmit={handleProfileUpdate} className="space-y-4">
                 <div>
                   <label className={LABEL}><MdBadge className="inline mr-1 text-gray-400" />Nom complet</label>
@@ -245,7 +246,7 @@ const UserProfilePage = () => {
                     <input type="tel" value={profileForm.phoneNumber} onChange={(e) => setProfileForm({ ...profileForm, phoneNumber: e.target.value })} className={INPUT} placeholder="+33 6 12 34 56 78" />
                   </div>
                 </div>
-                <button type="submit" className="px-6 py-2.5 rounded-xl bg-[#2563EB] text-white font-semibold text-sm hover:bg-[#1D4ED8]">
+                <button type="submit" className="px-6 py-2.5 rounded-xl bg-[#2563EB] dark:bg-[#3B82F6] text-white font-semibold text-sm hover:bg-[#1D4ED8] dark:hover:bg-[#2563EB]">
                   Mettre à jour le profil
                 </button>
               </form>
@@ -253,11 +254,11 @@ const UserProfilePage = () => {
 
             {/* Photo de profil */}
             <section className={`${CARD} flex flex-col items-center text-center`}>
-              <h2 className={`flex items-center gap-2 font-bold text-lg mb-4 ${t.title}`}><MdPhotoCamera className="text-[#2563EB] text-2xl" /> Photo de profil</h2>
+              <h2 className={`flex items-center gap-2 font-bold text-lg mb-4 ${t.title}`}><MdPhotoCamera className="text-[#2563EB] dark:text-[#60A5FA] text-2xl" /> Photo de profil</h2>
               {avatar ? (
-                <img src={avatar} alt={user?.name || 'Avatar'} className="w-28 h-28 rounded-full object-cover border-4 border-[#DBEAFE] shadow" />
+                <img src={avatar} alt={user?.name || 'Avatar'} className="w-28 h-28 rounded-full object-cover border-4 border-[#DBEAFE] dark:border-[#1E40AF] shadow" />
               ) : (
-                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] text-white flex items-center justify-center font-extrabold text-3xl shadow">{initials}</div>
+                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] dark:to-[#3B82F6] text-white flex items-center justify-center font-extrabold text-3xl shadow">{initials}</div>
               )}
               <input id="profile-photo-upload" type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploadingPhoto} />
               <label
@@ -267,7 +268,7 @@ const UserProfilePage = () => {
                 <MdPhotoCamera /> {uploadingPhoto ? 'Envoi en cours…' : 'Changer la photo'}
               </label>
               {user?.profilePicture && (
-                <button type="button" onClick={handlePhotoDelete} disabled={uploadingPhoto} className="mt-2 inline-flex items-center gap-1 text-sm text-red-600 hover:text-red-700">
+                <button type="button" onClick={handlePhotoDelete} disabled={uploadingPhoto} className="mt-2 inline-flex items-center gap-1 text-sm text-red-600 dark:text-[#F87171] hover:text-red-700 dark:hover:text-[#FCA5A5]">
                   <MdDelete /> Supprimer
                 </button>
               )}
@@ -284,7 +285,7 @@ const UserProfilePage = () => {
                 <button
                   key={id}
                   onClick={() => setTab(id)}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full font-semibold text-sm transition-colors ${tab === id ? 'bg-[#2563EB] text-white' : t.tabOff}`}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full font-semibold text-sm transition-colors ${tab === id ? 'bg-[#2563EB] dark:bg-[#3B82F6] text-white' : t.tabOff}`}
                 >
                   <Icon /> {label}
                 </button>
@@ -317,6 +318,11 @@ const UserProfilePage = () => {
                     </select>
                   </div>
                 </div>
+                <div>
+                  <label className={LABEL}>Thème</label>
+                  <ThemeToggle showLabel={false} />
+                  <p className={`text-xs mt-1 ${t.muted}`}>Clair, automatique (suit votre appareil) ou sombre. Le choix est mémorisé sur votre compte.</p>
+                </div>
                 <div className="md:max-w-sm">
                   <label className={LABEL}>Langue</label>
                   <select
@@ -332,7 +338,7 @@ const UserProfilePage = () => {
             )}
 
             {tab === 'notifications' && (
-              <div className={`divide-y ${isDarkMode ? 'divide-[#404040]' : 'divide-gray-100'}`}>
+              <div className={`divide-y ${isDarkMode ? 'divide-[#334155]' : 'divide-gray-100 dark:divide-[#334155]'}`}>
                 {NOTIF_ROWS.map(({ key, label, description }) => {
                   const on = Boolean(settings?.notifications?.[key]);
                   return (
@@ -343,8 +349,8 @@ const UserProfilePage = () => {
                       </div>
                       <label className="inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" checked={on} onChange={() => handleSettingsUpdate({ notifications: { [key]: !on } })} className="sr-only" aria-label={label} />
-                        <span className={`w-12 h-7 flex items-center rounded-full p-1 duration-300 ${on ? 'bg-green-500' : 'bg-gray-300'}`}>
-                          <span className={`bg-white w-5 h-5 rounded-full shadow transform duration-300 ${on ? 'translate-x-5' : ''}`}></span>
+                        <span className={`w-12 h-7 flex items-center rounded-full p-1 duration-300 ${on ? 'bg-green-500' : 'bg-gray-300 dark:bg-[#475569]'}`}>
+                          <span className={`bg-white dark:bg-[#1E293B] w-5 h-5 rounded-full shadow transform duration-300 ${on ? 'translate-x-5' : ''}`}></span>
                         </span>
                       </label>
                     </div>

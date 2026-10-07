@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../api.js";
+import ThemeToggle from "./ThemeToggle.jsx";
 import { 
   MdMenu, 
   MdClose, 
@@ -113,13 +114,14 @@ function UserCard({ onNavigate }) {
   const photo = !imgFailed ? avatarUrl(user?.profilePicture) : null;
 
   return (
-    <div ref={ref} className="relative px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
+    <div ref={ref} className="relative px-4 py-3 border-t border-gray-200 dark:border-[#334155] bg-white dark:bg-[#1E293B] flex-shrink-0">
       {open && (
-        <div className="absolute bottom-full left-4 right-4 mb-2 rounded-xl bg-white border border-gray-200 shadow-xl overflow-hidden" role="menu">
-          <Link to="/profile" onClick={() => { setOpen(false); onNavigate?.(); }} role="menuitem" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+        <div className="absolute bottom-full left-4 right-4 mb-2 rounded-xl bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155] shadow-xl overflow-hidden" role="menu">
+          <div className="px-4 py-2.5 border-b border-gray-100 dark:border-[#334155]"><ThemeToggle /></div>
+          <Link to="/profile" onClick={() => { setOpen(false); onNavigate?.(); }} role="menuitem" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-50 dark:hover:bg-[#334155]/50">
             <MdPerson size={18} /> Mon profil
           </Link>
-          <button onClick={logout} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100">
+          <button onClick={logout} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 dark:text-[#F87171] hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30 border-t border-gray-100 dark:border-[#334155]">
             <MdLogout size={18} /> Se déconnecter
           </button>
         </div>
@@ -128,19 +130,19 @@ function UserCard({ onNavigate }) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="w-full flex items-center gap-3 rounded-xl p-2 hover:bg-gray-100 transition-colors text-left"
+        className="w-full flex items-center gap-3 rounded-xl p-2 hover:bg-gray-100 dark:hover:bg-[#334155] transition-colors text-left"
       >
         <span className="relative shrink-0">
           {photo ? (
             <img src={photo} alt="" onError={() => setImgFailed(true)} className="w-10 h-10 rounded-full object-cover border-2 border-[#2563EB]" />
           ) : (
-            <span className="w-10 h-10 rounded-full bg-[#2563EB] text-white flex items-center justify-center font-bold text-sm">{initials}</span>
+            <span className="w-10 h-10 rounded-full bg-[#2563EB] dark:bg-[#3B82F6] text-white flex items-center justify-center font-bold text-sm">{initials}</span>
           )}
-          <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" title="Connecté" />
+          <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white dark:border-[#334155]" title="Connecté" />
         </span>
         <span className="flex-1 min-w-0">
-          <span className="block text-sm font-semibold text-[#0F172A] truncate">{user?.name || 'Mon compte'}</span>
-          <span className="block text-xs text-green-600">Connecté</span>
+          <span className="block text-sm font-semibold text-[#0F172A] dark:text-[#F8FAFC] truncate">{user?.name || 'Mon compte'}</span>
+          <span className="block text-xs text-green-600 dark:text-[#22C55E]">Connecté</span>
         </span>
         <MdUnfoldMore className="text-gray-400 shrink-0" size={20} />
       </button>
@@ -162,18 +164,18 @@ export default function DashboardSidebar() {
   return (
     <>
       {/* Barre supérieure mobile : menu + marque (le contenu des pages démarre en dessous) */}
-      <div className="md:hidden fixed top-0 inset-x-0 h-14 z-50 bg-white border-b border-gray-200 shadow-sm flex items-center gap-3 px-3">
+      <div className="md:hidden fixed top-0 inset-x-0 h-14 z-50 bg-white dark:bg-[#1E293B] border-b border-gray-200 dark:border-[#334155] shadow-sm flex items-center gap-3 px-3">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={mobileMenuOpen}
-          className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-100 active:bg-gray-200"
+          className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#334155] active:bg-gray-200 dark:active:bg-[#475569]"
         >
-          {mobileMenuOpen ? <MdClose size={24} className="text-gray-800" /> : <MdMenu size={24} className="text-gray-800" />}
+          {mobileMenuOpen ? <MdClose size={24} className="text-gray-800 dark:text-[#F8FAFC]" /> : <MdMenu size={24} className="text-gray-800 dark:text-[#F8FAFC]" />}
         </button>
         <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
           <span className="w-8 h-8 rounded-lg bg-[#1E3A8A] flex items-center justify-center"><MdDashboard className="text-white" /></span>
-          <span className="font-bold text-[#1E3A8A]">MyBudget+</span>
+          <span className="font-bold text-[#1E3A8A] dark:text-[#60A5FA]">MyBudget+</span>
         </Link>
       </div>
 
@@ -190,8 +192,8 @@ export default function DashboardSidebar() {
         app-sidebar
         fixed md:static top-14 md:top-0 left-0
         w-72 max-w-[85vw] md:max-w-none
-        bg-gradient-to-b from-white to-gray-50
-        border-r border-gray-200
+        bg-gradient-to-b from-white dark:from-[#1E293B] to-gray-50 dark:to-[#0F172A]
+        border-r border-gray-200 dark:border-[#334155]
         h-[calc(100dvh-3.5rem)] md:h-screen
         transition-all duration-300 ease-in-out
         z-40
@@ -202,16 +204,16 @@ export default function DashboardSidebar() {
         {/* Conteneur flex pour organiser logo, nav et bouton */}
         <div className="flex flex-col h-full">
           {/* Logo/Brand - Fixe en haut */}
-          <div className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-[#334155] flex-shrink-0">
             <Link to="/dashboard" className="flex items-center gap-3 group">
               <div className="w-10 h-10 rounded-xl bg-[#1E3A8A] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200">
                 <MdDashboard className="text-white text-lg" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-[#1E3A8A]">
+                <h2 className="text-lg font-bold text-[#1E3A8A] dark:text-[#60A5FA]">
                   MyBudget+
                 </h2>
-                <p className="text-xs text-gray-500">Gestion financière</p>
+                <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Gestion financière</p>
               </div>
             </Link>
           </div>
@@ -221,7 +223,7 @@ export default function DashboardSidebar() {
           {menuSections.map((section, sectionIndex) => (
             <div key={sectionIndex} className={sectionIndex > 0 ? "mt-4" : ""}>
               {/* Titre de section */}
-              <div className="text-xs font-semibold text-[#1E293B] uppercase tracking-wider mb-1.5 px-3">
+              <div className="text-xs font-semibold text-[#1E293B] dark:text-[#E2E8F0] uppercase tracking-wider mb-1.5 px-3">
                 {section.title}
               </div>
               
@@ -242,13 +244,13 @@ export default function DashboardSidebar() {
                           ${
                             active
                               ? "bg-[#1E3A8A] text-white shadow-md"
-                              : "text-gray-700 hover:bg-gray-100 hover:text-[#1E3A8A]"
+                              : "text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-100 dark:hover:bg-[#334155] hover:text-[#1E3A8A] dark:hover:text-[#60A5FA]"
                           }
                         `}
                       >
                         {/* Indicateur actif */}
                         {active && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white dark:bg-[#1E293B] rounded-r-full"></div>
                         )}
                         
                         {/* Icône */}
@@ -256,7 +258,7 @@ export default function DashboardSidebar() {
                           size={18} 
                           className={`
                             transition-transform duration-200 flex-shrink-0
-                            ${active ? "text-white" : "text-gray-500 group-hover:text-[#1E3A8A]"}
+                            ${active ? "text-white" : "text-gray-500 dark:text-[#94A3B8] group-hover:text-[#1E3A8A] dark:group-hover:text-[#60A5FA]"}
                             ${active ? "" : "group-hover:scale-110"}
                           `}
                         />
@@ -264,7 +266,7 @@ export default function DashboardSidebar() {
                         {/* Label */}
                         <span className={`
                           font-medium text-sm flex-1
-                          ${active ? "text-white font-semibold" : "text-gray-700"}
+                          ${active ? "text-white font-semibold" : "text-gray-700 dark:text-[#E2E8F0]"}
                         `}>
                           {item.label}
                         </span>

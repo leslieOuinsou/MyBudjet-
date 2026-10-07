@@ -8,6 +8,16 @@
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="theme-color" content="#1E73BE" />
     <title>MyBudget</title>
+    <script>
+      // Applique le thème avant l'affichage pour éviter un flash blanc en mode sombre
+      (function () {
+        try {
+          var t = localStorage.getItem('mybudget_theme') || 'light';
+          var dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

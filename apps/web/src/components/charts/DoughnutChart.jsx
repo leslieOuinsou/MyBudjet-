@@ -1,7 +1,8 @@
 import React from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-import { SERIES, OTHER, SURFACE, INK, tooltipStyle, euro } from './chartTheme.js';
+import { useTheme } from '../../context/ThemeContext.jsx';
+import { T, SERIES, INK, setChartTheme, tooltipStyle, euro } from './chartTheme.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -14,7 +15,7 @@ const prepare = (labels = [], values = []) => {
   if (rows.length <= SERIES.length) return { rows, colors: rows.map((_, i) => SERIES[i]) };
   const head = rows.slice(0, MAX_SLICES);
   const rest = rows.slice(MAX_SLICES).reduce((s, r) => s + r.value, 0);
-  return { rows: [...head, { label: 'Autres', value: rest }], colors: [...SERIES.slice(0, MAX_SLICES), OTHER] };
+  return { rows: [...head, { label: 'Autres', value: rest }], colors: [...SERIES.slice(0, MAX_SLICES), T.OTHER] };
 };
 
 // Total affiché au centre du donut
@@ -39,11 +40,13 @@ const centerText = {
 };
 
 export default function DoughnutChart({ data, title }) {
+  const { isDarkMode } = useTheme();
+  setChartTheme(isDarkMode);
   const { rows, colors } = prepare(data?.labels, data?.values);
   const total = rows.reduce((s, r) => s + r.value, 0);
 
   if (rows.length === 0) {
-    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500">Aucune dépense sur cette période.</div>;
+    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500 dark:text-[#94A3B8]">Aucune dépense sur cette période.</div>;
   }
 
   const chartData = {
@@ -51,7 +54,7 @@ export default function DoughnutChart({ data, title }) {
     datasets: [{
       data: rows.map((r) => r.value),
       backgroundColor: colors,
-      borderColor: SURFACE,
+      borderColor: T.SURFACE,
       borderWidth: 3, // l'écart entre parts est la couleur du fond
       hoverOffset: 6,
       borderRadius: 4,
@@ -92,7 +95,7 @@ export default function DoughnutChart({ data, title }) {
         },
       },
       tooltip: {
-        ...tooltipStyle,
+        ...tooltipStyle(),
         callbacks: {
           label: (c) => ` ${c.label} : ${euro(c.parsed)} (${Math.round((c.parsed / total) * 100)} %)`,
         },

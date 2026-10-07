@@ -120,9 +120,9 @@ export default function AdminSignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col px-4 py-6 md:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 dark:from-[#0F172A] via-white dark:via-[#1E293B] to-gray-50 dark:to-[#0F172A] flex flex-col px-4 py-6 md:py-8">
       <div className="flex flex-1 items-center justify-center w-full">
-        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl flex flex-col md:flex-row overflow-hidden border border-gray-200">
+        <div className="w-full max-w-5xl bg-white dark:bg-[#1E293B] rounded-2xl shadow-xl flex flex-col md:flex-row overflow-hidden border border-gray-200 dark:border-[#334155]">
           {/* Formulaire */}
           <div className="w-full md:w-1/2 p-6 md:p-8 lg:p-10 flex flex-col justify-center relative">
             {/* Effet de fond animé */}
@@ -133,7 +133,7 @@ export default function AdminSignUpPage() {
               <div className="mb-4">
                 <Link 
                   to="/" 
-                  className="inline-flex items-center gap-2 text-sm text-[#64748B] hover:text-[#1E3A8A] transition-colors"
+                  className="inline-flex items-center gap-2 text-sm text-[#64748B] dark:text-[#94A3B8] hover:text-[#1E3A8A] dark:hover:text-[#60A5FA] transition-colors"
                 >
                   <MdArrowBack size={18} />
                   <span>Retour à l'accueil</span>
@@ -143,32 +143,32 @@ export default function AdminSignUpPage() {
               <div className="flex flex-col items-center mb-8 animate-fade-in">
                 <div className="relative mb-4">
                   <div className="absolute inset-0 bg-[#1E3A8A] rounded-full blur-xl opacity-20 animate-pulse"></div>
-                  <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] rounded-2xl flex items-center justify-center shadow-lg">
+                  <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] dark:to-[#2563EB] rounded-2xl flex items-center justify-center shadow-lg">
                     <MdAdminPanelSettings className="text-white text-2xl" />
                   </div>
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-2">
-                  MyBudget<span className="text-[#1E3A8A]">+</span>
+                <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] dark:text-[#F8FAFC] mb-2">
+                  MyBudget<span className="text-[#1E3A8A] dark:text-[#60A5FA]">+</span>
                 </h1>
-                <h2 className="text-xl md:text-2xl font-semibold text-[#0F172A] mt-2 mb-2">Créer un compte Admin</h2>
-                <p className="text-[#64748B] text-center text-sm md:text-base">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#0F172A] dark:text-[#F8FAFC] mt-2 mb-2">Créer un compte Admin</h2>
+                <p className="text-[#64748B] dark:text-[#94A3B8] text-center text-sm md:text-base">
                   Portail réservé aux administrateurs autorisés
                 </p>
               </div>
 
               {/* Messages d'erreur/succès */}
               {error && (
-                <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm animate-slide-down">
+                <div className="mb-4 p-4 bg-red-50 dark:bg-[#7F1D1D]/30 border-l-4 border-red-500 rounded-lg shadow-sm animate-slide-down">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-red-500 dark:text-[#F87171] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <div className="text-red-800 text-sm font-medium">{error}</div>
+                    <div className="text-red-800 dark:text-[#FCA5A5] text-sm font-medium">{error}</div>
                   </div>
                 </div>
               )}
               {success && (
-                <div className="mb-4 p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl shadow-lg animate-slide-down">
+                <div className="mb-4 p-5 bg-gradient-to-r from-green-50 dark:from-[#14532D]/30 to-emerald-50 dark:to-[#14532D]/30 border-2 border-green-400 rounded-xl shadow-lg animate-slide-down">
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
                       <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center animate-bounce">
@@ -176,17 +176,17 @@ export default function AdminSignUpPage() {
                       </div>
                     </div>
                     <div className="ml-4 flex-1">
-                      <div className="text-green-800 text-base font-bold mb-1">{success}</div>
+                      <div className="text-green-800 dark:text-[#86EFAC] text-base font-bold mb-1">{success}</div>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Avertissement */}
-              <div className="mb-6 p-4 rounded-lg bg-orange-50 border border-orange-200">
+              <div className="mb-6 p-4 rounded-lg bg-orange-50 dark:bg-[#78350F]/30 border border-orange-200 dark:border-[#9A3412]">
                 <div className="flex items-start gap-3">
-                  <MdWarning size={20} className="text-orange-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-xs text-orange-700">
+                  <MdWarning size={20} className="text-orange-600 dark:text-[#FBBF24] mt-0.5 flex-shrink-0" />
+                  <div className="text-xs text-orange-700 dark:text-[#FDBA74]">
                     <div className="font-semibold mb-1">Code d'activation requis</div>
                     <div>
                       Un code d'activation admin est nécessaire pour créer ce compte. 
@@ -199,18 +199,18 @@ export default function AdminSignUpPage() {
               <form className="space-y-5 relative z-10" onSubmit={handleSubmit}>
                 {/* Nom complet */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-[#E2E8F0]">
                     Nom complet
                   </label>
                   <div className="relative">
-                    <MdPerson className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'name' ? 'text-[#1E3A8A]' : 'text-gray-400'}`} size={20} />
+                    <MdPerson className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'name' ? 'text-[#1E3A8A] dark:text-[#60A5FA]' : 'text-gray-400'}`} size={20} />
                     <input 
                       type="text" 
                       placeholder="John Doe" 
                       className={`w-full pl-10 pr-4 rounded-xl border-2 py-3 text-sm transition-all duration-200 ${
                         focusedField === 'name' 
-                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50' 
-                          : 'border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A]'
+                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50 dark:bg-[#1E40AF]/25' 
+                          : 'border-gray-200 dark:border-[#334155] hover:border-gray-300 dark:hover:border-[#475569] focus:border-[#1E3A8A]'
                       } focus:outline-none focus:ring-4 focus:ring-blue-100`}
                       value={formData.name} 
                       onChange={e => setFormData({...formData, name: e.target.value})}
@@ -223,18 +223,18 @@ export default function AdminSignUpPage() {
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-[#E2E8F0]">
                     Adresse e-mail
                   </label>
                   <div className="relative">
-                    <MdEmail className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'email' ? 'text-[#1E3A8A]' : 'text-gray-400'}`} size={20} />
+                    <MdEmail className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'email' ? 'text-[#1E3A8A] dark:text-[#60A5FA]' : 'text-gray-400'}`} size={20} />
                     <input 
                       type="email" 
                       placeholder="admin@mybudget.com" 
                       className={`w-full pl-10 pr-4 rounded-xl border-2 py-3 text-sm transition-all duration-200 ${
                         focusedField === 'email' 
-                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50' 
-                          : 'border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A]'
+                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50 dark:bg-[#1E40AF]/25' 
+                          : 'border-gray-200 dark:border-[#334155] hover:border-gray-300 dark:hover:border-[#475569] focus:border-[#1E3A8A]'
                       } focus:outline-none focus:ring-4 focus:ring-blue-100`}
                       value={formData.email} 
                       onChange={e => setFormData({...formData, email: e.target.value})}
@@ -248,13 +248,13 @@ export default function AdminSignUpPage() {
                 {/* Mot de passe */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-[#E2E8F0]">
                       Mot de passe
                     </label>
                     {formData.password && (
                       <div className="flex items-center gap-2">
-                        <div className="text-xs text-gray-500">Force:</div>
-                        <div className="flex-1 w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="text-xs text-gray-500 dark:text-[#94A3B8]">Force:</div>
+                        <div className="flex-1 w-24 h-2 bg-gray-200 dark:bg-[#475569] rounded-full overflow-hidden">
                           <div 
                             className={`h-full transition-all duration-500 ${
                               strengthPercentage < 40 ? 'bg-red-500' :
@@ -264,7 +264,7 @@ export default function AdminSignUpPage() {
                           ></div>
                         </div>
                         <span className={`text-xs font-medium ${
-                          strengthPercentage < 40 ? 'text-red-500' :
+                          strengthPercentage < 40 ? 'text-red-500 dark:text-[#F87171]' :
                           strengthPercentage < 80 ? 'text-yellow-500' : 'text-green-500'
                         }`}>
                           {strengthPercentage < 40 ? 'Faible' : strengthPercentage < 80 ? 'Moyen' : 'Fort'}
@@ -273,14 +273,14 @@ export default function AdminSignUpPage() {
                     )}
                   </div>
                   <div className="relative">
-                    <MdLock className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'password' ? 'text-[#1E3A8A]' : 'text-gray-400'}`} size={20} />
+                    <MdLock className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'password' ? 'text-[#1E3A8A] dark:text-[#60A5FA]' : 'text-gray-400'}`} size={20} />
                     <input 
                       type={showPassword ? "text" : "password"} 
                       placeholder="Votre mot de passe sécurisé" 
                       className={`w-full pl-10 pr-12 rounded-xl border-2 py-3 text-sm transition-all duration-200 ${
                         focusedField === 'password' 
-                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50' 
-                          : 'border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A]'
+                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50 dark:bg-[#1E40AF]/25' 
+                          : 'border-gray-200 dark:border-[#334155] hover:border-gray-300 dark:hover:border-[#475569] focus:border-[#1E3A8A]'
                       } focus:outline-none focus:ring-4 focus:ring-blue-100`}
                       value={formData.password} 
                       onChange={(e) => {
@@ -299,7 +299,7 @@ export default function AdminSignUpPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors duration-200"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-[#CBD5E1] focus:outline-none transition-colors duration-200"
                     >
                       {showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
                     </button>
@@ -307,35 +307,35 @@ export default function AdminSignUpPage() {
 
                   {/* Règles du mot de passe */}
                   {showPasswordRules && formData.password && !allRequirementsMet && (
-                    <div className="mt-3 p-4 bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 rounded-xl space-y-2 animate-slide-down">
-                      <div className="font-semibold text-sm text-gray-700 mb-2">Règles du mot de passe :</div>
-                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.length ? 'text-green-600' : 'text-red-500'}`}>
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.length ? 'bg-green-100' : 'bg-red-100'}`}>
-                          {passwordRequirements.length ? <MdCheckCircle className="w-3 h-3 text-green-600" /> : <span className="text-red-600">✕</span>}
+                    <div className="mt-3 p-4 bg-gradient-to-r from-gray-50 dark:from-[#0F172A] to-blue-50 dark:to-[#1E40AF]/25 border border-gray-200 dark:border-[#334155] rounded-xl space-y-2 animate-slide-down">
+                      <div className="font-semibold text-sm text-gray-700 dark:text-[#E2E8F0] mb-2">Règles du mot de passe :</div>
+                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.length ? 'text-green-600 dark:text-[#22C55E]' : 'text-red-500 dark:text-[#F87171]'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.length ? 'bg-green-100 dark:bg-[#14532D]/50' : 'bg-red-100 dark:bg-[#7F1D1D]/50'}`}>
+                          {passwordRequirements.length ? <MdCheckCircle className="w-3 h-3 text-green-600 dark:text-[#22C55E]" /> : <span className="text-red-600 dark:text-[#F87171]">✕</span>}
                         </div>
                         <span>Au moins 12 caractères</span>
                       </div>
-                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.uppercase ? 'text-green-600' : 'text-red-500'}`}>
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.uppercase ? 'bg-green-100' : 'bg-red-100'}`}>
-                          {passwordRequirements.uppercase ? <MdCheckCircle className="w-3 h-3 text-green-600" /> : <span className="text-red-600">✕</span>}
+                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.uppercase ? 'text-green-600 dark:text-[#22C55E]' : 'text-red-500 dark:text-[#F87171]'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.uppercase ? 'bg-green-100 dark:bg-[#14532D]/50' : 'bg-red-100 dark:bg-[#7F1D1D]/50'}`}>
+                          {passwordRequirements.uppercase ? <MdCheckCircle className="w-3 h-3 text-green-600 dark:text-[#22C55E]" /> : <span className="text-red-600 dark:text-[#F87171]">✕</span>}
                         </div>
                         <span>Une majuscule</span>
                       </div>
-                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.lowercase ? 'text-green-600' : 'text-red-500'}`}>
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.lowercase ? 'bg-green-100' : 'bg-red-100'}`}>
-                          {passwordRequirements.lowercase ? <MdCheckCircle className="w-3 h-3 text-green-600" /> : <span className="text-red-600">✕</span>}
+                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.lowercase ? 'text-green-600 dark:text-[#22C55E]' : 'text-red-500 dark:text-[#F87171]'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.lowercase ? 'bg-green-100 dark:bg-[#14532D]/50' : 'bg-red-100 dark:bg-[#7F1D1D]/50'}`}>
+                          {passwordRequirements.lowercase ? <MdCheckCircle className="w-3 h-3 text-green-600 dark:text-[#22C55E]" /> : <span className="text-red-600 dark:text-[#F87171]">✕</span>}
                         </div>
                         <span>Une minuscule</span>
                       </div>
-                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.number ? 'text-green-600' : 'text-red-500'}`}>
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.number ? 'bg-green-100' : 'bg-red-100'}`}>
-                          {passwordRequirements.number ? <MdCheckCircle className="w-3 h-3 text-green-600" /> : <span className="text-red-600">✕</span>}
+                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.number ? 'text-green-600 dark:text-[#22C55E]' : 'text-red-500 dark:text-[#F87171]'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.number ? 'bg-green-100 dark:bg-[#14532D]/50' : 'bg-red-100 dark:bg-[#7F1D1D]/50'}`}>
+                          {passwordRequirements.number ? <MdCheckCircle className="w-3 h-3 text-green-600 dark:text-[#22C55E]" /> : <span className="text-red-600 dark:text-[#F87171]">✕</span>}
                         </div>
                         <span>Un chiffre</span>
                       </div>
-                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.special ? 'text-green-600' : 'text-red-500'}`}>
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.special ? 'bg-green-100' : 'bg-red-100'}`}>
-                          {passwordRequirements.special ? <MdCheckCircle className="w-3 h-3 text-green-600" /> : <span className="text-red-600">✕</span>}
+                      <div className={`flex items-center gap-2 text-xs transition-all duration-300 ${passwordRequirements.special ? 'text-green-600 dark:text-[#22C55E]' : 'text-red-500 dark:text-[#F87171]'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${passwordRequirements.special ? 'bg-green-100 dark:bg-[#14532D]/50' : 'bg-red-100 dark:bg-[#7F1D1D]/50'}`}>
+                          {passwordRequirements.special ? <MdCheckCircle className="w-3 h-3 text-green-600 dark:text-[#22C55E]" /> : <span className="text-red-600 dark:text-[#F87171]">✕</span>}
                         </div>
                         <span>Un caractère spécial (@$!%*?&)</span>
                       </div>
@@ -345,22 +345,22 @@ export default function AdminSignUpPage() {
 
                 {/* Confirmer le mot de passe */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-[#E2E8F0]">
                     Confirmer le mot de passe
                   </label>
                   <div className="relative">
-                    <MdLock className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'confirmPassword' ? 'text-[#1E3A8A]' : 'text-gray-400'}`} size={20} />
+                    <MdLock className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${focusedField === 'confirmPassword' ? 'text-[#1E3A8A] dark:text-[#60A5FA]' : 'text-gray-400'}`} size={20} />
                     <input 
                       type={showConfirmPassword ? "text" : "password"} 
                       placeholder="Confirmez votre mot de passe" 
                       className={`w-full pl-10 pr-12 rounded-xl border-2 py-3 text-sm transition-all duration-200 ${
                         focusedField === 'confirmPassword' 
-                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50' 
+                          ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50 dark:bg-[#1E40AF]/25' 
                           : formData.confirmPassword && formData.password !== formData.confirmPassword
-                          ? 'border-red-300 bg-red-50'
+                          ? 'border-red-300 dark:border-[#991B1B] bg-red-50 dark:bg-[#7F1D1D]/30'
                           : formData.confirmPassword && formData.password === formData.confirmPassword
-                          ? 'border-green-300 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A]'
+                          ? 'border-green-300 dark:border-[#166534] bg-green-50 dark:bg-[#14532D]/30'
+                          : 'border-gray-200 dark:border-[#334155] hover:border-gray-300 dark:hover:border-[#475569] focus:border-[#1E3A8A]'
                       } focus:outline-none focus:ring-4 focus:ring-blue-100`}
                       value={formData.confirmPassword} 
                       onChange={e => setFormData({...formData, confirmPassword: e.target.value})}
@@ -373,14 +373,14 @@ export default function AdminSignUpPage() {
                         {formData.password === formData.confirmPassword ? (
                           <MdCheckCircle className="w-5 h-5 text-green-500" />
                         ) : (
-                          <span className="text-red-500">✕</span>
+                          <span className="text-red-500 dark:text-[#F87171]">✕</span>
                         )}
                       </div>
                     )}
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors duration-200"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-[#CBD5E1] focus:outline-none transition-colors duration-200"
                     >
                       {showConfirmPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
                     </button>
@@ -389,7 +389,7 @@ export default function AdminSignUpPage() {
 
                 {/* Code d'activation admin */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-[#E2E8F0]">
                     Code d'activation admin
                   </label>
                   <input
@@ -398,15 +398,15 @@ export default function AdminSignUpPage() {
                     onChange={(e) => setFormData({...formData, adminCode: e.target.value})}
                     className={`w-full px-4 py-3 rounded-xl border-2 font-mono text-sm transition-all duration-200 ${
                       focusedField === 'adminCode' 
-                        ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A]'
+                        ? 'border-[#1E3A8A] ring-4 ring-blue-100 bg-blue-50 dark:bg-[#1E40AF]/25' 
+                        : 'border-gray-200 dark:border-[#334155] hover:border-gray-300 dark:hover:border-[#475569] focus:border-[#1E3A8A]'
                     } focus:outline-none focus:ring-4 focus:ring-blue-100`}
                     placeholder="XXXX-XXXX-XXXX-XXXX"
                     onFocus={() => setFocusedField('adminCode')}
                     onBlur={() => setFocusedField('')}
                     required
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-[#94A3B8]">
                     Code fourni par le super-administrateur
                   </p>
                 </div>
@@ -417,8 +417,8 @@ export default function AdminSignUpPage() {
                   disabled={loading || !allRequirementsMet}
                   className={`w-full rounded-xl font-semibold py-4 mt-6 transition-all duration-300 transform ${
                     loading || !allRequirementsMet
-                      ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-[#1E3A8A] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E3A8A] hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
+                      ? 'bg-gray-400 dark:bg-[#475569] cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-[#1E3A8A] to-[#1D4ED8] dark:to-[#2563EB] hover:from-[#1D4ED8] dark:hover:from-[#2563EB] hover:to-[#1E3A8A] hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
                   } text-white text-sm md:text-base flex items-center justify-center gap-2`}
                 >
                   {loading ? (
@@ -440,9 +440,9 @@ export default function AdminSignUpPage() {
 
               {/* Liens */}
               <div className="mt-6 space-y-3 text-center relative z-10">
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-700 dark:text-[#E2E8F0]">
                   Vous avez déjà un compte admin ?{' '}
-                  <Link to="/admin/login" className="text-[#1E3A8A] font-semibold hover:text-[#1D4ED8] hover:underline transition-colors">
+                  <Link to="/admin/login" className="text-[#1E3A8A] dark:text-[#60A5FA] font-semibold hover:text-[#1D4ED8] dark:hover:text-[#60A5FA] hover:underline transition-colors">
                     Se connecter
                   </Link>
                 </p>
@@ -451,10 +451,10 @@ export default function AdminSignUpPage() {
           </div>
 
           {/* Section témoignage moderne */}
-          <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] flex-col items-center justify-center p-8 lg:p-12 relative overflow-hidden">
+          <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] dark:to-[#2563EB] flex-col items-center justify-center p-8 lg:p-12 relative overflow-hidden">
             {/* Effets de fond */}
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+              <div className="absolute top-0 left-0 w-72 h-72 bg-white dark:bg-[#1E293B] rounded-full blur-3xl"></div>
               <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#1E3A8A]/30 rounded-full blur-3xl"></div>
             </div>
             

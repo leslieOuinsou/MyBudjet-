@@ -12,11 +12,11 @@ export default function TwoFactorPrompt({ emailHint, devCode, loading, onSubmit,
         onSubmit(code);
       }}
     >
-      <p className="text-sm text-[#0F172A]">
+      <p className="text-sm text-[#0F172A] dark:text-[#F8FAFC]">
         Un code de sécurité à 6 chiffres a été envoyé à <strong>{emailHint}</strong>. Il est valable 10 minutes.
       </p>
       {devCode && (
-        <p className="text-xs bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg p-2">
+        <p className="text-xs bg-yellow-50 dark:bg-[#78350F]/30 border border-yellow-200 dark:border-[#92400E] text-yellow-800 dark:text-[#FCD34D] rounded-lg p-2">
           Mode développement (email non configuré) : votre code est <strong>{devCode}</strong>
         </p>
       )}
@@ -28,18 +28,18 @@ export default function TwoFactorPrompt({ emailHint, devCode, loading, onSubmit,
         value={code}
         onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
         placeholder="000000"
-        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-center text-2xl tracking-[0.5em] focus:outline-none focus:border-[#2563EB]"
+        className="w-full border-2 border-gray-200 dark:border-[#334155] rounded-xl px-4 py-3 text-center text-2xl tracking-[0.5em] focus:outline-none focus:border-[#2563EB]"
         autoFocus
         required
       />
       <button
         type="submit"
         disabled={loading || code.length !== 6}
-        className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#1D4ED8] disabled:opacity-50 text-sm md:text-base"
+        className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#1D4ED8] dark:hover:bg-[#2563EB] disabled:opacity-50 text-sm md:text-base"
       >
         {loading ? 'Vérification…' : 'Valider le code'}
       </button>
-      <button type="button" onClick={onCancel} className="text-sm text-[#64748B] hover:underline">
+      <button type="button" onClick={onCancel} className="text-sm text-[#64748B] dark:text-[#94A3B8] hover:underline">
         Retour à la connexion
       </button>
     </form>

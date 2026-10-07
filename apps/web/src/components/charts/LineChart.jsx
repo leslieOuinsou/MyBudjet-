@@ -3,7 +3,8 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { LINE_SERIES, INCOME, EXPENSE, SURFACE, INK, areaGradient, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
+import { useTheme } from '../../context/ThemeContext.jsx';
+import { T, LINE_SERIES, INK, setChartTheme, areaGradient, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -20,7 +21,7 @@ const crosshair = {
     ctx.moveTo(x, chartArea.top);
     ctx.lineTo(x, chartArea.bottom);
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#CBD5E1';
+    ctx.strokeStyle = T.CROSSHAIR;
     ctx.setLineDash([4, 4]);
     ctx.stroke();
     ctx.restore();
@@ -40,8 +41,8 @@ const series = (label, values, color) => ({
   pointHoverBorderWidth: 2,
   pointBackgroundColor: color,
   pointHoverBackgroundColor: color,
-  pointBorderColor: SURFACE,
-  pointHoverBorderColor: SURFACE,
+  pointBorderColor: T.SURFACE,
+  pointHoverBorderColor: T.SURFACE,
 });
 
 // Accepte deux formats : { labels, income, expense } (Rapports, Tableau de bord)
@@ -51,10 +52,12 @@ const buildSeries = (data) => {
   if (Array.isArray(data?.datasets)) {
     return data.datasets.map((d, i) => series(d.label, d.data, LINE_SERIES[i % LINE_SERIES.length]));
   }
-  return [series('Revenus', data?.income, INCOME), series('Dépenses', data?.expense, EXPENSE)];
+  return [series('Revenus', data?.income, T.INCOME), series('Dépenses', data?.expense, T.EXPENSE)];
 };
 
 export default function LineChart({ data, title }) {
+  const { isDarkMode } = useTheme();
+  setChartTheme(isDarkMode);
   const chartData = {
     labels: data?.labels || [],
     datasets: buildSeries(data),
@@ -69,15 +72,15 @@ export default function LineChart({ data, title }) {
       legend: legendStyle('circle'),
       title: { display: !!title, text: title, color: INK.primary, font: { size: 15, weight: '600' } },
       tooltip: {
-        ...tooltipStyle,
+        ...tooltipStyle(),
         callbacks: { label: (c) => ` ${c.dataset.label} : ${euro(c.parsed.y)}` },
       },
     },
-    scales: axisStyle,
+    scales: axisStyle(),
   };
 
   if (!hasValues(chartData.datasets.map((d) => d.data))) {
-    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500">Aucune donnée sur cette période.</div>;
+    return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500 dark:text-[#94A3B8]">Aucune donnée sur cette période.</div>;
   }
 
   return (

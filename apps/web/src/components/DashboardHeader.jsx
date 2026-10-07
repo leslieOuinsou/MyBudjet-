@@ -93,9 +93,9 @@ export default function DashboardHeader() {
     if (loading) {
       return (
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
+          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-[#475569] animate-pulse"></div>
           <div className="hidden md:block">
-            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-24 bg-gray-200 dark:bg-[#475569] rounded animate-pulse"></div>
           </div>
         </div>
       );
@@ -113,14 +113,14 @@ export default function DashboardHeader() {
       console.log('⚠️ Pas d\'utilisateur mais token présent, affichage placeholder');
       return (
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-sm shadow-md">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] text-white flex items-center justify-center font-bold text-sm shadow-md">
             U
           </div>
           <div className="hidden md:block text-left">
-            <div className="text-sm font-semibold text-[#0F172A]">
+            <div className="text-sm font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
               Utilisateur
             </div>
-            <div className="text-xs text-[#64748B]">
+            <div className="text-xs text-[#64748B] dark:text-[#94A3B8]">
               Chargement...
             </div>
           </div>
@@ -166,7 +166,7 @@ export default function DashboardHeader() {
           ) : null}
           {/* Initiales (toujours présentes, affichées si pas d'avatar ou si avatar échoue) */}
           <div 
-            className={`w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:shadow-lg transition-all group-hover:scale-105 ${
+            className={`w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] dark:from-[#3B82F6] to-[#1D4ED8] dark:to-[#2563EB] text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:shadow-lg transition-all group-hover:scale-105 ${
               avatarUrl ? 'hidden' : 'flex'
             }`}
           >
@@ -176,10 +176,10 @@ export default function DashboardHeader() {
         
         {/* Nom de l'utilisateur (visible sur desktop) */}
         <div className="hidden md:block text-left">
-          <div className="text-sm font-semibold text-[#0F172A] group-hover:text-[#2563EB] transition-colors">
+          <div className="text-sm font-semibold text-[#0F172A] dark:text-[#F8FAFC] group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors">
             {firstName}
           </div>
-          <div className="text-xs text-[#64748B]">
+          <div className="text-xs text-[#64748B] dark:text-[#94A3B8]">
             Connecté
           </div>
         </div>
@@ -188,23 +188,23 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-white dark:bg-[#1E293B] shadow-sm">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-4 md:px-6">
-        <span className="text-[#2563EB] font-bold text-lg md:text-xl">MyBudget+</span>
-        <nav className="hidden lg:flex gap-4 xl:gap-8 text-[#0F172A] font-medium text-sm">
-          <Link to="/dashboard" className="text-[#2563EB] font-bold">Tableau de bord</Link>
-          <Link to="/budgets" className="hover:text-[#2563EB]">Budgets</Link>
-          <Link to="/importexport" className="hover:text-[#2563EB]">Données</Link>
-          <Link to="/forecasts" className="hover:text-[#2563EB]">Prévisions</Link>
+        <span className="text-[#2563EB] dark:text-[#60A5FA] font-bold text-lg md:text-xl">MyBudget+</span>
+        <nav className="hidden lg:flex gap-4 xl:gap-8 text-[#0F172A] dark:text-[#F8FAFC] font-medium text-sm">
+          <Link to="/dashboard" className="text-[#2563EB] dark:text-[#60A5FA] font-bold">Tableau de bord</Link>
+          <Link to="/budgets" className="hover:text-[#2563EB] dark:hover:text-[#60A5FA]">Budgets</Link>
+          <Link to="/importexport" className="hover:text-[#2563EB] dark:hover:text-[#60A5FA]">Données</Link>
+          <Link to="/forecasts" className="hover:text-[#2563EB] dark:hover:text-[#60A5FA]">Prévisions</Link>
           <input 
             type="text" 
             placeholder="Rechercher..." 
-            className="ml-2 xl:ml-4 px-2 xl:px-3 py-1 rounded border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] text-sm w-32 xl:w-auto" 
+            className="ml-2 xl:ml-4 px-2 xl:px-3 py-1 rounded border border-[#E2E8F0] dark:border-[#334155] bg-[#F8FAFC] dark:bg-[#334155]/50 text-[#0F172A] dark:text-[#F8FAFC] text-sm w-32 xl:w-auto" 
           />
         </nav>
         <div className="flex gap-2 items-center">
           <NotificationBell />
-          <Link to="/importexport" className="hidden md:block bg-[#2563EB] text-white px-3 md:px-4 py-2 rounded hover:bg-[#1D4ED8] text-sm">Importer/Exporter</Link>
+          <Link to="/importexport" className="hidden md:block bg-[#2563EB] dark:bg-[#3B82F6] text-white px-3 md:px-4 py-2 rounded hover:bg-[#1D4ED8] dark:hover:bg-[#2563EB] text-sm">Importer/Exporter</Link>
           <UserAvatar />
         </div>
       </div>

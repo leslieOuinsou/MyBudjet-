@@ -154,7 +154,7 @@ export default function CookieConsent() {
         <div className={`max-w-7xl mx-auto m-4 rounded-2xl shadow-2xl border-2 ${
           isDarkMode 
             ? 'bg-gray-800 border-blue-500/30' 
-            : 'bg-white border-blue-500/50'
+            : 'bg-white dark:bg-[#1E293B] border-blue-500/50'
         }`}>
           
           {/* Contenu principal de la bannière */}
@@ -162,20 +162,20 @@ export default function CookieConsent() {
             <div className="flex items-start gap-4 mb-6">
               {/* Icône cookie */}
               <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
-                isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100'
+                isDarkMode ? 'bg-blue-500/20' : 'bg-blue-100 dark:bg-[#1E40AF]/50'
               }`}>
-                <MdCookie className="text-3xl text-blue-500" />
+                <MdCookie className="text-3xl text-blue-500 dark:text-[#60A5FA]" />
               </div>
               
               {/* Texte principal */}
               <div className="flex-1">
                 <h3 className={`text-xl font-bold mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
+                  isDarkMode ? 'text-white' : 'text-gray-900 dark:text-[#F8FAFC]'
                 }`}>
                   🍪 Nous respectons votre vie privée
                 </h3>
                 <p className={`text-sm leading-relaxed ${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600 dark:text-[#CBD5E1]'
                 }`}>
                   Nous utilisons des cookies pour améliorer votre expérience, analyser le trafic et personnaliser le contenu. 
                   En cliquant sur "Accepter tout", vous consentez à l'utilisation de TOUS les cookies. 
@@ -185,7 +185,7 @@ export default function CookieConsent() {
                 {/* Lien vers la politique de confidentialité */}
                 <Link 
                   to="/privacy-policy" 
-                  className="inline-flex items-center gap-1 mt-2 text-sm text-blue-500 hover:text-blue-600 hover:underline"
+                  className="inline-flex items-center gap-1 mt-2 text-sm text-blue-500 dark:text-[#60A5FA] hover:text-blue-600 dark:hover:text-[#60A5FA] hover:underline"
                 >
                   <MdInfo size={16} />
                   En savoir plus sur notre politique de confidentialité
@@ -198,7 +198,7 @@ export default function CookieConsent() {
               {/* Bouton Accepter tout */}
               <button
                 onClick={handleAcceptAll}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                className="flex-1 bg-blue-600 dark:bg-[#3B82F6] hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
               >
                 <MdCheck size={20} />
                 Accepter tout
@@ -210,7 +210,7 @@ export default function CookieConsent() {
                 className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
                   isDarkMode
                     ? 'bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600'
-                    : 'bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-[#334155] border-gray-300 dark:border-[#475569] text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-200 dark:hover:bg-[#475569]'
                 }`}
               >
                 <MdClose size={20} />
@@ -223,7 +223,7 @@ export default function CookieConsent() {
                 className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
                   isDarkMode
                     ? 'bg-transparent border-blue-500 text-blue-400 hover:bg-blue-500/10'
-                    : 'bg-transparent border-blue-500 text-blue-600 hover:bg-blue-50'
+                    : 'bg-transparent border-blue-500 text-blue-600 dark:text-[#60A5FA] hover:bg-blue-50 dark:hover:bg-[#1E40AF]/25'
                 }`}
               >
                 <MdSettings size={20} />
@@ -235,33 +235,33 @@ export default function CookieConsent() {
           {/* Panneau de paramètres détaillés (affiché si showSettings est vrai) */}
           {showSettings && (
             <div className={`border-t-2 p-6 md:p-8 space-y-6 ${
-              isDarkMode ? 'border-gray-700 bg-gray-750' : 'border-gray-200 bg-gray-50'
+              isDarkMode ? 'border-gray-700 bg-gray-750' : 'border-gray-200 dark:border-[#334155] bg-gray-50 dark:bg-[#334155]/50'
             }`}>
               <h4 className={`text-lg font-bold mb-4 flex items-center gap-2 ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
+                isDarkMode ? 'text-white' : 'text-gray-900 dark:text-[#F8FAFC]'
               }`}>
-                <MdSecurity className="text-blue-500" />
+                <MdSecurity className="text-blue-500 dark:text-[#60A5FA]" />
                 Gérer mes préférences de cookies
               </h4>
               
               {/* Cookie nécessaires (toujours activés) */}
               <div className={`flex items-start gap-4 p-4 rounded-lg ${
-                isDarkMode ? 'bg-gray-800' : 'bg-white'
+                isDarkMode ? 'bg-gray-800' : 'bg-white dark:bg-[#1E293B]'
               }`}>
                 <input
                   type="checkbox"
                   checked={preferences.necessary}
                   disabled
-                  className="mt-1 w-5 h-5 text-blue-600 rounded cursor-not-allowed opacity-50"
+                  className="mt-1 w-5 h-5 text-blue-600 dark:text-[#60A5FA] rounded cursor-not-allowed opacity-50"
                 />
                 <div className="flex-1">
                   <h5 className={`font-semibold mb-1 ${
-                    isDarkMode ? 'text-white' : 'text-gray-900'
+                    isDarkMode ? 'text-white' : 'text-gray-900 dark:text-[#F8FAFC]'
                   }`}>
-                    🔒 Cookies nécessaires <span className="text-xs text-blue-500">(Obligatoire)</span>
+                    🔒 Cookies nécessaires <span className="text-xs text-blue-500 dark:text-[#60A5FA]">(Obligatoire)</span>
                   </h5>
                   <p className={`text-sm ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'
                   }`}>
                     Ces cookies sont indispensables au fonctionnement du site. 
                     Ils permettent l'authentification, la sécurité et les fonctionnalités de base.
@@ -273,7 +273,7 @@ export default function CookieConsent() {
               <div className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all ${
                 isDarkMode 
                   ? 'bg-gray-800 hover:bg-gray-750' 
-                  : 'bg-white hover:bg-gray-50'
+                  : 'bg-white dark:bg-[#1E293B] hover:bg-gray-50 dark:hover:bg-[#334155]/50'
               }`}
                 onClick={() => togglePreference('analytics')}
               >
@@ -281,16 +281,16 @@ export default function CookieConsent() {
                   type="checkbox"
                   checked={preferences.analytics}
                   onChange={() => togglePreference('analytics')}
-                  className="mt-1 w-5 h-5 text-blue-600 rounded cursor-pointer"
+                  className="mt-1 w-5 h-5 text-blue-600 dark:text-[#60A5FA] rounded cursor-pointer"
                 />
                 <div className="flex-1">
                   <h5 className={`font-semibold mb-1 ${
-                    isDarkMode ? 'text-white' : 'text-gray-900'
+                    isDarkMode ? 'text-white' : 'text-gray-900 dark:text-[#F8FAFC]'
                   }`}>
                     📊 Cookies analytiques
                   </h5>
                   <p className={`text-sm ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'
                   }`}>
                     Ces cookies nous aident à comprendre comment les visiteurs utilisent notre site. 
                     Données anonymisées utilisées pour améliorer l'expérience utilisateur.
@@ -302,7 +302,7 @@ export default function CookieConsent() {
               <div className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all ${
                 isDarkMode 
                   ? 'bg-gray-800 hover:bg-gray-750' 
-                  : 'bg-white hover:bg-gray-50'
+                  : 'bg-white dark:bg-[#1E293B] hover:bg-gray-50 dark:hover:bg-[#334155]/50'
               }`}
                 onClick={() => togglePreference('marketing')}
               >
@@ -310,16 +310,16 @@ export default function CookieConsent() {
                   type="checkbox"
                   checked={preferences.marketing}
                   onChange={() => togglePreference('marketing')}
-                  className="mt-1 w-5 h-5 text-blue-600 rounded cursor-pointer"
+                  className="mt-1 w-5 h-5 text-blue-600 dark:text-[#60A5FA] rounded cursor-pointer"
                 />
                 <div className="flex-1">
                   <h5 className={`font-semibold mb-1 ${
-                    isDarkMode ? 'text-white' : 'text-gray-900'
+                    isDarkMode ? 'text-white' : 'text-gray-900 dark:text-[#F8FAFC]'
                   }`}>
                     🎯 Cookies marketing
                   </h5>
                   <p className={`text-sm ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'
                   }`}>
                     Ces cookies permettent de vous proposer des publicités et du contenu personnalisé. 
                     Ils peuvent être déposés par nos partenaires publicitaires.
@@ -331,7 +331,7 @@ export default function CookieConsent() {
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={handleSavePreferences}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2"
+                  className="flex-1 bg-blue-600 dark:bg-[#3B82F6] hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <MdCheck size={20} />
                   Enregistrer mes préférences
@@ -341,7 +341,7 @@ export default function CookieConsent() {
                   className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
                     isDarkMode
                       ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      : 'bg-gray-200 dark:bg-[#475569] text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-300 dark:hover:bg-[#475569]'
                   }`}
                 >
                   Annuler

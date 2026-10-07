@@ -78,37 +78,37 @@ const testimonials = [
 
 export default function HomePage() {
 	return (
-		<div className='min-h-screen bg-gray-100 flex flex-col'>
+		<div className='min-h-screen bg-gray-100 dark:bg-[#0F172A] flex flex-col'>
 			{/* Header */}
-			<header className='bg-white shadow-sm'>
+			<header className='bg-white dark:bg-[#1E293B] shadow-sm'>
 				<div className='max-w-7xl mx-auto flex justify-between items-center py-3 md:py-4 px-3 md:px-6'>
 					<div className='flex items-center gap-2'>
-						<span className='text-[#2563EB] font-bold text-lg md:text-xl'>MyBudget+</span>
+						<span className='text-[#2563EB] dark:text-[#60A5FA] font-bold text-lg md:text-xl'>MyBudget+</span>
 					</div>
-					<nav className='hidden lg:flex gap-6 xl:gap-8 text-[#0F172A] font-medium text-sm'>
-						<a href='#features' className='hover:text-[#2563EB]'>
+					<nav className='hidden lg:flex gap-6 xl:gap-8 text-[#0F172A] dark:text-[#F8FAFC] font-medium text-sm'>
+						<a href='#features' className='hover:text-[#2563EB] dark:hover:text-[#60A5FA]'>
 							Fonctionnalités
 						</a>
-						<a href='#testimonials' className='hover:text-[#2563EB]'>
+						<a href='#testimonials' className='hover:text-[#2563EB] dark:hover:text-[#60A5FA]'>
 							Témoignages
 						</a>
-						<a href='#pricing' className='hover:text-[#2563EB]'>
+						<a href='#pricing' className='hover:text-[#2563EB] dark:hover:text-[#60A5FA]'>
 							Prix
 						</a>
-						<a href='#contact' className='hover:text-[#2563EB]'>
+						<a href='#contact' className='hover:text-[#2563EB] dark:hover:text-[#60A5FA]'>
 							Contact
 						</a>
 					</nav>
 					<div className='flex gap-1.5 md:gap-2'>
 						<Link
 							to='/login'
-							className='text-[#0F172A] px-2 md:px-4 py-1.5 md:py-2 rounded hover:bg-[#F8FAFC] text-sm md:text-base'>
+							className='text-[#0F172A] dark:text-[#F8FAFC] px-2 md:px-4 py-1.5 md:py-2 rounded hover:bg-[#F8FAFC] dark:hover:bg-[#334155]/50 text-sm md:text-base'>
 							<span className="hidden sm:inline">Se Connecter</span>
 							<span className="sm:hidden">Connexion</span>
 						</Link>
 						<Link
 							to='/signup'
-							className='bg-[#2563EB] text-white px-2 md:px-4 py-1.5 md:py-2 rounded hover:bg-[#1D4ED8] text-sm md:text-base'>
+							className='bg-[#2563EB] dark:bg-[#3B82F6] text-white px-2 md:px-4 py-1.5 md:py-2 rounded hover:bg-[#1D4ED8] dark:hover:bg-[#2563EB] text-sm md:text-base'>
 							S'inscrire
 						</Link>
 					</div>
@@ -116,32 +116,32 @@ export default function HomePage() {
 			</header>
 
 			{/* Hero */}
-			<section className='bg-[#DBEAFE] py-8 md:py-12 lg:py-16'>
+			<section className='bg-[#DBEAFE] dark:bg-[#1E40AF] py-8 md:py-12 lg:py-16'>
 				<div className='max-w-7xl mx-auto flex flex-col md:flex-row items-center px-3 md:px-6 gap-6 md:gap-12'>
 					<div className='flex-1'>
-						<h1 className='text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#0F172A] mb-4 md:mb-6'>
+						<h1 className='text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#0F172A] dark:text-[#F8FAFC] mb-4 md:mb-6'>
 							Gérez Votre Argent,
 							<br /> Simplifiez Votre Vie avec MyBudget+
 						</h1>
-						<p className='text-[#64748B] text-sm md:text-base mb-6 md:mb-8'>
+						<p className='text-[#64748B] dark:text-[#94A3B8] text-sm md:text-base mb-6 md:mb-8'>
 							Suivez vos revenus et dépenses, créez des budgets personnalisés, et
 							atteignez vos objectifs financiers en toute simplicité.
 						</p>
 						<div className='flex flex-col sm:flex-row gap-3 md:gap-4'>
 							<Link
 								to='/signup'
-								className='bg-[#2563EB] text-white px-4 md:px-6 py-2.5 md:py-3 rounded font-semibold hover:bg-[#1D4ED8] text-center text-sm md:text-base'>
+								className='bg-[#2563EB] dark:bg-[#3B82F6] text-white px-4 md:px-6 py-2.5 md:py-3 rounded font-semibold hover:bg-[#1D4ED8] dark:hover:bg-[#2563EB] text-center text-sm md:text-base'>
 								Commencer Gratuitement
 							</Link>
 							<Link
 								to='/features'
-								className='border border-[#2563EB] text-[#2563EB] px-4 md:px-6 py-2.5 md:py-3 rounded font-semibold hover:bg-[#F8FAFC] text-center text-sm md:text-base'>
+								className='border border-[#2563EB] text-[#2563EB] dark:text-[#60A5FA] px-4 md:px-6 py-2.5 md:py-3 rounded font-semibold hover:bg-[#F8FAFC] dark:hover:bg-[#334155]/50 text-center text-sm md:text-base'>
 								Découvrir les Fonctionnalités
 							</Link>
 						</div>
 					</div>
 					<div className='flex-1 flex justify-center w-full md:w-auto'>
-						<div className='w-full max-w-xl h-[240px] md:h-[320px] bg-white rounded shadow flex items-center justify-center overflow-hidden'>
+						<div className='w-full max-w-xl h-[240px] md:h-[320px] bg-white dark:bg-[#1E293B] rounded shadow flex items-center justify-center overflow-hidden'>
 							<img
 								src='/images/people/hero.jpg'
 								alt='Hero'
@@ -155,10 +155,10 @@ export default function HomePage() {
 			{/* Features */}
 			<section id='features' className='py-8 md:py-12 lg:py-16'>
 				<div className='max-w-7xl mx-auto px-3 md:px-6'>
-					<h2 className='text-2xl md:text-3xl font-bold text-[#0F172A] text-center mb-3 md:mb-4'>
+					<h2 className='text-2xl md:text-3xl font-bold text-[#0F172A] dark:text-[#F8FAFC] text-center mb-3 md:mb-4'>
 						Fonctionnalités Clés de MyBudget+
 					</h2>
-					<p className='text-[#64748B] text-center mb-8 md:mb-12 text-sm md:text-base'>
+					<p className='text-[#64748B] dark:text-[#94A3B8] text-center mb-8 md:mb-12 text-sm md:text-base'>
 						Découvrez comment MyBudget+ vous aide à prendre le contrôle de vos
 						finances avec des outils puissants et faciles à utiliser.
 					</p>
@@ -166,7 +166,7 @@ export default function HomePage() {
 						{features.map((f, i) => (
 							<div
 								key={i}
-								className='bg-white rounded-lg shadow p-4 md:p-6 flex flex-col items-start gap-3 md:gap-4 border border-[#E2E8F0]'>
+								className='bg-white dark:bg-[#1E293B] rounded-lg shadow p-4 md:p-6 flex flex-col items-start gap-3 md:gap-4 border border-[#E2E8F0] dark:border-[#334155]'>
 								<span
 									className='text-2xl md:text-3xl'
 									style={{
@@ -179,10 +179,10 @@ export default function HomePage() {
 									}}>
 									{f.icon}
 								</span>
-								<h3 className='text-base md:text-lg font-semibold text-[#0F172A]'>
+								<h3 className='text-base md:text-lg font-semibold text-[#0F172A] dark:text-[#F8FAFC]'>
 									{f.title}
 								</h3>
-								<p className='text-[#64748B] text-xs md:text-sm'>{f.desc}</p>
+								<p className='text-[#64748B] dark:text-[#94A3B8] text-xs md:text-sm'>{f.desc}</p>
 							</div>
 						))}
 					</div>
@@ -190,29 +190,29 @@ export default function HomePage() {
 			</section>
 
 			{/* Testimonials */}
-			<section id='testimonials' className='bg-[#F8FAFC] py-8 md:py-12 lg:py-16'>
+			<section id='testimonials' className='bg-[#F8FAFC] dark:bg-[#334155]/50 py-8 md:py-12 lg:py-16'>
 				<div className='max-w-7xl mx-auto px-3 md:px-6'>
-					<h2 className='text-xl md:text-2xl font-bold text-[#0F172A] text-center mb-6 md:mb-8'>
+					<h2 className='text-xl md:text-2xl font-bold text-[#0F172A] dark:text-[#F8FAFC] text-center mb-6 md:mb-8'>
 						Ce que Nos Utilisateurs Disent
 					</h2>
 					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8'>
 						{testimonials.map((t, i) => (
 							<div
 								key={i}
-								className='bg-white rounded-lg shadow p-4 md:p-6 flex flex-col gap-3 md:gap-4 border border-[#E2E8F0] items-center'>
+								className='bg-white dark:bg-[#1E293B] rounded-lg shadow p-4 md:p-6 flex flex-col gap-3 md:gap-4 border border-[#E2E8F0] dark:border-[#334155] items-center'>
 								<img
 									src={t.img}
 									alt={t.name}
 									className='w-12 h-12 md:w-16 md:h-16 rounded-full object-cover mb-2'
 								/>
-								<p className='text-[#0F172A] italic text-center text-xs md:text-sm'>
+								<p className='text-[#0F172A] dark:text-[#F8FAFC] italic text-center text-xs md:text-sm'>
 									"{t.text}"
 								</p>
 								<div className='flex flex-col items-center'>
-									<div className='font-semibold text-[#0F172A] text-sm md:text-base'>
+									<div className='font-semibold text-[#0F172A] dark:text-[#F8FAFC] text-sm md:text-base'>
 										{t.name}
 									</div>
-									<div className='text-xs text-[#64748B]'>{t.job}</div>
+									<div className='text-xs text-[#64748B] dark:text-[#94A3B8]'>{t.job}</div>
 								</div>
 							</div>
 						))}

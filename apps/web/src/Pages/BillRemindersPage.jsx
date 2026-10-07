@@ -184,12 +184,12 @@ export default function BillRemindersPage() {
   
   if (loading) {
     return (
-      <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
+      <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#0F172A]' : 'bg-[#F8FAFC] dark:bg-[#0F172A]'}`}>
         <DashboardSidebar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
-            <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B]'}>Chargement...</p>
+            <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B] dark:text-[#94A3B8]'}>Chargement...</p>
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function BillRemindersPage() {
   }
   
   return (
-    <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
+    <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#0F172A]' : 'bg-[#F8FAFC] dark:bg-[#0F172A]'}`}>
       <DashboardSidebar />
       
       <div className="flex-1 flex flex-col">
@@ -205,13 +205,13 @@ export default function BillRemindersPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#0F172A] dark:text-[#F8FAFC]'}`}>
                 Rappels de Factures
               </h1>
-              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
+              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B] dark:text-[#94A3B8]'}`}>
                 Gérez vos rappels de paiement et ne manquez plus aucune échéance
               </p>
-              <div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+              <div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-400'}`}>
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 Dernière mise à jour : {lastRefresh.toLocaleTimeString('fr-FR')}
                 <span className="mx-2">•</span>
@@ -229,41 +229,41 @@ export default function BillRemindersPage() {
           
           {/* Messages */}
           {error && (
-            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700 text-red-400' : 'bg-red-100 border border-red-300 text-red-700'}`}>
+            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700 text-red-400' : 'bg-red-100 dark:bg-[#7F1D1D]/50 border border-red-300 dark:border-[#991B1B] text-red-700 dark:text-[#FCA5A5]'}`}>
               ❌ {error}
             </div>
           )}
           {success && (
-            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-green-100 border border-green-300 text-green-700'}`}>
+            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-green-100 dark:bg-[#14532D]/50 border border-green-300 dark:border-[#166534] text-green-700 dark:text-[#4ADE80]'}`}>
               ✅ {success}
             </div>
           )}
           
           {/* Statistiques */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
-              <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total Rappels</div>
-              <div className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>{reminders.length}</div>
+            <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#1E293B] border border-[#334155]' : 'bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155]'}`}>
+              <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>Total Rappels</div>
+              <div className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>{reminders.length}</div>
             </div>
-            <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
-              <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>À venir</div>
-              <div className="text-3xl font-bold text-green-600">{upcomingReminders.length}</div>
+            <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#1E293B] border border-[#334155]' : 'bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155]'}`}>
+              <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>À venir</div>
+              <div className="text-3xl font-bold text-green-600 dark:text-[#22C55E]">{upcomingReminders.length}</div>
             </div>
-            <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
-              <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>En retard</div>
-              <div className="text-3xl font-bold text-[#334155]">{overdueReminders.length}</div>
+            <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#1E293B] border border-[#334155]' : 'bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155]'}`}>
+              <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>En retard</div>
+              <div className="text-3xl font-bold text-[#334155] dark:text-[#E2E8F0]">{overdueReminders.length}</div>
             </div>
           </div>
           
           {/* Recherche */}
           <div className="mb-6 relative">
-            <MdSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} size={20} />
+            <MdSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500 dark:text-[#94A3B8]'}`} size={20} />
             <input
               type="text"
               placeholder="Rechercher un rappel..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040] text-white placeholder-gray-500' : 'bg-white border-gray-300 text-black'}`}
+              className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDarkMode ? 'bg-[#1E293B] border-[#334155] text-white placeholder-gray-500' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
             />
           </div>
           
@@ -277,15 +277,15 @@ export default function BillRemindersPage() {
                 return (
                   <div
                     key={reminder._id}
-                    className={`p-6 rounded-lg border-l-4 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-gray-200'}`}
+                    className={`p-6 rounded-lg border-l-4 ${isDarkMode ? 'bg-[#1E293B] border-[#334155]' : 'bg-white dark:bg-[#1E293B] border-gray-200 dark:border-[#334155]'}`}
                     style={{ borderLeftColor: status.color === 'red' ? '#334155' : status.color === 'orange' ? '#64748B' : '#16A34A' }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
-                          <MdNotifications size={24} className={status.color === 'red' ? 'text-[#334155]' : status.color === 'orange' ? 'text-[#64748B]' : 'text-[#16A34A]'} />
+                          <MdNotifications size={24} className={status.color === 'red' ? 'text-[#334155] dark:text-[#E2E8F0]' : status.color === 'orange' ? 'text-[#64748B] dark:text-[#94A3B8]' : 'text-[#16A34A] dark:text-[#22C55E]'} />
                           <div>
-                            <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                            <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
                               {reminder.name}
                             </h3>
                             <span className={`text-xs px-2 py-1 rounded ${
@@ -300,20 +300,20 @@ export default function BillRemindersPage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="flex items-center gap-2">
-                            <MdAttachMoney size={18} className={isDarkMode ? 'text-gray-400' : 'text-gray-500'} />
+                            <MdAttachMoney size={18} className={isDarkMode ? 'text-gray-400' : 'text-gray-500 dark:text-[#94A3B8]'} />
                             <div>
-                              <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Montant</div>
-                              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                              <div className={`text-xs ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-400'}`}>Montant</div>
+                              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                                 {formatMoney(reminder.amount)}
                               </div>
                             </div>
                           </div>
                           
                           <div className="flex items-center gap-2">
-                            <MdCalendarToday size={18} className={isDarkMode ? 'text-gray-400' : 'text-gray-500'} />
+                            <MdCalendarToday size={18} className={isDarkMode ? 'text-gray-400' : 'text-gray-500 dark:text-[#94A3B8]'} />
                             <div>
-                              <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Date d'échéance</div>
-                              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                              <div className={`text-xs ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-400'}`}>Date d'échéance</div>
+                              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                                 {formatDate(reminder.dueDate)}
                               </div>
                             </div>
@@ -321,8 +321,8 @@ export default function BillRemindersPage() {
                           
                           <div className="flex items-center gap-2">
                             <div>
-                              <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Catégorie</div>
-                              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                              <div className={`text-xs ${isDarkMode ? 'text-gray-500 dark:text-[#94A3B8]' : 'text-gray-400'}`}>Catégorie</div>
+                              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                                 {reminder.category?.name || 'N/A'}
                               </div>
                             </div>
@@ -330,7 +330,7 @@ export default function BillRemindersPage() {
                         </div>
                         
                         {reminder.note && (
-                          <div className={`mt-3 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          <div className={`mt-3 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
                             Note: {reminder.note}
                           </div>
                         )}
@@ -339,14 +339,14 @@ export default function BillRemindersPage() {
                       <div className="flex gap-2 ml-4">
                         <button
                           onClick={() => handleEdit(reminder)}
-                          className="p-2 text-[#1E3A8A] hover:bg-blue-50 rounded transition"
+                          className="p-2 text-[#1E3A8A] dark:text-[#60A5FA] hover:bg-blue-50 dark:hover:bg-[#1E40AF]/25 rounded transition"
                           title="Modifier"
                         >
                           <MdEdit size={20} />
                         </button>
                         <button
                           onClick={() => handleDelete(reminder._id)}
-                          className="p-2 text-[#64748B] hover:bg-gray-50 rounded transition"
+                          className="p-2 text-[#64748B] dark:text-[#94A3B8] hover:bg-gray-50 dark:hover:bg-[#334155]/50 rounded transition"
                           title="Supprimer"
                         >
                           <MdDelete size={20} />
@@ -357,10 +357,10 @@ export default function BillRemindersPage() {
                 );
               })
             ) : (
-              <div className={`p-12 rounded-lg text-center ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
-                <MdNotifications size={48} className={`mx-auto mb-3 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
-                <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>Aucun rappel trouvé</div>
-                <div className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              <div className={`p-12 rounded-lg text-center ${isDarkMode ? 'bg-[#1E293B] border border-[#334155]' : 'bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155]'}`}>
+                <MdNotifications size={48} className={`mx-auto mb-3 ${isDarkMode ? 'text-gray-600 dark:text-[#CBD5E1]' : 'text-gray-400'}`} />
+                <div className={`font-medium ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>Aucun rappel trouvé</div>
+                <div className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500 dark:text-[#94A3B8]'}`}>
                   {searchTerm ? 'Essayez de modifier votre recherche' : 'Créez votre premier rappel pour ne plus manquer d\'échéance'}
                 </div>
               </div>
@@ -372,28 +372,28 @@ export default function BillRemindersPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className={`rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto ${isDarkMode ? 'bg-[#2d2d2d]' : 'bg-white'}`}>
-            <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          <div className={`rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto ${isDarkMode ? 'bg-[#1E293B]' : 'bg-white dark:bg-[#1E293B]'}`}>
+            <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black dark:text-[#F8FAFC]'}`}>
               {editingReminder ? 'Modifier le Rappel' : 'Nouveau Rappel'}
             </h3>
             
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                     Nom *
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                     Montant *
                   </label>
                   <input
@@ -401,38 +401,38 @@ export default function BillRemindersPage() {
                     step="0.01"
                     value={formData.amount}
                     onChange={(e) => setFormData({...formData, amount: e.target.value})}
-                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                     Date d'échéance *
                   </label>
                   <input
                     type="date"
                     value={formData.dueDate}
                     onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
-                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                     style={isDarkMode ? { colorScheme: 'dark' } : {}}
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                     Catégorie
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                     style={isDarkMode ? { colorScheme: 'dark' } : {}}
                   >
                     <option value="">Aucune</option>
                     {categories.filter(c => c.type === 'expense').map(cat => (
-                      <option key={cat._id} value={cat._id} style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>
+                      <option key={cat._id} value={cat._id} style={isDarkMode ? { backgroundColor: '#334155', color: 'white' } : {}}>
                         {cat.name}
                       </option>
                     ))}
@@ -440,18 +440,18 @@ export default function BillRemindersPage() {
                 </div>
                 
                 <div>
-                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                     Portefeuille
                   </label>
                   <select
                     value={formData.wallet}
                     onChange={(e) => setFormData({...formData, wallet: e.target.value})}
-                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                     style={isDarkMode ? { colorScheme: 'dark' } : {}}
                   >
                     <option value="">Aucun</option>
                     {wallets.map(wallet => (
-                      <option key={wallet._id} value={wallet._id} style={isDarkMode ? { backgroundColor: '#383838', color: 'white' } : {}}>
+                      <option key={wallet._id} value={wallet._id} style={isDarkMode ? { backgroundColor: '#334155', color: 'white' } : {}}>
                         {wallet.name}
                       </option>
                     ))}
@@ -459,13 +459,13 @@ export default function BillRemindersPage() {
                 </div>
                 
                 <div>
-                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
                     Note
                   </label>
                   <textarea
                     value={formData.note}
                     onChange={(e) => setFormData({...formData, note: e.target.value})}
-                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#383838] border-[#404040] text-white' : 'bg-white border-gray-300 text-black'}`}
+                    className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-[#334155] border-[#334155] text-white' : 'bg-white dark:bg-[#1E293B] border-gray-300 dark:border-[#475569] text-black dark:text-[#F8FAFC]'}`}
                     rows="3"
                   ></textarea>
                 </div>
@@ -485,7 +485,7 @@ export default function BillRemindersPage() {
                     setEditingReminder(null);
                     resetForm();
                   }}
-                  className="flex-1 bg-[#E2E8F0] text-[#1E293B] px-4 py-2 rounded-lg hover:bg-[#CBD5E1] transition"
+                  className="flex-1 bg-[#E2E8F0] dark:bg-[#334155] text-[#1E293B] dark:text-[#E2E8F0] px-4 py-2 rounded-lg hover:bg-[#CBD5E1] transition"
                 >
                   Annuler
                 </button>

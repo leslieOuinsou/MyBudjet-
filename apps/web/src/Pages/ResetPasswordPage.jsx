@@ -120,14 +120,14 @@ export default function ResetPasswordPage() {
   const isAdminReset = fromParam === 'admin'; // Vérifier si c'est une réinitialisation admin
   
   return (
-    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
-      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
+    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100 dark:bg-[#0F172A]'}`}>
+      <div className={`w-full max-w-md p-8 rounded-xl shadow-2xl ${isDarkMode ? 'bg-[#0F172A]' : 'bg-white dark:bg-[#1E293B]'}`}>
         {/* Header */}
         <div className="text-center mb-8">
           <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
             isAdminReset 
               ? 'bg-gradient-to-r from-purple-500 to-purple-700' 
-              : 'bg-gradient-to-r from-green-500 to-blue-600'
+              : 'bg-gradient-to-r from-green-500 to-blue-600 dark:to-[#3B82F6]'
           }`}>
             {isAdminReset ? (
               <MdAdminPanelSettings className="text-white text-2xl" />
@@ -135,24 +135,24 @@ export default function ResetPasswordPage() {
               <MdSecurity className="text-white text-2xl" />
             )}
           </div>
-          <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+          <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800 dark:text-[#F8FAFC]'}`}>
             Nouveau mot de passe {isAdminReset && '(Admin)'}
           </h1>
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'}`}>
             Créez un nouveau mot de passe sécurisé {isAdminReset && 'pour votre compte administrateur'}
           </p>
         </div>
 
         {/* Messages d'état */}
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
-            <MdWarning className="text-red-500" size={20} />
+          <div className="bg-red-100 dark:bg-[#7F1D1D]/50 border border-red-400 text-red-700 dark:text-[#FCA5A5] px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+            <MdWarning className="text-red-500 dark:text-[#F87171]" size={20} />
             <span className="text-sm">{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+          <div className="bg-green-100 dark:bg-[#14532D]/50 border border-green-400 text-green-700 dark:text-[#4ADE80] px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
             <MdCheckCircle className="text-green-500" size={20} />
             <span className="text-sm">{success}</span>
           </div>
@@ -161,7 +161,7 @@ export default function ResetPasswordPage() {
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="password" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label htmlFor="password" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
               Nouveau mot de passe
             </label>
             <div className="relative">
@@ -173,7 +173,7 @@ export default function ResetPasswordPage() {
                 className={`w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                   isDarkMode 
                     ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                    : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500'
+                    : 'bg-gray-50 dark:bg-[#334155]/50 border-gray-300 dark:border-[#475569] text-gray-900 dark:text-[#F8FAFC] placeholder-gray-500'
                 }`}
                 placeholder="••••••••••••"
                 value={formData.password}
@@ -184,7 +184,7 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-[#CBD5E1] transition-colors"
                 disabled={loading}
               >
                 {showPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
@@ -196,7 +196,7 @@ export default function ResetPasswordPage() {
               <div className="mt-3 space-y-1">
                 {validatePassword(formData.password).map((criterion, index) => (
                   <div key={index} className={`flex items-center gap-2 text-xs ${
-                    criterion.isValid ? 'text-green-600' : 'text-red-500'
+                    criterion.isValid ? 'text-green-600 dark:text-[#22C55E]' : 'text-red-500 dark:text-[#F87171]'
                   }`}>
                     {criterion.isValid ? <MdCheckCircle size={14} /> : <MdWarning size={14} />}
                     {criterion.message}
@@ -207,7 +207,7 @@ export default function ResetPasswordPage() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label htmlFor="confirmPassword" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700 dark:text-[#E2E8F0]'}`}>
               Confirmer le mot de passe
             </label>
             <div className="relative">
@@ -219,7 +219,7 @@ export default function ResetPasswordPage() {
                 className={`w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                   isDarkMode 
                     ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                    : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500'
+                    : 'bg-gray-50 dark:bg-[#334155]/50 border-gray-300 dark:border-[#475569] text-gray-900 dark:text-[#F8FAFC] placeholder-gray-500'
                 }`}
                 placeholder="••••••••••••"
                 value={formData.confirmPassword}
@@ -230,7 +230,7 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-[#CBD5E1] transition-colors"
                 disabled={loading}
               >
                 {showConfirmPassword ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
@@ -242,13 +242,13 @@ export default function ResetPasswordPage() {
               <div className="mt-2 flex items-center gap-2 text-xs">
                 {formData.password === formData.confirmPassword ? (
                   <>
-                    <MdCheckCircle className="text-green-600" size={14} />
-                    <span className="text-green-600">Les mots de passe correspondent</span>
+                    <MdCheckCircle className="text-green-600 dark:text-[#22C55E]" size={14} />
+                    <span className="text-green-600 dark:text-[#22C55E]">Les mots de passe correspondent</span>
                   </>
                 ) : (
                   <>
-                    <MdWarning className="text-red-500" size={14} />
-                    <span className="text-red-500">Les mots de passe ne correspondent pas</span>
+                    <MdWarning className="text-red-500 dark:text-[#F87171]" size={14} />
+                    <span className="text-red-500 dark:text-[#F87171]">Les mots de passe ne correspondent pas</span>
                   </>
                 )}
               </div>
@@ -259,8 +259,8 @@ export default function ResetPasswordPage() {
             type="submit"
             className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
               loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 transform hover:scale-[1.02]'
+                ? 'bg-gray-400 dark:bg-[#475569] cursor-not-allowed'
+                : 'bg-gradient-to-r from-green-500 to-blue-600 dark:to-[#3B82F6] hover:from-green-600 hover:to-blue-700 transform hover:scale-[1.02]'
             } text-white shadow-lg`}
             disabled={loading || !token}
           >
@@ -286,7 +286,7 @@ export default function ResetPasswordPage() {
           <Link
             to={isAdminReset ? "/admin/login" : "/login"}
             className={`inline-flex items-center gap-2 hover:underline text-sm font-medium transition-colors ${
-              isAdminReset ? 'text-purple-600 hover:text-purple-700' : 'text-blue-600 hover:text-blue-700'
+              isAdminReset ? 'text-purple-600 dark:text-[#A78BFA] hover:text-purple-700 dark:hover:text-[#A78BFA]' : 'text-blue-600 dark:text-[#60A5FA] hover:text-blue-700 dark:hover:text-[#60A5FA]'
             }`}
           >
             <MdArrowBack size={16} />
@@ -295,7 +295,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {/* Informations de sécurité */}
-        <div className={`mt-8 p-4 rounded-lg text-sm ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
+        <div className={`mt-8 p-4 rounded-lg text-sm ${isDarkMode ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 dark:bg-[#334155] text-gray-600 dark:text-[#CBD5E1]'}`}>
           <div className="flex items-start gap-2">
             <MdSecurity className="text-green-500 mt-0.5" size={16} />
             <div>

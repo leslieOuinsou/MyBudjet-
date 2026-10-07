@@ -3,27 +3,27 @@ import { Link } from "react-router-dom";
 
 export default function NotFoundPage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-white dark:bg-[#1E293B] flex flex-col items-center justify-center">
       <div className="flex flex-col items-center">
         <div className="mb-2">
-          <span className="inline-block text-3xl font-bold text-[#2563EB] align-middle mr-2">✴️</span>
-          <span className="text-2xl font-extrabold text-[#2563EB] align-middle">MyBudget+</span>
+          <span className="inline-block text-3xl font-bold text-[#2563EB] dark:text-[#60A5FA] align-middle mr-2">✴️</span>
+          <span className="text-2xl font-extrabold text-[#2563EB] dark:text-[#60A5FA] align-middle">MyBudget+</span>
         </div>
         <div className="relative flex flex-col items-center">
           <span className="absolute text-[10rem] font-extrabold text-[#DBEAFE] select-none -z-10" style={{top: '-3.5rem'}}>404</span>
-          <h1 className="text-4xl font-extrabold text-[#0F172A] mb-2">Page introuvable</h1>
-          <p className="text-[#64748B] mb-6 max-w-md text-center">
+          <h1 className="text-4xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC] mb-2">Page introuvable</h1>
+          <p className="text-[#64748B] dark:text-[#94A3B8] mb-6 max-w-md text-center">
             Oups ! La page que vous recherchez n'existe pas. Elle a peut-être été supprimée, renommée ou est temporairement indisponible.
           </p>
           <div className="flex gap-3 mb-8">
             <Link to="/" className="px-5 py-2 bg-[#16A34A] hover:bg-[#15803D] text-white rounded font-semibold transition">Retour à l'accueil</Link>
-            <Link to="/support" className="px-5 py-2 border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-[#0F172A] rounded font-semibold transition">Contacter le support</Link>
+            <Link to="/support" className="px-5 py-2 border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] hover:bg-[#F8FAFC] dark:hover:bg-[#334155]/50 text-[#0F172A] dark:text-[#F8FAFC] rounded font-semibold transition">Contacter le support</Link>
           </div>
         </div>
         <div className="flex gap-2 mt-8">
           <button className="px-4 py-2 bg-[#16A34A] text-white rounded font-semibold">Afficher 404</button>
-          <button className="px-4 py-2 border border-[#E2E8F0] bg-white text-[#0F172A] rounded font-semibold">Afficher 500</button>
-          <button className="px-4 py-2 border border-[#E2E8F0] bg-white text-[#0F172A] rounded font-semibold">Afficher Accès Refusé</button>
+          <button className="px-4 py-2 border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] rounded font-semibold">Afficher 500</button>
+          <button className="px-4 py-2 border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] rounded font-semibold">Afficher Accès Refusé</button>
         </div>
       </div>
     </div>

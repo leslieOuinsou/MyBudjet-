@@ -2,83 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Configuration du mode sombre avec Tailwind */
+/* Mode sombre (classe `dark` sur <html>, posée par ThemeProvider)
+   Palette : fond #0F172A · cartes #1E293B · zones secondaires #334155 · texte #F8FAFC / #CBD5E1 */
 @layer base {
-  :root {
-    color-scheme: light;
-  }
-
-  .dark {
-    color-scheme: dark;
-  }
+  :root { color-scheme: light; }
+  .dark { color-scheme: dark; }
+  .dark body { background-color: #0F172A; color: #F8FAFC; }
+  .dark ::placeholder { color: #94A3B8; opacity: 1; }
+  .dark :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) { background-color: #334155; color: #F8FAFC; border-color: #475569; }
+  .dark option { background-color: #1E293B; color: #F8FAFC; }
+  .dark ::selection { background: #3B82F6; color: #fff; }
 }
 
-/* Styles globaux pour le mode sombre */
-@layer utilities {
-  /* Couleurs de texte par défaut */
-  .dark body {
-    color: #e0e0e0;
-  }
-  
-  /* Tables en mode sombre */
-  .dark table tbody tr {
-    color: #e0e0e0;
-  }
-  
-  .dark table tbody tr:nth-child(even) {
-    background-color: #2d2d2d;
-  }
-  
-  .dark table tbody tr:nth-child(odd) {
-    background-color: #383838;
-  }
-  
-  .dark table tbody tr:hover {
-    background-color: #404040;
-  }
-}
-
-/* Traduction de votre CSS en syntaxe valide */
-.image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1440px;
-  height: 900px;
-  padding: 0 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Inter, system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 22px;
-  font-weight: 500;
-  color: #FFFFFF; /* blanc */
-  background: #FFFFFF; /* blanc */
-  opacity: 1;
-  border: none;
-  border-radius: 0;
-}
-
-.button:hover {
-  color: #FFFFFF; /* blanc */
-  background: #15803D; /* succes-500 */
-}
-
-.button:hover:active {
-  color: #FFFFFF; /* blanc */
-  background: #15803D; /* succes-500 */
-}
-
-.button:disabled {
-  opacity: 0.4;
-}
-
-/* Bouton Login par défaut (même vert que sur survol/actif) */
-.btn-login {
-  background: #15803D;
-  color: #FFFFFF;
-}
 /* ===== Affichage téléphone ===== */
 /* Un contenu large ne doit jamais élargir la page : il défile dans son bloc */
 main { min-width: 0; }
