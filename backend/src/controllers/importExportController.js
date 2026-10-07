@@ -6,8 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { createReport, COLORS, makeMoney, fmtDate, getUserCurrency, getUserName } from '../utils/pdfStyle.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -345,57 +344,70 @@ export const importTransactions = async (req, res) => {
   }
 };
 
+const sum = (list, type) => list.filter((t) => t.type === type).reduce((s, t) => s + (t.amount || 0), 0);
+const noteShort = (n, max) => (n ? (n.length > max ? `${n.substring(0, max)}…` : n) : '');
+
+function groupTotals(txs, type, pick) {
+  const out = {};
+  txs.forEach((t) => {
+    const key = pick(t);
+    if (!key || (type && t.type !== type)) return;
+    out[key] = (out[key] || 0) + (t.amount || 0);
+  });
+  return Object.entries(out).sort(([, a], [, b]) => b - a);
+}
+
+const sendPdf = (res, filename, buffer) => {
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+  res.send(buffer);
+};
+
 export const exportPDF = async (req, res) => {
   try {
     const uid = getUserId(req.user);
     const { startDate, endDate } = req.query;
     const where = buildTransactionWhere(uid, { startDate, endDate });
 
-    const transactions = await prisma.transaction.findMany({
-      where,
-      include: { category: true, wallet: true },
-      orderBy: { date: 'desc' },
-    });
+    const [transactions, currency, userName] = await Promise.all([
+      prisma.transaction.findMany({ where, include: { category: true, wallet: true }, orderBy: { date: 'desc' } }),
+      getUserCurrency(uid),
+      getUserName(uid),
+    ]);
+    const money = makeMoney(currency);
 
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text('Liste des Transactions', 10, 20);
-
-    if (startDate || endDate) {
-      doc.setFontSize(12);
-      const dateRange = `Période: ${startDate || 'Début'} - ${endDate || 'Fin'}`;
-      doc.text(dateRange, 10, 30);
-    }
-
-    const totalIncome = transactions.filter((t) => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-    const totalExpense = transactions.filter((t) => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+    const totalIncome = sum(transactions, 'income');
+    const totalExpense = sum(transactions, 'expense');
     const balance = totalIncome - totalExpense;
 
-    doc.setFontSize(10);
-    doc.text(`Total revenus: ${totalIncome.toFixed(2)}€`, 10, 40);
-    doc.text(`Total dépenses: ${totalExpense.toFixed(2)}€`, 10, 48);
-    doc.text(`Solde: ${balance.toFixed(2)}€`, 10, 56);
+    const subtitle = startDate || endDate ? `Du ${startDate || 'début'} au ${endDate || 'jour'}` : 'Toutes les périodes';
+    const report = createReport({ title: 'Liste des transactions', subtitle, userName });
 
-    autoTable(doc, {
-      startY: 65,
-      head: [['Date', 'Montant', 'Type', 'Catégorie', 'Portefeuille', 'Note']],
-      body: transactions.map((t) => [
-        t.date ? new Date(t.date).toLocaleDateString('fr-FR') : '',
-        `${t.amount.toFixed(2)}€`,
-        t.type === 'income' ? 'Revenu' : 'Dépense',
-        t.category?.name || '',
-        t.wallet?.name || '',
-        (t.note || '').substring(0, 30) + (t.note && t.note.length > 30 ? '...' : ''),
-      ]),
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [30, 115, 190] },
-    });
+    report.kpis([
+      { label: 'Revenus', value: money(totalIncome), color: COLORS.income },
+      { label: 'Dépenses', value: money(totalExpense), color: COLORS.expense },
+      { label: 'Solde', value: money(balance), color: balance >= 0 ? COLORS.brand : COLORS.expense },
+    ]);
 
-    const pdf = doc.output('arraybuffer');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=transactions.pdf');
-    res.send(Buffer.from(pdf));
+    report.section(`Transactions (${transactions.length})`);
+    if (transactions.length === 0) {
+      report.paragraph('Aucune transaction sur cette période.');
+    } else {
+      report.table({
+        head: ['Date', 'Catégorie', 'Portefeuille', 'Note', 'Montant'],
+        body: transactions.map((t) => [
+          fmtDate(t.date),
+          t.category?.name || 'Non catégorisé',
+          t.wallet?.name || '',
+          noteShort(t.note, 32),
+          `${t.type === 'income' ? '+' : '-'} ${money(t.amount)}`,
+        ]),
+        columnStyles: { 4: { halign: 'right', fontStyle: 'bold' } },
+        fontSize: 8.5,
+      });
+    }
+
+    sendPdf(res, 'transactions.pdf', report.output());
   } catch (error) {
     console.error('Erreur export PDF:', error);
     res.status(500).json({ message: "Erreur lors de l'export PDF", error: error.message });
@@ -404,13 +416,10 @@ export const exportPDF = async (req, res) => {
 
 export const exportReport = async (req, res) => {
   try {
-    console.log('📊 Génération du rapport PDF...');
     const { period = 'custom', year, month, startDate, endDate } = req.query;
     const uid = getUserId(req.user);
     let start, end;
     const now = new Date();
-
-    console.log('📋 Paramètres reçus:', { period, year, month, startDate, endDate });
 
     if (period === 'custom' && startDate && endDate) {
       start = new Date(startDate);
@@ -427,190 +436,99 @@ export const exportReport = async (req, res) => {
       end = new Date(y, m + 1, 0, 23, 59, 59);
     }
 
-    console.log('📅 Période calculée:', { start: start.toISOString(), end: end.toISOString() });
+    const [txs, currency, userName] = await Promise.all([
+      prisma.transaction.findMany({
+        where: { userId: uid, date: { gte: start, lte: end } },
+        include: { category: true, wallet: true },
+        orderBy: { date: 'desc' },
+      }),
+      getUserCurrency(uid),
+      getUserName(uid),
+    ]);
+    const money = makeMoney(currency);
 
-    const txs = await prisma.transaction.findMany({
-      where: {
-        userId: uid,
-        date: { gte: start, lte: end },
-      },
-      include: { category: true, wallet: true },
-      orderBy: { date: 'desc' },
-    });
-
-    console.log(`✅ ${txs.length} transactions trouvées`);
-
-    const totalIncome = txs.filter((t) => t.type === 'income').reduce((s, t) => s + (t.amount || 0), 0);
-    const totalExpense = txs.filter((t) => t.type === 'expense').reduce((s, t) => s + (t.amount || 0), 0);
+    const totalIncome = sum(txs, 'income');
+    const totalExpense = sum(txs, 'expense');
     const balance = totalIncome - totalExpense;
+    const savingsRate = totalIncome > 0 ? (balance / totalIncome) * 100 : 0;
 
-    console.log('💰 Statistiques:', { totalIncome, totalExpense, balance });
+    const periodText = period === 'year'
+      ? `Année ${year || now.getFullYear()}`
+      : `Du ${fmtDate(start)} au ${fmtDate(end)}`;
+    const report = createReport({ title: 'Rapport financier', subtitle: periodText, userName });
 
-    const byCategory = {};
-    const byCategoryIncome = {};
-    txs.forEach((t) => {
-      if (!t.category) return;
-      const key = t.category.name;
-      if (t.type === 'expense') {
-        byCategory[key] = (byCategory[key] || 0) + t.amount;
-      } else {
-        byCategoryIncome[key] = (byCategoryIncome[key] || 0) + t.amount;
-      }
-    });
+    report.kpis([
+      { label: 'Revenus', value: money(totalIncome), color: COLORS.income },
+      { label: 'Dépenses', value: money(totalExpense), color: COLORS.expense },
+      { label: 'Solde net', value: money(balance), color: balance >= 0 ? COLORS.brand : COLORS.expense },
+    ]);
+    report.paragraph(`${txs.length} transaction${txs.length > 1 ? 's' : ''} · Taux d'épargne : ${savingsRate.toFixed(1)} %`);
+
+    const expenseByCat = groupTotals(txs, 'expense', (t) => t.category?.name);
+    if (expenseByCat.length > 0 && totalExpense > 0) {
+      report.section('Dépenses par catégorie');
+      report.table({
+        head: ['Catégorie', 'Montant', '% des dépenses'],
+        body: expenseByCat.map(([cat, val]) => [cat, money(val), `${((val / totalExpense) * 100).toFixed(1)} %`]),
+        color: COLORS.expense,
+        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+      });
+    }
+
+    const incomeByCat = groupTotals(txs, 'income', (t) => t.category?.name);
+    if (incomeByCat.length > 0 && totalIncome > 0) {
+      report.section('Revenus par catégorie');
+      report.table({
+        head: ['Catégorie', 'Montant', '% des revenus'],
+        body: incomeByCat.map(([cat, val]) => [cat, money(val), `${((val / totalIncome) * 100).toFixed(1)} %`]),
+        color: COLORS.income,
+        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+      });
+    }
 
     const byWallet = {};
     txs.forEach((t) => {
       if (!t.wallet) return;
-      const key = t.wallet.name;
-      byWallet[key] = (byWallet[key] || 0) + (t.type === 'income' ? t.amount : -t.amount);
+      byWallet[t.wallet.name] = (byWallet[t.wallet.name] || 0) + (t.type === 'income' ? t.amount : -t.amount);
     });
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-    doc.text('Rapport Financier Détaillé', 10, 20);
-
-    doc.setFontSize(12);
-    const periodText = period === 'custom'
-      ? `Période: ${start.toLocaleDateString('fr-FR')} - ${end.toLocaleDateString('fr-FR')}`
-      : period === 'year'
-        ? `Année: ${year || now.getFullYear()}`
-        : `Mois: ${month || now.getMonth() + 1}/${year || now.getFullYear()}`;
-    doc.text(periodText, 10, 30);
-
-    doc.setFontSize(14);
-    doc.text('Résumé Financier', 10, 45);
-
-    doc.setFontSize(11);
-    doc.text(`Total des revenus: ${totalIncome.toFixed(2)}€`, 10, 55);
-    doc.text(`Total des dépenses: ${totalExpense.toFixed(2)}€`, 10, 65);
-    doc.text(`Solde net: ${balance.toFixed(2)}€`, 10, 75);
-    doc.text(`Nombre de transactions: ${txs.length}`, 10, 85);
-
-    let currentY = 100;
-
-    if (Object.keys(byCategory).length > 0 && totalExpense > 0) {
-      doc.setFontSize(14);
-      doc.text('Dépenses par Catégorie', 10, currentY);
-      currentY += 10;
-
-      autoTable(doc, {
-        startY: currentY,
-        head: [['Catégorie', 'Montant (€)', '% du Total']],
-        body: Object.entries(byCategory)
-          .sort(([, a], [, b]) => b - a)
-          .map(([cat, val]) => [
-            cat,
-            val.toFixed(2),
-            totalExpense > 0 ? ((val / totalExpense) * 100).toFixed(1) + '%' : '0%',
-          ]),
-        styles: { fontSize: 10 },
-        headStyles: { fillColor: [220, 53, 69] },
+    const wallets = Object.entries(byWallet).sort(([, a], [, b]) => b - a);
+    if (wallets.length > 0) {
+      report.section('Mouvement par portefeuille');
+      report.table({
+        head: ['Portefeuille', 'Variation'],
+        body: wallets.map(([name, bal]) => [name, money(bal)]),
+        columnStyles: { 1: { halign: 'right' } },
       });
-
-      if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
-        currentY = doc.lastAutoTable.finalY + 20;
-      } else {
-        currentY += 50;
-      }
     }
 
-    if (Object.keys(byCategoryIncome).length > 0 && totalIncome > 0) {
-      doc.setFontSize(14);
-      doc.text('Revenus par Catégorie', 10, currentY);
-      currentY += 10;
-
-      autoTable(doc, {
-        startY: currentY,
-        head: [['Catégorie', 'Montant (€)', '% du Total']],
-        body: Object.entries(byCategoryIncome)
-          .sort(([, a], [, b]) => b - a)
-          .map(([cat, val]) => [
-            cat,
-            val.toFixed(2),
-            totalIncome > 0 ? ((val / totalIncome) * 100).toFixed(1) + '%' : '0%',
-          ]),
-        styles: { fontSize: 10 },
-        headStyles: { fillColor: [40, 167, 69] },
-      });
-
-      if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
-        currentY = doc.lastAutoTable.finalY + 20;
-      } else {
-        currentY += 50;
-      }
-    }
-
-    if (Object.keys(byWallet).length > 0) {
-      doc.setFontSize(14);
-      doc.text('Solde par Portefeuille', 10, currentY);
-      currentY += 10;
-
-      autoTable(doc, {
-        startY: currentY,
-        head: [['Portefeuille', 'Solde (€)']],
-        body: Object.entries(byWallet)
-          .sort(([, a], [, b]) => b - a)
-          .map(([wallet, bal]) => [wallet, bal.toFixed(2)]),
-        styles: { fontSize: 10 },
-        headStyles: { fillColor: [30, 115, 190] },
-      });
-
-      if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
-        currentY = doc.lastAutoTable.finalY + 20;
-      } else {
-        currentY += 50;
-      }
-    }
-
-    if (txs.length > 0) {
-      if (currentY > 250) {
-        doc.addPage();
-        currentY = 20;
-      }
-
-      doc.setFontSize(14);
-      doc.text('Détail des Transactions', 10, currentY);
-      currentY += 10;
-
-      const transactionsToShow = txs.slice(0, 100);
-      autoTable(doc, {
-        startY: currentY,
-        head: [['Date', 'Montant', 'Type', 'Catégorie', 'Portefeuille', 'Note']],
-        body: transactionsToShow.map((t) => [
-          t.date ? new Date(t.date).toLocaleDateString('fr-FR') : '',
-          `${(t.amount || 0).toFixed(2)}€`,
-          t.type === 'income' ? 'Revenu' : 'Dépense',
+    report.section('Détail des transactions');
+    if (txs.length === 0) {
+      report.paragraph('Aucune transaction trouvée pour cette période.');
+    } else {
+      report.table({
+        head: ['Date', 'Catégorie', 'Portefeuille', 'Note', 'Montant'],
+        body: txs.slice(0, 100).map((t) => [
+          fmtDate(t.date),
           t.category?.name || 'Non catégorisé',
           t.wallet?.name || 'Non défini',
-          (t.note || '').substring(0, 25) + (t.note && t.note.length > 25 ? '...' : ''),
+          noteShort(t.note, 28),
+          `${t.type === 'income' ? '+' : '-'} ${money(t.amount)}`,
         ]),
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [108, 117, 125] },
+        color: COLORS.muted,
+        columnStyles: { 4: { halign: 'right', fontStyle: 'bold' } },
+        fontSize: 8.5,
       });
-
-      if (txs.length > 100 && doc.lastAutoTable && doc.lastAutoTable.finalY) {
-        const finalY = doc.lastAutoTable.finalY;
-        doc.setFontSize(10);
-        doc.text(`Note: Seules les 100 premières transactions sont affichées (${txs.length} au total)`, 10, finalY + 10);
+      if (txs.length > 100) {
+        report.paragraph(`Seules les 100 premières transactions sont affichées (${txs.length} au total).`, { size: 9 });
       }
-    } else {
-      doc.setFontSize(12);
-      doc.text('Aucune transaction trouvée pour cette période.', 10, currentY);
     }
 
-    console.log('✅ PDF généré avec succès');
-    const pdf = doc.output('arraybuffer');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=rapport-financier-${period}-${Date.now()}.pdf`);
-    res.send(Buffer.from(pdf));
+    sendPdf(res, `rapport-financier-${period}-${Date.now()}.pdf`, report.output());
   } catch (error) {
     console.error('❌ Erreur génération rapport:', error);
-    console.error('❌ Stack:', error.stack);
     res.status(500).json({
       message: 'Erreur lors de la génération du rapport',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Erreur interne du serveur',
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
     });
   }
 };

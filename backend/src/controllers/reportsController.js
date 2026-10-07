@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma.js';
 import { serialize, userId as getUserId } from '../lib/serialize.js';
 import { Parser } from 'json2csv';
-import PDFDocument from 'pdfkit';
+import { createReport, COLORS, makeMoney, fmtDate, getUserCurrency, getUserName } from '../utils/pdfStyle.js';
 
 function getPeriodRange(period) {
   const now = new Date();
@@ -394,41 +394,42 @@ export const exportReportData = async (req, res) => {
     }
 
     if (format === 'pdf') {
-      const doc = new PDFDocument();
-      res.header('Content-Type', 'application/pdf');
-      res.attachment(`rapport_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
+      const [currency, userName] = await Promise.all([getUserCurrency(uid), getUserName(uid)]);
+      const money = makeMoney(currency);
+      const income = transactions.filter((t) => t.type === 'income').reduce((s, t) => s + (t.amount || 0), 0);
+      const expense = transactions.filter((t) => t.type === 'expense').reduce((s, t) => s + (t.amount || 0), 0);
 
-      doc.pipe(res);
-
-      doc.fontSize(20).text('Rapport de Transactions MyBudget+', 50, 50);
-      doc.fontSize(12).text(`Généré le: ${new Date().toLocaleDateString('fr-FR')}`, 50, 80);
-
-      let yPosition = 120;
-      doc.text('Date', 50, yPosition);
-      doc.text('Description', 120, yPosition);
-      doc.text('Catégorie', 250, yPosition);
-      doc.text('Montant', 350, yPosition);
-      doc.text('Type', 450, yPosition);
-
-      yPosition += 20;
-
-      transactions.forEach((transaction) => {
-        if (yPosition > 750) {
-          doc.addPage();
-          yPosition = 50;
-        }
-
-        doc.text(new Date(transaction.date).toLocaleDateString('fr-FR'), 50, yPosition);
-        doc.text(transaction.description || '', 120, yPosition);
-        doc.text(transaction.category?.name || 'N/A', 250, yPosition);
-        doc.text(`${transaction.amount.toFixed(2)} €`, 350, yPosition);
-        doc.text(transaction.type, 450, yPosition);
-
-        yPosition += 15;
+      const report = createReport({
+        title: 'Rapport de transactions',
+        subtitle: startDate && endDate ? `Du ${fmtDate(startDate)} au ${fmtDate(endDate)}` : 'Toutes les périodes',
+        userName,
       });
+      report.kpis([
+        { label: 'Revenus', value: money(income), color: COLORS.income },
+        { label: 'Dépenses', value: money(expense), color: COLORS.expense },
+        { label: 'Solde', value: money(income - expense), color: income - expense >= 0 ? COLORS.brand : COLORS.expense },
+      ]);
+      report.section(`Transactions (${transactions.length})`);
+      if (transactions.length === 0) {
+        report.paragraph('Aucune transaction sur cette période.');
+      } else {
+        report.table({
+          head: ['Date', 'Description', 'Catégorie', 'Type', 'Montant'],
+          body: transactions.map((t) => [
+            fmtDate(t.date),
+            (t.description || t.note || '').slice(0, 40),
+            t.category?.name || 'Non catégorisé',
+            t.type === 'income' ? 'Revenu' : 'Dépense',
+            `${t.type === 'income' ? '+' : '-'} ${money(t.amount)}`,
+          ]),
+          columnStyles: { 4: { halign: 'right', fontStyle: 'bold' } },
+          fontSize: 8.5,
+        });
+      }
 
-      doc.end();
-      return;
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=rapport_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
+      return res.send(report.output());
     }
 
     return res.status(400).json({ message: 'Format non supporté' });
