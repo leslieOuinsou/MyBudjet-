@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { setAnalyticsConsent, trackPageView } from '../lib/analytics.js';
 import {
@@ -23,6 +23,7 @@ import {
  */
 export default function CookieConsent() {
   const { isDarkMode } = useTheme();
+  const location = useLocation();
   
   // États pour gérer l'affichage de la bannière et des préférences
   const [showBanner, setShowBanner] = useState(false); // showBanner: affiche ou masque la bannière principale
@@ -54,6 +55,12 @@ export default function CookieConsent() {
     }
   }, []);
 
+  // À chaque nouvelle connexion (nouveau jeton), le choix est redemandé
+  useEffect(() => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (token && localStorage.getItem('cookieAskedToken') !== token.slice(-24)) setShowBanner(true);
+  }, [location.pathname]);
+
   // Rouvrir le choix depuis le pied de page (« Gérer les cookies »)
   useEffect(() => {
     const reopen = () => { setShowBanner(true); setShowSettings(true); };
@@ -65,6 +72,8 @@ export default function CookieConsent() {
   const savePreferences = (prefs) => {
     localStorage.setItem('cookieConsent', JSON.stringify(prefs));
     localStorage.setItem('cookieConsentDate', new Date().toISOString());
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (token) localStorage.setItem('cookieAskedToken', token.slice(-24));
     setAnalyticsConsent(Boolean(prefs.analytics));
     // la page courante est comptée dès l'acceptation
     if (prefs.analytics) trackPageView(window.location.pathname);
