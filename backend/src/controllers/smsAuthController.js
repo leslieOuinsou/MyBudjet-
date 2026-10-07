@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma.js';
 import { serialize } from '../lib/serialize.js';
 import { sendVerificationCode, generateVerificationCode, validatePhoneNumber } from '../utils/twilioService.js';
-import jwt from 'jsonwebtoken';
+import { issueToken } from '../lib/session.js';
 import { createWelcomeNotification } from '../utils/notificationGenerator.js';
 import { initializeDefaultData } from '../utils/defaultData.js';
 
@@ -285,7 +285,7 @@ export const verifySMSCode = async (req, res) => {
     });
     
     // Générer un token JWT
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = await issueToken(user.id, req);
     
     // Supprimer le code de vérification utilisé
     await prisma.sMSVerification.delete({ where: { id: verification.id } });

@@ -1,8 +1,9 @@
 import prisma from '../lib/prisma.js';
 import { userId } from '../lib/serialize.js';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { issueToken } from '../lib/session.js';
+import { createChallenge, verifyChallenge, isTwoFactorEnabled } from '../lib/twoFactor.js';
 import { createWelcomeNotification } from '../utils/notificationGenerator.js';
 import { initializeDefaultData, addMissingCategories, addMissingWallets } from '../utils/defaultData.js';
 
@@ -57,7 +58,7 @@ export const register = async (req, res) => {
     
     console.log('✅ ========== INSCRIPTION RÉUSSIE ==========');
     console.log('📤 Envoi de la réponse 201...');
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = await issueToken(user.id, req);
     res.status(201).json({
       message: 'Inscription réussie',
       success: true,
@@ -118,6 +119,35 @@ export const login = async (req, res) => {
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) return res.status(400).json({ message: 'Invalid credentials' });
   
+  // Double authentification activée : on n'émet pas de jeton avant le code
+  if (await isTwoFactorEnabled(user.id)) {
+    const challenge = await createChallenge(user, 'login');
+    if (!challenge.ok) {
+      return res.status(503).json({ message: "Impossible d'envoyer le code de sécurité par email. Réessayez plus tard." });
+    }
+    return res.json({
+      requiresTwoFactor: true,
+      challengeId: challenge.challengeId,
+      method: 'email',
+      emailHint: user.email.replace(/^(.{2}).*(@.*)$/, '$1***$2'),
+      ...(challenge.devCode ? { devCode: challenge.devCode } : {}),
+    });
+  }
+
+  await completeLogin(user, req, res);
+};
+
+// Deuxième étape de connexion : vérifie le code reçu par email puis émet le jeton
+export const verifyTwoFactorLogin = async (req, res) => {
+  const result = await verifyChallenge({ challengeId: req.body.challengeId, code: req.body.code, purpose: 'login' });
+  if (!result.ok) return res.status(400).json({ message: result.message });
+
+  const user = await prisma.user.findUnique({ where: { id: result.userId } });
+  if (!user || user.blocked) return res.status(403).json({ message: 'Compte indisponible' });
+  await completeLogin(user, req, res);
+};
+
+const completeLogin = async (user, req, res) => {
   // Vérifier si c'est la première connexion (pas de lastLogin ou créé récemment)
   // Note: lastLogin a une valeur par défaut à la création, donc on s'appuie aussi sur createdAt
   const isFirstLogin = !user.lastLogin;
@@ -151,7 +181,7 @@ export const login = async (req, res) => {
     }
   }
   
-  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const token = await issueToken(user.id, req);
   res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 };
 
@@ -176,7 +206,7 @@ export const googleCallback = async (req, res) => {
       data: { lastLogin: new Date() }
     });
     
-    const token = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = await issueToken(id, req);
     
     console.log('✅ Google login successful for:', req.user.email);
     

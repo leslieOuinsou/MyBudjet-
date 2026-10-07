@@ -75,41 +75,63 @@ export const deleteRecurring = async (req, res) => {
   res.json({ message: 'Récurrence supprimée' });
 };
 
-export const processRecurring = async (req, res) => {
+const advanceDate = (date, frequency) => {
+  const next = new Date(date);
+  if (frequency === 'daily') next.setDate(next.getDate() + 1);
+  if (frequency === 'weekly') next.setDate(next.getDate() + 7);
+  if (frequency === 'monthly') next.setMonth(next.getMonth() + 1);
+  if (frequency === 'yearly') next.setFullYear(next.getFullYear() + 1);
+  return next;
+};
+
+/**
+ * Génère les transactions des récurrences échues (rattrape les périodes manquées).
+ * Appelée par le cron quotidien ; `userId` limite le traitement à un utilisateur.
+ */
+export const runRecurringScan = async ({ userId: onlyUserId } = {}) => {
   const now = new Date();
   const recs = await prisma.recurringTransaction.findMany({
-    where: { nextDate: { lte: now } },
+    where: { nextDate: { lte: now }, ...(onlyUserId ? { userId: onlyUserId } : {}) },
   });
 
+  let created = 0;
   for (const rec of recs) {
-    await prisma.transaction.create({
-      data: {
-        amount: rec.amount,
-        type: rec.type,
-        categoryId: rec.categoryId,
-        walletId: rec.walletId,
-        userId: rec.userId,
-        description: rec.note || 'Transaction récurrente',
-        note: rec.note,
-        date: rec.nextDate,
-        attachment: rec.attachment,
-      },
-    });
+    let date = new Date(rec.nextDate);
+    let finished = false;
 
-    const next = new Date(rec.nextDate);
-    if (rec.frequency === 'daily') next.setDate(next.getDate() + 1);
-    if (rec.frequency === 'weekly') next.setDate(next.getDate() + 7);
-    if (rec.frequency === 'monthly') next.setMonth(next.getMonth() + 1);
-    if (rec.frequency === 'yearly') next.setFullYear(next.getFullYear() + 1);
+    while (date <= now) {
+      if (rec.endDate && date > rec.endDate) {
+        finished = true;
+        break;
+      }
+      await prisma.transaction.create({
+        data: {
+          amount: rec.amount,
+          type: rec.type,
+          categoryId: rec.categoryId,
+          walletId: rec.walletId,
+          userId: rec.userId,
+          description: rec.note || 'Transaction récurrente',
+          note: rec.note,
+          date,
+          attachment: rec.attachment,
+        },
+      });
+      created++;
+      date = advanceDate(date, rec.frequency);
+    }
 
-    if (rec.endDate && next > rec.endDate) {
+    if (finished || (rec.endDate && date > rec.endDate)) {
       await prisma.recurringTransaction.delete({ where: { id: rec.id } });
     } else {
-      await prisma.recurringTransaction.update({
-        where: { id: rec.id },
-        data: { nextDate: next },
-      });
+      await prisma.recurringTransaction.update({ where: { id: rec.id }, data: { nextDate: date } });
     }
   }
-  res.json({ message: 'Transactions récurrentes générées' });
+  return { processed: recs.length, created };
+};
+
+// Déclenchement manuel : limité aux récurrences de l'utilisateur connecté
+export const processRecurring = async (req, res) => {
+  const result = await runRecurringScan({ userId: userId(req.user) });
+  res.json({ message: 'Transactions récurrentes générées', ...result });
 };

@@ -95,6 +95,13 @@ model User {
   paypalConnection          PayPalConnection?
   resetTokens               ResetToken[]
   smsVerifications          SMSVerification[]
+  sharedBudgetsOwned        SharedBudget[]             @relation("SharedBudgetOwner")
+  sharedMemberships         SharedBudgetMember[]
+  sharedExpensesPaid        SharedExpense[]
+  settlementsSent           SharedSettlement[]         @relation("SettlementFrom")
+  settlementsReceived       SharedSettlement[]         @relation("SettlementTo")
+  sessions                  UserSession[]
+  twoFactorChallenges       TwoFactorChallenge[]
 
   @@index([createdAt(sort: Desc)])
 }
@@ -354,4 +361,91 @@ model SMSVerification {
 
   @@index([phoneNumber, verified])
   @@index([expiresAt])
+}
+
+model SharedBudget {
+  id        String   @id @default(cuid())
+  name      String
+  currency  String   @default("EUR")
+  ownerId   String
+  createdAt DateTime @default(now())
+
+  owner       User                 @relation("SharedBudgetOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     SharedBudgetMember[]
+  expenses    SharedExpense[]
+  settlements SharedSettlement[]
+
+  @@index([ownerId])
+}
+
+model SharedBudgetMember {
+  id             String   @id @default(cuid())
+  sharedBudgetId String
+  userId         String
+  createdAt      DateTime @default(now())
+
+  sharedBudget SharedBudget @relation(fields: [sharedBudgetId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sharedBudgetId, userId])
+  @@index([userId])
+}
+
+model SharedExpense {
+  id             String   @id @default(cuid())
+  sharedBudgetId String
+  paidById       String
+  amount         Float
+  description    String
+  date           DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  sharedBudget SharedBudget @relation(fields: [sharedBudgetId], references: [id], onDelete: Cascade)
+  paidBy       User         @relation(fields: [paidById], references: [id], onDelete: Cascade)
+
+  @@index([sharedBudgetId, date])
+}
+
+model SharedSettlement {
+  id             String   @id @default(cuid())
+  sharedBudgetId String
+  fromUserId     String
+  toUserId       String
+  amount         Float
+  createdAt      DateTime @default(now())
+
+  sharedBudget SharedBudget @relation(fields: [sharedBudgetId], references: [id], onDelete: Cascade)
+  from         User         @relation("SettlementFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  to           User         @relation("SettlementTo", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([sharedBudgetId])
+}
+
+model UserSession {
+  id         String    @id @default(cuid())
+  userId     String
+  userAgent  String?
+  ip         String?
+  createdAt  DateTime  @default(now())
+  lastSeenAt DateTime  @default(now())
+  revokedAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+}
+
+// Code à usage unique pour la double authentification (connexion ou activation)
+model TwoFactorChallenge {
+  id        String   @id @default(cuid())
+  userId    String
+  purpose   String // "login" | "enable"
+  codeHash  String
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
 }

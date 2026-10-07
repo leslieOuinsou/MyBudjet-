@@ -1,5 +1,6 @@
 import prisma from '../lib/prisma.js';
 import { serialize, userId } from '../lib/serialize.js';
+import { createGoalAchievedNotification } from '../utils/notificationGenerator.js';
 
 function withProgress(goal) {
   const target = Number(goal.targetAmount) || 0;
@@ -88,6 +89,13 @@ export const updateGoal = async (req, res) => {
       where: { id: req.params.id },
       data,
     });
+
+    // L'objectif vient-il d'être atteint ? (passage sous la cible → cible atteinte)
+    const wasAchieved = existing.currentAmount >= existing.targetAmount;
+    const isNowAchieved = goal.currentAmount >= goal.targetAmount;
+    if (!wasAchieved && isNowAchieved) {
+      await createGoalAchievedNotification(uid, goal.name, goal.targetAmount);
+    }
 
     res.json(withProgress(goal));
   } catch (error) {

@@ -1,6 +1,7 @@
 import prisma from '../lib/prisma.js';
 import { serialize, userId } from '../lib/serialize.js';
 import nodemailer from 'nodemailer';
+import { createBillReminderNotification } from '../utils/notificationGenerator.js';
 
 export const getReminders = async (req, res) => {
   const reminders = serialize(
@@ -58,17 +59,32 @@ export const deleteReminder = async (req, res) => {
   res.json({ message: 'Rappel supprimé' });
 };
 
-export const processReminders = async (req, res) => {
+/**
+ * Scan des factures à échéance proche (≤ 3 jours).
+ * Crée une notification in-app (si l'option « Rappels de Factures » est activée)
+ * et envoie un e-mail si le service est configuré.
+ * Réutilisable par le cron Vercel et par la route manuelle /process.
+ */
+export const runBillReminderScan = async ({ userId: onlyUserId } = {}) => {
   const now = new Date();
   const soon = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
   const reminders = await prisma.billReminder.findMany({
     where: {
       dueDate: { lte: soon, gte: now },
       reminded: false,
+      ...(onlyUserId ? { userId: onlyUserId } : {}),
     },
   });
 
+  let notificationsCreated = 0;
+  let emailsSent = 0;
+
   for (const r of reminders) {
+    // 1. Notification in-app — respecte la préférence « Rappels de Factures »
+    const created = await createBillReminderNotification(r.userId, r.name, r.amount, r.dueDate);
+    if (created) notificationsCreated++;
+
+    // 2. E-mail si configuré
     const user = await prisma.user.findUnique({ where: { id: r.userId } });
     if (user?.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       try {
@@ -81,15 +97,24 @@ export const processReminders = async (req, res) => {
           subject: 'Rappel de facture à payer',
           text: `La facture "${r.name}" de ${r.amount} € est à payer avant le ${r.dueDate.toLocaleDateString()}`,
         });
-        await prisma.billReminder.update({
-          where: { id: r.id },
-          data: { reminded: true },
-        });
+        emailsSent++;
         console.log('✅ Email de rappel envoyé à', user.email);
       } catch (err) {
         console.error('⚠️ Erreur envoi email (ignorée):', err.message);
       }
     }
+
+    // 3. Marquer comme traitée (évite de re-notifier chaque jour)
+    await prisma.billReminder.update({
+      where: { id: r.id },
+      data: { reminded: true },
+    }).catch(() => null);
   }
-  res.json({ message: 'Rappels envoyés', count: reminders.length });
+
+  return { scanned: reminders.length, notificationsCreated, emailsSent };
+};
+
+export const processReminders = async (req, res) => {
+  const result = await runBillReminderScan();
+  res.json({ message: 'Rappels traités', ...result });
 };

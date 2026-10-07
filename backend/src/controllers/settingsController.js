@@ -7,6 +7,7 @@ import {
   deleteCloudinaryImage,
 } from '../lib/cloudinary.js';
 import bcrypt from 'bcryptjs';
+import { createChallenge, verifyChallenge } from '../lib/twoFactor.js';
 
 const DEFAULT_USER_PREFERENCES = {
   appearance: { theme: 'light', language: 'fr', currency: 'EUR', dateFormat: 'DD/MM/YYYY' },
@@ -65,8 +66,10 @@ export const updateUserPreferences = async (req, res) => {
     const updateData = {};
     for (const [category, newSettings] of Object.entries(req.body)) {
       if (PREF_CATEGORIES.includes(category) && newSettings && typeof newSettings === 'object') {
-        console.log(`✏️ Mise à jour de ${category}:`, newSettings);
-        updateData[category] = mergeJson(userPreferences[category], newSettings);
+        // La double authentification ne se change que via /2fa/* (code ou mot de passe requis)
+        const { twoFactorAuth: _ignored, ...allowed } = newSettings;
+        console.log(`✏️ Mise à jour de ${category}:`, allowed);
+        updateData[category] = mergeJson(userPreferences[category], allowed);
       }
     }
 
@@ -109,6 +112,12 @@ export const changePassword = async (req, res) => {
     await prisma.user.update({
       where: { id: uid },
       data: { password: hashedNewPassword },
+    });
+
+    // Par sécurité, les autres appareils doivent se reconnecter
+    await prisma.userSession.updateMany({
+      where: { userId: uid, revokedAt: null, ...(req.sessionId ? { id: { not: req.sessionId } } : {}) },
+      data: { revokedAt: new Date() },
     });
 
     res.json({ message: 'Mot de passe mis à jour avec succès' });
@@ -361,4 +370,77 @@ export const deleteProfilePicture = async (req, res) => {
     console.error('❌ Erreur lors de la suppression de la photo:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
+};
+
+// ---------- Double authentification ----------
+
+const setTwoFactor = async (uid, enabled) => {
+  const prefs = await getOrCreateUserPreferences(uid);
+  const security = mergeJson(prefs.security, {
+    twoFactorAuth: { ...(prefs.security?.twoFactorAuth || {}), enabled, method: 'email' },
+  });
+  await prisma.userPreferences.update({ where: { userId: uid }, data: { security } });
+};
+
+// Étape 1 : envoie un code à l'adresse email pour prouver qu'elle est joignable avant d'activer
+export const sendTwoFactorEnableCode = async (req, res) => {
+  const user = await prisma.user.findUnique({ where: { id: getUserId(req.user) } });
+  if (!user?.password) {
+    return res.status(400).json({ message: 'La double authentification concerne les comptes avec mot de passe.' });
+  }
+  const challenge = await createChallenge(user, 'enable');
+  if (!challenge.ok) {
+    return res.status(503).json({ message: "Envoi d'email indisponible : impossible d'activer la double authentification pour le moment." });
+  }
+  res.json({
+    challengeId: challenge.challengeId,
+    emailHint: user.email.replace(/^(.{2}).*(@.*)$/, '$1***$2'),
+    ...(challenge.devCode ? { devCode: challenge.devCode } : {}),
+  });
+};
+
+// Étape 2 : vérifie le code puis active
+export const enableTwoFactor = async (req, res) => {
+  const uid = getUserId(req.user);
+  const result = await verifyChallenge({ challengeId: req.body.challengeId, code: req.body.code, purpose: 'enable', userId: uid });
+  if (!result.ok) return res.status(400).json({ message: result.message });
+  await setTwoFactor(uid, true);
+  res.json({ message: 'Double authentification activée', enabled: true });
+};
+
+export const disableTwoFactor = async (req, res) => {
+  const uid = getUserId(req.user);
+  const user = await prisma.user.findUnique({ where: { id: uid } });
+  if (!user?.password || !(await bcrypt.compare(String(req.body.password || ''), user.password))) {
+    return res.status(400).json({ message: 'Mot de passe incorrect' });
+  }
+  await setTwoFactor(uid, false);
+  res.json({ message: 'Double authentification désactivée', enabled: false });
+};
+
+// ---------- Sessions actives ----------
+
+export const listSessions = async (req, res) => {
+  const sessions = await prisma.userSession.findMany({
+    where: { userId: getUserId(req.user), revokedAt: null, createdAt: { gte: new Date(Date.now() - 7 * 86400000) } },
+    orderBy: { lastSeenAt: 'desc' },
+  });
+  res.json(sessions.map((s) => ({ ...serialize(s), current: s.id === req.sessionId })));
+};
+
+export const revokeSession = async (req, res) => {
+  const result = await prisma.userSession.updateMany({
+    where: { id: req.params.id, userId: getUserId(req.user), revokedAt: null },
+    data: { revokedAt: new Date() },
+  });
+  if (result.count === 0) return res.status(404).json({ message: 'Session introuvable' });
+  res.json({ message: 'Session déconnectée', loggedOut: req.params.id === req.sessionId });
+};
+
+export const revokeOtherSessions = async (req, res) => {
+  const result = await prisma.userSession.updateMany({
+    where: { userId: getUserId(req.user), revokedAt: null, ...(req.sessionId ? { id: { not: req.sessionId } } : {}) },
+    data: { revokedAt: new Date() },
+  });
+  res.json({ message: `${result.count} session(s) déconnectée(s)`, count: result.count });
 };

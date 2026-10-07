@@ -36,8 +36,13 @@ export const getDashboard = async (req, res) => {
   const incomeThisMonth = incomeAgg._sum.amount || 0;
 
   // Totaux par catégorie
+  // Sans filtre de dates : dépenses du mois en cours uniquement (les revenus ne sont pas des dépenses)
   const txs = await prisma.transaction.findMany({
-    where,
+    where: {
+      ...where,
+      type: 'expense',
+      ...(where.date ? {} : { date: { gte: monthStart, lte: monthEnd } }),
+    },
     include: { category: true },
   });
   const byCategory = {};

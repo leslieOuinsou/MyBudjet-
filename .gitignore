@@ -1,3 +1,5 @@
+
+
 # Environment variables
 .env
 .env.local
@@ -65,3 +67,7 @@ quick_test.*
 *.seed
 *.pid.lock
 
+
+# Fichiers d environnement (secrets) : seul .env.example est versionné
+.env.*
+!.env.example

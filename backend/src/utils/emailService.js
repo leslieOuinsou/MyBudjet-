@@ -244,7 +244,34 @@ export const sendPasswordChangedEmail = async (email, userName) => {
   }
 };
 
+// Code de double authentification (connexion ou activation)
+export const sendTwoFactorCodeEmail = async (email, userName, code, purpose = 'login') => {
+  const transporter = createTransporter();
+  if (!transporter) return { success: false, reason: 'Email not configured' };
+
+  const action = purpose === 'enable' ? 'activer la double authentification' : 'vous connecter';
+  try {
+    const info = await transporter.sendMail({
+      from: `"MyBudget+" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `Votre code de sécurité MyBudget+ : ${code}`,
+      html: `<div style="font-family:Segoe UI,Arial,sans-serif;max-width:480px;margin:auto;padding:24px">
+        <h2 style="color:#1E73BE">Code de sécurité</h2>
+        <p>Bonjour ${userName || ''},</p>
+        <p>Voici votre code pour ${action} :</p>
+        <p style="font-size:32px;letter-spacing:8px;font-weight:700;margin:24px 0">${code}</p>
+        <p style="color:#6C757D;font-size:13px">Ce code expire dans 10 minutes. Si vous n'êtes pas à l'origine de cette demande, changez votre mot de passe.</p>
+      </div>`,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Erreur envoi code 2FA:', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 export default {
   sendPasswordResetEmail,
   sendPasswordChangedEmail,
+  sendTwoFactorCodeEmail,
 };

@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { register, login, googleCallback, addMissingDefaultData, registerAdmin, forgotPassword, resetPassword } from '../controllers/authController.js';
+import { register, login, verifyTwoFactorLogin, googleCallback, addMissingDefaultData, registerAdmin, forgotPassword, resetPassword } from '../controllers/authController.js';
 import { sendSMSCode, verifySMSCode } from '../controllers/smsAuthController.js';
 import { validate, registerSchema, loginSchema } from '../validators/authValidator.js';
 import { authenticateJWT } from '../middleware/auth.js';
@@ -11,6 +11,7 @@ router.post('/register', validate(registerSchema), register);
 router.post('/signup', validate(registerSchema), register); // Ajouter cette route pour le frontend
 router.post('/signup-admin', registerAdmin); // Inscription admin publique (avec code)
 router.post('/login', validate(loginSchema), login);
+router.post('/login/2fa', verifyTwoFactorLogin);
 
 // Routes de réinitialisation de mot de passe
 router.post('/forgot-password', forgotPassword);

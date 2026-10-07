@@ -47,6 +47,9 @@ import reportsRoutes from './routes/reports.js';
 import forecastRoutes from './routes/forecasts.js';
 import notificationRoutes from './routes/notifications.js';
 import settingsRoutes from './routes/settings.js';
+import cronRoutes from './routes/cron.js';
+import sharedBudgetRoutes from './routes/sharedBudgets.js';
+import currencyRoutes from './routes/currency.js';
 import bankAccountRoutes from './routes/bankAccounts.js';
 import importBankRoutes from './routes/importBank.js';
 import paypalRoutes from './routes/paypal.js';
@@ -217,6 +220,7 @@ if (false && process.env.NODE_ENV === 'production') {
 
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/login/2fa', authLimiter);
 
 app.use(async (req, res, next) => {
   try {
@@ -265,6 +269,9 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/forecasts', forecastRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/cron', cronRoutes);
+app.use('/api/shared-budgets', sharedBudgetRoutes);
+app.use('/api/currency', currencyRoutes);
 
 app.get('/', (req, res) => {
   res.json({

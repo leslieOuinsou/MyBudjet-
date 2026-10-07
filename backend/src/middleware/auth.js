@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma.js';
 import { serialize } from '../lib/serialize.js';
+import { checkSession } from '../lib/session.js';
 
 export const authenticateJWT = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -42,6 +43,12 @@ export const authenticateJWT = async (req, res, next) => {
       });
     }
     
+    const session = await checkSession(decoded);
+    if (!session.ok) {
+      return res.status(401).json({ message: 'Session expirée ou révoquée. Veuillez vous reconnecter.' });
+    }
+    req.sessionId = session.sessionId;
+
     req.user = serialize(user);
     
     if (process.env.NODE_ENV === 'production') {
