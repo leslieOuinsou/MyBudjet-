@@ -157,17 +157,17 @@ export default function CookieConsent() {
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998]" />
       
       {/* Bannière principale */}
-      <div className={`fixed bottom-0 left-0 right-0 z-[9999] transform transition-all duration-500 ${
+      <div className={`fixed bottom-0 left-0 right-0 z-[9999] pb-[env(safe-area-inset-bottom)] transform transition-all duration-500 ${
         showBanner ? 'translate-y-0' : 'translate-y-full'
       }`}>
-        <div className={`max-w-7xl mx-auto m-2 md:m-4 max-h-[88dvh] overflow-y-auto rounded-2xl shadow-2xl border-2 ${
+        <div className={`max-w-7xl mx-auto m-2 md:m-4 max-h-[85dvh] overflow-y-auto overscroll-contain rounded-2xl shadow-2xl border-2 ${
           isDarkMode 
             ? 'bg-gray-800 border-blue-500/30' 
             : 'bg-white dark:bg-[#1E293B] border-blue-500/50'
         }`}>
           
           {/* Contenu principal de la bannière */}
-          <div className="p-4 md:p-8">
+          <div className="p-3 sm:p-4 md:p-8">
             <div className="flex items-start gap-3 md:gap-4 mb-4 md:mb-6">
               {/* Icône cookie */}
               <div className={`hidden sm:flex flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
@@ -194,9 +194,9 @@ export default function CookieConsent() {
                 {/* Lien vers la politique de confidentialité */}
                 <Link 
                   to="/privacy-policy" 
-                  className="inline-flex items-center gap-1 mt-2 text-sm text-blue-500 dark:text-[#60A5FA] hover:text-blue-600 dark:hover:text-[#60A5FA] hover:underline"
+                  className="inline-flex items-start gap-1 mt-2 text-xs md:text-sm text-blue-500 dark:text-[#60A5FA] hover:text-blue-600 dark:hover:text-[#60A5FA] hover:underline"
                 >
-                  <MdInfo size={16} />
+                  <MdInfo size={16} className="shrink-0 mt-0.5" />
                   En savoir plus sur notre politique de confidentialité
                 </Link>
               </div>
@@ -207,7 +207,7 @@ export default function CookieConsent() {
               {/* Bouton Accepter tout */}
               <button
                 onClick={handleAcceptAll}
-                className="flex-1 bg-blue-600 dark:bg-[#3B82F6] hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                className="flex-1 bg-blue-600 dark:bg-[#3B82F6] hover:bg-blue-700 text-white px-3 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
               >
                 <MdCheck size={20} />
                 Accepter tout
@@ -229,7 +229,7 @@ export default function CookieConsent() {
               {/* Bouton Personnaliser */}
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className={`col-span-2 sm:col-span-1 flex-1 px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
+                className={`col-span-2 sm:col-span-1 flex-1 px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-2 border-2 ${
                   isDarkMode
                     ? 'bg-transparent border-blue-500 text-blue-400 hover:bg-blue-500/10'
                     : 'bg-transparent border-blue-500 text-blue-600 dark:text-[#60A5FA] hover:bg-blue-50 dark:hover:bg-[#1E40AF]/25'
@@ -243,10 +243,10 @@ export default function CookieConsent() {
           
           {/* Panneau de paramètres détaillés (affiché si showSettings est vrai) */}
           {showSettings && (
-            <div className={`border-t-2 p-6 md:p-8 space-y-6 ${
+            <div className={`border-t-2 p-3 sm:p-6 md:p-8 space-y-3 sm:space-y-6 ${
               isDarkMode ? 'border-gray-700 bg-gray-750' : 'border-gray-200 dark:border-[#334155] bg-gray-50 dark:bg-[#334155]/50'
             }`}>
-              <h4 className={`text-lg font-bold mb-4 flex items-center gap-2 ${
+              <h4 className={`text-base md:text-lg font-bold mb-2 md:mb-4 flex items-center gap-2 ${
                 isDarkMode ? 'text-white' : 'text-gray-900 dark:text-[#F8FAFC]'
               }`}>
                 <MdSecurity className="text-blue-500 dark:text-[#60A5FA]" />
@@ -254,7 +254,7 @@ export default function CookieConsent() {
               </h4>
               
               {/* Cookie nécessaires (toujours activés) */}
-              <div className={`flex items-start gap-4 p-4 rounded-lg ${
+              <div className={`flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-lg ${
                 isDarkMode ? 'bg-gray-800' : 'bg-white dark:bg-[#1E293B]'
               }`}>
                 <input
@@ -269,7 +269,7 @@ export default function CookieConsent() {
                   }`}>
                     🔒 Cookies nécessaires <span className="text-xs text-blue-500 dark:text-[#60A5FA]">(Obligatoire)</span>
                   </h5>
-                  <p className={`text-sm ${
+                  <p className={`text-xs md:text-sm ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'
                   }`}>
                     Ces cookies sont indispensables au fonctionnement du site. 
@@ -279,7 +279,7 @@ export default function CookieConsent() {
               </div>
               
               {/* Cookies analytiques */}
-              <div className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all ${
+              <div className={`flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-lg cursor-pointer transition-all ${
                 isDarkMode 
                   ? 'bg-gray-800 hover:bg-gray-750' 
                   : 'bg-white dark:bg-[#1E293B] hover:bg-gray-50 dark:hover:bg-[#334155]/50'
@@ -298,7 +298,7 @@ export default function CookieConsent() {
                   }`}>
                     📊 Cookies analytiques
                   </h5>
-                  <p className={`text-sm ${
+                  <p className={`text-xs md:text-sm ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'
                   }`}>
                     Ces cookies nous aident à comprendre comment les visiteurs utilisent notre site. 
@@ -308,7 +308,7 @@ export default function CookieConsent() {
               </div>
               
               {/* Cookies marketing */}
-              <div className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all ${
+              <div className={`flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-lg cursor-pointer transition-all ${
                 isDarkMode 
                   ? 'bg-gray-800 hover:bg-gray-750' 
                   : 'bg-white dark:bg-[#1E293B] hover:bg-gray-50 dark:hover:bg-[#334155]/50'
@@ -327,7 +327,7 @@ export default function CookieConsent() {
                   }`}>
                     🎯 Cookies marketing
                   </h5>
-                  <p className={`text-sm ${
+                  <p className={`text-xs md:text-sm ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-600 dark:text-[#CBD5E1]'
                   }`}>
                     Ces cookies permettent de vous proposer des publicités et du contenu personnalisé. 
@@ -337,17 +337,17 @@ export default function CookieConsent() {
               </div>
               
               {/* Boutons de validation des préférences */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
                 <button
                   onClick={handleSavePreferences}
-                  className="flex-1 bg-blue-600 dark:bg-[#3B82F6] hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2"
+                  className="flex-1 bg-blue-600 dark:bg-[#3B82F6] hover:bg-blue-700 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <MdCheck size={20} />
                   Enregistrer mes préférences
                 </button>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                  className={`px-4 md:px-6 py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base transition-all duration-200 ${
                     isDarkMode
                       ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
                       : 'bg-gray-200 dark:bg-[#475569] text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-300 dark:hover:bg-[#475569]'
