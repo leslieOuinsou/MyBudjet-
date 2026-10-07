@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
+import { MdInsights, MdAutorenew, MdAccountBalance, MdAutoAwesome, MdLightbulb, MdSend } from 'react-icons/md';
 import { getSubscriptions, getHealthScore, getAccountsSummary, getAiStatus, askAssistant } from '../api.js';
 
 import { formatMoney } from '../lib/format.js';
 const FREQUENCY_LABELS = { weekly: 'Hebdo', monthly: 'Mensuel', yearly: 'Annuel' };
 const LEVEL_STYLES = {
-  excellent: 'text-green-600',
-  bon: 'text-blue-600',
-  moyen: 'text-orange-500',
-  fragile: 'text-red-600',
+  excellent: 'bg-green-100 text-green-700',
+  bon: 'bg-blue-100 text-blue-700',
+  moyen: 'bg-amber-100 text-amber-700',
+  fragile: 'bg-red-100 text-red-700',
 };
 const BREAKDOWN_LABELS = {
   savings: 'Épargne',
@@ -26,9 +27,9 @@ function ScoreRing({ score, level }) {
   const circumference = 2 * Math.PI * radius;
   const color = LEVEL_COLORS[level] || '#2A78D6';
   return (
-    <div className="relative w-36 h-36 shrink-0" role="img" aria-label={`Score ${score} sur 100, niveau ${level}`}>
+    <div className="relative w-40 h-40 shrink-0" role="img" aria-label={`Score ${score} sur 100, niveau ${level}`}>
       <svg viewBox="0 0 128 128" className="w-full h-full -rotate-90">
-        <circle cx="64" cy="64" r={radius} fill="none" stroke="#ECEBE8" strokeWidth="12" />
+        <circle cx="64" cy="64" r={radius} fill="none" stroke="#E9EEF5" strokeWidth="12" />
         <circle
           cx="64" cy="64" r={radius} fill="none" stroke={color} strokeWidth="12" strokeLinecap="round"
           strokeDasharray={circumference}
@@ -37,7 +38,7 @@ function ScoreRing({ score, level }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-4xl font-bold text-[#22292F] leading-none">{score}</span>
+        <span className="text-5xl font-extrabold text-[#22292F] leading-none">{score}</span>
         <span className="text-xs text-gray-500 mt-1">sur 100 · {level}</span>
       </div>
     </div>
@@ -45,6 +46,26 @@ function ScoreRing({ score, level }) {
 }
 
 const formatAmount = (n) => formatMoney(n);
+
+const CARD = 'bg-white rounded-2xl border border-gray-100 shadow-sm p-6';
+
+const SectionTitle = ({ icon: Icon, title, hint, tone = 'bg-[#E8F1FA] text-[#1E73BE]' }) => (
+  <div className="flex items-start gap-3 mb-5">
+    <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 ${tone}`}><Icon /></span>
+    <div>
+      <h2 className="text-lg font-bold text-[#22292F] leading-tight">{title}</h2>
+      {hint && <p className="text-sm text-gray-500 mt-0.5">{hint}</p>}
+    </div>
+  </div>
+);
+
+const Stat = ({ label, value, sub, accent }) => (
+  <div className={`${CARD} !p-5 border-l-4`} style={{ borderLeftColor: accent }}>
+    <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</div>
+    <div className="text-2xl font-extrabold text-[#22292F] mt-1">{value}</div>
+    {sub && <div className="text-xs text-gray-500 mt-1">{sub}</div>}
+  </div>
+);
 
 export default function InsightsPage() {
   const [loading, setLoading] = useState(true);
@@ -90,29 +111,50 @@ export default function InsightsPage() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-[#F5F7FA] dark:bg-gray-900">
+    <div className="flex min-h-screen bg-[#F5F7FA]">
       <DashboardSidebar />
-      <main className="flex-1 p-6 space-y-6">
-        <h1 className="text-2xl font-bold text-[#2C3E50] dark:text-white">Analyse financière</h1>
+      <main className="flex-1 p-5 md:p-10 space-y-6 max-w-6xl">
+        <header className="rounded-2xl bg-gradient-to-r from-[#1E73BE] to-[#2A9DF4] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+          <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdInsights /></span>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold">Analyse financière</h1>
+            <p className="text-white/85 text-sm mt-1">Ta santé financière, tes abonnements et tes comptes, en un coup d’œil.</p>
+          </div>
+        </header>
 
-        {loading && <p className="text-gray-500">Chargement…</p>}
-        {error && <p className="text-red-600">{error}</p>}
+        {loading && (
+          <div className="flex items-center gap-3 text-gray-500">
+            <span className="h-5 w-5 rounded-full border-2 border-[#1E73BE] border-t-transparent animate-spin" /> Chargement…
+          </div>
+        )}
+        {error && <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+
+        {(health || subs || accounts) && (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {health && <Stat label="Score de santé" value={`${health.score}/100`} sub={`Niveau ${health.level}`} accent={LEVEL_COLORS[health.level]} />}
+            {subs && <Stat label="Abonnements" value={`${formatAmount(subs.totalMonthly)} /mois`} sub={`${subs.subscriptions.length} détecté(s)`} accent="#EB6834" />}
+            {accounts && <Stat label="Total des comptes" value={formatAmount(accounts.total)} sub={`en ${accounts.base}`} accent="#1BAF7A" />}
+          </div>
+        )}
 
         {health && (
-          <section className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-4 text-[#2C3E50] dark:text-white">Score de santé financière</h2>
-            <div className="flex items-center gap-6 flex-wrap">
+          <section className={CARD}>
+            <SectionTitle icon={MdInsights} title="Score de santé financière" hint="Calculé d’après ton épargne, tes budgets, tes objectifs et ta régularité." />
+            <div className="flex items-center gap-8 flex-wrap">
               <ScoreRing score={health.score} level={health.level} />
-              <div className="flex-1 min-w-[240px] space-y-3">
+              <div className="flex-1 min-w-[240px] space-y-4">
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase ${LEVEL_STYLES[health.level] || 'bg-gray-100 text-gray-700'}`}>
+                  {health.level}
+                </span>
                 {Object.entries(health.breakdown).map(([key, { points, max }]) => (
                   <div key={key}>
-                    <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
-                      <span>{BREAKDOWN_LABELS[key]}</span>
-                      <span>{points}/{max}</span>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="font-medium text-[#22292F]">{BREAKDOWN_LABELS[key]}</span>
+                      <span className="text-gray-500 font-semibold">{points}/{max}</span>
                     </div>
-                    <div className="h-2 bg-[#ECEBE8] rounded-full overflow-hidden">
+                    <div className="h-2.5 bg-[#E9EEF5] rounded-full overflow-hidden">
                       <div
-                        className="h-2 rounded"
+                        className="h-2.5 rounded-full"
                         style={{ width: `${(points / max) * 100}%`, backgroundColor: BAR_COLORS[key], transition: 'width 700ms ease' }}
                       />
                     </div>
@@ -121,38 +163,47 @@ export default function InsightsPage() {
               </div>
             </div>
             {health.tips.length > 0 && (
-              <ul className="mt-4 list-disc pl-5 text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                {health.tips.map((tip) => <li key={tip}>{tip}</li>)}
-              </ul>
+              <div className="mt-6 rounded-xl bg-amber-50 border border-amber-200 p-4">
+                <div className="flex items-center gap-2 text-sm font-bold text-amber-800 mb-2"><MdLightbulb /> Conseils pour progresser</div>
+                <ul className="list-disc pl-5 text-sm text-amber-900 space-y-1">
+                  {health.tips.map((tip) => <li key={tip}>{tip}</li>)}
+                </ul>
+              </div>
             )}
           </section>
         )}
 
         {subs && (
-          <section className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-1 text-[#2C3E50] dark:text-white">Abonnements détectés</h2>
-            <p className="text-sm text-gray-500 mb-4">
-              {subs.subscriptions.length > 0
+          <section className={CARD}>
+            <SectionTitle
+              icon={MdAutorenew}
+              tone="bg-orange-100 text-orange-600"
+              title="Abonnements détectés"
+              hint={subs.subscriptions.length > 0
                 ? `${formatAmount(subs.totalMonthly)} par mois, soit ${formatAmount(subs.totalYearly)} par an.`
                 : 'Aucun abonnement détecté. Il faut au moins 3 paiements réguliers du même libellé.'}
-            </p>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            />
+            <div className="space-y-3">
               {subs.subscriptions.map((s) => (
-                <div key={s.key} className="py-3 flex justify-between gap-4">
-                  <div>
-                    <div className="font-medium text-[#2C3E50] dark:text-white">{s.name}</div>
-                    <div className="text-xs text-gray-500">
-                      {FREQUENCY_LABELS[s.frequency]} · {s.occurrences} paiements{s.category ? ` · ${s.category}` : ''}
+                <div key={s.key} className="flex items-center gap-4 rounded-xl border border-gray-100 p-4 hover:bg-[#F8FAFC] transition-colors">
+                  <span className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 font-extrabold flex items-center justify-center shrink-0">
+                    {(s.name || '?').charAt(0).toUpperCase()}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-[#22292F] truncate">{s.name}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      <span className="inline-block px-2 py-0.5 rounded-full bg-gray-100 mr-2">{FREQUENCY_LABELS[s.frequency]}</span>
+                      {s.occurrences} paiements{s.category ? ` · ${s.category}` : ''}
                     </div>
-                    <div className="h-1.5 mt-2 w-48 max-w-full bg-[#ECEBE8] rounded-full overflow-hidden">
+                    <div className="h-1.5 mt-2 w-full max-w-xs bg-[#E9EEF5] rounded-full overflow-hidden">
                       <div
-                        className="h-1.5 rounded-full bg-[#2A78D6]"
+                        className="h-1.5 rounded-full bg-orange-400"
                         style={{ width: `${Math.max(4, (s.yearlyCost / subs.subscriptions[0].yearlyCost) * 100)}%` }}
                       />
                     </div>
                   </div>
-                  <div className="text-right min-w-[120px]">
-                    <div className="font-semibold">{formatAmount(s.amount)}</div>
+                  <div className="text-right shrink-0">
+                    <div className="font-bold text-[#22292F]">{formatAmount(s.amount)}</div>
                     <div className="text-xs text-gray-500">{formatAmount(s.yearlyCost)} / an</div>
                   </div>
                 </div>
@@ -162,20 +213,21 @@ export default function InsightsPage() {
         )}
 
         {accounts && accounts.accounts.length > 0 && (
-          <section className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-1 text-[#2C3E50] dark:text-white">Mes comptes (en {accounts.base})</h2>
-            <p className="text-sm text-gray-500 mb-4">
-              Total : {formatAmount(accounts.total)}
-              {accounts.unconvertible > 0 && ` (${accounts.unconvertible} compte(s) dans une devise inconnue, non comptés)`}
-            </p>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+          <section className={CARD}>
+            <SectionTitle
+              icon={MdAccountBalance}
+              tone="bg-green-100 text-green-600"
+              title={`Mes comptes (en ${accounts.base})`}
+              hint={`Total : ${formatAmount(accounts.total)}${accounts.unconvertible > 0 ? ` (${accounts.unconvertible} compte(s) dans une devise inconnue, non comptés)` : ''}`}
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
               {accounts.accounts.map((a) => (
-                <div key={a.id} className="py-2 flex justify-between text-sm dark:text-white">
-                  <span>{a.bankName}</span>
-                  <span>
+                <div key={a.id} className="flex items-center justify-between gap-3 rounded-xl border border-gray-100 p-4">
+                  <span className="font-medium text-[#22292F] truncate">{a.bankName}</span>
+                  <span className="text-right text-sm font-bold text-[#22292F] shrink-0">
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: a.currency }).format(a.balance)}
                     {a.currency !== accounts.base && a.balanceInBase !== null && (
-                      <span className="text-gray-500"> ≈ {formatAmount(a.balanceInBase)}</span>
+                      <span className="block text-xs font-normal text-gray-500">≈ {formatAmount(a.balanceInBase)}</span>
                     )}
                   </span>
                 </div>
@@ -185,25 +237,27 @@ export default function InsightsPage() {
         )}
 
         {aiReady && (
-          <section className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-            <h2 className="text-lg font-semibold mb-1 text-[#2C3E50] dark:text-white">Poser une question à l’assistant</h2>
-            <p className="text-xs text-gray-500 mb-3">
-              Seuls des totaux par mois et par catégorie (3 derniers mois) sont envoyés à l’IA, pas tes libellés.
-            </p>
+          <section className={`${CARD} bg-gradient-to-br from-white to-[#F0F6FD]`}>
+            <SectionTitle
+              icon={MdAutoAwesome}
+              tone="bg-violet-100 text-violet-600"
+              title="Poser une question à l’assistant"
+              hint="Seuls des totaux par mois et par catégorie (3 derniers mois) sont envoyés à l’IA, pas tes libellés."
+            />
             <form onSubmit={ask} className="flex gap-2 flex-wrap">
               <input
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 maxLength={500}
                 placeholder="Ex : combien j’ai dépensé en courses le mois dernier ?"
-                className="flex-1 min-w-[220px] border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:text-white"
+                className="flex-1 min-w-[220px] border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E73BE]/40"
                 required
               />
-              <button disabled={asking} className="px-4 py-2 rounded-lg bg-[#1E73BE] text-white text-sm disabled:opacity-50">
-                {asking ? 'Réflexion…' : 'Demander'}
+              <button disabled={asking} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1E73BE] text-white text-sm font-semibold hover:bg-[#155a8a] disabled:opacity-50">
+                <MdSend /> {asking ? 'Réflexion…' : 'Demander'}
               </button>
             </form>
-            {answer && <p className="mt-3 text-sm whitespace-pre-line text-[#2C3E50] dark:text-gray-200">{answer}</p>}
+            {answer && <p className="mt-4 rounded-xl bg-white border border-gray-100 p-4 text-sm whitespace-pre-line text-[#22292F]">{answer}</p>}
             {askError && <p className="mt-3 text-sm text-red-600">{askError}</p>}
           </section>
         )}
