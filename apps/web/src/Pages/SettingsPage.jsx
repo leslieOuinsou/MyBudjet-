@@ -761,7 +761,7 @@ export default function SettingsPage() {
                     <option value="de">Deutsch</option>
                   </select>
                   <p className="text-xs text-gray-500 dark:text-[#94A3B8]">
-                    Change le format des nombres et des mois. Les textes de l’interface restent en français pour l’instant.
+                    {t('lang.note')}
                   </p>
                 </div>
                 <div className="pt-6 border-t-2 border-gray-200 dark:border-[#334155] mt-6">

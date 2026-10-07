@@ -31,6 +31,7 @@ export function setDisplayPrefs(partial) {
     // stockage indisponible : les préférences restent valables pour la session
   }
   if (typeof document !== 'undefined') document.documentElement.lang = prefs.language;
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('display-prefs-changed'));
   // Le thème du compte est appliqué par ThemeProvider
   if (partial?.theme && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('theme-pref', { detail: partial.theme }));
 }

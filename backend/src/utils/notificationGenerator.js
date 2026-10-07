@@ -1,5 +1,6 @@
 import prisma from '../lib/prisma.js';
 import { sendNotificationEmail } from './emailService.js';
+import { pushNotificationIfEnabled } from './pushService.js';
 
 /**
  * Générateur de notifications automatiques
@@ -104,6 +105,7 @@ const createIfAllowed = async ({ userId, type, title, message, priority, data, d
       },
     });
     await emailNotificationIfEnabled(userId, { title, message, priority, type });
+    await pushNotificationIfEnabled(userId, { title, message, priority, type });
     return true;
   } catch (error) {
     console.error('Erreur lors de la création de notification:', error);

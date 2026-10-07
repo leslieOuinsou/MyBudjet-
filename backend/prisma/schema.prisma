@@ -105,6 +105,7 @@ model User {
   documents                 Document[]
   activityLogs              ActivityLog[]
   twoFactorChallenges       TwoFactorChallenge[]
+  pushSubscriptions         PushSubscription[]
 
   @@index([createdAt(sort: Desc)])
 }
@@ -489,4 +490,18 @@ model ActivityLog {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt(sort: Desc)])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

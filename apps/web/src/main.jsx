@@ -5,12 +5,15 @@ import "./styles/theme.css";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { PrivacyProvider } from "./context/PrivacyContext.jsx";
+import { I18nProvider } from "./context/I18nContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ThemeProvider>
       <PrivacyProvider>
-        <App />
+        <I18nProvider>
+          <App />
+        </I18nProvider>
       </PrivacyProvider>
     </ThemeProvider>
   </React.StrictMode>

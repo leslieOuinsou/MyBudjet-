@@ -1630,3 +1630,14 @@ export async function fetchDocumentFile(id) {
   if (!response.ok) throw new Error('Impossible de récupérer le document');
   return response.blob();
 }
+
+// Notifications push (appareil courant)
+export const getPushPublicKey = () => apiCall('GET', '/push/public-key');
+export const subscribePush = (subscription) => apiCall('POST', '/push/subscribe', { subscription });
+export const unsubscribePush = (endpoint) => apiCall('POST', '/push/unsubscribe', { endpoint });
+export const sendTestPush = () => apiCall('POST', '/push/test');
+
+// Données de démonstration
+export const getDemoStatus = () => apiCall('GET', '/demo');
+export const loadDemoData = () => apiCall('POST', '/demo');
+export const removeDemoData = () => apiCall('DELETE', '/demo');

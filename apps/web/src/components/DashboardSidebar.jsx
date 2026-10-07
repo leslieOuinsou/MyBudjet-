@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../api.js";
 import ThemeSwitch from "./ThemeSwitch.jsx";
 import PrivacyToggle from "./PrivacyToggle.jsx";
+import { useI18n } from "../context/I18nContext.jsx";
 import { 
   MdMenu, 
   MdClose, 
@@ -25,52 +26,53 @@ import {
   MdEmojiEvents,
   MdUnfoldMore,
   MdFolderOpen,
-  MdHistory
+  MdHistory,
+  MdHelpOutline
 } from "react-icons/md";
 
 // Organisation des menus en sections logiques
 const menuSections = [
   {
-    title: "Vue d'ensemble",
+    title: 'nav.overview',
     items: [
-      { to: "/dashboard", label: "Tableau de bord", icon: MdDashboard },
+      { to: "/dashboard", label: 'nav.dashboard', icon: MdDashboard },
     ]
   },
   {
-    title: "Gestion financière",
+    title: 'nav.finance',
     items: [
-      { to: "/transactions", label: "Transactions", icon: MdReceipt },
-      { to: "/expenses", label: "Dépenses", icon: MdShoppingCart },
-      { to: "/shared", label: "Budgets partagés", icon: MdGroup },
-      { to: "/budgets", label: "Budgets", icon: MdAccountBalance },
-      { to: "/categories", label: "Catégories & Portefeuilles", icon: MdCategory },
-      { to: "/bills", label: "Rappels de factures", icon: MdEventNote },
-      { to: "/recurring", label: "Transactions récurrentes", icon: MdRepeat },
-      { to: "/history", label: "Corbeille & historique", icon: MdHistory },
+      { to: "/transactions", label: 'nav.transactions', icon: MdReceipt },
+      { to: "/expenses", label: 'nav.expenses', icon: MdShoppingCart },
+      { to: "/shared", label: 'nav.shared', icon: MdGroup },
+      { to: "/budgets", label: 'nav.budgets', icon: MdAccountBalance },
+      { to: "/categories", label: 'nav.categories', icon: MdCategory },
+      { to: "/bills", label: 'nav.bills', icon: MdEventNote },
+      { to: "/recurring", label: 'nav.recurring', icon: MdRepeat },
+      { to: "/history", label: 'nav.history', icon: MdHistory },
     ]
   },
   {
-    title: "Analyse & Rapports",
+    title: 'nav.analysis',
     items: [
-      { to: "/reports", label: "Rapports", icon: MdBarChart },
-      { to: "/insights", label: "Analyse", icon: MdInsights },
-      { to: "/challenges", label: "Défis d'épargne", icon: MdEmojiEvents },
-      { to: "/forecasts", label: "Prévisions", icon: MdTrendingUp },
-      { to: "/importexport", label: "Import/Export", icon: MdFolder },
+      { to: "/reports", label: 'nav.reports', icon: MdBarChart },
+      { to: "/insights", label: 'nav.insights', icon: MdInsights },
+      { to: "/challenges", label: 'nav.challenges', icon: MdEmojiEvents },
+      { to: "/forecasts", label: 'nav.forecasts', icon: MdTrendingUp },
+      { to: "/importexport", label: 'nav.importexport', icon: MdFolder },
     ]
   },
   {
-    title: "Documents",
+    title: 'nav.documents',
     items: [
-      { to: "/documents", label: "Mes documents", icon: MdFolderOpen },
+      { to: "/documents", label: 'nav.myDocuments', icon: MdFolderOpen },
     ]
   },
   {
-    title: "Paramètres",
+    title: 'nav.settingsGroup',
     items: [
-      { to: "/notifications", label: "Notifications", icon: MdNotifications },
-      { to: "/profile", label: "Mon Profil", icon: MdPerson },
-      { to: "/settings", label: "Paramètres", icon: MdSettings },
+      { to: "/notifications", label: 'nav.notifications', icon: MdNotifications },
+      { to: "/profile", label: 'nav.profile', icon: MdPerson },
+      { to: "/settings", label: 'nav.settings', icon: MdSettings },
     ]
   }
 ];
@@ -80,6 +82,7 @@ const avatarUrl = (pic) => (!pic ? null : pic.startsWith('http') ? pic : `${API_
 
 // Carte « connecté en tant que » : photo + nom, menu de déconnexion au clic
 function UserCard({ onNavigate }) {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
@@ -122,10 +125,13 @@ function UserCard({ onNavigate }) {
         <div className="absolute bottom-full left-4 right-4 mb-2 rounded-xl bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155] shadow-xl overflow-hidden" role="menu">
           <div className="px-4 py-2 border-b border-gray-100 dark:border-[#334155]"><ThemeSwitch compact /></div>
           <Link to="/profile" onClick={() => { setOpen(false); onNavigate?.(); }} role="menuitem" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-50 dark:hover:bg-[#334155]/50">
-            <MdPerson size={18} /> Mon profil
+            <MdPerson size={18} /> {t('user.myProfile')}
           </Link>
+          <button onClick={() => { setOpen(false); onNavigate?.(); window.dispatchEvent(new CustomEvent('start-tour')); }} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-50 dark:hover:bg-[#334155]/50">
+            <MdHelpOutline size={18} /> {t('user.tutorial')}
+          </button>
           <button onClick={logout} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 dark:text-[#F87171] hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30 border-t border-gray-100 dark:border-[#334155]">
-            <MdLogout size={18} /> Se déconnecter
+            <MdLogout size={18} /> {t('user.logout')}
           </button>
         </div>
       )}
@@ -144,8 +150,8 @@ function UserCard({ onNavigate }) {
           <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white dark:border-[#334155]" title="Connecté" />
         </span>
         <span className="flex-1 min-w-0">
-          <span className="block text-sm font-semibold text-[#0F172A] dark:text-[#F8FAFC] truncate">{user?.name || 'Mon compte'}</span>
-          <span className="block text-xs text-green-600 dark:text-[#22C55E]">Connecté</span>
+          <span className="block text-sm font-semibold text-[#0F172A] dark:text-[#F8FAFC] truncate">{user?.name || t('user.myAccount')}</span>
+          <span className="block text-xs text-green-600 dark:text-[#22C55E]">{t('user.connected')}</span>
         </span>
         <MdUnfoldMore className="text-gray-400 shrink-0" size={20} />
       </button>
@@ -154,6 +160,7 @@ function UserCard({ onNavigate }) {
 }
 
 export default function DashboardSidebar() {
+  const { t } = useI18n();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -170,7 +177,7 @@ export default function DashboardSidebar() {
       <div className="md:hidden fixed top-0 inset-x-0 h-14 z-50 bg-white dark:bg-[#1E293B] border-b border-gray-200 dark:border-[#334155] shadow-sm flex items-center gap-3 px-3">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-label={mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           aria-expanded={mobileMenuOpen}
           className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#334155] active:bg-gray-200 dark:active:bg-[#475569]"
         >
@@ -216,7 +223,7 @@ export default function DashboardSidebar() {
                 <h2 className="text-lg font-bold text-[#1E3A8A] dark:text-[#60A5FA]">
                   MyBudget+
                 </h2>
-                <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Gestion financière</p>
+                <p className="text-xs text-gray-500 dark:text-[#94A3B8]">{t('nav.tagline')}</p>
               </div>
             </Link>
             <PrivacyToggle className="hidden md:flex shrink-0" />
@@ -228,7 +235,7 @@ export default function DashboardSidebar() {
             <div key={sectionIndex} className={sectionIndex > 0 ? "mt-4" : ""}>
               {/* Titre de section */}
               <div className="text-xs font-semibold text-[#1E293B] dark:text-[#E2E8F0] uppercase tracking-wider mb-1.5 px-3">
-                {section.title}
+                {t(section.title)}
               </div>
               
               {/* Items de la section */}
@@ -272,7 +279,7 @@ export default function DashboardSidebar() {
                           font-medium text-sm flex-1
                           ${active ? "text-white font-semibold" : "text-gray-700 dark:text-[#E2E8F0]"}
                         `}>
-                          {item.label}
+                          {t(item.label)}
                         </span>
                         
                         {/* Effet hover */}

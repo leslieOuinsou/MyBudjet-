@@ -46,11 +46,26 @@ import PrivacyPolicyPage from "./Pages/PrivacyPolicyPage.jsx";
 import CookieConsent from "./components/CookieConsent.jsx";
 import AnalyticsTracker from "./components/AnalyticsTracker.jsx";
 import { usePrivacy } from "./context/PrivacyContext.jsx";
+import { useI18n } from "./context/I18nContext.jsx";
+import QuickAdd from "./components/QuickAdd.jsx";
+import OfflineBanner from "./components/OfflineBanner.jsx";
+import InstallPrompt from "./components/InstallPrompt.jsx";
+import Onboarding from "./components/Onboarding.jsx";
 
 // Composant pour gérer la logique de chargement initial
 function AppContent() {
   useAutoSync();
+  const { hidden } = usePrivacy();
+  const { lang } = useI18n();
   const [showLoading, setShowLoading] = useState(true);
+  // Incrémenté après un ajout rapide ou une synchronisation : les pages se rechargent avec les nouvelles données
+  const [dataTick, setDataTick] = useState(0);
+
+  useEffect(() => {
+    const bump = () => setDataTick((n) => n + 1);
+    window.addEventListener('transactions-changed', bump);
+    return () => window.removeEventListener('transactions-changed', bump);
+  }, []);
 
   const handleInitialLoadComplete = useCallback(() => {
     sessionStorage.setItem('hasVisited', 'true');
@@ -68,10 +83,9 @@ function AppContent() {
     return <LoadingScreen onComplete={handleInitialLoadComplete} />;
   }
 
-  const { hidden } = usePrivacy();
-
   return (
-    <Routes key={hidden ? 'privacy-on' : 'privacy-off'}>
+    <>
+    <Routes key={`${hidden ? 'privacy-on' : 'privacy-off'}-${lang}-${dataTick}`}>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
@@ -117,6 +131,11 @@ function AppContent() {
       <Route path="/access-denied" element={<AccessDeniedPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
+    <QuickAdd />
+    <OfflineBanner />
+    <InstallPrompt />
+    <Onboarding />
+    </>
   );
 }
 

@@ -54,6 +54,8 @@ import currencyRoutes from './routes/currency.js';
 import bankAccountRoutes from './routes/bankAccounts.js';
 import importBankRoutes from './routes/importBank.js';
 import paypalRoutes from './routes/paypal.js';
+import pushRoutes from './routes/push.js';
+import demoRoutes from './routes/demo.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -270,6 +272,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/forecasts', forecastRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/push', pushRoutes);
+app.use('/api/demo', demoRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/cron', cronRoutes);
 app.use('/api/shared-budgets', sharedBudgetRoutes);
