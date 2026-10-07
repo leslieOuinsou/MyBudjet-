@@ -1,5 +1,6 @@
 import prisma from '../lib/prisma.js';
 import { serialize, userId as getUserId } from '../lib/serialize.js';
+import { emailNotificationIfEnabled } from '../utils/notificationGenerator.js';
 
 const DEFAULT_NOTIFICATION_PREFERENCES = {
   preferences: {
@@ -211,6 +212,7 @@ export const createNotification = async (req, res) => {
       },
     });
 
+    await emailNotificationIfEnabled(uid, { title, message, priority });
     res.status(201).json(serialize(notification));
   } catch (error) {
     console.error('Erreur lors de la création de la notification:', error);

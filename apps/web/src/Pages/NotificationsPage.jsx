@@ -11,7 +11,9 @@ import {
   deleteNotification,
   getNotificationPreferences,
   updateNotificationPreferences,
-  getCurrentUser
+  getCurrentUser,
+  getUserSettings,
+  updateUserSettings
 } from '../api.js';
 
 import { formatDate } from '../lib/format.js';
@@ -92,6 +94,8 @@ const NotificationsPage = () => {
   const [savingKey, setSavingKey] = useState(null);
   const [savingAll, setSavingAll] = useState(false);
   const [user, setUser] = useState(null);
+  const [emailChannel, setEmailChannel] = useState(true);
+  const [savingEmail, setSavingEmail] = useState(false);
 
   // Afficher un message de confirmation temporaire
   const showSavedMessage = (text = 'Préférences enregistrées ✓') => {
@@ -116,6 +120,8 @@ const NotificationsPage = () => {
           setSettings(preferencesData.preferences);
         }
         setUser(userData);
+        // Canal e-mail : facultatif, ne bloque pas la page
+        getUserSettings().then((st) => setEmailChannel(st?.notifications?.email !== false)).catch(() => {});
       } catch (err) {
         setError(err.message || 'Erreur lors du chargement des données');
       } finally {
@@ -147,6 +153,23 @@ const NotificationsPage = () => {
       setSavedMessage('');
     } finally {
       setSavingKey(null);
+    }
+  };
+
+  // Recevoir aussi chaque notification par e-mail
+  const handleEmailChannel = async () => {
+    const next = !emailChannel;
+    setEmailChannel(next);
+    setSavingEmail(true);
+    setActionError('');
+    try {
+      await updateUserSettings({ notifications: { email: next } });
+      showSavedMessage(next ? 'Vous recevrez aussi vos notifications par e-mail ✓' : 'Notifications par e-mail désactivées ✓');
+    } catch (err) {
+      setEmailChannel(!next);
+      setActionError(err.message || 'Erreur lors de la mise à jour');
+    } finally {
+      setSavingEmail(false);
     }
   };
 
@@ -344,6 +367,16 @@ const NotificationsPage = () => {
             {/* Paramètres de notification */}
             <section className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6 self-start">
               <h2 className="font-bold text-lg text-[#22292F] mb-5">Paramètres de notification</h2>
+              <div className="mb-5 rounded-xl bg-[#F0F6FD] border border-[#CFE2F5] p-4">
+                <SettingSwitch
+                  settingKey="channelEmail"
+                  label="Recevoir aussi par e-mail"
+                  description={`Chaque notification activée ci-dessous est aussi envoyée à ${user?.email || 'votre adresse e-mail'}.`}
+                  value={emailChannel}
+                  saving={savingEmail}
+                  onToggle={handleEmailChannel}
+                />
+              </div>
               <div className="divide-y divide-gray-100">
                 {[
                   { key: 'budget', label: 'Alertes budgétaires', description: 'Recevez des notifications lorsque vous dépassez un budget défini ou que vous êtes proche de la limite.' },

@@ -1,4 +1,5 @@
 import prisma from '../lib/prisma.js';
+import { sendNotificationEmail } from './emailService.js';
 
 /**
  * Générateur de notifications automatiques
@@ -62,6 +63,26 @@ const hasRecentDuplicate = async (userId, type, budgetName, hours = 72) => {
   return Boolean(existing);
 };
 
+/**
+ * Envoie aussi la notification par e-mail si l'utilisateur l'a activé
+ * (Mon profil > Préférences > Notifications par e-mail, activé par défaut).
+ * Ne lève jamais d'erreur : l'e-mail est un bonus, la notification existe déjà.
+ */
+export const emailNotificationIfEnabled = async (userId, { title, message, priority }) => {
+  try {
+    const [user, prefs] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } }),
+      prisma.userPreferences.findUnique({ where: { userId } }),
+    ]);
+    if (!user?.email || prefs?.notifications?.email === false) return false;
+    const result = await sendNotificationEmail(user.email, user.name, { title, message, priority });
+    return Boolean(result.success);
+  } catch (error) {
+    console.error('Erreur envoi e-mail de notification:', error.message);
+    return false;
+  }
+};
+
 /** Créer la notification si autorisée par les préférences et non redondante. */
 const createIfAllowed = async ({ userId, type, title, message, priority, data, dedupeHours }) => {
   try {
@@ -82,6 +103,7 @@ const createIfAllowed = async ({ userId, type, title, message, priority, data, d
         data: data || {},
       },
     });
+    await emailNotificationIfEnabled(userId, { title, message, priority });
     return true;
   } catch (error) {
     console.error('Erreur lors de la création de notification:', error);

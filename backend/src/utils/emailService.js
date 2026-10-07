@@ -270,7 +270,40 @@ export const sendTwoFactorCodeEmail = async (email, userName, code, purpose = 'l
   }
 };
 
+const esc = (v) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// Copie e-mail d'une notification de l'application
+export const sendNotificationEmail = async (email, userName, { title, message, priority = 'medium' }) => {
+  const transporter = createTransporter();
+  if (!transporter) return { success: false, reason: 'Email not configured' };
+
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const accent = priority === 'high' ? '#DC3545' : '#1E73BE';
+  try {
+    const info = await transporter.sendMail({
+      from: `"MyBudget+" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `${title} - MyBudget+`,
+      html: `<div style="font-family:Segoe UI,Arial,sans-serif;max-width:520px;margin:auto;border:1px solid #E9EEF5;border-radius:12px;overflow:hidden">
+        <div style="background:${accent};color:#fff;padding:18px 24px;font-size:18px;font-weight:700">MyBudget+</div>
+        <div style="padding:24px;color:#22292F">
+          <p style="margin:0 0 4px">Bonjour ${esc(userName)},</p>
+          <h2 style="margin:12px 0 8px;font-size:18px">${esc(title)}</h2>
+          <p style="line-height:1.6;margin:0 0 20px">${esc(message)}</p>
+          <a href="${frontendUrl}/notifications" style="display:inline-block;background:${accent};color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-weight:600">Voir mes notifications</a>
+        </div>
+        <div style="padding:14px 24px;background:#F5F7FA;color:#6C757D;font-size:12px">Vous recevez cet e-mail car les notifications par e-mail sont activées. Vous pouvez les désactiver dans Mon profil > Préférences.</div>
+      </div>`,
+    });
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Erreur envoi notification e-mail:', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 export default {
+  sendNotificationEmail,
   sendPasswordResetEmail,
   sendPasswordChangedEmail,
   sendTwoFactorCodeEmail,

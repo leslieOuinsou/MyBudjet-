@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../api.js";
 import { 
   MdMenu, 
   MdClose, 
@@ -19,7 +20,8 @@ import {
   MdEventNote,
   MdGroup,
   MdInsights,
-  MdEmojiEvents
+  MdEmojiEvents,
+  MdUnfoldMore
 } from "react-icons/md";
 
 // Organisation des menus en sections logiques
@@ -61,6 +63,83 @@ const menuSections = [
     ]
   }
 ];
+
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/api\/?$/, '');
+const avatarUrl = (pic) => (!pic ? null : pic.startsWith('http') ? pic : `${API_BASE}${pic}`);
+
+// Carte « connecté en tant que » : photo + nom, menu de déconnexion au clic
+function UserCard({ onNavigate }) {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (!token) return;
+      getCurrentUser().then((u) => { if (!cancelled) { setUser(u); setImgFailed(false); } }).catch(() => {});
+    };
+    load();
+    // Photo ou nom modifiés depuis Mon profil / Paramètres
+    window.addEventListener('avatar-updated', load);
+    return () => { cancelled = true; window.removeEventListener('avatar-updated', load); };
+  }, []);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [open]);
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    onNavigate?.();
+    navigate('/login');
+  };
+
+  const initials = user?.name ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) : 'U';
+  const photo = !imgFailed ? avatarUrl(user?.profilePicture) : null;
+
+  return (
+    <div ref={ref} className="relative px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
+      {open && (
+        <div className="absolute bottom-full left-4 right-4 mb-2 rounded-xl bg-white border border-gray-200 shadow-xl overflow-hidden" role="menu">
+          <Link to="/profile" onClick={() => { setOpen(false); onNavigate?.(); }} role="menuitem" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+            <MdPerson size={18} /> Mon profil
+          </Link>
+          <button onClick={logout} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100">
+            <MdLogout size={18} /> Se déconnecter
+          </button>
+        </div>
+      )}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="w-full flex items-center gap-3 rounded-xl p-2 hover:bg-gray-100 transition-colors text-left"
+      >
+        <span className="relative shrink-0">
+          {photo ? (
+            <img src={photo} alt="" onError={() => setImgFailed(true)} className="w-10 h-10 rounded-full object-cover border-2 border-[#1E73BE]" />
+          ) : (
+            <span className="w-10 h-10 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-bold text-sm">{initials}</span>
+          )}
+          <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" title="Connecté" />
+        </span>
+        <span className="flex-1 min-w-0">
+          <span className="block text-sm font-semibold text-[#22292F] truncate">{user?.name || 'Mon compte'}</span>
+          <span className="block text-xs text-green-600">Connecté</span>
+        </span>
+        <MdUnfoldMore className="text-gray-400 shrink-0" size={20} />
+      </button>
+    </div>
+  );
+}
 
 export default function DashboardSidebar() {
   const location = useLocation();
@@ -191,21 +270,7 @@ export default function DashboardSidebar() {
           ))}
           </nav>
 
-          {/* Section déconnexion - Toujours visible en bas, fixée */}
-          <div className="px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
-            <Link 
-              to="/login" 
-              onClick={() => {
-                localStorage.removeItem('token');
-                sessionStorage.removeItem('token');
-                setMobileMenuOpen(false);
-              }}
-              className="group flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[#374151] hover:bg-[#1f2937] text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
-            >
-              <MdLogout size={18} className="group-hover:rotate-12 transition-transform duration-200" />
-              <span className="text-sm">Déconnexion</span>
-            </Link>
-          </div>
+          <UserCard onNavigate={() => setMobileMenuOpen(false)} />
         </div>
       </aside>
     </>

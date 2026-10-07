@@ -72,6 +72,7 @@ const UserProfilePage = () => {
       setError('');
       const updated = await updateUserProfile(profileForm);
       setUser((prev) => ({ ...prev, ...updated }));
+      window.dispatchEvent(new CustomEvent('avatar-updated'));
       setSuccess('Profil mis à jour avec succès');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
