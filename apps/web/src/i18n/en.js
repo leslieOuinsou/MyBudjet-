@@ -71,6 +71,9 @@ export default {
   'install.button': 'Install',
   'install.later': 'Not now',
   'install.done': "App installed. Find MyBudget in your applications menu, on the desktop or in the Dock depending on your system.",
+  'install.menu': "Install the app",
+  'demo.badge': "Demo mode on",
+  'install.hint.generic': "Open your browser menu (⋮) then “Install app” or “Add to Home Screen”.",
   'install.hint.ios': "On iPhone: tap Share then “Add to Home Screen” to install MyBudget.",
   'install.hint.safari': "On Safari: File menu then “Add to Dock” to install MyBudget.",
   'install.hint.firefox': "Firefox on desktop can’t install the app. Open MyBudget in Chrome or Edge, or bookmark it.",
@@ -124,7 +127,6 @@ export default {
   'help.demoActive': '{n} demo transactions present',
   'help.demoRemoved': 'Demo data removed',
   'help.install': 'Install the app',
-  'demo.banner': 'Demo mode is on: {n} sample transactions.',
   'demo.exit': 'Exit demo mode',
   'demo.exiting': 'Exiting demo mode…',
 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../api.js";
+import { getCurrentUser, getDemoStatus, removeDemoData } from "../api.js";
+import { manualInstallHint, promptInstall, useCanInstall, useIsInstalled } from "../lib/install.js";
 import ThemeSwitch from "./ThemeSwitch.jsx";
 import PrivacyToggle from "./PrivacyToggle.jsx";
 import { useI18n } from "../context/I18nContext.jsx";
@@ -8,6 +9,8 @@ import {
   MdMenu, 
   MdClose, 
   MdLogout,
+  MdInstallDesktop,
+  MdScience,
   MdDashboard,
   MdCategory,
   MdAccountBalance,
@@ -87,7 +90,37 @@ function UserCard({ onNavigate }) {
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
+  const [demoActive, setDemoActive] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const canInstall = useCanInstall();
+  const isInstalled = useIsInstalled();
   const ref = useRef(null);
+
+  const refreshDemo = useCallback(() => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) { setDemoActive(false); return; }
+    getDemoStatus().then((d) => setDemoActive(d.active)).catch(() => {});
+  }, []);
+  useEffect(() => {
+    refreshDemo();
+    window.addEventListener('demo-changed', refreshDemo);
+    return () => window.removeEventListener('demo-changed', refreshDemo);
+  }, [refreshDemo]);
+
+  const exitDemo = async () => {
+    try {
+      await removeDemoData();
+      window.dispatchEvent(new CustomEvent('transactions-changed'));
+      window.dispatchEvent(new CustomEvent('demo-changed'));
+      setOpen(false);
+      onNavigate?.();
+    } catch { /* le menu reste ouvert, nouvelle tentative possible */ }
+  };
+
+  const install = async () => {
+    if (canInstall) { await promptInstall(); setOpen(false); onNavigate?.(); }
+    else setShowHint((v) => !v);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -130,6 +163,19 @@ function UserCard({ onNavigate }) {
           <button onClick={() => { setOpen(false); onNavigate?.(); window.dispatchEvent(new CustomEvent('start-tour')); }} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-50 dark:hover:bg-[#334155]/50">
             <MdHelpOutline size={18} /> {t('user.tutorial')}
           </button>
+          {demoActive && (
+            <button onClick={exitDemo} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-amber-700 dark:text-[#FCD34D] hover:bg-amber-50 dark:hover:bg-[#78350F]/30">
+              <MdScience size={18} /> {t('demo.exit')}
+            </button>
+          )}
+          {!isInstalled && (
+            <>
+              <button onClick={install} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-50 dark:hover:bg-[#334155]/50">
+                <MdInstallDesktop size={18} /> {t('install.menu')}
+              </button>
+              {showHint && !canInstall && <p className="px-4 pb-2 text-xs text-gray-600 dark:text-[#CBD5E1]">{t(`install.hint.${manualInstallHint() || 'generic'}`)}</p>}
+            </>
+          )}
           <button onClick={logout} role="menuitem" className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 dark:text-[#F87171] hover:bg-red-50 dark:hover:bg-[#7F1D1D]/30 border-t border-gray-100 dark:border-[#334155]">
             <MdLogout size={18} /> {t('user.logout')}
           </button>
@@ -151,7 +197,9 @@ function UserCard({ onNavigate }) {
         </span>
         <span className="flex-1 min-w-0">
           <span className="block text-sm font-semibold text-[#0F172A] dark:text-[#F8FAFC] truncate">{user?.name || t('user.myAccount')}</span>
-          <span className="block text-xs text-green-600 dark:text-[#22C55E]">{t('user.connected')}</span>
+          {demoActive
+            ? <span className="block text-xs font-semibold text-amber-600 dark:text-[#FCD34D]">{t('demo.badge')}</span>
+            : <span className="block text-xs text-green-600 dark:text-[#22C55E]">{t('user.connected')}</span>}
         </span>
         <MdUnfoldMore className="text-gray-400 shrink-0" size={20} />
       </button>

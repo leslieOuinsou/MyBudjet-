@@ -50,7 +50,6 @@ import { useI18n } from "./context/I18nContext.jsx";
 import QuickAdd from "./components/QuickAdd.jsx";
 import OfflineBanner from "./components/OfflineBanner.jsx";
 import InstallPrompt from "./components/InstallPrompt.jsx";
-import DemoBanner from "./components/DemoBanner.jsx";
 import Onboarding from "./components/Onboarding.jsx";
 
 // Composant pour gérer la logique de chargement initial
@@ -134,7 +133,6 @@ function AppContent() {
     </Routes>
     <QuickAdd />
     <OfflineBanner />
-    <DemoBanner />
     <InstallPrompt />
     <Onboarding />
     </>
