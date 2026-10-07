@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../api.js";
-import ThemeToggle from "./ThemeToggle.jsx";
+import ThemeSwitch from "./ThemeSwitch.jsx";
 import { 
   MdMenu, 
   MdClose, 
@@ -117,7 +117,7 @@ function UserCard({ onNavigate }) {
     <div ref={ref} className="relative px-4 py-3 border-t border-gray-200 dark:border-[#334155] bg-white dark:bg-[#1E293B] flex-shrink-0">
       {open && (
         <div className="absolute bottom-full left-4 right-4 mb-2 rounded-xl bg-white dark:bg-[#1E293B] border border-gray-200 dark:border-[#334155] shadow-xl overflow-hidden" role="menu">
-          <div className="px-4 py-2.5 border-b border-gray-100 dark:border-[#334155]"><ThemeToggle /></div>
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-[#334155]"><ThemeSwitch compact /></div>
           <Link to="/profile" onClick={() => { setOpen(false); onNavigate?.(); }} role="menuitem" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-[#E2E8F0] hover:bg-gray-50 dark:hover:bg-[#334155]/50">
             <MdPerson size={18} /> Mon profil
           </Link>

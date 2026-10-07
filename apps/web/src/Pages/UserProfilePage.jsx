@@ -10,7 +10,7 @@ import {
   deleteAvatar
 } from '../api.js';
 import { useTheme } from '../context/ThemeContext';
-import ThemeToggle from '../components/ThemeToggle.jsx';
+import ThemeSwitch from '../components/ThemeSwitch.jsx';
 
 import { setDisplayPrefs } from '../lib/format.js';
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/api\/?$/, '');
@@ -320,8 +320,8 @@ const UserProfilePage = () => {
                 </div>
                 <div>
                   <label className={LABEL}>Thème</label>
-                  <ThemeToggle showLabel={false} />
-                  <p className={`text-xs mt-1 ${t.muted}`}>Clair, automatique (suit votre appareil) ou sombre. Le choix est mémorisé sur votre compte.</p>
+                  <div className={`rounded-xl border px-4 py-1 ${t.card}`}><ThemeSwitch /></div>
+                  <p className={`text-xs mt-1 ${t.muted}`}>Le choix est mémorisé sur votre compte et retrouvé sur vos autres appareils.</p>
                 </div>
                 <div className="md:max-w-sm">
                   <label className={LABEL}>Langue</label>
