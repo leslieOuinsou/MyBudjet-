@@ -68,14 +68,14 @@ const hasRecentDuplicate = async (userId, type, budgetName, hours = 72) => {
  * (Mon profil > Préférences > Notifications par e-mail, activé par défaut).
  * Ne lève jamais d'erreur : l'e-mail est un bonus, la notification existe déjà.
  */
-export const emailNotificationIfEnabled = async (userId, { title, message, priority }) => {
+export const emailNotificationIfEnabled = async (userId, { title, message, priority, type }) => {
   try {
     const [user, prefs] = await Promise.all([
       prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } }),
       prisma.userPreferences.findUnique({ where: { userId } }),
     ]);
     if (!user?.email || prefs?.notifications?.email === false) return false;
-    const result = await sendNotificationEmail(user.email, user.name, { title, message, priority });
+    const result = await sendNotificationEmail(user.email, user.name, { title, message, priority, type });
     return Boolean(result.success);
   } catch (error) {
     console.error('Erreur envoi e-mail de notification:', error.message);
@@ -103,7 +103,7 @@ const createIfAllowed = async ({ userId, type, title, message, priority, data, d
         data: data || {},
       },
     });
-    await emailNotificationIfEnabled(userId, { title, message, priority });
+    await emailNotificationIfEnabled(userId, { title, message, priority, type });
     return true;
   } catch (error) {
     console.error('Erreur lors de la création de notification:', error);

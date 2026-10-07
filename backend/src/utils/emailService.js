@@ -272,28 +272,58 @@ export const sendTwoFactorCodeEmail = async (email, userName, code, purpose = 'l
 
 const esc = (v) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-// Copie e-mail d'une notification de l'application
-export const sendNotificationEmail = async (email, userName, { title, message, priority = 'medium' }) => {
+const TYPE_STYLES = {
+  budget_alert: { icon: '⚠️', label: 'Alerte budget', color: '#F59E0B' },
+  budget_exceeded: { icon: '🚨', label: 'Budget dépassé', color: '#DC3545' },
+  bill: { icon: '🧾', label: 'Rappel de facture', color: '#1BAF7A' },
+  goal_achieved: { icon: '🏆', label: 'Objectif atteint', color: '#10B981' },
+  weekly: { icon: '📊', label: 'Résumé hebdomadaire', color: '#2A9DF4' },
+  security: { icon: '🔒', label: 'Sécurité', color: '#EAB308' },
+  system: { icon: '🔔', label: 'Notification', color: '#1E73BE' },
+};
+
+// Copie e-mail d'une notification de l'application (mise en page à tableaux : compatible Gmail, Outlook, mobile)
+export const sendNotificationEmail = async (email, userName, { title, message, priority = 'medium', type = 'system' }) => {
   const transporter = createTransporter();
   if (!transporter) return { success: false, reason: 'Email not configured' };
 
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-  const accent = priority === 'high' ? '#DC3545' : '#1E73BE';
+  const style = TYPE_STYLES[type] || TYPE_STYLES.system;
+  const firstName = esc(String(userName || '').split(' ')[0]);
+  const urgent = priority === 'high' || type === 'budget_exceeded';
   try {
     const info = await transporter.sendMail({
       from: `"MyBudget+" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: `${title} - MyBudget+`,
-      html: `<div style="font-family:Segoe UI,Arial,sans-serif;max-width:520px;margin:auto;border:1px solid #E9EEF5;border-radius:12px;overflow:hidden">
-        <div style="background:${accent};color:#fff;padding:18px 24px;font-size:18px;font-weight:700">MyBudget+</div>
-        <div style="padding:24px;color:#22292F">
-          <p style="margin:0 0 4px">Bonjour ${esc(userName)},</p>
-          <h2 style="margin:12px 0 8px;font-size:18px">${esc(title)}</h2>
-          <p style="line-height:1.6;margin:0 0 20px">${esc(message)}</p>
-          <a href="${frontendUrl}/notifications" style="display:inline-block;background:${accent};color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-weight:600">Voir mes notifications</a>
-        </div>
-        <div style="padding:14px 24px;background:#F5F7FA;color:#6C757D;font-size:12px">Vous recevez cet e-mail car les notifications par e-mail sont activées. Vous pouvez les désactiver dans Mon profil > Préférences.</div>
-      </div>`,
+      subject: `${style.icon} ${title} - MyBudget+`,
+      html: `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F5F7FA;font-family:'Segoe UI',Helvetica,Arial,sans-serif">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F7FA;padding:32px 12px"><tr><td align="center">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
+    <tr><td style="background:linear-gradient(135deg,#1E73BE,#6C5CE7);background-color:#1E73BE;border-radius:16px 16px 0 0;padding:26px 32px">
+      <div style="color:#fff;font-size:22px;font-weight:800;letter-spacing:.3px">MyBudget+</div>
+      <div style="color:rgba(255,255,255,.85);font-size:13px;margin-top:2px">Votre gestion financière, simplement</div>
+    </td></tr>
+    <tr><td style="background:#fff;padding:32px;border-left:1px solid #E9EEF5;border-right:1px solid #E9EEF5">
+      <p style="margin:0 0 18px;color:#6C757D;font-size:15px">Bonjour ${firstName || 'et bienvenue'},</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E9EEF5;border-left:5px solid ${style.color};border-radius:12px;background:#FAFBFD">
+        <tr><td style="padding:20px 22px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:${style.color}">${style.icon}&nbsp; ${style.label}${urgent ? ' · Urgent' : ''}</div>
+          <div style="font-size:19px;font-weight:700;color:#22292F;margin:8px 0 6px">${esc(title)}</div>
+          <div style="font-size:15px;line-height:1.6;color:#495057">${esc(message)}</div>
+        </td></tr>
+      </table>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px auto 4px"><tr>
+        <td style="background:#1E73BE;border-radius:10px"><a href="${frontendUrl}/notifications" style="display:inline-block;padding:13px 28px;color:#fff;text-decoration:none;font-weight:700;font-size:15px">Voir mes notifications</a></td>
+      </tr></table>
+    </td></tr>
+    <tr><td style="background:#EEF2F7;border:1px solid #E9EEF5;border-top:none;border-radius:0 0 16px 16px;padding:18px 32px;color:#6C757D;font-size:12px;line-height:1.6;text-align:center">
+      Vous recevez cet e-mail car les notifications par e-mail sont activées.<br>
+      Pour les arrêter : <a href="${frontendUrl}/notifications" style="color:#1E73BE">Notifications</a> › « Recevoir aussi par e-mail ».<br>
+      © MyBudget+
+    </td></tr>
+  </table>
+</td></tr></table></body></html>`,
     });
     return { success: true, messageId: info.messageId };
   } catch (error) {

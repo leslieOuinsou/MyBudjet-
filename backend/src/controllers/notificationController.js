@@ -212,7 +212,7 @@ export const createNotification = async (req, res) => {
       },
     });
 
-    await emailNotificationIfEnabled(uid, { title, message, priority });
+    await emailNotificationIfEnabled(uid, { title, message, priority, type });
     res.status(201).json(serialize(notification));
   } catch (error) {
     console.error('Erreur lors de la création de la notification:', error);
