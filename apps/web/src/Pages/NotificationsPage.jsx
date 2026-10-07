@@ -300,7 +300,7 @@ const NotificationsPage = () => {
 
           <div className="grid gap-6 lg:grid-cols-5">
             {/* Notifications récentes */}
-            <section className="lg:col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6">
+            <section className="lg:col-span-3 min-w-0 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6">
               <div className="flex justify-between items-center mb-4 gap-3 flex-wrap">
                 <h2 className="font-bold text-lg text-[#22292F]">Notifications récentes</h2>
                 <button
@@ -335,7 +335,7 @@ const NotificationsPage = () => {
                             <span>{formatTimeAgo(n.createdAt)}</span>
                             {!n.isRead && <span className="w-2 h-2 rounded-full bg-[#1E73BE]" title="Non lue" />}
                           </div>
-                          <p className={`text-sm mt-0.5 text-[#22292F] ${!n.isRead ? 'font-semibold' : ''}`}>{n.message}</p>
+                          <p className={`text-sm mt-0.5 break-words text-[#22292F] ${!n.isRead ? 'font-semibold' : ''}`}>{n.message}</p>
                         </div>
                         <div className="flex gap-1 shrink-0">
                           {!n.isRead && (
@@ -365,7 +365,7 @@ const NotificationsPage = () => {
             </section>
 
             {/* Paramètres de notification */}
-            <section className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6 self-start">
+            <section className="lg:col-span-2 min-w-0 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6 self-start">
               <h2 className="font-bold text-lg text-[#22292F] mb-5">Paramètres de notification</h2>
               <div className="mb-5 rounded-xl bg-[#F0F6FD] border border-[#CFE2F5] p-4">
                 <SettingSwitch

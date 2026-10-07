@@ -106,7 +106,7 @@ export default function FAQPage() {
 										)
 									}
 								>
-									<span>{section.title}</span>
+									<span className="min-w-0 flex-1 pr-2">{section.title}</span>
 									<span
 										className={`ml-2 text-2xl transition-transform ${
 											openSection === idx

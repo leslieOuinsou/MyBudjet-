@@ -161,18 +161,22 @@ export default function DashboardSidebar() {
   
   return (
     <>
-      {/* Bouton hamburger mobile */}
-      <button
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200"
-      >
-        {mobileMenuOpen ? (
-          <MdClose size={24} className="text-gray-800" />
-        ) : (
-          <MdMenu size={24} className="text-gray-800" />
-        )}
-      </button>
-      
+      {/* Barre supérieure mobile : menu + marque (le contenu des pages démarre en dessous) */}
+      <div className="md:hidden fixed top-0 inset-x-0 h-14 z-50 bg-white border-b border-gray-200 shadow-sm flex items-center gap-3 px-3">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={mobileMenuOpen}
+          className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-100 active:bg-gray-200"
+        >
+          {mobileMenuOpen ? <MdClose size={24} className="text-gray-800" /> : <MdMenu size={24} className="text-gray-800" />}
+        </button>
+        <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+          <span className="w-8 h-8 rounded-lg bg-[#1E3A8A] flex items-center justify-center"><MdDashboard className="text-white" /></span>
+          <span className="font-bold text-[#1E3A8A]">MyBudget+</span>
+        </Link>
+      </div>
+
       {/* Overlay pour mobile */}
       {mobileMenuOpen && (
         <div
@@ -183,11 +187,12 @@ export default function DashboardSidebar() {
       
       {/* Sidebar */}
       <aside className={`
-        fixed md:static
-        w-72
+        app-sidebar
+        fixed md:static top-14 md:top-0 left-0
+        w-72 max-w-[85vw] md:max-w-none
         bg-gradient-to-b from-white to-gray-50
         border-r border-gray-200
-        h-screen
+        h-[calc(100dvh-3.5rem)] md:h-screen
         transition-all duration-300 ease-in-out
         z-40
         shadow-lg md:shadow-none

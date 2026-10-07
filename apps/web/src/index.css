@@ -79,3 +79,28 @@
   background: #488E38;
   color: #FFFFFF;
 }
+/* ===== Affichage téléphone ===== */
+/* Un contenu large ne doit jamais élargir la page : il défile dans son bloc */
+main { min-width: 0; }
+main .flex-1, main .grid > * { min-width: 0; }
+main input, main select, main textarea { max-width: 100%; }
+img, video, canvas, svg { max-width: 100%; }
+
+@media (max-width: 767px) {
+  html, body { overflow-x: hidden; }
+
+  /* Pages avec menu latéral : le contenu démarre sous la barre supérieure (3,5 rem) */
+  div:has(> aside.app-sidebar) > main {
+    padding: 4.75rem 1rem 2rem !important;
+  }
+
+  /* Tableaux : défilement horizontal plutôt que débordement de la page */
+  main table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Fenêtres modales : tiennent dans l'écran */
+  [role="dialog"] > div, [role="dialog"] > form { max-height: 92dvh; overflow-y: auto; }
+
+  /* Zones tactiles confortables et pas de zoom automatique iOS dans les champs */
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px; }
+  button, [role="button"], a.btn { min-height: 40px; }
+}
