@@ -243,7 +243,7 @@ export default function BudgetsPage() {
                             </div>
                           </td>
                           <td className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell ${reste < 0 ? "text-[#DC2626] dark:text-[#F87171] font-semibold" : ""}`}>
-                            {reste < 0 ? `-${formatMoney(Math.abs(reste))}` : reste.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+                            {reste < 0 ? `-${formatMoney(Math.abs(reste))}` : formatMoney(reste)}
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3">
                             <div className="flex items-center gap-2">

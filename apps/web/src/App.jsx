@@ -44,6 +44,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import PrivacyPolicyPage from "./Pages/PrivacyPolicyPage.jsx";
 import CookieConsent from "./components/CookieConsent.jsx";
 import AnalyticsTracker from "./components/AnalyticsTracker.jsx";
+import { usePrivacy } from "./context/PrivacyContext.jsx";
 
 // Composant pour gérer la logique de chargement initial
 function AppContent() {
@@ -66,8 +67,10 @@ function AppContent() {
     return <LoadingScreen onComplete={handleInitialLoadComplete} />;
   }
 
+  const { hidden } = usePrivacy();
+
   return (
-    <Routes>
+    <Routes key={hidden ? 'privacy-on' : 'privacy-off'}>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />

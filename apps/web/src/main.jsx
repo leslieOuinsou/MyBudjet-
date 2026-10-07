@@ -4,11 +4,14 @@ import "./index.css";
 import "./styles/theme.css";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { PrivacyProvider } from "./context/PrivacyContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ThemeProvider>
-      <App />
+      <PrivacyProvider>
+        <App />
+      </PrivacyProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

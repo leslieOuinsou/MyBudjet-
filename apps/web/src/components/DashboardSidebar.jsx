@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../api.js";
 import ThemeSwitch from "./ThemeSwitch.jsx";
+import PrivacyToggle from "./PrivacyToggle.jsx";
 import { 
   MdMenu, 
   MdClose, 
@@ -204,8 +205,8 @@ export default function DashboardSidebar() {
         {/* Conteneur flex pour organiser logo, nav et bouton */}
         <div className="flex flex-col h-full">
           {/* Logo/Brand - Fixe en haut */}
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-[#334155] flex-shrink-0">
-            <Link to="/dashboard" className="flex items-center gap-3 group">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-[#334155] flex-shrink-0 flex items-center justify-between gap-2">
+            <Link to="/dashboard" className="flex items-center gap-3 group min-w-0">
               <div className="w-10 h-10 rounded-xl bg-[#1E3A8A] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200">
                 <MdDashboard className="text-white text-lg" />
               </div>
@@ -216,6 +217,7 @@ export default function DashboardSidebar() {
                 <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Gestion financière</p>
               </div>
             </Link>
+            <PrivacyToggle className="hidden md:flex shrink-0" />
           </div>
 
           {/* Navigation - Scrollable si nécessaire, occupe l'espace disponible entre logo et bouton */}
