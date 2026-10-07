@@ -1,4 +1,5 @@
 import { runDocumentExpiryScan } from '../utils/documentExpiry.js';
+import { purgeExpiredTrash } from '../controllers/transactionController.js';
 import express from 'express';
 import { runBillReminderScan } from '../controllers/billReminderController.js';
 import { runRecurringScan } from '../controllers/recurringController.js';
@@ -31,7 +32,8 @@ router.get('/bill-reminders', async (req, res) => {
     const result = await runBillReminderScan();
     // Même passage quotidien : documents arrivant à échéance
     const documents = await runDocumentExpiryScan().catch((e) => ({ error: e.message }));
-    res.json({ message: 'Scan des factures terminé', ...result, documents });
+    const trash = await purgeExpiredTrash().catch((e) => ({ error: e.message }));
+    res.json({ message: 'Scan des factures terminé', ...result, documents, trash });
   } catch (error) {
     console.error('Erreur cron bill-reminders:', error);
     res.status(500).json({ message: 'Erreur serveur' });

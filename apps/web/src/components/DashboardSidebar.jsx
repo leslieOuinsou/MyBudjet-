@@ -24,7 +24,8 @@ import {
   MdInsights,
   MdEmojiEvents,
   MdUnfoldMore,
-  MdFolderOpen
+  MdFolderOpen,
+  MdHistory
 } from "react-icons/md";
 
 // Organisation des menus en sections logiques
@@ -45,6 +46,7 @@ const menuSections = [
       { to: "/categories", label: "Catégories & Portefeuilles", icon: MdCategory },
       { to: "/bills", label: "Rappels de factures", icon: MdEventNote },
       { to: "/recurring", label: "Transactions récurrentes", icon: MdRepeat },
+      { to: "/history", label: "Corbeille & historique", icon: MdHistory },
     ]
   },
   {

@@ -1,6 +1,7 @@
 import prisma from '../lib/prisma.js';
 import { serialize, userId } from '../lib/serialize.js';
 import nodemailer from 'nodemailer';
+import { logActivity, snapshot, diff, describe } from '../lib/activityLog.js';
 import {
   createBudgetAlertNotification,
   createBudgetExceededNotification,
@@ -121,8 +122,8 @@ export const getTransactions = async (req, res) => {
 };
 
 export const getTransaction = async (req, res) => {
-  const transaction = await prisma.transaction.findUnique({
-    where: { id: req.params.id },
+  const transaction = await prisma.transaction.findFirst({
+    where: { id: req.params.id, userId: userId(req.user) },
     include: { category: true, wallet: true },
   });
   if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
@@ -212,6 +213,8 @@ export const createTransaction = async (req, res) => {
     include: { category: true, wallet: true },
   });
 
+  await logActivity({ userId: uid, entityId: transaction.id, action: 'create', summary: `${describe(transaction)} ajoutée`, after: snapshot(transaction) });
+
   if (walletId && type) {
     const walletToUpdate = await prisma.wallet.findUnique({ where: { id: walletId } });
     if (walletToUpdate) {
@@ -240,7 +243,7 @@ export const updateTransaction = async (req, res) => {
   const { amount, type, category, wallet, date, description, note, notes } = req.body;
   const finalNote = note || notes || '';
 
-  const oldTransaction = await prisma.transaction.findUnique({ where: { id: req.params.id } });
+  const oldTransaction = await prisma.transaction.findFirst({ where: { id: req.params.id, userId: userId(req.user) } });
   if (!oldTransaction) return res.status(404).json({ message: 'Transaction not found' });
 
   const data = {
@@ -249,8 +252,9 @@ export const updateTransaction = async (req, res) => {
     categoryId: category !== undefined ? category || null : undefined,
     walletId: wallet !== undefined ? wallet || null : undefined,
     date: date ? new Date(date) : undefined,
-    description: description || finalNote,
-    note: finalNote,
+    // Un champ absent de la requête n'écrase plus la valeur existante
+    description: description || finalNote || undefined,
+    note: note !== undefined || notes !== undefined ? finalNote : undefined,
   };
   if (req.file) data.attachment = `/uploads/${req.file.filename}`;
 
@@ -293,39 +297,95 @@ export const updateTransaction = async (req, res) => {
     }
   }
 
+  const changes = diff(snapshot(oldTransaction), snapshot(transaction));
+  if (changes.length > 0) {
+    await logActivity({
+      userId: userId(req.user),
+      entityId: transaction.id,
+      action: 'update',
+      summary: `${describe(transaction)} modifiée`,
+      before: snapshot(oldTransaction),
+      after: snapshot(transaction),
+    });
+  }
+
   await checkBudgetAndNotify(transaction);
   res.json(serialize(transaction));
 };
 
+// Variation de solde d'un portefeuille quand la transaction existe (dépense : -, revenu : +)
+const walletDelta = (t) => (t.type === 'expense' ? -t.amount : t.type === 'income' ? t.amount : 0);
+
+async function applyToWallet(t, sign) {
+  const delta = walletDelta(t) * sign;
+  if (!t.walletId || delta === 0) return;
+  await prisma.wallet.update({ where: { id: t.walletId }, data: { balance: { increment: delta } } }).catch(() => null);
+}
+
+const TRASH_DAYS = 30;
+
+// Suppression = mise à la corbeille (30 jours) : le solde du portefeuille est rétabli, la restauration le réapplique
 export const deleteTransaction = async (req, res) => {
-  const transaction = await prisma.transaction.findUnique({ where: { id: req.params.id } });
+  const uid = userId(req.user);
+  const transaction = await prisma.transaction.findFirst({ where: { id: req.params.id, userId: uid } });
   if (!transaction) return res.status(404).json({ message: 'Transaction not found' });
 
-  console.log(`🗑️ Suppression de transaction: ${transaction.type} de ${transaction.amount}€`);
+  await applyToWallet(transaction, -1);
+  await prisma.transaction.update({ where: { id: transaction.id }, data: { deletedAt: new Date() } });
+  await logActivity({ userId: uid, entityId: transaction.id, action: 'delete', summary: `${describe(transaction)} mise à la corbeille`, before: snapshot(transaction) });
 
-  if (transaction.walletId && transaction.type) {
-    const restoreDelta =
-      transaction.type === 'expense'
-        ? transaction.amount
-        : transaction.type === 'income'
-          ? -transaction.amount
-          : 0;
-    if (restoreDelta !== 0) {
-      try {
-        const wallet = await prisma.wallet.update({
-          where: { id: transaction.walletId },
-          data: { balance: { increment: restoreDelta } },
-        });
-        console.log(`💰 Solde APRÈS suppression: ${wallet.balance}€`);
-        console.log(`✅ Portefeuille ${wallet.name} - Solde restauré: ${wallet.balance}€`);
-      } catch {
-        console.log(`❌ Portefeuille ${transaction.walletId} non trouvé`);
-      }
-    }
-  } else {
-    console.log(`ℹ️ Pas de portefeuille associé à cette transaction`);
-  }
-
-  await prisma.transaction.delete({ where: { id: req.params.id } });
-  res.json({ message: 'Transaction deleted' });
+  res.json({ message: 'Transaction deleted', id: transaction.id, restorableUntil: new Date(Date.now() + TRASH_DAYS * 86400000) });
 };
+
+export const getTrash = async (req, res) => {
+  const items = await prisma.transaction.findMany({
+    where: { userId: userId(req.user), deletedAt: { not: null } },
+    include: { category: true, wallet: true },
+    orderBy: { deletedAt: 'desc' },
+  });
+  res.json(serialize(items.map((t) => ({ ...t, purgeAt: new Date(t.deletedAt.getTime() + TRASH_DAYS * 86400000) }))));
+};
+
+export const restoreTransaction = async (req, res) => {
+  const uid = userId(req.user);
+  const transaction = await prisma.transaction.findFirst({ where: { id: req.params.id, userId: uid, deletedAt: { not: null } } });
+  if (!transaction) return res.status(404).json({ message: 'Transaction introuvable dans la corbeille' });
+
+  await applyToWallet(transaction, 1);
+  const restored = await prisma.transaction.update({ where: { id: transaction.id }, data: { deletedAt: null }, include: { category: true, wallet: true } });
+  await logActivity({ userId: uid, entityId: transaction.id, action: 'restore', summary: `${describe(transaction)} restaurée`, after: snapshot(transaction) });
+  res.json(serialize(restored));
+};
+
+// Suppression définitive (le solde a déjà été rétabli à la mise à la corbeille)
+export const purgeTransaction = async (req, res) => {
+  const uid = userId(req.user);
+  const transaction = await prisma.transaction.findFirst({ where: { id: req.params.id, userId: uid, deletedAt: { not: null } } });
+  if (!transaction) return res.status(404).json({ message: 'Transaction introuvable dans la corbeille' });
+  await prisma.transaction.delete({ where: { id: transaction.id } });
+  await logActivity({ userId: uid, entityId: transaction.id, action: 'purge', summary: `${describe(transaction)} supprimée définitivement`, before: snapshot(transaction) });
+  res.json({ message: 'Supprimée définitivement' });
+};
+
+export const emptyTrash = async (req, res) => {
+  const uid = userId(req.user);
+  const { count } = await prisma.transaction.deleteMany({ where: { userId: uid, deletedAt: { not: null } } });
+  if (count > 0) await logActivity({ userId: uid, entityId: 'trash', action: 'purge', summary: `Corbeille vidée (${count} transaction${count > 1 ? 's' : ''})` });
+  res.json({ message: 'Corbeille vidée', count });
+};
+
+export const getActivity = async (req, res) => {
+  const limit = Math.min(Number(req.query.limit) || 100, 300);
+  const items = await prisma.activityLog.findMany({
+    where: { userId: userId(req.user) },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+  });
+  res.json(serialize(items));
+};
+
+// Appelé chaque jour : supprime définitivement ce qui est en corbeille depuis plus de 30 jours
+export async function purgeExpiredTrash() {
+  const { count } = await prisma.transaction.deleteMany({ where: { deletedAt: { not: null, lt: new Date(Date.now() - TRASH_DAYS * 86400000) } } });
+  return { purged: count };
+}

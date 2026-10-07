@@ -660,6 +660,13 @@ export async function deleteTransaction(id) {
   return res.json();
 }
 
+// Corbeille et historique des transactions
+export const getTrash = () => apiCall('GET', '/transactions/trash');
+export const restoreTransaction = (id) => apiCall('POST', `/transactions/${id}/restore`);
+export const purgeTransaction = (id) => apiCall('DELETE', `/transactions/${id}/permanent`);
+export const emptyTrash = () => apiCall('DELETE', '/transactions/trash');
+export const getActivity = (limit = 100) => apiCall('GET', `/transactions/activity?limit=${limit}`);
+
 // =====================
 // REPORTS API
 // =====================

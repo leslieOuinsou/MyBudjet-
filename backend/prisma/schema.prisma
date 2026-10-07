@@ -103,6 +103,7 @@ model User {
   settlementsReceived       SharedSettlement[]         @relation("SettlementTo")
   sessions                  UserSession[]
   documents                 Document[]
+  activityLogs              ActivityLog[]
   twoFactorChallenges       TwoFactorChallenge[]
 
   @@index([createdAt(sort: Desc)])
@@ -152,6 +153,7 @@ model Transaction {
   attachment  String?
   paypalData  Json?
   date        DateTime     @default(now())
+  deletedAt   DateTime?
   userId      String
   categoryId  String?
   walletId    String?
@@ -165,6 +167,7 @@ model Transaction {
   @@index([userId])
   @@index([userId, date])
   @@index([userId, type])
+  @@index([userId, deletedAt])
   @@index([categoryId])
   @@index([walletId])
 }
@@ -470,4 +473,20 @@ model Document {
 
   @@index([userId, createdAt(sort: Desc)])
   @@index([expiresAt])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  entity    String
+  entityId  String
+  action    String
+  summary   String
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
 }

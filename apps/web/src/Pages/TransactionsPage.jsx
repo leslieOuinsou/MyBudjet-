@@ -3,7 +3,7 @@ import { trackEvent } from '../lib/analytics.js';
 import { Link, useSearchParams } from "react-router-dom";
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import { 
-  getTransactions, getCategories, getWallets, addTransaction, suggestCategory, scanReceipt, getAiStatus, updateTransaction, deleteTransaction,
+  getTransactions, getCategories, getWallets, addTransaction, suggestCategory, scanReceipt, getAiStatus, updateTransaction, deleteTransaction, restoreTransaction,
   getPayPalAuthUrl, getPayPalStatus, getPayPalBalance, getPayPalTransactions, disconnectPayPal, handlePayPalCallback
 } from '../api.js';
 import { 
@@ -23,6 +23,7 @@ export default function TransactionsPage() {
   const [categoryHint, setCategoryHint] = useState('');
   const [aiReady, setAiReady] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [undoId, setUndoId] = useState(null);
   const [scanProgress, setScanProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -321,17 +322,29 @@ export default function TransactionsPage() {
     setShowModal(true);
   };
 
+  // Suppression = corbeille (30 jours) : pas de confirmation bloquante, mais un bouton « Annuler »
   const handleDeleteTransaction = async (id) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?')) {
-      try {
-        setError('');
-        await deleteTransaction(id);
-        setSuccess('Transaction supprimée avec succès !');
-        loadData();
-        setTimeout(() => setSuccess(''), 3000);
-      } catch (err) {
-        setError(err.message || 'Erreur lors de la suppression de la transaction');
-      }
+    try {
+      setError('');
+      await deleteTransaction(id);
+      setUndoId(id);
+      setSuccess('Transaction mise à la corbeille (restaurable 30 jours).');
+      loadData();
+      setTimeout(() => { setSuccess(''); setUndoId(null); }, 8000);
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la suppression de la transaction');
+    }
+  };
+
+  const handleUndoDelete = async () => {
+    try {
+      await restoreTransaction(undoId);
+      setUndoId(null);
+      setSuccess('Transaction restaurée ✓');
+      loadData();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.message || 'Impossible de restaurer la transaction');
     }
   };
 
@@ -418,6 +431,9 @@ export default function TransactionsPage() {
           {success && (
             <div className="mb-6 bg-[#DCFCE7] dark:bg-[#14532D]/50 border border-[#C3E6CB] text-[#166534] dark:text-[#86EFAC] px-4 py-3 rounded-lg">
               {success}
+              {undoId && (
+                <button type="button" onClick={handleUndoDelete} className="ml-3 underline font-semibold">Annuler</button>
+              )}
             </div>
           )}
           
@@ -483,6 +499,9 @@ export default function TransactionsPage() {
           {success && (
             <div className="mb-4 p-4 bg-[#DCFCE7] dark:bg-[#14532D]/50 border border-[#16A34A] text-[#166534] dark:text-[#86EFAC] rounded-lg">
               {success}
+              {undoId && (
+                <button type="button" onClick={handleUndoDelete} className="ml-3 underline font-semibold">Annuler</button>
+              )}
             </div>
           )}
           {/* Filtres */}
