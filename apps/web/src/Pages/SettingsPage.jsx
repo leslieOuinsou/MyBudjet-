@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import Toast from '../components/Toast.jsx';
+import { useI18n } from '../context/I18nContext.jsx';
 import { 
   MdPerson, 
   MdEmail, 
@@ -45,6 +46,7 @@ import {
 import { setDisplayPrefs, formatMoney, formatDate } from '../lib/format.js';
 
 export default function SettingsPage() {
+  const { t } = useI18n();
   const [user, setUser] = useState(null);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
