@@ -1,6 +1,5 @@
 import prisma from '../lib/prisma.js';
 import { serialize, userId } from '../lib/serialize.js';
-import nodemailer from 'nodemailer';
 import { createBillReminderNotification } from '../utils/notificationGenerator.js';
 
 export const getReminders = async (req, res) => {
@@ -77,41 +76,20 @@ export const runBillReminderScan = async ({ userId: onlyUserId } = {}) => {
   });
 
   let notificationsCreated = 0;
-  let emailsSent = 0;
 
   for (const r of reminders) {
-    // 1. Notification in-app — respecte la préférence « Rappels de Factures »
+    // 1. Notification in-app (+ e-mail si activé) — respecte la préférence « Rappels de Factures »
     const created = await createBillReminderNotification(r.userId, r.name, r.amount, r.dueDate);
     if (created) notificationsCreated++;
 
-    // 2. E-mail si configuré
-    const user = await prisma.user.findUnique({ where: { id: r.userId } });
-    if (user?.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      try {
-        const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-        });
-        await transporter.sendMail({
-          to: user.email,
-          subject: 'Rappel de facture à payer',
-          text: `La facture "${r.name}" de ${r.amount} € est à payer avant le ${r.dueDate.toLocaleDateString()}`,
-        });
-        emailsSent++;
-        console.log('✅ Email de rappel envoyé à', user.email);
-      } catch (err) {
-        console.error('⚠️ Erreur envoi email (ignorée):', err.message);
-      }
-    }
-
-    // 3. Marquer comme traitée (évite de re-notifier chaque jour)
+    // 2. Marquer comme traitée (évite de re-notifier chaque jour)
     await prisma.billReminder.update({
       where: { id: r.id },
       data: { reminded: true },
     }).catch(() => null);
   }
 
-  return { scanned: reminders.length, notificationsCreated, emailsSent };
+  return { scanned: reminders.length, notificationsCreated };
 };
 
 export const processReminders = async (req, res) => {

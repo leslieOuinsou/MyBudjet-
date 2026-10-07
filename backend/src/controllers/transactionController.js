@@ -53,24 +53,6 @@ async function checkBudgetAndNotify(transaction) {
           categoryLabel,
           Math.abs(exceeded)
         );
-
-        const user = await prisma.user.findUnique({ where: { id: transaction.userId } });
-        if (user?.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-          try {
-            const transporter = nodemailer.createTransport({
-              service: 'gmail',
-              auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-            });
-            await transporter.sendMail({
-              to: user.email,
-              subject: 'Alerte budget dépassé',
-              text: `Vous avez dépassé votre budget pour la catégorie ${categoryLabel} de ${exceeded.toFixed(2)}€`,
-            });
-            console.log('✅ Email d\'alerte envoyé à', user.email);
-          } catch (err) {
-            console.error('⚠️ Erreur envoi email (ignorée):', err.message);
-          }
-        }
       }
     }
   }
