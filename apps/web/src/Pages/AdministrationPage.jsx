@@ -121,17 +121,17 @@ export default function AdministrationPage() {
 	
 	if (loading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
+			<div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
 				<div className="text-center">
 					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E3A8A] mx-auto mb-4"></div>
-					<p className="text-[#6C757D]">Chargement du tableau de bord admin...</p>
+					<p className="text-[#64748B]">Chargement du tableau de bord admin...</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen flex flex-col bg-[#F5F7FA]">
+		<div className="min-h-screen flex flex-col bg-[#F8FAFC]">
 			<AdminHeader />
 			
 			<div className="flex flex-1">
@@ -141,11 +141,11 @@ export default function AdministrationPage() {
 				<main className="flex-1 px-4 md:px-8 lg:px-12 py-6 md:py-10 flex flex-col pt-16 md:pt-10">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
 						<div>
-							<h1 className="text-2xl md:text-3xl font-extrabold text-[#22292F]">
+							<h1 className="text-2xl md:text-3xl font-extrabold text-[#0F172A]">
 								Tableau de Bord Administration
 							</h1>
 							<div className="text-xs mt-2 flex items-center gap-2 text-gray-400">
-								<span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span>
+								<span className="w-2 h-2 bg-[#16A34A] rounded-full animate-pulse"></span>
 								Dernière mise à jour : {lastRefresh.toLocaleTimeString('fr-FR')}
 								<span className="mx-2">•</span>
 								Auto-refresh : 30s
@@ -168,76 +168,76 @@ export default function AdministrationPage() {
 						</div>
 					)}
 					{success && (
-						<div className="mb-4 p-4 rounded-lg bg-[#D4EDDA] border border-[#22C55E] text-[#155724]">
+						<div className="mb-4 p-4 rounded-lg bg-[#DCFCE7] border border-[#16A34A] text-[#166534]">
 							✅ {success}
 						</div>
 					)}
 					
 					{/* Statistiques Clés */}
 					<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#6C757D]">
+								<span className="text-sm text-[#64748B]">
 									Total Utilisateurs
 								</span>
-								<MdPeople size={24} className="text-[#1E73BE]" />
+								<MdPeople size={24} className="text-[#2563EB]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
 								{stats?.userCount || 0}
 							</div>
-							<span className="text-xs text-[#22C55E]">
+							<span className="text-xs text-[#16A34A]">
 								Utilisateurs inscrits
 							</span>
 						</div>
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#6C757D]">
+								<span className="text-sm text-[#64748B]">
 									Transactions
 								</span>
-								<MdAttachMoney size={24} className="text-[#22C55E]" />
+								<MdAttachMoney size={24} className="text-[#16A34A]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
 								{stats?.txCount || 0}
 							</div>
-							<span className="text-xs text-[#6C757D]">
+							<span className="text-xs text-[#64748B]">
 								Transactions enregistrées
 							</span>
 						</div>
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#6C757D]">
+								<span className="text-sm text-[#64748B]">
 									Budgets Actifs
 								</span>
-								<MdAccountBalance size={24} className="text-[#1E73BE]" />
+								<MdAccountBalance size={24} className="text-[#2563EB]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
 								{stats?.budgetCount || 0}
 							</div>
-							<span className="text-xs text-[#22C55E]">
+							<span className="text-xs text-[#16A34A]">
 								Budgets créés
 							</span>
 						</div>
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#EAF4FB]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-2 bg-white border-[#E2E8F0]">
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-[#6C757D]">
+								<span className="text-sm text-[#64748B]">
 									Rappels de Factures
 								</span>
-								<MdNotifications size={24} className="text-[#6C757D]" />
+								<MdNotifications size={24} className="text-[#64748B]" />
 							</div>
-							<div className="flex items-center gap-2 text-2xl font-bold text-[#22292F]">
+							<div className="flex items-center gap-2 text-2xl font-bold text-[#0F172A]">
 								{stats?.reminderCount || 0}
 							</div>
-							<span className="text-xs text-[#1E73BE]">Rappels actifs</span>
+							<span className="text-xs text-[#2563EB]">Rappels actifs</span>
 						</div>
 					</div>
 					{/* Gestion des Utilisateurs */}
-					<section className="rounded-xl shadow p-6 border mb-8 bg-white border-[#EAF4FB]">
+					<section className="rounded-xl shadow p-6 border mb-8 bg-white border-[#E2E8F0]">
 						<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
 							<div>
-								<h2 className="text-xl font-bold text-[#22292F]">
+								<h2 className="text-xl font-bold text-[#0F172A]">
 									Gestion des Utilisateurs ({filteredUsers.length})
 								</h2>
-								<p className="text-sm mt-1 text-[#6C757D]">
+								<p className="text-sm mt-1 text-[#64748B]">
 									Gérez les comptes utilisateurs et leurs accès
 								</p>
 							</div>
@@ -257,20 +257,20 @@ export default function AdministrationPage() {
 						<div className="overflow-x-auto rounded-xl">
 							<table className="min-w-full text-base">
 								<thead>
-									<tr className="bg-[#F5F7FA]">
-										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
+									<tr className="bg-[#F8FAFC]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
 											NOM
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
 											EMAIL
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
 											RÔLE
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
 											STATUT
 										</th>
-										<th className="px-4 py-3 text-left font-bold text-[#343A40]">
+										<th className="px-4 py-3 text-left font-bold text-[#0F172A]">
 											ACTIONS
 										</th>
 									</tr>
@@ -280,12 +280,12 @@ export default function AdministrationPage() {
 										filteredUsers.map((user) => (
 											<tr
 												key={user._id}
-												className="even:bg-white odd:bg-[#F5F7FA] hover:bg-gray-100"
+												className="even:bg-white odd:bg-[#F8FAFC] hover:bg-gray-100"
 											>
 												<td className="px-4 py-3 font-medium text-black">{user.name}</td>
 												<td className="px-4 py-3 text-gray-700">{user.email}</td>
 												<td className="px-4 py-3 text-gray-700">
-													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E3A8A] text-white' : 'bg-[#E3F2FD] text-[#1E3A8A]'}`}>
+													<span className={`px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-[#1E3A8A] text-white' : 'bg-[#DBEAFE] text-[#1E3A8A]'}`}>
 														{user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
 													</span>
 												</td>
@@ -293,8 +293,8 @@ export default function AdministrationPage() {
 													<span
 														className={`px-3 py-1 rounded-full text-xs font-bold ${
 															user.blocked 
-																? 'bg-[#6C757D] text-white' 
-																: 'bg-[#D4EDDA] text-[#155724]'
+																? 'bg-[#64748B] text-white' 
+																: 'bg-[#DCFCE7] text-[#166534]'
 														}`}
 													>
 														{user.blocked ? 'Bloqué' : 'Actif'}
@@ -305,7 +305,7 @@ export default function AdministrationPage() {
 														{user.blocked ? (
 															<button 
 																onClick={() => handleUnblockUser(user._id)}
-																className="flex items-center gap-1 text-[#22C55E] hover:text-[#16a34a] text-sm"
+																className="flex items-center gap-1 text-[#16A34A] hover:text-[#15803D] text-sm"
 																title="Débloquer"
 															>
 																<MdCheckCircle size={18} />
@@ -323,7 +323,7 @@ export default function AdministrationPage() {
 														)}
 														<button 
 															onClick={() => handleDeleteUser(user._id)}
-															className="flex items-center gap-1 text-[#6C757D] hover:text-[#495057] text-sm"
+															className="flex items-center gap-1 text-[#64748B] hover:text-[#334155] text-sm"
 															title="Supprimer"
 														>
 															<MdDelete size={18} />
@@ -335,7 +335,7 @@ export default function AdministrationPage() {
 										))
 									) : (
 										<tr>
-											<td colSpan="5" className="px-4 py-8 text-center text-[#6C757D]">
+											<td colSpan="5" className="px-4 py-8 text-center text-[#64748B]">
 												{searchTerm ? 'Aucun utilisateur trouvé' : 'Aucun utilisateur'}
 											</td>
 										</tr>
@@ -346,16 +346,16 @@ export default function AdministrationPage() {
 					</section>
 					{/* Actions Rapides */}
 					<section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#EAF4FB]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#E2E8F0]">
 							<div className="flex items-center gap-3">
-								<div className="p-3 bg-[#E3F2FD] rounded-lg">
-									<MdPeople size={24} className="text-[#1E73BE]" />
+								<div className="p-3 bg-[#DBEAFE] rounded-lg">
+									<MdPeople size={24} className="text-[#2563EB]" />
 								</div>
 								<div>
-									<h3 className="text-lg font-bold text-[#22292F]">
+									<h3 className="text-lg font-bold text-[#0F172A]">
 										Utilisateurs
 									</h3>
-									<p className="text-sm text-[#6C757D]">
+									<p className="text-sm text-[#64748B]">
 										{stats?.userCount || 0} comptes
 									</p>
 								</div>
@@ -368,16 +368,16 @@ export default function AdministrationPage() {
 							</Link>
 						</div>
 						
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#EAF4FB]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#E2E8F0]">
 							<div className="flex items-center gap-3">
 								<div className="p-3 bg-yellow-100 rounded-lg">
 									<MdNotifications size={24} className="text-yellow-600" />
 								</div>
 								<div>
-									<h3 className="text-lg font-bold text-[#22292F]">
+									<h3 className="text-lg font-bold text-[#0F172A]">
 										Rappels
 									</h3>
-									<p className="text-sm text-[#6C757D]">
+									<p className="text-sm text-[#64748B]">
 										{stats?.reminderCount || 0} rappels
 									</p>
 								</div>
@@ -390,16 +390,16 @@ export default function AdministrationPage() {
 							</Link>
 						</div>
 						
-						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#EAF4FB]">
+						<div className="rounded-xl shadow p-6 border flex flex-col gap-3 bg-white border-[#E2E8F0]">
 							<div className="flex items-center gap-3">
-								<div className="p-3 bg-[#D4EDDA] rounded-lg">
-									<MdAccountBalance size={24} className="text-[#22C55E]" />
+								<div className="p-3 bg-[#DCFCE7] rounded-lg">
+									<MdAccountBalance size={24} className="text-[#16A34A]" />
 								</div>
 								<div>
-									<h3 className="text-lg font-bold text-[#22292F]">
+									<h3 className="text-lg font-bold text-[#0F172A]">
 										Budgets
 									</h3>
-									<p className="text-sm text-[#6C757D]">
+									<p className="text-sm text-[#64748B]">
 										{stats?.budgetCount || 0} budgets
 									</p>
 								</div>

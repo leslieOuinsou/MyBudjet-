@@ -87,7 +87,7 @@ export const syncCategoriesFromTransactions = async (req, res) => {
           data: {
             name,
             type: 'expense',
-            color: '#1E73BE',
+            color: '#2563EB',
             icon: '💳',
             userId: uid,
           },

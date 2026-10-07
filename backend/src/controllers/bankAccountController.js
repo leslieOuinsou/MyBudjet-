@@ -100,7 +100,7 @@ export const createBankAccount = async (req, res) => {
         currency: currency || 'EUR',
         balance: balance || 0,
         description,
-        color: color || '#1E73BE',
+        color: color || '#2563EB',
         icon: icon || '🏦',
         isPrimary: makePrimary,
       },

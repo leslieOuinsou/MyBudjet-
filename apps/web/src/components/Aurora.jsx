@@ -111,7 +111,7 @@ void main() {
 
 export default function Aurora(props) {
 	// Palette Fintech par défaut : Bleu (confiance), Vert (croissance), Bleu foncé
-	const { colorStops = ['#1E73BE', '#28A745', '#155a8a'], amplitude = 1.0, blend = 0.5 } = props;
+	const { colorStops = ['#2563EB', '#16A34A', '#1D4ED8'], amplitude = 1.0, blend = 0.5 } = props;
 	const propsRef = useRef(props);
 	propsRef.current = props;
 

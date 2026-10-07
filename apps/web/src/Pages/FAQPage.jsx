@@ -37,40 +37,40 @@ export default function FAQPage() {
 	const [openSection, setOpenSection] = useState(0);
 
 	return (
-		<div className="min-h-screen bg-[#F5F7FA] flex flex-col">
+		<div className="min-h-screen bg-[#F8FAFC] flex flex-col">
 			<div className="flex flex-1">
 				{/* Sidebar */}
-				<aside className="w-64 bg-white border-r border-[#EAF4FB] py-8 px-6 flex flex-col gap-6">
+				<aside className="w-64 bg-white border-r border-[#E2E8F0] py-8 px-6 flex flex-col gap-6">
 					<nav className="flex-1">
 						<ul className="space-y-2">
 							<li>
-								<span className="text-[#343A40] text-sm">
+								<span className="text-[#0F172A] text-sm">
 									Rappels de factures
 								</span>
 							</li>
 							<li>
-								<span className="text-[#343A40] text-sm">
+								<span className="text-[#0F172A] text-sm">
 									Transactions récurrentes
 								</span>
 							</li>
-							<li className="mt-6 text-xs text-[#6C757D] font-bold">
+							<li className="mt-6 text-xs text-[#64748B] font-bold">
 								ADMIN
 							</li>
 							<li>
-								<span className="text-[#343A40] text-sm">
+								<span className="text-[#0F172A] text-sm">
 									Tableau de bord d'administration
 								</span>
 							</li>
-							<li className="mt-6 text-xs text-[#6C757D] font-bold">
+							<li className="mt-6 text-xs text-[#64748B] font-bold">
 								SUPPORT
 							</li>
 							<li>
-								<span className="text-[#343A40] text-sm">
+								<span className="text-[#0F172A] text-sm">
 									Support/Contact
 								</span>
 							</li>
 							<li>
-								<span className="font-semibold text-[#1E73BE] text-sm bg-[#EAF4FB] rounded px-2 py-1">
+								<span className="font-semibold text-[#2563EB] text-sm bg-[#DBEAFE] rounded px-2 py-1">
 									Aide/FAQ
 								</span>
 							</li>
@@ -82,7 +82,7 @@ export default function FAQPage() {
 				</aside>
 				{/* Main */}
 				<main className="flex-1 px-12 py-10 flex flex-col">
-					<h1 className="text-3xl font-extrabold text-[#22292F] mb-8">
+					<h1 className="text-3xl font-extrabold text-[#0F172A] mb-8">
 						Aide et FAQ
 					</h1>
 					<input
@@ -90,16 +90,16 @@ export default function FAQPage() {
 						placeholder="🔍 Rechercher des questions..."
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						className="mb-6 border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] focus:border-[#1E73BE] w-full max-w-xl"
+						className="mb-6 border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] focus:border-[#2563EB] w-full max-w-xl"
 					/>
 					<div className="flex flex-col gap-3">
 						{FAQ_SECTIONS.map((section, idx) => (
 							<div
 								key={section.title}
-								className="bg-white border border-[#EAF4FB] rounded-xl"
+								className="bg-white border border-[#E2E8F0] rounded-xl"
 							>
 								<button
-									className="w-full flex items-center justify-between px-6 py-4 text-left focus:outline-none hover:bg-[#F5F7FA] transition font-semibold text-[#22292F] text-base"
+									className="w-full flex items-center justify-between px-6 py-4 text-left focus:outline-none hover:bg-[#F8FAFC] transition font-semibold text-[#0F172A] text-base"
 									onClick={() =>
 										setOpenSection(
 											openSection === idx ? null : idx
@@ -121,17 +121,17 @@ export default function FAQPage() {
 									<div className="px-6 pb-4">
 										{section.questions.length === 0 &&
 											idx !== 0 && (
-												<span className="text-[#6C757D]">
+												<span className="text-[#64748B]">
 													Aucune question dans cette section.
 												</span>
 											)}
 										{section.questions.length > 0 &&
 											section.questions.map((q, qidx) => (
 												<div key={q.q} className="mb-4">
-													<div className="font-bold text-[#22292F] mb-1">
+													<div className="font-bold text-[#0F172A] mb-1">
 														{q.q}
 													</div>
-													<div className="text-[#6C757D]">
+													<div className="text-[#64748B]">
 														{q.a}
 													</div>
 												</div>
@@ -139,10 +139,10 @@ export default function FAQPage() {
 										{idx === 0 &&
 											section.questions.map((q, qidx) => (
 												<div key={q.q} className="mb-4">
-													<div className="font-bold text-[#22292F] mb-1">
+													<div className="font-bold text-[#0F172A] mb-1">
 														{q.q}
 													</div>
-													<div className="text-[#6C757D]">
+													<div className="text-[#64748B]">
 														{q.a}
 													</div>
 												</div>

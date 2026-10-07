@@ -139,17 +139,17 @@ export default function AdminProfilePage() {
   
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-[#6C757D]'}>Chargement du profil...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B]'}>Chargement du profil...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
       <AdminHeader />
       
       <div className="flex flex-1">
@@ -157,10 +157,10 @@ export default function AdminProfilePage() {
         
         <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 pt-16 md:pt-8">
           <div className="max-w-4xl mx-auto">
-            <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+            <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
               Mon Profil Administrateur
             </h1>
-            <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+            <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
               Gérez vos informations personnelles et vos identifiants
             </p>
             
@@ -254,7 +254,7 @@ export default function AdminProfilePage() {
                   {!editing && (
                     <button
                       onClick={() => setEditing(true)}
-                      className="flex items-center gap-2 text-[#1E73BE] hover:underline"
+                      className="flex items-center gap-2 text-[#2563EB] hover:underline"
                     >
                       <MdEdit size={18} />
                       Modifier
@@ -340,7 +340,7 @@ export default function AdminProfilePage() {
                     <div className="flex gap-3 mt-6">
                       <button
                         type="submit"
-                        className="flex items-center gap-2 bg-[#1E73BE] text-white px-6 py-2 rounded-lg hover:bg-[#155a8a] transition"
+                        className="flex items-center gap-2 bg-[#2563EB] text-white px-6 py-2 rounded-lg hover:bg-[#1D4ED8] transition"
                       >
                         <MdSave size={20} />
                         Enregistrer

@@ -3,11 +3,9 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { SERIES, SURFACE, INK, areaGradient, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
+import { LINE_SERIES, INCOME, EXPENSE, SURFACE, INK, areaGradient, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
-
-const [INCOME, EXPENSE] = SERIES;
 
 // Trait vertical qui suit la souris : on lit les deux valeurs d'un même mois d'un coup d'œil
 const crosshair = {
@@ -22,7 +20,7 @@ const crosshair = {
     ctx.moveTo(x, chartArea.top);
     ctx.lineTo(x, chartArea.bottom);
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#C9C8C2';
+    ctx.strokeStyle = '#CBD5E1';
     ctx.setLineDash([4, 4]);
     ctx.stroke();
     ctx.restore();
@@ -51,7 +49,7 @@ const series = (label, values, color) => ({
 // Les couleurs viennent toujours de la palette commune, dans l'ordre des séries.
 const buildSeries = (data) => {
   if (Array.isArray(data?.datasets)) {
-    return data.datasets.map((d, i) => series(d.label, d.data, SERIES[i % SERIES.length]));
+    return data.datasets.map((d, i) => series(d.label, d.data, LINE_SERIES[i % LINE_SERIES.length]));
   }
   return [series('Revenus', data?.income, INCOME), series('Dépenses', data?.expense, EXPENSE)];
 };

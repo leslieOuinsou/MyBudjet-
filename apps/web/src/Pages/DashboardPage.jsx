@@ -283,10 +283,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-          <p className="text-[#6C757D]">Chargement du tableau de bord...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
+          <p className="text-[#64748B]">Chargement du tableau de bord...</p>
         </div>
       </div>
     );
@@ -294,9 +294,9 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[#6C757D] mb-4">{error}</p>
+          <p className="text-[#64748B] mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="bg-[#1E3A8A] text-white px-4 py-2 rounded hover:bg-[#1e40af]"
@@ -314,29 +314,29 @@ export default function DashboardPage() {
         <DashboardSidebar />
         {/* Main content */}
         <main className="flex-1 py-4 md:py-6 lg:py-10 px-3 md:px-6 lg:px-8 xl:px-12 overflow-y-auto">
-          <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-[#343A40] mb-4 md:mb-6 lg:mb-8">
+          <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-[#0F172A] mb-4 md:mb-6 lg:mb-8">
             Bienvenue, {user ? getFirstName(user.name) : 'Utilisateur'}!
           </h1>
           {/* KPIs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-xs md:text-sm">Revenu Total</div>
-              <div className="text-xl md:text-2xl font-bold text-[#1E73BE]">{formatMoney(dashboardData?.incomeThisMonth)}</div>
-              <div className="text-xs text-[#22C55E]">Ce mois-ci</div>
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#64748B] text-xs md:text-sm">Revenu Total</div>
+              <div className="text-xl md:text-2xl font-bold text-[#16A34A]">{formatMoney(dashboardData?.incomeThisMonth)}</div>
+              <div className="text-xs text-[#16A34A]">Ce mois-ci</div>
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-xs md:text-sm">Dépenses Totales</div>
-              <div className="text-xl md:text-2xl font-bold text-[#6C757D]">{formatMoney(dashboardData?.spentThisMonth)}</div>
-              <div className="text-xs text-[#6C757D]">Ce mois-ci</div>
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#64748B] text-xs md:text-sm">Dépenses Totales</div>
+              <div className="text-xl md:text-2xl font-bold text-[#DC2626]">{formatMoney(dashboardData?.spentThisMonth)}</div>
+              <div className="text-xs text-[#64748B]">Ce mois-ci</div>
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-xs md:text-sm">Solde Total</div>
-              <div className="text-xl md:text-2xl font-bold text-[#343A40]">{formatMoney(dashboardData?.totalBalance)}</div>
-              <div className="text-xs text-[#22C55E]">Tous portefeuilles</div>
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#64748B] text-xs md:text-sm">Solde Total</div>
+              <div className="text-xl md:text-2xl font-bold text-[#0F172A]">{formatMoney(dashboardData?.totalBalance)}</div>
+              <div className="text-xs text-[#16A34A]">Tous portefeuilles</div>
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-4 md:p-6 flex flex-col gap-2">
-              <div className="text-[#6C757D] text-xs md:text-sm">Solde des portefeuilles</div>
-              <ul className="text-[#343A40] text-xs md:text-sm mt-2 space-y-1">
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-4 md:p-6 flex flex-col gap-2">
+              <div className="text-[#64748B] text-xs md:text-sm">Solde des portefeuilles</div>
+              <ul className="text-[#0F172A] text-xs md:text-sm mt-2 space-y-1">
                 {wallets.map((w, i) => (
                   <li key={i} className="flex justify-between"><span className="truncate pr-2">{w.name}</span><span className="font-semibold whitespace-nowrap">{formatMoney(w.balance)}</span></li>
                 ))}
@@ -345,36 +345,36 @@ export default function DashboardPage() {
           </div>
           {/* Budget restant & Graphs */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-6 flex flex-col gap-2">
               <div className="flex justify-between items-center mb-2">
-                <div className="font-semibold text-[#343A40]">Budget Restant</div>
-                <span className="text-[#6C757D] text-xs">Budget du mois</span>
+                <div className="font-semibold text-[#0F172A]">Budget Restant</div>
+                <span className="text-[#64748B] text-xs">Budget du mois</span>
               </div>
-              <div className="text-2xl font-bold text-[#1E73BE] mb-2">
+              <div className="text-2xl font-bold text-[#2563EB] mb-2">
                 {formatMoney(dashboardData?.budgetRemaining)}
               </div>
-              <div className="w-full h-2 bg-[#F5F7FA] rounded-full mb-2">
+              <div className="w-full h-2 bg-[#F8FAFC] rounded-full mb-2">
                 <div 
                   className="h-2 rounded-full"
                   style={{
                     width: `${Math.min(100, dashboardData?.budgetPercentage || 0)}%`,
-                    backgroundColor: dashboardData?.budgetPercentage > 90 ? '#D03B3B' : dashboardData?.budgetPercentage > 70 ? '#EB6834' : '#2A78D6',
+                    backgroundColor: dashboardData?.budgetPercentage > 90 ? '#DC2626' : dashboardData?.budgetPercentage > 70 ? '#F59E0B' : '#2563EB',
                     transition: 'width 700ms ease',
                   }}
                 ></div>
               </div>
               <div className="flex justify-between items-center">
-                <div className="text-xs text-[#6C757D]">
+                <div className="text-xs text-[#64748B]">
                   {Math.round(dashboardData?.budgetPercentage || 0)}% utilisé
                 </div>
-                <div className="text-xs text-[#6C757D]">
+                <div className="text-xs text-[#64748B]">
                   Budget total: {formatMoney(dashboardData?.totalBudget)}
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
-              <div className="font-semibold text-[#343A40] mb-2">Dépenses par Catégorie</div>
-              <div className="text-[#6C757D] text-xs mb-2">Ce mois-ci</div>
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-6 flex flex-col gap-2">
+              <div className="font-semibold text-[#0F172A] mb-2">Dépenses par Catégorie</div>
+              <div className="text-[#64748B] text-xs mb-2">Ce mois-ci</div>
               {dashboardData?.byCategory && Object.keys(dashboardData.byCategory).length > 0 ? (
                 <DoughnutChart
                   data={{
@@ -383,7 +383,7 @@ export default function DashboardPage() {
                   }}
                 />
               ) : (
-                <div className="h-32 w-full bg-gradient-to-br from-[#E9F7FB] to-[#F5F7FA] rounded flex items-center justify-center text-[#6C757D] text-sm">
+                <div className="h-32 w-full bg-gradient-to-br from-[#DBEAFE] to-[#F8FAFC] rounded flex items-center justify-center text-[#64748B] text-sm">
                   Aucune donnée disponible
                 </div>
               )}
@@ -391,9 +391,9 @@ export default function DashboardPage() {
           </div>
           {/* Net worth graph & Recent activity */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
-              <div className="font-semibold text-[#343A40] mb-2">Évolution Revenus/Dépenses</div>
-              <div className="text-[#6C757D] text-xs mb-2">6 derniers mois</div>
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-6 flex flex-col gap-2">
+              <div className="font-semibold text-[#0F172A] mb-2">Évolution Revenus/Dépenses</div>
+              <div className="text-[#64748B] text-xs mb-2">6 derniers mois</div>
               {dashboardData?.stats && dashboardData.stats.length > 0 ? (
                 <LineChart
                   data={{
@@ -403,27 +403,27 @@ export default function DashboardPage() {
                   }}
                 />
               ) : (
-                <div className="h-32 w-full bg-gradient-to-br from-[#E9F7FB] to-[#F5F7FA] rounded flex items-center justify-center text-[#6C757D] text-sm">
+                <div className="h-32 w-full bg-gradient-to-br from-[#DBEAFE] to-[#F8FAFC] rounded flex items-center justify-center text-[#64748B] text-sm">
                   Aucune donnée disponible
                 </div>
               )}
             </div>
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-2">
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-6 flex flex-col gap-2">
               <div className="flex justify-between items-center mb-2">
-                <div className="font-semibold text-[#343A40]">Activité Récente</div>
-                <a href="#" className="text-[#1E73BE] text-xs font-semibold hover:underline">Voir tout</a>
+                <div className="font-semibold text-[#0F172A]">Activité Récente</div>
+                <a href="#" className="text-[#2563EB] text-xs font-semibold hover:underline">Voir tout</a>
               </div>
-              <ul className="divide-y divide-[#F5F7FA]">
+              <ul className="divide-y divide-[#F8FAFC]">
                 {recentTransactions.map((transaction, i) => (
                   <li key={i} className="flex items-center justify-between py-2">
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{categoryIcons[transaction.category?.name] || categoryIcons['Autres']}</span>
-                      <span className="text-[#343A40] text-sm">{transaction.description || transaction.category?.name || 'Transaction'}</span>
+                      <span className="text-[#0F172A] text-sm">{transaction.description || transaction.category?.name || 'Transaction'}</span>
                     </div>
-                    <span className={`font-semibold ${transaction.type === 'expense' ? 'text-[#374151]' : 'text-[#22C55E]'}`}>
+                    <span className={`font-semibold ${transaction.type === 'expense' ? 'text-[#DC2626]' : 'text-[#16A34A]'}`}>
                       {transaction.type === 'expense' ? '-' : '+'}{formatMoney(transaction.amount)}
                     </span>
-                    <span className="text-[#6C757D] text-xs w-24 text-right">
+                    <span className="text-[#64748B] text-xs w-24 text-right">
                       {formatDate(transaction.date)}
                     </span>
                   </li>
@@ -433,8 +433,8 @@ export default function DashboardPage() {
           </div>
           {/* Quick actions & Goals */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-lg border border-[#F5F7FA] p-6 flex flex-col gap-4">
-              <div className="font-semibold text-[#343A40] mb-2">Actions Rapides</div>
+            <div className="bg-white rounded-lg border border-[#E2E8F0] p-6 flex flex-col gap-4">
+              <div className="font-semibold text-[#0F172A] mb-2">Actions Rapides</div>
               <button 
                 onClick={() => setShowTransactionModal(true)}
                 className="w-full bg-[#1E3A8A] text-white px-4 py-2 rounded font-semibold hover:bg-[#1e40af] flex items-center gap-2 justify-center"
@@ -443,30 +443,30 @@ export default function DashboardPage() {
               </button>
               <button 
                 onClick={() => setShowBudgetModal(true)}
-                className="w-full bg-[#E5E7EB] text-[#374151] px-4 py-2 rounded font-semibold border border-[#E5E7EB] hover:bg-[#D1D5DB]"
+                className="w-full bg-[#E2E8F0] text-[#1E293B] px-4 py-2 rounded font-semibold border border-[#E2E8F0] hover:bg-[#CBD5E1]"
               >
                 Créer un Budget
               </button>
               <Link 
                 to="/reports" 
-                className="w-full bg-[#E5E7EB] text-[#374151] px-4 py-2 rounded font-semibold border border-[#E5E7EB] hover:bg-[#D1D5DB] text-center"
+                className="w-full bg-[#E2E8F0] text-[#1E293B] px-4 py-2 rounded font-semibold border border-[#E2E8F0] hover:bg-[#CBD5E1] text-center"
               >
                 Voir les Rapports
               </Link>
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between mb-2">
-                <div className="font-semibold text-[#343A40]">Objectifs Financiers</div>
+                <div className="font-semibold text-[#0F172A]">Objectifs Financiers</div>
                 <button
                   type="button"
                   onClick={openCreateGoal}
-                  className="text-sm text-[#1E73BE] font-semibold hover:underline"
+                  className="text-sm text-[#2563EB] font-semibold hover:underline"
                 >
                   + Ajouter
                 </button>
               </div>
               {goals.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-[#E5E7EB] p-6 text-center text-[#6C757D] text-sm">
+                <div className="rounded-lg border border-dashed border-[#E2E8F0] p-6 text-center text-[#64748B] text-sm">
                   Aucun objectif. Créez votre premier objectif d&apos;épargne.
                 </div>
               ) : (
@@ -474,7 +474,7 @@ export default function DashboardPage() {
                   {goals.map((goal) => {
                     const id = goal._id || goal.id;
                     const percentage = goal.percentage ?? 0;
-                    const bg = goal.color || '#E6F6FD';
+                    const bg = goal.color || '#DBEAFE';
                     return (
                       <div
                         key={id}
@@ -482,34 +482,34 @@ export default function DashboardPage() {
                         style={{ background: `linear-gradient(to bottom right, ${bg}, ${bg}cc)` }}
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <div className="font-semibold text-[#343A40]">{goal.name}</div>
+                          <div className="font-semibold text-[#0F172A]">{goal.name}</div>
                           <div className="flex gap-2 shrink-0">
-                            <button type="button" onClick={() => openEditGoal(goal)} className="text-xs text-[#1E73BE] hover:underline">
+                            <button type="button" onClick={() => openEditGoal(goal)} className="text-xs text-[#2563EB] hover:underline">
                               Modifier
                             </button>
-                            <button type="button" onClick={() => handleDeleteGoal(id)} className="text-xs text-[#6C757D] hover:underline">
+                            <button type="button" onClick={() => handleDeleteGoal(id)} className="text-xs text-[#64748B] hover:underline">
                               Suppr.
                             </button>
                           </div>
                         </div>
-                        <div className="text-[#343A40] text-sm">
+                        <div className="text-[#0F172A] text-sm">
                           Actuel: {formatMoney(Number(goal.currentAmount || 0))}
                         </div>
-                        <div className="text-[#6C757D] text-xs">
+                        <div className="text-[#64748B] text-xs">
                           Cible: {formatMoney(Number(goal.targetAmount || 0))}
                         </div>
                         {goal.deadline && (
-                          <div className="text-[#6C757D] text-xs">
+                          <div className="text-[#64748B] text-xs">
                             Échéance: {formatDate(goal.deadline)}
                           </div>
                         )}
-                        <div className="w-full h-2 bg-[#F5F7FA] rounded-full">
+                        <div className="w-full h-2 bg-[#F8FAFC] rounded-full">
                           <div
-                            className={`h-2 rounded-full ${goal.achieved ? 'bg-[#22C55E]' : 'bg-[#1E3A8A]'}`}
+                            className={`h-2 rounded-full ${goal.achieved ? 'bg-[#16A34A]' : 'bg-[#1E3A8A]'}`}
                             style={{ width: `${Math.min(100, percentage)}%` }}
                           ></div>
                         </div>
-                        <div className="text-xs text-[#6C757D]">
+                        <div className="text-xs text-[#64748B]">
                           {percentage}% atteint
                           {goal.achieved ? ' ✓' : ''}
                         </div>
@@ -528,10 +528,10 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40]">Ajouter une Transaction</h3>
+              <h3 className="text-lg font-semibold text-[#0F172A]">Ajouter une Transaction</h3>
               <button 
                 onClick={() => { setShowTransactionModal(false); setFormError(''); }}
-                className="text-[#6C757D] hover:text-[#343A40]"
+                className="text-[#64748B] hover:text-[#0F172A]"
               >
                 ✕
               </button>
@@ -543,45 +543,45 @@ export default function DashboardPage() {
             )}
             <form onSubmit={handleAddTransaction} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Description</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Description</label>
                 <input
                   type="text"
                   value={newTransaction.description}
                   onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   placeholder="Ex: Achat supermarché"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant ({currencySymbol()})</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Montant ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"
                   value={newTransaction.amount}
                   onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   placeholder="0.00"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Type</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Type</label>
                 <select
                   value={newTransaction.type}
                   onChange={(e) => setNewTransaction({...newTransaction, type: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                 >
                   <option value="expense">Dépense</option>
                   <option value="income">Revenu</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Catégorie</label>
                 <select
                   value={newTransaction.category}
                   onChange={(e) => setNewTransaction({...newTransaction, category: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   required
                 >
                   <option value="">Sélectionner une catégorie</option>
@@ -595,11 +595,11 @@ export default function DashboardPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Portefeuille</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Portefeuille</label>
                 <select
                   value={newTransaction.wallet}
                   onChange={(e) => setNewTransaction({...newTransaction, wallet: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   required
                 >
                   <option value="">Sélectionner un portefeuille</option>
@@ -611,12 +611,12 @@ export default function DashboardPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Date</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Date</label>
                 <input
                   type="date"
                   value={newTransaction.date}
                   onChange={(e) => setNewTransaction({...newTransaction, date: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   required
                 />
               </div>
@@ -624,7 +624,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => { setShowTransactionModal(false); setFormError(''); }}
-                  className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
+                  className="flex-1 bg-[#F8FAFC] text-[#0F172A] py-2 rounded hover:bg-gray-200"
                 >
                   Annuler
                 </button>
@@ -645,10 +645,10 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40]">Créer un Budget</h3>
+              <h3 className="text-lg font-semibold text-[#0F172A]">Créer un Budget</h3>
               <button 
                 onClick={() => { setShowBudgetModal(false); setFormError(''); }}
-                className="text-[#6C757D] hover:text-[#343A40]"
+                className="text-[#64748B] hover:text-[#0F172A]"
               >
                 ✕
               </button>
@@ -660,33 +660,33 @@ export default function DashboardPage() {
             )}
             <form onSubmit={handleAddBudget} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Nom du Budget</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Nom du Budget</label>
                 <input
                   type="text"
                   value={newBudget.name}
                   onChange={(e) => setNewBudget({...newBudget, name: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   placeholder="Ex: Alimentation"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant ({currencySymbol()})</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Montant ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"
                   value={newBudget.amount}
                   onChange={(e) => setNewBudget({...newBudget, amount: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   placeholder="0.00"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Catégorie</label>
                 <select
                   value={newBudget.category}
                   onChange={(e) => setNewBudget({...newBudget, category: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                 >
                   <option value="">Général (toutes catégories)</option>
                   {categories
@@ -699,11 +699,11 @@ export default function DashboardPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Période</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Période</label>
                 <select
                   value={newBudget.period}
                   onChange={(e) => setNewBudget({...newBudget, period: e.target.value})}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                 >
                   <option value="month">Mensuel</option>
                   <option value="week">Hebdomadaire</option>
@@ -714,7 +714,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => { setShowBudgetModal(false); setFormError(''); }}
-                  className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
+                  className="flex-1 bg-[#F8FAFC] text-[#0F172A] py-2 rounded hover:bg-gray-200"
                 >
                   Annuler
                 </button>
@@ -735,12 +735,12 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40]">
+              <h3 className="text-lg font-semibold text-[#0F172A]">
                 {editingGoalId ? 'Modifier l\'objectif' : 'Nouvel objectif'}
               </h3>
               <button
                 onClick={() => { setShowGoalModal(false); setFormError(''); }}
-                className="text-[#6C757D] hover:text-[#343A40]"
+                className="text-[#64748B] hover:text-[#0F172A]"
               >
                 ✕
               </button>
@@ -752,53 +752,53 @@ export default function DashboardPage() {
             )}
             <form onSubmit={handleSaveGoal} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Nom</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Nom</label>
                 <input
                   type="text"
                   value={goalForm.name}
                   onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   placeholder="Ex: Fonds d'urgence"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant cible ({currencySymbol()})</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Montant cible ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
                   value={goalForm.targetAmount}
                   onChange={(e) => setGoalForm({ ...goalForm, targetAmount: e.target.value })}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant actuel ({currencySymbol()})</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Montant actuel ({currencySymbol()})</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
                   value={goalForm.currentAmount}
                   onChange={(e) => setGoalForm({ ...goalForm, currentAmount: e.target.value })}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Échéance (optionnel)</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Échéance (optionnel)</label>
                 <input
                   type="date"
                   value={goalForm.deadline}
                   onChange={(e) => setGoalForm({ ...goalForm, deadline: e.target.value })}
-                  className="w-full border border-[#F5F7FA] rounded px-3 py-2 focus:outline-none focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded px-3 py-2 focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
               <div className="flex gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => { setShowGoalModal(false); setFormError(''); }}
-                  className="flex-1 bg-[#F5F7FA] text-[#343A40] py-2 rounded hover:bg-gray-200"
+                  className="flex-1 bg-[#F8FAFC] text-[#0F172A] py-2 rounded hover:bg-gray-200"
                 >
                   Annuler
                 </button>

@@ -132,14 +132,14 @@ function UserCard({ onNavigate }) {
       >
         <span className="relative shrink-0">
           {photo ? (
-            <img src={photo} alt="" onError={() => setImgFailed(true)} className="w-10 h-10 rounded-full object-cover border-2 border-[#1E73BE]" />
+            <img src={photo} alt="" onError={() => setImgFailed(true)} className="w-10 h-10 rounded-full object-cover border-2 border-[#2563EB]" />
           ) : (
-            <span className="w-10 h-10 rounded-full bg-[#1E73BE] text-white flex items-center justify-center font-bold text-sm">{initials}</span>
+            <span className="w-10 h-10 rounded-full bg-[#2563EB] text-white flex items-center justify-center font-bold text-sm">{initials}</span>
           )}
           <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" title="Connecté" />
         </span>
         <span className="flex-1 min-w-0">
-          <span className="block text-sm font-semibold text-[#22292F] truncate">{user?.name || 'Mon compte'}</span>
+          <span className="block text-sm font-semibold text-[#0F172A] truncate">{user?.name || 'Mon compte'}</span>
           <span className="block text-xs text-green-600">Connecté</span>
         </span>
         <MdUnfoldMore className="text-gray-400 shrink-0" size={20} />
@@ -221,7 +221,7 @@ export default function DashboardSidebar() {
           {menuSections.map((section, sectionIndex) => (
             <div key={sectionIndex} className={sectionIndex > 0 ? "mt-4" : ""}>
               {/* Titre de section */}
-              <div className="text-xs font-semibold text-[#374151] uppercase tracking-wider mb-1.5 px-3">
+              <div className="text-xs font-semibold text-[#1E293B] uppercase tracking-wider mb-1.5 px-3">
                 {section.title}
               </div>
               

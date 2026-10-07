@@ -4,14 +4,14 @@ import autoTable from 'jspdf-autotable';
 import prisma from '../lib/prisma.js';
 
 export const COLORS = {
-  brand: [30, 115, 190],
-  brandDark: [21, 90, 138],
-  income: [40, 167, 69],
-  expense: [220, 53, 69],
-  text: [52, 58, 64],
-  muted: [108, 117, 125],
-  line: [222, 226, 230],
-  zebra: [245, 247, 250],
+  brand: [37, 99, 235],
+  brandDark: [30, 58, 138],
+  income: [22, 163, 74],
+  expense: [220, 38, 38],
+  text: [15, 23, 42],
+  muted: [100, 116, 139],
+  line: [226, 232, 240],
+  zebra: [248, 250, 252],
   white: [255, 255, 255],
 };
 

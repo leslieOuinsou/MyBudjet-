@@ -60,7 +60,7 @@ const typeLabels = {
 const SettingSwitch = ({ label, description, settingKey, value, saving, onToggle }) => (
   <div className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
     <div className="min-w-0">
-      <div className="font-semibold text-[#22292F] flex items-center gap-2">
+      <div className="font-semibold text-[#0F172A] flex items-center gap-2">
         {label}
         {saving && (
           <span className="inline-block h-3 w-3 rounded-full border-2 border-green-500 border-t-transparent animate-spin" title="Enregistrement…" />
@@ -238,9 +238,9 @@ const NotificationsPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
           <p className="text-gray-600">Chargement des notifications...</p>
         </div>
       </div>
@@ -249,12 +249,12 @@ const NotificationsPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="bg-[#1E73BE] text-white px-4 py-2 rounded hover:bg-[#155a8a]"
+            className="bg-[#2563EB] text-white px-4 py-2 rounded hover:bg-[#1D4ED8]"
           >
             Réessayer
           </button>
@@ -266,11 +266,11 @@ const NotificationsPage = () => {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       <div className="flex flex-1">
         <DashboardSidebar />
         <main className="flex-1 p-5 md:p-10 space-y-6 max-w-6xl">
-          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center justify-between gap-4 flex-wrap">
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 shadow-sm flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
               <span className="relative w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl">
                 <MdNotifications />
@@ -302,11 +302,11 @@ const NotificationsPage = () => {
             {/* Notifications récentes */}
             <section className="lg:col-span-3 min-w-0 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6">
               <div className="flex justify-between items-center mb-4 gap-3 flex-wrap">
-                <h2 className="font-bold text-lg text-[#22292F]">Notifications récentes</h2>
+                <h2 className="font-bold text-lg text-[#0F172A]">Notifications récentes</h2>
                 <button
                   onClick={handleMarkAllAsRead}
                   disabled={unreadCount === 0}
-                  className="inline-flex items-center gap-1.5 text-[#1E73BE] text-sm font-semibold hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-1.5 text-[#2563EB] text-sm font-semibold hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
                 >
                   <MdDoneAll /> Marquer tout comme lu
                 </button>
@@ -325,7 +325,7 @@ const NotificationsPage = () => {
                     return (
                       <li
                         key={n._id}
-                        className={`flex items-start gap-3 rounded-xl border p-3.5 transition-colors ${!n.isRead ? 'bg-[#F0F6FD] border-[#CFE2F5]' : 'bg-white border-gray-100'}`}
+                        className={`flex items-start gap-3 rounded-xl border p-3.5 transition-colors ${!n.isRead ? 'bg-[#EFF6FF] border-[#BFDBFE]' : 'bg-white border-gray-100'}`}
                       >
                         <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 ${visual.tone}`}><Icon /></span>
                         <div className="flex-1 min-w-0">
@@ -333,15 +333,15 @@ const NotificationsPage = () => {
                             <span className="font-semibold uppercase tracking-wide">{typeLabels[n.type] || n.type}</span>
                             <span>·</span>
                             <span>{formatTimeAgo(n.createdAt)}</span>
-                            {!n.isRead && <span className="w-2 h-2 rounded-full bg-[#1E73BE]" title="Non lue" />}
+                            {!n.isRead && <span className="w-2 h-2 rounded-full bg-[#2563EB]" title="Non lue" />}
                           </div>
-                          <p className={`text-sm mt-0.5 break-words text-[#22292F] ${!n.isRead ? 'font-semibold' : ''}`}>{n.message}</p>
+                          <p className={`text-sm mt-0.5 break-words text-[#0F172A] ${!n.isRead ? 'font-semibold' : ''}`}>{n.message}</p>
                         </div>
                         <div className="flex gap-1 shrink-0">
                           {!n.isRead && (
                             <button
                               onClick={() => handleMarkAsRead(n._id)}
-                              className="w-8 h-8 rounded-lg flex items-center justify-center text-[#1E73BE] hover:bg-[#E3EFFA]"
+                              className="w-8 h-8 rounded-lg flex items-center justify-center text-[#2563EB] hover:bg-[#DBEAFE]"
                               title="Marquer comme lu"
                               aria-label="Marquer comme lu"
                             >
@@ -366,8 +366,8 @@ const NotificationsPage = () => {
 
             {/* Paramètres de notification */}
             <section className="lg:col-span-2 min-w-0 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6 self-start">
-              <h2 className="font-bold text-lg text-[#22292F] mb-5">Paramètres de notification</h2>
-              <div className="mb-5 rounded-xl bg-[#F0F6FD] border border-[#CFE2F5] p-4">
+              <h2 className="font-bold text-lg text-[#0F172A] mb-5">Paramètres de notification</h2>
+              <div className="mb-5 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] p-4">
                 <SettingSwitch
                   settingKey="channelEmail"
                   label="Recevoir aussi par e-mail"
@@ -400,7 +400,7 @@ const NotificationsPage = () => {
               <button
                 onClick={handleSaveAll}
                 disabled={savingAll}
-                className={`mt-6 w-full py-2.5 rounded-xl font-semibold text-white transition-colors ${savingAll ? 'bg-[#155a8a] opacity-70 cursor-not-allowed' : 'bg-[#1E73BE] hover:bg-[#155a8a]'}`}
+                className={`mt-6 w-full py-2.5 rounded-xl font-semibold text-white transition-colors ${savingAll ? 'bg-[#1D4ED8] opacity-70 cursor-not-allowed' : 'bg-[#2563EB] hover:bg-[#1D4ED8]'}`}
               >
                 {savingAll ? 'Enregistrement…' : 'Enregistrer les préférences'}
               </button>

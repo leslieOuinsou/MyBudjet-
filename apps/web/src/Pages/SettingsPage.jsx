@@ -492,8 +492,8 @@ export default function SettingsPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-[#1E73BE] mx-auto mb-4"></div>
-            <MdSettings className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#1E73BE]" size={24} />
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-[#2563EB] mx-auto mb-4"></div>
+            <MdSettings className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[#2563EB]" size={24} />
           </div>
           <p className="text-gray-600 font-medium">Chargement des paramètres...</p>
         </div>
@@ -510,11 +510,11 @@ export default function SettingsPage() {
           {/* Header moderne */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] rounded-xl shadow-lg">
+              <div className="p-3 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] rounded-xl shadow-lg">
                 <MdSettings className="text-white" size={28} />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-[#1E73BE] to-[#155a8a] bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] bg-clip-text text-transparent">
                   Paramètres
                 </h1>
                 <p className="text-gray-600 text-sm">
@@ -527,15 +527,15 @@ export default function SettingsPage() {
 
           {/* Messages d'erreur et de succès modernisés */}
           {error && (
-            <div className="bg-gradient-to-r from-[#F8D7DA] to-[#F5C6CB] border-l-4 border-[#DC3545] text-[#721C24] px-6 py-4 rounded-xl mb-6 shadow-lg flex items-start gap-4 animate-slide-down">
-              <MdError className="text-[#DC3545] flex-shrink-0 mt-0.5" size={24} />
+            <div className="bg-gradient-to-r from-[#FEE2E2] to-[#FECACA] border-l-4 border-[#DC2626] text-[#991B1B] px-6 py-4 rounded-xl mb-6 shadow-lg flex items-start gap-4 animate-slide-down">
+              <MdError className="text-[#DC2626] flex-shrink-0 mt-0.5" size={24} />
               <div className="flex-1">
-                <p className="font-bold text-[#721C24] mb-1">Erreur</p>
-                <p className="text-sm text-[#721C24]">{error}</p>
+                <p className="font-bold text-[#991B1B] mb-1">Erreur</p>
+                <p className="text-sm text-[#991B1B]">{error}</p>
               </div>
               <button 
                 onClick={() => setError('')} 
-                className="text-[#DC3545] hover:text-[#721C24] hover:bg-[#F8D7DA] rounded-full p-1 transition-colors"
+                className="text-[#DC2626] hover:text-[#991B1B] hover:bg-[#FEE2E2] rounded-full p-1 transition-colors"
               >
                 ✕
               </button>
@@ -565,7 +565,7 @@ export default function SettingsPage() {
               </div>
               <h2 className="text-xl font-bold text-gray-900">Gestion du profil</h2>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 p-6 bg-gradient-to-br from-[#E3F2FD] to-[#BBDEFB] rounded-xl border border-[#1E73BE]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8 p-6 bg-gradient-to-br from-[#DBEAFE] to-[#BFDBFE] rounded-xl border border-[#2563EB]">
               {/* Avatar avec option d'upload */}
               <div className="relative group">
                 {user?.profilePicture ? (
@@ -577,14 +577,14 @@ export default function SettingsPage() {
                     className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-300" 
                   />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white flex items-center justify-center font-bold text-2xl shadow-xl group-hover:scale-105 transition-transform duration-300">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-2xl shadow-xl group-hover:scale-105 transition-transform duration-300">
                     {user ? (user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U') : 'U'}
                   </div>
                 )}
                 {/* Badge pour changer l'avatar */}
                 <label 
                   htmlFor="avatar-upload" 
-                  className="absolute -bottom-1 -right-1 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:from-[#155a8a] hover:to-[#0d4a6f] shadow-lg hover:scale-110 transition-all duration-300 border-2 border-white"
+                  className="absolute -bottom-1 -right-1 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:from-[#1D4ED8] hover:to-[#1E40AF] shadow-lg hover:scale-110 transition-all duration-300 border-2 border-white"
                   title="Changer l'avatar"
                 >
                   <MdCameraAlt size={18} />
@@ -600,13 +600,13 @@ export default function SettingsPage() {
               <div className="flex-1">
                 <div className="font-bold text-gray-900 text-xl mb-1">{user?.name || 'Utilisateur'}</div>
                 <div className="text-gray-600 text-sm mb-4 flex items-center gap-2">
-                  <MdEmail size={16} className="text-[#1E73BE]" />
+                  <MdEmail size={16} className="text-[#2563EB]" />
                   {user?.email || 'email@exemple.com'}
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <label 
                     htmlFor="avatar-upload" 
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#1E73BE] rounded-lg hover:bg-blue-50 cursor-pointer transition-colors text-sm font-medium border border-blue-200 shadow-sm hover:shadow-md"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#2563EB] rounded-lg hover:bg-blue-50 cursor-pointer transition-colors text-sm font-medium border border-blue-200 shadow-sm hover:shadow-md"
                   >
                     <MdCameraAlt size={16} />
                     Changer l'avatar
@@ -615,7 +615,7 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={handleDeleteAvatar}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#6C757D] rounded-lg hover:bg-gray-50 cursor-pointer transition-colors text-sm font-medium border border-gray-200 shadow-sm hover:shadow-md"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#64748B] rounded-lg hover:bg-gray-50 cursor-pointer transition-colors text-sm font-medium border border-gray-200 shadow-sm hover:shadow-md"
                     >
                       <MdDelete size={16} />
                       Supprimer
@@ -631,47 +631,47 @@ export default function SettingsPage() {
             <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                  <MdPerson size={16} className="text-[#1E73BE]" />
+                  <MdPerson size={16} className="text-[#2563EB]" />
                   Nom complet
                 </label>
                 <input 
                   type="text"
                   value={profileForm.name}
                   onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
                   placeholder="Votre nom complet"
                 />
               </div>
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                  <MdEmail size={16} className="text-[#1E73BE]" />
+                  <MdEmail size={16} className="text-[#2563EB]" />
                   Adresse e-mail
                 </label>
                 <input 
                   type="email"
                   value={profileForm.email}
                   onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
                   placeholder="votre@email.com"
                 />
               </div>
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                  <MdPhone size={16} className="text-[#1E73BE]" />
+                  <MdPhone size={16} className="text-[#2563EB]" />
                   Numéro de téléphone
                 </label>
                 <input 
                   type="tel"
                   value={profileForm.phoneNumber}
                   onChange={(e) => setProfileForm({...profileForm, phoneNumber: e.target.value})}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all bg-white shadow-sm hover:shadow-md" 
                   placeholder="+33 6 12 34 56 78"
                 />
               </div>
               <div className="md:col-span-3 flex justify-end">
                 <button 
                   type="submit" 
-                  className="bg-gradient-to-r from-[#1E73BE] to-[#155a8a] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#155a8a] hover:to-[#0d4a6f] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+                  className="bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#1D4ED8] hover:to-[#1E40AF] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
                 >
                   <MdCheckCircle size={20} />
                   Mettre à jour le profil
@@ -683,7 +683,7 @@ export default function SettingsPage() {
           {/* Préférences de l'application */}
           <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-gradient-to-br from-[#1E73BE] to-[#155a8a] rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] rounded-lg">
                 <MdSettings className="text-white" size={24} />
               </div>
               <h2 className="text-xl font-bold text-gray-900">Préférences de l'application</h2>
@@ -692,7 +692,7 @@ export default function SettingsPage() {
               <div className="flex-1 space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <div className="flex items-start gap-3 flex-1">
-                    <MdNotifications className="text-[#1E73BE] mt-1 flex-shrink-0" size={20} />
+                    <MdNotifications className="text-[#2563EB] mt-1 flex-shrink-0" size={20} />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">Alertes budgétaires</div>
                       <div className="text-gray-600 text-sm">Recevez des notifications lorsque vous dépassez vos limites budgétaires.</div>
@@ -705,7 +705,7 @@ export default function SettingsPage() {
                       checked={budgetAlerts} 
                       onChange={toggleBudgetAlerts} 
                     />
-                    <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${budgetAlerts ? 'bg-gradient-to-r from-[#1E73BE] to-[#155a8a]' : 'bg-gray-300'}`}>
+                    <span className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 transition-all ${budgetAlerts ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8]' : 'bg-gray-300'}`}>
                       <span className={`bg-white w-5 h-5 rounded-full shadow-lg transform duration-300 transition-all ${budgetAlerts ? 'translate-x-6' : 'translate-x-0'}`}></span>
                     </span>
                   </label>
@@ -716,7 +716,7 @@ export default function SettingsPage() {
                     Devise par défaut
                   </label>
                   <select 
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
                     value={settings?.appearance?.currency || 'EUR'}
                     onChange={(e) => handleSettingsUpdate('appearance', { currency: e.target.value })}
                   >
@@ -735,7 +735,7 @@ export default function SettingsPage() {
                     Format de la date
                   </label>
                   <select 
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
                     value={settings?.appearance?.dateFormat || 'DD/MM/YYYY'}
                     onChange={(e) => handleSettingsUpdate('appearance', { dateFormat: e.target.value })}
                   >
@@ -747,11 +747,11 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <MdLanguage size={16} className="text-[#1E73BE]" />
+                    <MdLanguage size={16} className="text-[#2563EB]" />
                     Langue de l'interface
                   </label>
                   <select 
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md"
                     value={settings?.appearance?.language || 'fr'}
                     onChange={(e) => handleSettingsUpdate('appearance', { language: e.target.value })}
                   >
@@ -836,10 +836,10 @@ export default function SettingsPage() {
                 disabled={syncStatus.isSyncing || !settings?.data?.autoBackup}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl ${
                   syncStatus.isSyncing 
-                    ? 'bg-[#9CA3AF] cursor-not-allowed text-white' 
+                    ? 'bg-[#94A3B8] cursor-not-allowed text-white' 
                     : settings?.data?.autoBackup
                       ? 'bg-[#1E3A8A] hover:bg-[#1e40af] text-white transform hover:scale-105'
-                      : 'bg-[#9CA3AF] text-white cursor-not-allowed'
+                      : 'bg-[#94A3B8] text-white cursor-not-allowed'
                 }`}
               >
                 {syncStatus.isSyncing ? (
@@ -865,43 +865,43 @@ export default function SettingsPage() {
           {/* Sécurité du compte */}
           <section className="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-gradient-to-br from-[#495057] to-[#343A40] rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-[#334155] to-[#0F172A] rounded-lg">
                 <MdSecurity className="text-white" size={24} />
               </div>
               <h2 className="text-xl font-bold text-gray-900">Sécurité du compte</h2>
             </div>
             
             {/* Formulaire de changement de mot de passe */}
-            <form onSubmit={handlePasswordChange} className="mb-8 p-6 bg-gradient-to-br from-[#E3F2FD] to-[#BBDEFB] rounded-xl border border-[#1E73BE]">
+            <form onSubmit={handlePasswordChange} className="mb-8 p-6 bg-gradient-to-br from-[#DBEAFE] to-[#BFDBFE] rounded-xl border border-[#2563EB]">
               <div className="flex items-center gap-2 mb-4">
-                <MdLock className="text-[#1E73BE]" size={20} />
+                <MdLock className="text-[#2563EB]" size={20} />
                 <h3 className="font-semibold text-gray-900">Changer le mot de passe</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <MdLock size={16} className="text-[#1E73BE]" />
+                    <MdLock size={16} className="text-[#2563EB]" />
                     Mot de passe actuel
                   </label>
                   <input 
                     type="password"
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Mot de passe actuel"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <MdLock size={16} className="text-[#1E73BE]" />
+                    <MdLock size={16} className="text-[#2563EB]" />
                     Nouveau mot de passe
                   </label>
                   <input 
                     type="password"
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Nouveau mot de passe (min. 6 caractères)"
                     minLength="6"
                     required
@@ -909,14 +909,14 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-                    <MdLock size={16} className="text-[#1E73BE]" />
+                    <MdLock size={16} className="text-[#2563EB]" />
                     Confirmer le mot de passe
                   </label>
                   <input 
                     type="password"
                     value={passwordForm.confirmPassword}
                     onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#1E73BE] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 transition-all shadow-sm hover:shadow-md" 
                     placeholder="Confirmer le mot de passe"
                     minLength="6"
                     required
@@ -925,7 +925,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit" 
-                className="bg-[#1E3A8A] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#1e40af] disabled:bg-[#9CA3AF] disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
+                className="bg-[#1E3A8A] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#1e40af] disabled:bg-[#94A3B8] disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none"
                 disabled={!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword || isChangingPassword}
               >
                 {isChangingPassword ? (
@@ -943,14 +943,14 @@ export default function SettingsPage() {
               {/* Indicateur de sécurité du mot de passe */}
               {passwordForm.newPassword && (
                 <div className="mt-3">
-                  <div className="text-sm text-[#6C757D] mb-1">Force du mot de passe :</div>
+                  <div className="text-sm text-[#64748B] mb-1">Force du mot de passe :</div>
                   <div className="flex gap-1">
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 6 ? 'bg-[#6C757D]' : 'bg-gray-300'}`}></div>
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 8 ? 'bg-[#495057]' : 'bg-gray-300'}`}></div>
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 10 && /[A-Z]/.test(passwordForm.newPassword) ? 'bg-[#28A745]' : 'bg-gray-300'}`}></div>
-                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 12 && /[A-Z]/.test(passwordForm.newPassword) && /[0-9]/.test(passwordForm.newPassword) && /[^A-Za-z0-9]/.test(passwordForm.newPassword) ? 'bg-[#218838]' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 6 ? 'bg-[#64748B]' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 8 ? 'bg-[#334155]' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 10 && /[A-Z]/.test(passwordForm.newPassword) ? 'bg-[#16A34A]' : 'bg-gray-300'}`}></div>
+                    <div className={`h-2 flex-1 rounded ${passwordForm.newPassword.length >= 12 && /[A-Z]/.test(passwordForm.newPassword) && /[0-9]/.test(passwordForm.newPassword) && /[^A-Za-z0-9]/.test(passwordForm.newPassword) ? 'bg-[#15803D]' : 'bg-gray-300'}`}></div>
                   </div>
-                  <p className="text-xs text-[#6C757D] mt-1">
+                  <p className="text-xs text-[#64748B] mt-1">
                     {passwordForm.newPassword.length < 6 ? 'Trop faible' :
                      passwordForm.newPassword.length < 8 ? 'Faible' :
                      passwordForm.newPassword.length < 10 ? 'Moyen' :
@@ -998,7 +998,7 @@ export default function SettingsPage() {
                             </>
                           )}
                           <div className="flex gap-2">
-                            <button type="submit" disabled={twoFactorFlow.busy || (twoFactorFlow.step === 'code' ? twoFactorFlow.code.length !== 6 : !twoFactorFlow.password)} className="px-4 py-2 rounded-xl bg-[#1E73BE] text-white text-sm font-semibold disabled:opacity-50">{twoFactorFlow.step === 'code' ? 'Activer' : 'Désactiver'}</button>
+                            <button type="submit" disabled={twoFactorFlow.busy || (twoFactorFlow.step === 'code' ? twoFactorFlow.code.length !== 6 : !twoFactorFlow.password)} className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-sm font-semibold disabled:opacity-50">{twoFactorFlow.step === 'code' ? 'Activer' : 'Désactiver'}</button>
                             <button type="button" onClick={() => patchTwoFactor({ step: null })} className="px-4 py-2 rounded-xl border text-sm">Annuler</button>
                           </div>
                         </form>
@@ -1020,13 +1020,13 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <div className="flex items-start gap-3 flex-1">
-                    <MdDevices className="text-[#1E73BE] mt-1 flex-shrink-0" size={20} />
+                    <MdDevices className="text-[#2563EB] mt-1 flex-shrink-0" size={20} />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">Sessions actives</div>
                       <div className="text-gray-600 text-sm">Gérez les appareils connectés à votre compte.</div>
                     </div>
                   </div>
-                  <button onClick={openSessions} className="bg-white text-[#1E73BE] px-6 py-2 rounded-xl font-semibold border-2 border-[#1E73BE] hover:bg-blue-50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <button onClick={openSessions} className="bg-white text-[#2563EB] px-6 py-2 rounded-xl font-semibold border-2 border-[#2563EB] hover:bg-blue-50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                     Voir les sessions
                   </button>
                 </div>
@@ -1035,23 +1035,23 @@ export default function SettingsPage() {
           </section>
 
           {/* Zone de Danger */}
-          <section className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 rounded-2xl border-2 border-[#495057] shadow-lg p-8 mb-8">
+          <section className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 rounded-2xl border-2 border-[#334155] shadow-lg p-8 mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-gradient-to-br from-[#495057] to-[#343A40] rounded-lg">
+              <div className="p-2 bg-gradient-to-br from-[#334155] to-[#0F172A] rounded-lg">
                 <MdWarning className="text-white" size={24} />
               </div>
-              <h2 className="text-xl font-bold text-[#495057]">Zone de Danger</h2>
+              <h2 className="text-xl font-bold text-[#334155]">Zone de Danger</h2>
             </div>
-            <div className="flex items-start gap-3 p-4 bg-[#F5F7FA] rounded-xl border border-[#6C757D] mb-6">
-              <MdWarning className="text-[#495057] flex-shrink-0 mt-0.5" size={20} />
-              <p className="text-[#343A40] text-sm">
+            <div className="flex items-start gap-3 p-4 bg-[#F8FAFC] rounded-xl border border-[#64748B] mb-6">
+              <MdWarning className="text-[#334155] flex-shrink-0 mt-0.5" size={20} />
+              <p className="text-[#0F172A] text-sm">
                 <span className="font-semibold">Attention :</span> Cette action supprimera définitivement toutes vos données et votre compte MyBudget+. Cette action est irréversible.
               </p>
             </div>
             <form onSubmit={handleAccountDelete} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-[#495057] text-sm font-medium">
+                  <label className="flex items-center gap-2 text-[#334155] text-sm font-medium">
                     <MdLock size={16} />
                     Mot de passe
                   </label>
@@ -1059,13 +1059,13 @@ export default function SettingsPage() {
                     type="password"
                     value={deleteForm.password}
                     onChange={(e) => setDeleteForm({...deleteForm, password: e.target.value})}
-                    className="w-full border-2 border-[#6C757D] rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#495057] focus:ring-2 focus:ring-gray-200 transition-all shadow-sm" 
+                    className="w-full border-2 border-[#64748B] rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#334155] focus:ring-2 focus:ring-gray-200 transition-all shadow-sm" 
                     placeholder="Votre mot de passe"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-[#495057] text-sm font-medium">
+                  <label className="flex items-center gap-2 text-[#334155] text-sm font-medium">
                     <MdWarning size={16} />
                     Tapez DELETE pour confirmer
                   </label>
@@ -1073,7 +1073,7 @@ export default function SettingsPage() {
                     type="text"
                     value={deleteForm.confirmation}
                     onChange={(e) => setDeleteForm({...deleteForm, confirmation: e.target.value})}
-                    className="w-full border-2 border-[#6C757D] rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#495057] focus:ring-2 focus:ring-gray-200 transition-all shadow-sm uppercase" 
+                    className="w-full border-2 border-[#64748B] rounded-xl px-4 py-3 bg-white text-gray-900 focus:outline-none focus:border-[#334155] focus:ring-2 focus:ring-gray-200 transition-all shadow-sm uppercase" 
                     placeholder="DELETE"
                     required
                   />
@@ -1081,7 +1081,7 @@ export default function SettingsPage() {
               </div>
               <button 
                 type="submit"
-                className="bg-gradient-to-r from-[#495057] to-[#343A40] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#343A40] hover:to-[#212529] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
+                className="bg-gradient-to-r from-[#334155] to-[#0F172A] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#0F172A] hover:to-[#0F172A] shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
                 disabled={deleteForm.confirmation !== 'DELETE'}
               >
                 <MdDelete size={20} />
@@ -1129,8 +1129,8 @@ export default function SettingsPage() {
           )}
         </main>
         {/* Sidebar mobile (déconnexion) */}
-        <aside className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#F5F7FA] p-4 flex justify-center">
-          <button className="bg-[#DC3545] text-white px-6 py-2 rounded font-semibold hover:bg-[#b52a37] flex items-center gap-2">
+        <aside className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#E2E8F0] p-4 flex justify-center">
+          <button className="bg-[#DC2626] text-white px-6 py-2 rounded font-semibold hover:bg-[#B91C1C] flex items-center gap-2">
             <span className="text-lg">⏻</span> Déconnexion
           </button>
         </aside>

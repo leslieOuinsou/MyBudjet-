@@ -9,7 +9,7 @@ export default function AdminSupportPage() {
   const { isDarkMode } = useTheme();
   
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
       <AdminHeader />
       
       <div className="flex flex-1">
@@ -22,10 +22,10 @@ export default function AdminSupportPage() {
               <MdArrowBack size={24} />
             </Link>
             <div>
-              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
                 Support & Contact
               </h1>
-              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
                 Informations de contact et support technique
               </p>
             </div>
@@ -69,7 +69,7 @@ export default function AdminSupportPage() {
                 </div>
                 <div>
                   <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Documentation</h3>
-                  <Link to="/admin/faq" className="text-sm text-[#1E73BE] hover:underline">Voir la FAQ</Link>
+                  <Link to="/admin/faq" className="text-sm text-[#2563EB] hover:underline">Voir la FAQ</Link>
                 </div>
               </div>
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>

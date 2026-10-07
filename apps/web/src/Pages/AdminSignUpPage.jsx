@@ -133,7 +133,7 @@ export default function AdminSignUpPage() {
               <div className="mb-4">
                 <Link 
                   to="/" 
-                  className="inline-flex items-center gap-2 text-sm text-[#6C757D] hover:text-[#1E3A8A] transition-colors"
+                  className="inline-flex items-center gap-2 text-sm text-[#64748B] hover:text-[#1E3A8A] transition-colors"
                 >
                   <MdArrowBack size={18} />
                   <span>Retour à l'accueil</span>
@@ -143,15 +143,15 @@ export default function AdminSignUpPage() {
               <div className="flex flex-col items-center mb-8 animate-fade-in">
                 <div className="relative mb-4">
                   <div className="absolute inset-0 bg-[#1E3A8A] rounded-full blur-xl opacity-20 animate-pulse"></div>
-                  <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] rounded-2xl flex items-center justify-center shadow-lg">
+                  <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] rounded-2xl flex items-center justify-center shadow-lg">
                     <MdAdminPanelSettings className="text-white text-2xl" />
                   </div>
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-[#343A40] mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-2">
                   MyBudget<span className="text-[#1E3A8A]">+</span>
                 </h1>
-                <h2 className="text-xl md:text-2xl font-semibold text-[#343A40] mt-2 mb-2">Créer un compte Admin</h2>
-                <p className="text-[#6C757D] text-center text-sm md:text-base">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#0F172A] mt-2 mb-2">Créer un compte Admin</h2>
+                <p className="text-[#64748B] text-center text-sm md:text-base">
                   Portail réservé aux administrateurs autorisés
                 </p>
               </div>
@@ -418,7 +418,7 @@ export default function AdminSignUpPage() {
                   className={`w-full rounded-xl font-semibold py-4 mt-6 transition-all duration-300 transform ${
                     loading || !allRequirementsMet
                       ? 'bg-gray-400 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-[#1E3A8A] to-[#155a8a] hover:from-[#155a8a] hover:to-[#1E3A8A] hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
+                      : 'bg-gradient-to-r from-[#1E3A8A] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E3A8A] hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
                   } text-white text-sm md:text-base flex items-center justify-center gap-2`}
                 >
                   {loading ? (
@@ -442,7 +442,7 @@ export default function AdminSignUpPage() {
               <div className="mt-6 space-y-3 text-center relative z-10">
                 <p className="text-sm text-gray-700">
                   Vous avez déjà un compte admin ?{' '}
-                  <Link to="/admin/login" className="text-[#1E3A8A] font-semibold hover:text-[#155a8a] hover:underline transition-colors">
+                  <Link to="/admin/login" className="text-[#1E3A8A] font-semibold hover:text-[#1D4ED8] hover:underline transition-colors">
                     Se connecter
                   </Link>
                 </p>
@@ -451,7 +451,7 @@ export default function AdminSignUpPage() {
           </div>
 
           {/* Section témoignage moderne */}
-          <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] flex-col items-center justify-center p-8 lg:p-12 relative overflow-hidden">
+          <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] flex-col items-center justify-center p-8 lg:p-12 relative overflow-hidden">
             {/* Effets de fond */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full blur-3xl"></div>

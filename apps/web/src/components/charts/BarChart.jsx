@@ -1,7 +1,7 @@
 import React from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { SERIES, BLUE_SOFT, CRITICAL, INK, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
+import { PRIMARY, WARNING, BLUE_SOFT, CRITICAL, INK, axisStyle, legendStyle, tooltipStyle, euro, hasValues } from './chartTheme.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -16,7 +16,7 @@ export default function BarChart({ data, title }) {
         label: 'Budget alloué',
         data: budgets,
         backgroundColor: BLUE_SOFT,
-        hoverBackgroundColor: '#6DA7EC',
+        hoverBackgroundColor: '#93C5FD',
         borderRadius: { topLeft: 4, topRight: 4 },
         borderSkipped: 'bottom',
         maxBarThickness: 26,
@@ -25,8 +25,16 @@ export default function BarChart({ data, title }) {
         label: 'Dépenses réelles',
         data: spent,
         // Dépassement : couleur de statut, doublée d'un libellé dans l'infobulle
-        backgroundColor: spent.map((s, i) => (s > (budgets[i] || 0) ? CRITICAL : SERIES[0])),
-        hoverBackgroundColor: spent.map((s, i) => (s > (budgets[i] || 0) ? '#B92F2F' : '#1F66BD')),
+        backgroundColor: spent.map((s, i) => {
+          const limit = budgets[i] || 0;
+          if (s > limit) return CRITICAL;
+          return limit > 0 && s >= limit * 0.8 ? WARNING : PRIMARY;
+        }),
+        hoverBackgroundColor: spent.map((s, i) => {
+          const limit = budgets[i] || 0;
+          if (s > limit) return '#B91C1C';
+          return limit > 0 && s >= limit * 0.8 ? '#D97706' : '#1D4ED8';
+        }),
         borderRadius: { topLeft: 4, topRight: 4 },
         borderSkipped: 'bottom',
         maxBarThickness: 26,
@@ -50,7 +58,8 @@ export default function BarChart({ data, title }) {
           ...legendStyle('rectRounded').labels,
           generateLabels: () => [
             { text: 'Budget alloué', fillStyle: BLUE_SOFT, strokeStyle: BLUE_SOFT, pointStyle: 'rectRounded', fontColor: INK.secondary },
-            { text: 'Dépenses réelles', fillStyle: SERIES[0], strokeStyle: SERIES[0], pointStyle: 'rectRounded', fontColor: INK.secondary },
+            { text: 'Dépenses réelles', fillStyle: PRIMARY, strokeStyle: PRIMARY, pointStyle: 'rectRounded', fontColor: INK.secondary },
+            { text: 'Bientôt atteint (80 %)', fillStyle: WARNING, strokeStyle: WARNING, pointStyle: 'rectRounded', fontColor: INK.secondary },
             { text: 'Budget dépassé', fillStyle: CRITICAL, strokeStyle: CRITICAL, pointStyle: 'rectRounded', fontColor: INK.secondary },
           ],
         },

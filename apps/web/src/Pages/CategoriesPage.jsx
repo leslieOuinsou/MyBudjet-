@@ -36,13 +36,13 @@ const categoryIcons = {
 // Palette de couleurs Fintech pour les icônes
 const fintechColors = [
   '#1E3A8A', // Bleu principal
-  '#22C55E', // Vert croissance
-  '#374151', // Gris anthracite
-  '#6C757D', // Gris moyen
-  '#155a8a', // Bleu foncé
-  '#343A40', // Anthracite foncé
-  '#1E73BE', // Bleu confiance (variante)
-  '#28A745', // Vert succès (variante)
+  '#16A34A', // Vert croissance
+  '#1E293B', // Gris anthracite
+  '#64748B', // Gris moyen
+  '#1D4ED8', // Bleu foncé
+  '#0F172A', // Anthracite foncé
+  '#2563EB', // Bleu confiance (variante)
+  '#16A34A', // Vert succès (variante)
 ];
 
 // Fonction pour obtenir une couleur basée sur le nom de la catégorie
@@ -51,7 +51,7 @@ const getCategoryColor = (categoryName, categoryType) => {
   
   // Pour les revenus, utiliser principalement le vert
   if (categoryType === 'income') {
-    return '#22C55E'; // Vert pour les revenus
+    return '#16A34A'; // Vert pour les revenus
   }
   
   // Pour les dépenses, utiliser un cycle de couleurs basé sur le nom
@@ -254,7 +254,7 @@ export default function CategoriesPage() {
 		return (
 			<div className="min-h-screen bg-gray-100 flex items-center justify-center">
 				<div className="text-center">
-									<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
+									<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
 					<p className="text-gray-500">Chargement des données...</p>
 				</div>
 			</div>
@@ -289,7 +289,7 @@ export default function CategoriesPage() {
 							<div className='flex gap-2 md:gap-3 mb-4 md:mb-6 flex-wrap'>
 								<button 
 									onClick={handleSyncCategories}
-									className='bg-[#22C55E] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:bg-[#16a34a] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+									className='bg-[#16A34A] text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold hover:bg-[#15803D] text-xs md:text-sm flex items-center gap-1.5 md:gap-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
 								>
 									<MdRefresh size={16} className="md:size-[18px]" />
 									<span className="hidden sm:inline">Synchroniser</span>
@@ -306,14 +306,14 @@ export default function CategoriesPage() {
 							</div>
 
 							{error && (
-								<div className="mb-4 p-3 bg-[#F8D7DA] border border-[#DC3545] rounded-lg text-[#721C24] text-sm">
+								<div className="mb-4 p-3 bg-[#FEE2E2] border border-[#DC2626] rounded-lg text-[#991B1B] text-sm">
 									{error}
 								</div>
 							)}
 
 							{loading ? (
 								<div className="text-center py-12 text-gray-500">
-									<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-[#1E73BE] mx-auto mb-4"></div>
+									<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-[#2563EB] mx-auto mb-4"></div>
 									<p className="font-medium">Chargement des catégories...</p>
 								</div>
 							) : categories.length === 0 ? (
@@ -344,12 +344,12 @@ export default function CategoriesPage() {
 													</div>
 													<div className='flex items-center gap-2 mt-0.5'>
 														{cat.type === 'income' ? (
-														<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#D4EDDA] text-[#22C55E] rounded md:rounded-lg'>
+														<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#DCFCE7] text-[#16A34A] rounded md:rounded-lg'>
 															<MdTrendingUp size={10} className="md:size-3" />
 															Revenu
 														</span>
 														) : (
-															<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#F5F7FA] text-[#374151] rounded md:rounded-lg'>
+															<span className='flex items-center gap-1 text-[10px] md:text-xs font-medium px-1.5 md:px-2 py-0.5 bg-[#F8FAFC] text-[#1E293B] rounded md:rounded-lg'>
 																<MdTrendingDown size={10} className="md:size-3" />
 																Dépense
 															</span>
@@ -360,14 +360,14 @@ export default function CategoriesPage() {
 											<div className='flex gap-0.5 md:gap-1 flex-shrink-0 ml-2'>
 												<button
 													onClick={() => handleEditCategory(cat)}
-													className='text-[#1E3A8A] hover:text-[#1e40af] p-1.5 md:p-2 rounded-lg hover:bg-[#E3F2FD] transition-all duration-200'
+													className='text-[#1E3A8A] hover:text-[#1e40af] p-1.5 md:p-2 rounded-lg hover:bg-[#DBEAFE] transition-all duration-200'
 													title="Modifier"
 												>
 													<MdEdit size={18} className="md:size-5" />
 												</button>
 												<button
 													onClick={() => handleDeleteCategory(cat._id)}
-													className='text-[#374151] hover:text-[#1f2937] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
+													className='text-[#1E293B] hover:text-[#1f2937] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
 													title="Supprimer"
 												>
 													<MdDelete size={18} className="md:size-5" />
@@ -402,7 +402,7 @@ export default function CategoriesPage() {
 
 							{loading ? (
 								<div className="text-center py-12 text-gray-500">
-									<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-[#1E73BE] mx-auto mb-4"></div>
+									<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-[#2563EB] mx-auto mb-4"></div>
 									<p className="font-medium">Chargement des portefeuilles...</p>
 								</div>
 							) : wallets.length === 0 ? (
@@ -428,13 +428,13 @@ export default function CategoriesPage() {
 													<div className='font-semibold text-gray-900 text-sm md:text-base truncate'>
 														{w.name}
 													</div>
-													<div className={`text-sm md:text-base font-bold mt-1 ${w.balance >= 0 ? 'text-[#22C55E]' : 'text-[#374151]'}`}>
+													<div className={`text-sm md:text-base font-bold mt-1 ${w.balance >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
 														{w.balance !== undefined && w.balance !== null 
 															? formatMoney(w.balance)
 																							: formatMoney(0)}
 													</div>
 													{w.overdraftLimit > 0 && (
-														<div className='text-[10px] md:text-xs font-medium text-[#1E3A8A] mt-1 px-1.5 md:px-2 py-0.5 bg-[#E3F2FD] rounded md:rounded-lg inline-block'>
+														<div className='text-[10px] md:text-xs font-medium text-[#1E3A8A] mt-1 px-1.5 md:px-2 py-0.5 bg-[#DBEAFE] rounded md:rounded-lg inline-block'>
 															Découvert: -{formatMoney(w.overdraftLimit)}
 														</div>
 													)}
@@ -443,21 +443,21 @@ export default function CategoriesPage() {
 											<div className='flex gap-0.5 md:gap-1 flex-shrink-0 ml-2'>
 												<button
 													onClick={() => handleRecalculateBalance(w._id)}
-													className='text-[#22C55E] hover:text-[#16a34a] p-1.5 md:p-2 rounded-lg hover:bg-[#D4EDDA] transition-all duration-200'
+													className='text-[#16A34A] hover:text-[#15803D] p-1.5 md:p-2 rounded-lg hover:bg-[#DCFCE7] transition-all duration-200'
 													title="Recalculer le solde"
 												>
 													<MdRefresh size={18} className="md:size-5" />
 												</button>
 												<button
 													onClick={() => handleEditWallet(w)}
-													className='text-[#1E3A8A] hover:text-[#1e40af] p-1.5 md:p-2 rounded-lg hover:bg-[#E3F2FD] transition-all duration-200'
+													className='text-[#1E3A8A] hover:text-[#1e40af] p-1.5 md:p-2 rounded-lg hover:bg-[#DBEAFE] transition-all duration-200'
 													title="Modifier"
 												>
 													<MdEdit size={18} className="md:size-5" />
 												</button>
 												<button
 													onClick={() => handleDeleteWallet(w._id)}
-													className='text-[#374151] hover:text-[#1f2937] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
+													className='text-[#1E293B] hover:text-[#1f2937] p-1.5 md:p-2 rounded-lg hover:bg-gray-50 transition-all duration-200'
 													title="Supprimer"
 												>
 													<MdDelete size={18} className="md:size-5" />
@@ -536,7 +536,7 @@ export default function CategoriesPage() {
 											}}
 											className={`p-3 rounded-xl border-2 text-2xl hover:scale-110 transition-all duration-200 ${
 												newCategory.icon === icon 
-													? 'border-[#1E3A8A] bg-[#E3F2FD] shadow-md' 
+													? 'border-[#1E3A8A] bg-[#DBEAFE] shadow-md' 
 													: 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
 											}`}
 										>
@@ -572,7 +572,7 @@ export default function CategoriesPage() {
 										setEditingCategory(null);
 										setNewCategory({ name: '', type: 'expense', icon: '💳' });
 									}}
-									className="flex-1 bg-[#E5E7EB] text-[#374151] py-3 rounded-xl font-semibold hover:bg-[#D1D5DB] transition-colors"
+									className="flex-1 bg-[#E2E8F0] text-[#1E293B] py-3 rounded-xl font-semibold hover:bg-[#CBD5E1] transition-colors"
 								>
 									Annuler
 								</button>
@@ -668,7 +668,7 @@ export default function CategoriesPage() {
 										setEditingWallet(null);
 										setNewWallet({ name: '', balance: '', overdraftLimit: '0', type: 'checking' });
 									}}
-									className="flex-1 bg-[#E5E7EB] text-[#374151] py-3 rounded-xl font-semibold hover:bg-[#D1D5DB] transition-colors"
+									className="flex-1 bg-[#E2E8F0] text-[#1E293B] py-3 rounded-xl font-semibold hover:bg-[#CBD5E1] transition-colors"
 								>
 									Annuler
 								</button>

@@ -142,11 +142,11 @@ export default function RecurringTransactionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       <div className="flex flex-1">
         <DashboardSidebar />
         <main className="flex-1 px-4 md:px-12 py-6 md:py-10 flex flex-col pt-16 md:pt-10">
-          <h1 className="text-2xl md:text-3xl font-extrabold text-[#22292F] mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-[#0F172A] mb-6 md:mb-8">
             Transactions récurrentes
           </h1>
 
@@ -159,7 +159,7 @@ export default function RecurringTransactionsPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <button
               onClick={openCreateModal}
-              className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-5 py-2 rounded-lg shadow transition w-fit"
+              className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold px-5 py-2 rounded-lg shadow transition w-fit"
             >
               Ajouter une nouvelle transaction
             </button>
@@ -169,12 +169,12 @@ export default function RecurringTransactionsPage() {
                 placeholder="Rechercher des transactions..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] focus:border-[#1E73BE] w-full sm:w-72"
+                className="border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] focus:border-[#2563EB] w-full sm:w-72"
               />
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] focus:border-[#1E73BE]"
+                className="border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] focus:border-[#2563EB]"
               >
                 <option value="">Filtrer par catégorie</option>
                 {categories.map((c) => (
@@ -186,26 +186,26 @@ export default function RecurringTransactionsPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-[#EAF4FB] bg-white shadow">
+          <div className="overflow-x-auto rounded-xl border border-[#E2E8F0] bg-white shadow">
             {loading ? (
-              <div className="p-8 text-center text-[#6C757D]">Chargement...</div>
+              <div className="p-8 text-center text-[#64748B]">Chargement...</div>
             ) : (
               <table className="min-w-full text-base">
                 <thead>
-                  <tr className="bg-[#F5F7FA]">
-                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Nom</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Fréquence</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Montant</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Catégorie</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Prochaine échéance</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Type</th>
-                    <th className="px-4 py-3 text-left text-[#343A40] font-bold">Actions</th>
+                  <tr className="bg-[#F8FAFC]">
+                    <th className="px-4 py-3 text-left text-[#0F172A] font-bold">Nom</th>
+                    <th className="px-4 py-3 text-left text-[#0F172A] font-bold">Fréquence</th>
+                    <th className="px-4 py-3 text-left text-[#0F172A] font-bold">Montant</th>
+                    <th className="px-4 py-3 text-left text-[#0F172A] font-bold">Catégorie</th>
+                    <th className="px-4 py-3 text-left text-[#0F172A] font-bold">Prochaine échéance</th>
+                    <th className="px-4 py-3 text-left text-[#0F172A] font-bold">Type</th>
+                    <th className="px-4 py-3 text-left text-[#0F172A] font-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-[#6C757D]">
+                      <td colSpan={7} className="px-4 py-8 text-center text-[#64748B]">
                         Aucune transaction récurrente
                       </td>
                     </tr>
@@ -213,7 +213,7 @@ export default function RecurringTransactionsPage() {
                     filtered.map((t) => {
                       const id = t._id || t.id;
                       return (
-                        <tr key={id} className="even:bg-white odd:bg-[#F5F7FA]">
+                        <tr key={id} className="even:bg-white odd:bg-[#F8FAFC]">
                           <td className="px-4 py-3 font-medium">{t.note || "Sans titre"}</td>
                           <td className="px-4 py-3">{FREQ_LABELS[t.frequency] || t.frequency}</td>
                           <td className="px-4 py-3">
@@ -229,13 +229,13 @@ export default function RecurringTransactionsPage() {
                           <td className="px-4 py-3 flex gap-3">
                             <button
                               onClick={() => openEditModal(t)}
-                              className="text-[#1E73BE] hover:underline text-sm"
+                              className="text-[#2563EB] hover:underline text-sm"
                             >
                               Modifier
                             </button>
                             <button
                               onClick={() => handleDelete(id)}
-                              className="text-[#6C757D] hover:underline text-sm"
+                              className="text-[#64748B] hover:underline text-sm"
                             >
                               Supprimer
                             </button>
@@ -255,10 +255,10 @@ export default function RecurringTransactionsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#343A40]">
+              <h3 className="text-lg font-semibold text-[#0F172A]">
                 {editingId ? "Modifier la récurrence" : "Nouvelle récurrence"}
               </h3>
-              <button onClick={closeModal} className="text-[#6C757D]">✕</button>
+              <button onClick={closeModal} className="text-[#64748B]">✕</button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-3">
               <input
@@ -324,7 +324,7 @@ export default function RecurringTransactionsPage() {
                 required
               />
               <div className="flex gap-2 pt-2">
-                <button type="button" onClick={closeModal} className="flex-1 bg-[#F5F7FA] py-2 rounded">
+                <button type="button" onClick={closeModal} className="flex-1 bg-[#F8FAFC] py-2 rounded">
                   Annuler
                 </button>
                 <button

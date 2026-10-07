@@ -113,14 +113,14 @@ export default function DashboardHeader() {
       console.log('⚠️ Pas d\'utilisateur mais token présent, affichage placeholder');
       return (
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white flex items-center justify-center font-bold text-sm shadow-md">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-sm shadow-md">
             U
           </div>
           <div className="hidden md:block text-left">
-            <div className="text-sm font-semibold text-[#343A40]">
+            <div className="text-sm font-semibold text-[#0F172A]">
               Utilisateur
             </div>
-            <div className="text-xs text-[#6C757D]">
+            <div className="text-xs text-[#64748B]">
               Chargement...
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function DashboardHeader() {
             <img 
               src={avatarUrl} 
               alt={user?.name || 'Avatar'} 
-              className="w-10 h-10 rounded-full border-2 border-[#1E73BE] object-cover shadow-md group-hover:shadow-lg transition-shadow"
+              className="w-10 h-10 rounded-full border-2 border-[#2563EB] object-cover shadow-md group-hover:shadow-lg transition-shadow"
               onError={(e) => {
                 console.log('❌ Erreur chargement avatar, affichage initiales');
                 // Si l'image ne charge pas, masquer l'image et afficher les initiales
@@ -166,7 +166,7 @@ export default function DashboardHeader() {
           ) : null}
           {/* Initiales (toujours présentes, affichées si pas d'avatar ou si avatar échoue) */}
           <div 
-            className={`w-10 h-10 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#155a8a] text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:shadow-lg transition-all group-hover:scale-105 ${
+            className={`w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:shadow-lg transition-all group-hover:scale-105 ${
               avatarUrl ? 'hidden' : 'flex'
             }`}
           >
@@ -176,10 +176,10 @@ export default function DashboardHeader() {
         
         {/* Nom de l'utilisateur (visible sur desktop) */}
         <div className="hidden md:block text-left">
-          <div className="text-sm font-semibold text-[#343A40] group-hover:text-[#1E73BE] transition-colors">
+          <div className="text-sm font-semibold text-[#0F172A] group-hover:text-[#2563EB] transition-colors">
             {firstName}
           </div>
-          <div className="text-xs text-[#6C757D]">
+          <div className="text-xs text-[#64748B]">
             Connecté
           </div>
         </div>
@@ -190,21 +190,21 @@ export default function DashboardHeader() {
   return (
     <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-4 md:px-6">
-        <span className="text-[#1E73BE] font-bold text-lg md:text-xl">MyBudget+</span>
-        <nav className="hidden lg:flex gap-4 xl:gap-8 text-[#343A40] font-medium text-sm">
-          <Link to="/dashboard" className="text-[#1E73BE] font-bold">Tableau de bord</Link>
-          <Link to="/budgets" className="hover:text-[#1E73BE]">Budgets</Link>
-          <Link to="/importexport" className="hover:text-[#1E73BE]">Données</Link>
-          <Link to="/forecasts" className="hover:text-[#1E73BE]">Prévisions</Link>
+        <span className="text-[#2563EB] font-bold text-lg md:text-xl">MyBudget+</span>
+        <nav className="hidden lg:flex gap-4 xl:gap-8 text-[#0F172A] font-medium text-sm">
+          <Link to="/dashboard" className="text-[#2563EB] font-bold">Tableau de bord</Link>
+          <Link to="/budgets" className="hover:text-[#2563EB]">Budgets</Link>
+          <Link to="/importexport" className="hover:text-[#2563EB]">Données</Link>
+          <Link to="/forecasts" className="hover:text-[#2563EB]">Prévisions</Link>
           <input 
             type="text" 
             placeholder="Rechercher..." 
-            className="ml-2 xl:ml-4 px-2 xl:px-3 py-1 rounded border border-[#F5F7FA] bg-[#F5F7FA] text-[#343A40] text-sm w-32 xl:w-auto" 
+            className="ml-2 xl:ml-4 px-2 xl:px-3 py-1 rounded border border-[#E2E8F0] bg-[#F8FAFC] text-[#0F172A] text-sm w-32 xl:w-auto" 
           />
         </nav>
         <div className="flex gap-2 items-center">
           <NotificationBell />
-          <Link to="/importexport" className="hidden md:block bg-[#1E73BE] text-white px-3 md:px-4 py-2 rounded hover:bg-[#155a8a] text-sm">Importer/Exporter</Link>
+          <Link to="/importexport" className="hidden md:block bg-[#2563EB] text-white px-3 md:px-4 py-2 rounded hover:bg-[#1D4ED8] text-sm">Importer/Exporter</Link>
           <UserAvatar />
         </div>
       </div>

@@ -11,16 +11,16 @@ const ThemeToggle = ({ showLabel = true, className = '' }) => {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {showLabel && (
-        <span className="text-sm text-[#6C757D] font-medium">Thème :</span>
+        <span className="text-sm text-[#64748B] font-medium">Thème :</span>
       )}
-      <div className="flex items-center gap-1 bg-[#F5F7FA] rounded-lg p-1">
+      <div className="flex items-center gap-1 bg-[#F8FAFC] rounded-lg p-1">
         {/* Light mode */}
         <button
           onClick={() => handleThemeChange('light')}
           className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
             theme === 'light'
-              ? 'bg-[#1E73BE] text-white'
-              : 'text-[#6C757D] hover:text-[#343A40]'
+              ? 'bg-[#2563EB] text-white'
+              : 'text-[#64748B] hover:text-[#0F172A]'
           }`}
           title="Mode clair"
         >
@@ -32,8 +32,8 @@ const ThemeToggle = ({ showLabel = true, className = '' }) => {
           onClick={() => handleThemeChange('auto')}
           className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
             theme === 'auto'
-              ? 'bg-[#1E73BE] text-white'
-              : 'text-[#6C757D] hover:text-[#343A40]'
+              ? 'bg-[#2563EB] text-white'
+              : 'text-[#64748B] hover:text-[#0F172A]'
           }`}
           title="Mode automatique"
         >
@@ -45,8 +45,8 @@ const ThemeToggle = ({ showLabel = true, className = '' }) => {
           onClick={() => handleThemeChange('dark')}
           className={`px-3 py-1.5 rounded text-sm font-medium transition-all ${
             theme === 'dark'
-              ? 'bg-[#1E73BE] text-white'
-              : 'text-[#6C757D] hover:text-[#343A40]'
+              ? 'bg-[#2563EB] text-white'
+              : 'text-[#64748B] hover:text-[#0F172A]'
           }`}
           title="Mode sombre"
         >

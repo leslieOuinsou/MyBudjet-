@@ -241,7 +241,7 @@ export default function ImportExportPage() {
     }
   };
 
-  const INPUT = 'w-full border border-gray-200 rounded-xl px-4 py-2.5 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#1E73BE]/40';
+  const INPUT = 'w-full border border-gray-200 rounded-xl px-4 py-2.5 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40';
   const FORMATS = [
     { id: 'csv', label: 'CSV', icon: MdTableChart },
     { id: 'excel', label: 'Excel', icon: MdGridOn },
@@ -257,7 +257,7 @@ export default function ImportExportPage() {
           role="radio"
           aria-checked={value === id}
           onClick={() => onChange(id)}
-          className={`flex flex-col items-center gap-1 rounded-xl border py-3 text-sm font-semibold transition-colors ${value === id ? 'border-[#1E73BE] bg-[#E8F1FA] text-[#1E73BE]' : 'border-gray-200 text-gray-600 hover:border-[#1E73BE]'}`}
+          className={`flex flex-col items-center gap-1 rounded-xl border py-3 text-sm font-semibold transition-colors ${value === id ? 'border-[#2563EB] bg-[#DBEAFE] text-[#2563EB]' : 'border-gray-200 text-gray-600 hover:border-[#2563EB]'}`}
         >
           <Icon className="text-2xl" /> {label}
         </button>
@@ -266,11 +266,11 @@ export default function ImportExportPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       <div className="flex flex-1">
         <DashboardSidebar />
         <main className="flex-1 p-5 md:p-10 space-y-6 max-w-6xl">
-          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+          <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
             <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdSwapVert /></span>
             <div>
               <h1 className="text-2xl md:text-3xl font-extrabold">Importer et exporter des données</h1>
@@ -294,18 +294,18 @@ export default function ImportExportPage() {
             <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 flex flex-col">
               <div className="flex items-center gap-3 mb-1">
                 <span className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl"><MdCloudUpload /></span>
-                <h2 className="text-xl font-bold text-[#22292F]">Importer des données</h2>
+                <h2 className="text-xl font-bold text-[#0F172A]">Importer des données</h2>
               </div>
               <p className="text-gray-500 text-sm mb-5">Importez vos transactions depuis un fichier CSV ou Excel, ou rangez un document (PDF, photo) dans votre espace personnel.</p>
 
               <div className="mb-4">
-                <label className="block text-[#22292F] text-sm font-medium mb-2">Format du fichier</label>
+                <label className="block text-[#0F172A] text-sm font-medium mb-2">Format du fichier</label>
                 <FormatPicker value={importFormat} onChange={setImportFormat} options={importFormats} />
               </div>
 
               <div
                 className={`flex flex-col justify-center items-center border-2 border-dashed rounded-2xl py-10 px-4 mb-5 cursor-pointer transition ${
-                  dragActive ? 'border-[#1E73BE] bg-blue-50' : 'border-gray-300 hover:border-[#1E73BE] hover:bg-[#F8FAFC]'
+                  dragActive ? 'border-[#2563EB] bg-blue-50' : 'border-gray-300 hover:border-[#2563EB] hover:bg-[#F8FAFC]'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -323,12 +323,12 @@ export default function ImportExportPage() {
                 {selectedFile ? (
                   <div className="text-center">
                     <MdDescription className="mx-auto text-5xl text-green-500 mb-2" />
-                    <div className="text-[#22292F] font-semibold break-all">{selectedFile.name}</div>
+                    <div className="text-[#0F172A] font-semibold break-all">{selectedFile.name}</div>
                     <div className="text-gray-500 text-sm">{(selectedFile.size / 1024 / 1024).toFixed(2)} Mo</div>
                     {uploadProgress > 0 && uploadProgress < 100 && (
                       <div className="mt-4 w-full max-w-xs mx-auto">
                         <div className="bg-gray-200 rounded-full h-2">
-                          <div className="bg-[#1E73BE] h-2 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+                          <div className="bg-[#2563EB] h-2 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
                         </div>
                         <div className="text-sm text-gray-600 mt-1">{uploadProgress} %</div>
                       </div>
@@ -343,14 +343,14 @@ export default function ImportExportPage() {
               </div>
 
               {importFormat === 'document' && (
-                <Link to="/documents" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[#1E73BE] hover:underline">
+                <Link to="/documents" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[#2563EB] hover:underline">
                   <MdFolderOpen /> Voir tous mes documents
                 </Link>
               )}
 
               {importResults && (
-                <div className="mb-5 p-4 bg-[#F5F7FA] rounded-xl">
-                  <h3 className="font-semibold text-[#22292F] mb-2">Résultats de l'import</h3>
+                <div className="mb-5 p-4 bg-[#F8FAFC] rounded-xl">
+                  <h3 className="font-semibold text-[#0F172A] mb-2">Résultats de l'import</h3>
                   <div className="text-sm text-gray-700 space-y-1">
                     <div>✅ {importResults.imported} transactions importées</div>
                     {importResults.duplicates > 0 && <div>⚠️ {importResults.duplicates} doublons ignorés</div>}
@@ -358,7 +358,7 @@ export default function ImportExportPage() {
                   </div>
                   {importResults.details && importResults.details.length > 0 && (
                     <details className="mt-2">
-                      <summary className="cursor-pointer text-[#1E73BE] text-sm">Voir les détails</summary>
+                      <summary className="cursor-pointer text-[#2563EB] text-sm">Voir les détails</summary>
                       <div className="mt-2 text-xs text-gray-600">
                         {importResults.details.map((detail, index) => <div key={index}>{detail}</div>)}
                       </div>
@@ -369,7 +369,7 @@ export default function ImportExportPage() {
 
               <button
                 className={`mt-auto font-semibold px-6 py-3 rounded-xl transition ${
-                  loading || !selectedFile ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#1E73BE] hover:bg-[#155a8a] text-white'
+                  loading || !selectedFile ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white'
                 }`}
                 onClick={handleImport}
                 disabled={loading || !selectedFile}
@@ -382,33 +382,33 @@ export default function ImportExportPage() {
             <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 flex flex-col">
               <div className="flex items-center gap-3 mb-1">
                 <span className="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-xl"><MdCloudDownload /></span>
-                <h2 className="text-xl font-bold text-[#22292F]">Exporter des données</h2>
+                <h2 className="text-xl font-bold text-[#0F172A]">Exporter des données</h2>
               </div>
               <p className="text-gray-500 text-sm mb-5">Choisissez le format et la plage de dates pour télécharger vos données financières.</p>
 
               <div className="mb-4">
-                <label className="block text-[#22292F] text-sm font-medium mb-2">Format de l'exportation</label>
+                <label className="block text-[#0F172A] text-sm font-medium mb-2">Format de l'exportation</label>
                 <FormatPicker value={exportFormat} onChange={setExportFormat} options={FORMATS} />
               </div>
 
               <div className="mb-4 grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#22292F] text-sm font-medium mb-1">Date de début</label>
+                  <label className="block text-[#0F172A] text-sm font-medium mb-1">Date de début</label>
                   <input type="date" className={INPUT} value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-[#22292F] text-sm font-medium mb-1">Date de fin</label>
+                  <label className="block text-[#0F172A] text-sm font-medium mb-1">Date de fin</label>
                   <input type="date" className={INPUT} value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
                 </div>
               </div>
 
-              <label htmlFor="includePending" className="mb-6 flex items-center gap-2 text-[#22292F] text-sm cursor-pointer">
+              <label htmlFor="includePending" className="mb-6 flex items-center gap-2 text-[#0F172A] text-sm cursor-pointer">
                 <input
                   type="checkbox"
                   id="includePending"
                   checked={includePending}
                   onChange={(e) => setIncludePending(e.target.checked)}
-                  className="w-4 h-4 accent-[#1E73BE]"
+                  className="w-4 h-4 accent-[#2563EB]"
                 />
                 Inclure les transactions en attente
               </label>
@@ -416,7 +416,7 @@ export default function ImportExportPage() {
               <div className="space-y-3 mt-auto">
                 <button
                   className={`w-full font-semibold px-6 py-3 rounded-xl transition ${
-                    loading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#1E73BE] hover:bg-[#155a8a] text-white'
+                    loading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white'
                   }`}
                   onClick={handleExport}
                   disabled={loading}
@@ -425,7 +425,7 @@ export default function ImportExportPage() {
                 </button>
                 <button
                   className={`w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-3 rounded-xl transition ${
-                    loading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'border border-[#28A745] text-[#1e7e34] hover:bg-green-50'
+                    loading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'border border-[#16A34A] text-[#15803D] hover:bg-green-50'
                   }`}
                   onClick={handleExportReport}
                   disabled={loading}

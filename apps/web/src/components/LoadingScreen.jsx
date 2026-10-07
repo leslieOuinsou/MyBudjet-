@@ -9,15 +9,15 @@ const MESSAGES = [
 
 /** Couleurs charte MyBudget+ (tailwind + pages login/dashboard) */
 const COLORS = {
-  bg: '#F5F7FA',
+  bg: '#F8FAFC',
   bgRadial: 'rgba(30, 58, 138, 0.06)',
-  text: '#343A40',
-  textMuted: '#6C757D',
-  textSoft: '#ADB5BD',
-  line: '#DEE2E6',
-  track: '#E9ECEF',
+  text: '#0F172A',
+  textMuted: '#64748B',
+  textSoft: '#94A3B8',
+  line: '#E2E8F0',
+  track: '#E2E8F0',
   accent: '#1E3A8A',
-  accentLight: '#1E73BE',
+  accentLight: '#2563EB',
 };
 
 /** Délai après 100 % pour laisser voir le cercle complet avant la suite (ms) */

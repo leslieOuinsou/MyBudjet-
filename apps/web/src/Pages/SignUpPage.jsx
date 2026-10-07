@@ -306,7 +306,7 @@ const SignUpPage = () => {
       <div className="w-full max-w-lg mx-auto shrink-0 mb-3">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#1E3A8A] hover:text-[#155a8a] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#1E3A8A] hover:text-[#1D4ED8] transition-colors"
         >
           <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -325,35 +325,35 @@ const SignUpPage = () => {
               <div className="flex flex-col items-center mb-8 animate-fade-in">
                 <div className="relative mb-4">
                   <div className="absolute inset-0 bg-[#1E3A8A] rounded-full blur-xl opacity-20 animate-pulse"></div>
-                  <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] rounded-2xl flex items-center justify-center shadow-lg">
+                  <div className="relative z-10 w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] rounded-2xl flex items-center justify-center shadow-lg">
                     <span className="text-white font-bold text-2xl">M+</span>
                   </div>
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-[#343A40] mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-2">
                   MyBudget<span className="text-[#1E3A8A]">+</span>
               </h1>
-                <h2 className="text-xl md:text-2xl font-semibold text-[#343A40] mt-2 mb-2">Créer un compte</h2>
-                <p className="text-[#6C757D] text-center text-sm md:text-base">
+                <h2 className="text-xl md:text-2xl font-semibold text-[#0F172A] mt-2 mb-2">Créer un compte</h2>
+                <p className="text-[#64748B] text-center text-sm md:text-base">
                   Lancez-vous avec MyBudget+ pour gérer vos finances intelligemment.
               </p>
             </div>
 
               {/* Messages d'erreur/succès avec animation */}
               {error && (
-                <div className="mb-4 p-4 bg-red-50 border-l-4 border-[#DC3545] rounded-lg shadow-sm animate-slide-down">
+                <div className="mb-4 p-4 bg-red-50 border-l-4 border-[#DC2626] rounded-lg shadow-sm animate-slide-down">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-[#DC3545] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-[#DC2626] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <div className="text-[#DC3545] text-sm font-medium">{error}</div>
+                    <div className="text-[#DC2626] text-sm font-medium">{error}</div>
                   </div>
                 </div>
               )}
               {success && (
-                <div className="mb-4 p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-[#22C55E] rounded-xl shadow-lg animate-slide-down">
+                <div className="mb-4 p-5 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-[#16A34A] rounded-xl shadow-lg animate-slide-down">
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-[#22C55E] rounded-full flex items-center justify-center animate-bounce">
+                      <div className="w-10 h-10 bg-[#16A34A] rounded-full flex items-center justify-center animate-bounce">
                         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
@@ -447,15 +447,15 @@ const SignUpPage = () => {
                         <div className="flex-1 w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div 
                             className={`h-full transition-all duration-500 ${
-                              strengthPercentage < 40 ? 'bg-[#DC3545]' :
-                              strengthPercentage < 80 ? 'bg-yellow-500' : 'bg-[#22C55E]'
+                              strengthPercentage < 40 ? 'bg-[#DC2626]' :
+                              strengthPercentage < 80 ? 'bg-yellow-500' : 'bg-[#16A34A]'
                             }`}
                             style={{ width: `${strengthPercentage}%` }}
                           ></div>
                         </div>
                         <span className={`text-xs font-medium ${
-                          strengthPercentage < 40 ? 'text-[#DC3545]' :
-                          strengthPercentage < 80 ? 'text-yellow-500' : 'text-[#22C55E]'
+                          strengthPercentage < 40 ? 'text-[#DC2626]' :
+                          strengthPercentage < 80 ? 'text-yellow-500' : 'text-[#16A34A]'
                         }`}>
                           {strengthPercentage < 40 ? 'Faible' : strengthPercentage < 80 ? 'Moyen' : 'Fort'}
                         </span>
@@ -511,25 +511,25 @@ const SignUpPage = () => {
                   {/* Règles du mot de passe avec animation */}
                   {showPasswordRules && password && !isPasswordValid() && (
                     <div className="mt-3 p-4 bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 rounded-xl space-y-2 animate-slide-down">
-                      <div className="font-semibold text-sm text-[#343A40] mb-2">Règles du mot de passe :</div>
+                      <div className="font-semibold text-sm text-[#0F172A] mb-2">Règles du mot de passe :</div>
                       {passwordRules.map((rule, index) => {
                         const isValid = rule.test();
                         return (
                           <div 
                             key={index}
                             className={`flex items-center gap-2 text-xs transition-all duration-300 ${
-                              isValid ? 'text-[#22C55E]' : 'text-[#DC3545]'
+                              isValid ? 'text-[#16A34A]' : 'text-[#DC2626]'
                             }`}
                           >
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
                               isValid ? 'bg-green-100' : 'bg-red-100'
                             }`}>
                               {isValid ? (
-                                <svg className="w-3 h-3 text-[#22C55E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3 h-3 text-[#16A34A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                 </svg>
                               ) : (
-                                <svg className="w-3 h-3 text-[#DC3545]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-3 h-3 text-[#DC2626]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                               )}
@@ -557,7 +557,7 @@ const SignUpPage = () => {
                           : confirmPassword && password !== confirmPassword
                           ? 'border-red-300 bg-red-50'
                           : confirmPassword && password === confirmPassword
-                          ? 'border-[#22C55E] bg-green-50'
+                          ? 'border-[#16A34A] bg-green-50'
                           : 'border-gray-200 hover:border-gray-300 focus:border-[#1E3A8A]'
                       } focus:outline-none focus:ring-4 focus:ring-[#1E3A8A]/10`}
                       value={confirmPassword} 
@@ -612,8 +612,8 @@ const SignUpPage = () => {
                   disabled={loading}
                   className={`w-full rounded-xl font-semibold py-4 mt-6 transition-all duration-300 transform ${
                     loading 
-                      ? 'bg-[#9CA3AF] cursor-not-allowed' 
-                      : 'bg-[#1E3A8A] hover:bg-[#155a8a] hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
+                      ? 'bg-[#94A3B8] cursor-not-allowed' 
+                      : 'bg-[#1E3A8A] hover:bg-[#1D4ED8] hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl'
                   } text-white text-sm md:text-base flex items-center justify-center gap-2`}
                 >
                   {loading ? (
@@ -637,15 +637,15 @@ const SignUpPage = () => {
 
               {/* Liens */}
               <div className="mt-6 space-y-3 text-center relative z-10">
-                <p className="text-xs text-[#6C757D]">
+                <p className="text-xs text-[#64748B]">
                   En cliquant sur "S'inscrire", vous acceptez notre{' '}
-                  <Link to="/privacy-policy" className="text-[#1E3A8A] font-medium hover:text-[#155a8a] hover:underline transition-colors">
+                  <Link to="/privacy-policy" className="text-[#1E3A8A] font-medium hover:text-[#1D4ED8] hover:underline transition-colors">
                     Politique de confidentialité
                   </Link>
                 </p>
-                <p className="text-sm text-[#343A40]">
+                <p className="text-sm text-[#0F172A]">
                   Vous avez déjà un compte ?{' '}
-                  <Link to="/login" className="text-[#1E3A8A] font-semibold hover:text-[#155a8a] hover:underline transition-colors">
+                  <Link to="/login" className="text-[#1E3A8A] font-semibold hover:text-[#1D4ED8] hover:underline transition-colors">
                     Se connecter
                   </Link>
                 </p>

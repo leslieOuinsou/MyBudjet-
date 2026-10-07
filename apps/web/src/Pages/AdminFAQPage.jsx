@@ -99,7 +99,7 @@ export default function AdminFAQPage() {
   };
   
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
       <AdminHeader />
       
       <div className="flex flex-1">
@@ -112,10 +112,10 @@ export default function AdminFAQPage() {
               <MdArrowBack size={24} />
             </Link>
             <div>
-              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
                 FAQ Administrateur
               </h1>
-              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
                 Questions fréquemment posées et documentation
               </p>
             </div>
@@ -125,7 +125,7 @@ export default function AdminFAQPage() {
             {faqs.map((category, catIndex) => (
               <div key={catIndex}>
                 <div className="flex items-center gap-2 mb-4">
-                  <MdHelp size={24} className="text-[#1E73BE]" />
+                  <MdHelp size={24} className="text-[#2563EB]" />
                   <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                     {category.category}
                   </h2>
@@ -149,7 +149,7 @@ export default function AdminFAQPage() {
                             {item.q}
                           </span>
                           {isOpen ? (
-                            <MdExpandLess size={24} className="text-[#1E73BE]" />
+                            <MdExpandLess size={24} className="text-[#2563EB]" />
                           ) : (
                             <MdExpandMore size={24} className={isDarkMode ? 'text-gray-400' : 'text-gray-500'} />
                           )}
@@ -177,7 +177,7 @@ export default function AdminFAQPage() {
             <div className="flex gap-4">
               <Link
                 to="/admin/support"
-                className="bg-[#1E73BE] text-white px-4 py-2 rounded-lg hover:bg-[#155a8a] transition inline-block"
+                className="bg-[#2563EB] text-white px-4 py-2 rounded-lg hover:bg-[#1D4ED8] transition inline-block"
               >
                 Contacter le Support
               </Link>

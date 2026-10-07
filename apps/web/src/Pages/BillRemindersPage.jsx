@@ -184,12 +184,12 @@ export default function BillRemindersPage() {
   
   if (loading) {
     return (
-      <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+      <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
         <DashboardSidebar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-            <p className={isDarkMode ? 'text-gray-300' : 'text-[#6C757D]'}>Chargement...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
+            <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B]'}>Chargement...</p>
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function BillRemindersPage() {
   }
   
   return (
-    <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+    <div className={`min-h-screen flex ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
       <DashboardSidebar />
       
       <div className="flex-1 flex flex-col">
@@ -205,10 +205,10 @@ export default function BillRemindersPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
                 Rappels de Factures
               </h1>
-              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+              <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
                 Gérez vos rappels de paiement et ne manquez plus aucune échéance
               </p>
               <div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -251,7 +251,7 @@ export default function BillRemindersPage() {
             </div>
             <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>En retard</div>
-              <div className="text-3xl font-bold text-[#495057]">{overdueReminders.length}</div>
+              <div className="text-3xl font-bold text-[#334155]">{overdueReminders.length}</div>
             </div>
           </div>
           
@@ -278,20 +278,20 @@ export default function BillRemindersPage() {
                   <div
                     key={reminder._id}
                     className={`p-6 rounded-lg border-l-4 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : 'bg-white border-gray-200'}`}
-                    style={{ borderLeftColor: status.color === 'red' ? '#495057' : status.color === 'orange' ? '#6C757D' : '#28A745' }}
+                    style={{ borderLeftColor: status.color === 'red' ? '#334155' : status.color === 'orange' ? '#64748B' : '#16A34A' }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
-                          <MdNotifications size={24} className={status.color === 'red' ? 'text-[#495057]' : status.color === 'orange' ? 'text-[#6C757D]' : 'text-[#22C55E]'} />
+                          <MdNotifications size={24} className={status.color === 'red' ? 'text-[#334155]' : status.color === 'orange' ? 'text-[#64748B]' : 'text-[#16A34A]'} />
                           <div>
                             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                               {reminder.name}
                             </h3>
                             <span className={`text-xs px-2 py-1 rounded ${
-                              status.color === 'red' ? 'bg-[#495057] text-white' :
-                              status.color === 'orange' ? 'bg-[#6C757D] text-white' :
-                              'bg-[#22C55E] text-white'
+                              status.color === 'red' ? 'bg-[#334155] text-white' :
+                              status.color === 'orange' ? 'bg-[#64748B] text-white' :
+                              'bg-[#16A34A] text-white'
                             }`}>
                               {status.label} {daysUntil >= 0 ? `(${daysUntil} jour${daysUntil > 1 ? 's' : ''})` : `(${Math.abs(daysUntil)} jour${Math.abs(daysUntil) > 1 ? 's' : ''} de retard)`}
                             </span>
@@ -346,7 +346,7 @@ export default function BillRemindersPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(reminder._id)}
-                          className="p-2 text-[#6C757D] hover:bg-gray-50 rounded transition"
+                          className="p-2 text-[#64748B] hover:bg-gray-50 rounded transition"
                           title="Supprimer"
                         >
                           <MdDelete size={20} />
@@ -485,7 +485,7 @@ export default function BillRemindersPage() {
                     setEditingReminder(null);
                     resetForm();
                   }}
-                  className="flex-1 bg-[#E5E7EB] text-[#374151] px-4 py-2 rounded-lg hover:bg-[#D1D5DB] transition"
+                  className="flex-1 bg-[#E2E8F0] text-[#1E293B] px-4 py-2 rounded-lg hover:bg-[#CBD5E1] transition"
                 >
                   Annuler
                 </button>

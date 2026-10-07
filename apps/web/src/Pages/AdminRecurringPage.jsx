@@ -80,17 +80,17 @@ export default function AdminRecurringPage() {
   
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-[#6C757D]'}>Chargement des transactions récurrentes...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B]'}>Chargement des transactions récurrentes...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
       <AdminHeader />
       
       <div className="flex flex-1">
@@ -104,10 +104,10 @@ export default function AdminRecurringPage() {
                 <MdArrowBack size={24} />
               </Link>
               <div>
-                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
                   Transactions Récurrentes
                 </h1>
-                <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+                <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
                   Gérez toutes les transactions automatiques
                 </p>
                 <div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -120,7 +120,7 @@ export default function AdminRecurringPage() {
             </div>
             <button 
               onClick={loadRecurring}
-              className="flex items-center gap-2 bg-[#1E73BE] text-white px-4 py-2 rounded-lg hover:bg-[#155a8a] transition"
+              className="flex items-center gap-2 bg-[#2563EB] text-white px-4 py-2 rounded-lg hover:bg-[#1D4ED8] transition"
             >
               <MdRefresh size={20} />
               Actualiser

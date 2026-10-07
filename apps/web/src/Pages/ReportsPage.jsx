@@ -8,7 +8,7 @@ import BarChart from '../components/charts/BarChart.jsx';
 
 import { formatMoney, formatDate, getLocale } from '../lib/format.js';
 const chartPlaceholder = (text = "Graphique") => (
-  <div className="flex items-center justify-center h-56 w-full bg-[#F5F7FA] border border-[#EAF4FB] rounded-xl text-[#6C757D] text-lg font-bold">
+  <div className="flex items-center justify-center h-56 w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-[#64748B] text-lg font-bold">
     {text}
   </div>
 );
@@ -276,27 +276,27 @@ export default function ReportsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-          <p className="text-[#6C757D]">Génération du rapport...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
+          <p className="text-[#64748B]">Génération du rapport...</p>
         </div>
       </div>
     );
   }
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
         <main className="flex-1 px-3 md:px-6 lg:px-8 xl:px-12 py-4 md:py-6 lg:py-10 flex flex-col pt-16 md:pt-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 lg:mb-8 gap-3 md:gap-4">
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#22292F]">Rapports Financiers</h1>
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#0F172A]">Rapports Financiers</h1>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center w-full sm:w-auto">
               <select 
                 value={period} 
                 onChange={(e) => setPeriod(e.target.value)}
-                className="border border-[#EAF4FB] rounded-lg px-3 md:px-4 py-2 text-sm md:text-base bg-[#F9FAFB] text-[#343A40] focus:border-[#1E73BE] w-full sm:w-auto"
+                className="border border-[#E2E8F0] rounded-lg px-3 md:px-4 py-2 text-sm md:text-base bg-[#F8FAFC] text-[#0F172A] focus:border-[#2563EB] w-full sm:w-auto"
               >
                 <option value="week">Cette Semaine</option>
                 <option value="month">Ce Mois</option>
@@ -305,17 +305,17 @@ export default function ReportsPage() {
               <div className="relative w-full sm:w-auto">
                 <button 
                   onClick={() => document.getElementById('export-menu').classList.toggle('hidden')}
-                  className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-3 md:px-5 py-2 rounded-lg shadow transition text-sm md:text-base w-full sm:w-auto"
+                  className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold px-3 md:px-5 py-2 rounded-lg shadow transition text-sm md:text-base w-full sm:w-auto"
                 >
                   Exporter ▼
                 </button>
-                <div id="export-menu" className="hidden absolute top-full right-0 mt-2 bg-white border border-[#EAF4FB] rounded-lg shadow-lg z-10">
+                <div id="export-menu" className="hidden absolute top-full right-0 mt-2 bg-white border border-[#E2E8F0] rounded-lg shadow-lg z-10">
                   <button 
                     onClick={() => {
                       handleExport('csv');
                       document.getElementById('export-menu').classList.add('hidden');
                     }}
-                    className="block w-full text-left px-4 py-2 hover:bg-[#F5F7FA] text-[#22292F]"
+                    className="block w-full text-left px-4 py-2 hover:bg-[#F8FAFC] text-[#0F172A]"
                   >
                     📄 Export CSV
                   </button>
@@ -324,7 +324,7 @@ export default function ReportsPage() {
                       handleExport('pdf');
                       document.getElementById('export-menu').classList.add('hidden');
                     }}
-                    className="block w-full text-left px-4 py-2 hover:bg-[#F5F7FA] text-[#22292F]"
+                    className="block w-full text-left px-4 py-2 hover:bg-[#F8FAFC] text-[#0F172A]"
                   >
                     📑 Export PDF
                   </button>
@@ -340,38 +340,38 @@ export default function ReportsPage() {
             </div>
           )}
           {success && (
-            <div className="mb-4 p-4 bg-[#D4EDDA] border border-[#22C55E] text-[#155724] rounded-lg">
+            <div className="mb-4 p-4 bg-[#DCFCE7] border border-[#16A34A] text-[#166534] rounded-lg">
               {success}
             </div>
           )}
           {/* Statistiques */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
-            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
-              <span className="text-[#6C757D] text-xs md:text-sm">Revenu Total</span>
-              <div className="flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold text-[#22C55E]">
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#E2E8F0] flex flex-col gap-2">
+              <span className="text-[#64748B] text-xs md:text-sm">Revenu Total</span>
+              <div className="flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold text-[#16A34A]">
                 {formatMoney(stats.totalIncome)}
               </div>
-              <span className={`text-[10px] md:text-xs ${stats.incomeVariation >= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
+              <span className={`text-[10px] md:text-xs ${stats.incomeVariation >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
                 {stats.incomeVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.incomeVariation || 0).toFixed(1)}% 
                 <span className="hidden sm:inline"> {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}</span>
               </span>
             </div>
-            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
-              <span className="text-[#6C757D] text-xs md:text-sm">Dépenses Totales</span>
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#E2E8F0] flex flex-col gap-2">
+              <span className="text-[#64748B] text-xs md:text-sm">Dépenses Totales</span>
               <div className="flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold text-[#DC2626]">
                 {formatMoney(stats.totalExpense)}
               </div>
-              <span className={`text-[10px] md:text-xs ${stats.expenseVariation <= 0 ? 'text-[#22C55E]' : 'text-[#DC2626]'}`}>
+              <span className={`text-[10px] md:text-xs ${stats.expenseVariation <= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
                 {stats.expenseVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.expenseVariation || 0).toFixed(1)}% 
                 <span className="hidden sm:inline"> {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}</span>
               </span>
             </div>
-            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2 sm:col-span-2 md:col-span-1">
-              <span className="text-[#6C757D] text-xs md:text-sm">Épargne Nette</span>
-              <div className={`flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold ${stats.savings >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#E2E8F0] flex flex-col gap-2 sm:col-span-2 md:col-span-1">
+              <span className="text-[#64748B] text-xs md:text-sm">Épargne Nette</span>
+              <div className={`flex items-center gap-2 text-lg md:text-xl lg:text-2xl font-bold ${stats.savings >= 0 ? 'text-[#2563EB]' : 'text-[#DC2626]'}`}>
                 {stats.savings >= 0 ? '+' : ''} {formatMoney(stats.savings)}
               </div>
-              <span className={`text-[10px] md:text-xs ${stats.savingsVariation >= 0 ? 'text-[#1E73BE]' : 'text-[#DC2626]'}`}>
+              <span className={`text-[10px] md:text-xs ${stats.savingsVariation >= 0 ? 'text-[#2563EB]' : 'text-[#DC2626]'}`}>
                 {stats.savingsVariation >= 0 ? '↑' : '↓'} {Math.abs(stats.savingsVariation || 0).toFixed(1)}% 
                 <span className="hidden sm:inline"> {period === 'week' ? ' cette semaine' : period === 'month' ? ' ce mois-ci' : ' cette année'}</span>
               </span>
@@ -379,16 +379,16 @@ export default function ReportsPage() {
           </div>
           {/* Graphiques et résumé */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6 lg:mb-8">
-            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] mb-2 text-sm md:text-base">Tendance des Revenus et Dépenses</span>
-              <span className="text-[#6C757D] text-xs md:text-sm mb-2 hidden sm:block">Visualisation de l'évolution des revenus et dépenses sur la période sélectionnée.</span>
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#E2E8F0] flex flex-col gap-2">
+              <span className="font-bold text-[#0F172A] mb-2 text-sm md:text-base">Tendance des Revenus et Dépenses</span>
+              <span className="text-[#64748B] text-xs md:text-sm mb-2 hidden sm:block">Visualisation de l'évolution des revenus et dépenses sur la période sélectionnée.</span>
               <LineChart 
                 data={chartData.trends} 
               />
             </div>
-            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] mb-2 text-sm md:text-base">Répartition des Dépenses par Catégorie</span>
-              <span className="text-[#6C757D] text-xs md:text-sm mb-2 hidden sm:block">Analyse des dépenses par catégorie pour identifier les principaux postes.</span>
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#E2E8F0] flex flex-col gap-2">
+              <span className="font-bold text-[#0F172A] mb-2 text-sm md:text-base">Répartition des Dépenses par Catégorie</span>
+              <span className="text-[#64748B] text-xs md:text-sm mb-2 hidden sm:block">Analyse des dépenses par catégorie pour identifier les principaux postes.</span>
               <DoughnutChart 
                 data={chartData.categories} 
               />
@@ -411,43 +411,43 @@ export default function ReportsPage() {
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6 lg:mb-8">
-            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] mb-2 text-sm md:text-base">Adhérence au Budget</span>
-              <span className="text-[#6C757D] text-xs md:text-sm mb-2 hidden sm:block">Comparaison des dépenses réelles avec les budgets alloués par catégorie.</span>
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#E2E8F0] flex flex-col gap-2">
+              <span className="font-bold text-[#0F172A] mb-2 text-sm md:text-base">Adhérence au Budget</span>
+              <span className="text-[#64748B] text-xs md:text-sm mb-2 hidden sm:block">Comparaison des dépenses réelles avec les budgets alloués par catégorie.</span>
               <BarChart 
                 data={chartData.budget} 
               />
             </div>
-            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#EAF4FB] flex flex-col gap-2">
-              <span className="font-bold text-[#22292F] mb-2 text-sm md:text-base">Top Dépenses de la Période</span>
-              <span className="text-[#6C757D] text-xs md:text-sm mb-2 hidden sm:block">Les transactions les plus importantes de la période sélectionnée.</span>
+            <div className="bg-white rounded-xl shadow p-4 md:p-6 border border-[#E2E8F0] flex flex-col gap-2">
+              <span className="font-bold text-[#0F172A] mb-2 text-sm md:text-base">Top Dépenses de la Période</span>
+              <span className="text-[#64748B] text-xs md:text-sm mb-2 hidden sm:block">Les transactions les plus importantes de la période sélectionnée.</span>
               <div className="overflow-x-auto rounded-xl">
                 <table className="min-w-full text-xs md:text-sm lg:text-base">
                   <thead>
-                    <tr className="bg-[#F5F7FA]">
-                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">Date</th>
-                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">Description</th>
-                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden md:table-cell">Catégorie</th>
-                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">Montant</th>
-                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden lg:table-cell">Portefeuille</th>
+                    <tr className="bg-[#F8FAFC]">
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">Date</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">Description</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm hidden md:table-cell">Catégorie</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">Montant</th>
+                      <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm hidden lg:table-cell">Portefeuille</th>
                     </tr>
                   </thead>
                   <tbody>
                     {topTransactions.transactions.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="px-4 py-8 text-center text-[#6C757D]">
+                        <td colSpan="5" className="px-4 py-8 text-center text-[#64748B]">
                           Aucune transaction trouvée pour cette période
                         </td>
                       </tr>
                     ) : (
                       topTransactions.transactions.map((transaction, index) => (
-                        <tr key={transaction._id} className="even:bg-white odd:bg-[#F5F7FA] hover:bg-[#EAF4FB] transition">
-                          <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-[#343A40] text-xs md:text-sm">
+                        <tr key={transaction._id} className="even:bg-white odd:bg-[#F8FAFC] hover:bg-[#DBEAFE] transition">
+                          <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-[#0F172A] text-xs md:text-sm">
                             {formatDate(transaction.date)}
                           </td>
-                          <td className="px-2 md:px-4 py-2 md:py-3 text-[#343A40] text-xs md:text-sm truncate max-w-[150px] md:max-w-none">{transaction.description}</td>
+                          <td className="px-2 md:px-4 py-2 md:py-3 text-[#0F172A] text-xs md:text-sm truncate max-w-[150px] md:max-w-none">{transaction.description}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 hidden md:table-cell">
-                            <span className="bg-[#F5F7FA] border border-[#EAF4FB] rounded px-2 py-1 text-[10px] md:text-xs text-[#343A40]">
+                            <span className="bg-[#F8FAFC] border border-[#E2E8F0] rounded px-2 py-1 text-[10px] md:text-xs text-[#0F172A]">
                               {transaction.category?.name || 'Non catégorisé'}
                             </span>
                           </td>
@@ -455,7 +455,7 @@ export default function ReportsPage() {
                             - {formatMoney(transaction.amount)}
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3 hidden lg:table-cell">
-                            <span className="bg-[#E0F2FE] border border-[#B3E5FC] rounded px-2 py-1 text-[10px] md:text-xs text-[#1E73BE]">
+                            <span className="bg-[#DBEAFE] border border-[#B3E5FC] rounded px-2 py-1 text-[10px] md:text-xs text-[#2563EB]">
                               {transaction.wallet?.name || 'N/A'}
                             </span>
                           </td>

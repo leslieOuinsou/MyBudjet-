@@ -143,17 +143,17 @@ export default function AdminUsersPage() {
   
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-[#6C757D]'}>Chargement des utilisateurs...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B]'}>Chargement des utilisateurs...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
       <AdminHeader />
       
       <div className="flex flex-1">
@@ -171,14 +171,14 @@ export default function AdminUsersPage() {
                 <MdArrowBack size={24} />
               </Link>
               <div>
-                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
                   Gestion des Utilisateurs
                 </h1>
-                <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+                <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
                   Gérez tous les comptes utilisateurs de la plateforme
                 </p>
                 <div className={`text-xs mt-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  <span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse"></span>
+                  <span className="w-2 h-2 bg-[#16A34A] rounded-full animate-pulse"></span>
                   Dernière mise à jour : {lastRefresh.toLocaleTimeString('fr-FR')}
                   <span className="mx-2">•</span>
                   Auto-refresh : 30s
@@ -202,7 +202,7 @@ export default function AdminUsersPage() {
             </div>
           )}
           {success && (
-            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-[#D4EDDA] border border-[#22C55E] text-[#155724]'}`}>
+            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-700 text-green-400' : 'bg-[#DCFCE7] border border-[#16A34A] text-[#166534]'}`}>
               ✅ {success}
             </div>
           )}
@@ -215,22 +215,22 @@ export default function AdminUsersPage() {
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Actifs</div>
-              <div className="text-2xl font-bold text-[#22C55E]">{users.filter(u => !u.blocked).length}</div>
+              <div className="text-2xl font-bold text-[#16A34A]">{users.filter(u => !u.blocked).length}</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Bloqués</div>
-              <div className="text-2xl font-bold text-[#6C757D]">{users.filter(u => u.blocked).length}</div>
+              <div className="text-2xl font-bold text-[#64748B]">{users.filter(u => u.blocked).length}</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Admins</div>
-              <div className="text-2xl font-bold text-[#1E73BE]">{users.filter(u => u.role === 'admin').length}</div>
+              <div className="text-2xl font-bold text-[#2563EB]">{users.filter(u => u.role === 'admin').length}</div>
             </div>
           </div>
           
           {/* Filtres */}
           <div className={`p-6 rounded-lg mb-6 ${isDarkMode ? 'bg-[#2d2d2d] border border-[#404040]' : 'bg-white border border-gray-200'}`}>
             <div className="flex items-center gap-2 mb-4">
-              <MdFilterList size={24} className="text-[#1E73BE]" />
+              <MdFilterList size={24} className="text-[#2563EB]" />
               <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>Filtres</h2>
             </div>
             
@@ -318,7 +318,7 @@ export default function AdminUsersPage() {
                             className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                               user.role === 'admin' 
                                 ? 'bg-[#1E3A8A] text-white hover:bg-[#1e40af]' 
-                                : 'bg-[#E3F2FD] text-[#1E73BE] hover:bg-[#BBDEFB]'
+                                : 'bg-[#DBEAFE] text-[#2563EB] hover:bg-[#BFDBFE]'
                             }`}
                           >
                             {user.role === 'admin' ? <MdAdminPanelSettings size={14} /> : <MdPerson size={14} />}
@@ -330,7 +330,7 @@ export default function AdminUsersPage() {
                           <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                             user.blocked 
                               ? 'bg-red-100 text-red-700' 
-                              : 'bg-[#D4EDDA] text-[#155724]'
+                              : 'bg-[#DCFCE7] text-[#166534]'
                           }`}>
                             {user.blocked ? 'Bloqué' : 'Actif'}
                           </span>
@@ -343,7 +343,7 @@ export default function AdminUsersPage() {
                             {user.blocked ? (
                               <button 
                                 onClick={() => handleUnblockUser(user._id)}
-                                className="flex items-center gap-1 px-3 py-1 rounded text-sm text-[#22C55E] hover:bg-[#D4EDDA]"
+                                className="flex items-center gap-1 px-3 py-1 rounded text-sm text-[#16A34A] hover:bg-[#DCFCE7]"
                                 title="Débloquer"
                               >
                                 <MdCheckCircle size={18} />

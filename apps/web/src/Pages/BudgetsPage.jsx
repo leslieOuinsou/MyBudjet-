@@ -112,32 +112,32 @@ export default function BudgetsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       <div className="flex flex-1">
         <DashboardSidebar />
         {/* Main */}
         <main className="flex-1 px-3 md:px-6 lg:px-8 xl:px-12 py-4 md:py-6 lg:py-10 flex flex-col pt-16 md:pt-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 lg:mb-8 gap-3 md:gap-4">
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#22292F]">Budgets</h1>
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#0F172A]">Budgets</h1>
             <div className="flex gap-4 items-center">
               <input 
                 type="text" 
                 placeholder="🔍 Rechercher" 
-                className="w-full md:w-auto border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" 
+                className="w-full md:w-auto border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] text-[#0F172A] focus:border-[#2563EB]" 
               />
             </div>
           </div>
           {/* Formulaire de création */}
-          <section className="bg-white border border-[#EAF4FB] rounded-xl p-4 md:p-6 lg:p-8 mb-4 md:mb-6 lg:mb-8">
-            <h2 className="text-lg md:text-xl font-bold text-[#22292F] mb-4 md:mb-6">Créer un nouveau budget</h2>
+          <section className="bg-white border border-[#E2E8F0] rounded-xl p-4 md:p-6 lg:p-8 mb-4 md:mb-6 lg:mb-8">
+            <h2 className="text-lg md:text-xl font-bold text-[#0F172A] mb-4 md:mb-6">Créer un nouveau budget</h2>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-end" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
-                <label className="text-[#343A40] text-sm">Nom du budget</label>
-                <input name="name" value={form.name} onChange={handleChange} placeholder="Ex: Courses mensuelles" className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" required />
+                <label className="text-[#0F172A] text-sm">Nom du budget</label>
+                <input name="name" value={form.name} onChange={handleChange} placeholder="Ex: Courses mensuelles" className="border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] text-[#0F172A] focus:border-[#2563EB]" required />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[#343A40] text-sm">Catégorie</label>
-                <select name="category" value={form.category} onChange={handleChange} className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]">
+                <label className="text-[#0F172A] text-sm">Catégorie</label>
+                <select name="category" value={form.category} onChange={handleChange} className="border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] text-[#0F172A] focus:border-[#2563EB]">
                   <option value="">Toutes / Générale</option>
                   {categories.map((c) => (
                     <option key={c._id || c.id} value={c._id || c.id}>{c.name}</option>
@@ -145,51 +145,51 @@ export default function BudgetsPage() {
                 </select>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[#343A40] text-sm">Montant alloué</label>
-                <input name="amount" value={form.amount} onChange={handleChange} type="number" min="0" step="0.01" className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]" required />
+                <label className="text-[#0F172A] text-sm">Montant alloué</label>
+                <input name="amount" value={form.amount} onChange={handleChange} type="number" min="0" step="0.01" className="border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] text-[#0F172A] focus:border-[#2563EB]" required />
               </div>
               <div className="flex gap-2">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-[#343A40] text-sm">Période</label>
-                  <select name="period" value={form.period} onChange={handleChange} className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#22292F] focus:border-[#1E73BE]">
+                  <label className="text-[#0F172A] text-sm">Période</label>
+                  <select name="period" value={form.period} onChange={handleChange} className="border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] text-[#0F172A] focus:border-[#2563EB]">
                     {PERIODS.map((p) => <option key={p}>{p}</option>)}
                   </select>
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
-                  <label className="text-[#343A40] text-sm">Date de début</label>
-                  <input type="text" value={form.startDate} disabled className="border border-[#EAF4FB] rounded-lg px-4 py-2 bg-[#F9FAFB] text-[#6C757D]" />
+                  <label className="text-[#0F172A] text-sm">Date de début</label>
+                  <input type="text" value={form.startDate} disabled className="border border-[#E2E8F0] rounded-lg px-4 py-2 bg-[#F8FAFC] text-[#64748B]" />
                 </div>
               </div>
               <div className="md:col-span-2 flex justify-end">
-                <button type="submit" className="bg-[#22C55E] hover:bg-[#16A34A] text-white font-semibold px-4 md:px-6 py-2 rounded-lg shadow transition text-sm md:text-base w-full md:w-auto">Créer un budget</button>
+                <button type="submit" className="bg-[#16A34A] hover:bg-[#15803D] text-white font-semibold px-4 md:px-6 py-2 rounded-lg shadow transition text-sm md:text-base w-full md:w-auto">Créer un budget</button>
               </div>
             </form>
           </section>
           {/* Tableau des budgets */}
-          <section className="bg-white border border-[#EAF4FB] rounded-xl p-4 md:p-6 lg:p-8">
-            <h2 className="text-lg md:text-xl font-bold text-[#22292F] mb-4 md:mb-6">Vos budgets actuels</h2>
+          <section className="bg-white border border-[#E2E8F0] rounded-xl p-4 md:p-6 lg:p-8">
+            <h2 className="text-lg md:text-xl font-bold text-[#0F172A] mb-4 md:mb-6">Vos budgets actuels</h2>
             <div className="overflow-x-auto rounded-xl">
               <table className="min-w-full text-xs md:text-sm lg:text-base">
                 <thead>
-                  <tr className="bg-[#F5F7FA]">
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">CATÉGORIE</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">NOM DU BUDGET</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden lg:table-cell">PÉRIODE</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">MONTANT ALLOUÉ</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden md:table-cell">DÉPENSES ACTUELLES</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm hidden lg:table-cell">RESTE À DÉPENSER</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">PROGRESSION</th>
-                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#343A40] font-bold text-xs md:text-sm">ACTIONS</th>
+                  <tr className="bg-[#F8FAFC]">
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">CATÉGORIE</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">NOM DU BUDGET</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm hidden lg:table-cell">PÉRIODE</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">MONTANT ALLOUÉ</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm hidden md:table-cell">DÉPENSES ACTUELLES</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm hidden lg:table-cell">RESTE À DÉPENSER</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">PROGRESSION</th>
+                    <th className="px-2 md:px-4 py-2 md:py-3 text-left text-[#0F172A] font-bold text-xs md:text-sm">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="8" className="text-center text-[#1E73BE] py-8">Chargement...</td>
+                      <td colSpan="8" className="text-center text-[#2563EB] py-8">Chargement...</td>
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td colSpan="8" className="text-center text-[#6C757D] py-8">{error}</td>
+                      <td colSpan="8" className="text-center text-[#64748B] py-8">{error}</td>
                     </tr>
                   ) : (
                     budgets.map((b) => {
@@ -200,36 +200,36 @@ export default function BudgetsPage() {
                       const status = b.status || 'good';
                       
                       // Couleurs basées sur le statut
-                      let color = "bg-[#22C55E]"; // Vert par défaut
+                      let color = "bg-[#16A34A]"; // Vert par défaut
                       let StatusIcon = MdCheckCircle;
                       let statusText = "En cours";
                       
                       switch (status) {
                         case 'exceeded':
-                          color = "bg-[#495057]";
+                          color = "bg-[#DC2626]";
                           StatusIcon = MdError;
                           statusText = "Dépassé";
                           break;
                         case 'warning':
-                          color = "bg-[#6C757D]";
+                          color = "bg-[#F59E0B]";
                           StatusIcon = MdWarning;
                           statusText = "Attention";
                           break;
                         case 'half':
-                          color = "bg-[#1E73BE]";
+                          color = "bg-[#2563EB]";
                           StatusIcon = MdShowChart;
                           statusText = "À mi-chemin";
                           break;
                         case 'good':
                         default:
-                          color = "bg-[#28A745]";
+                          color = "bg-[#16A34A]";
                           StatusIcon = MdCheckCircle;
                           statusText = "En cours";
                           break;
                       }
                       
                       return (
-                        <tr key={b._id} className="even:bg-white odd:bg-[#F5F7FA]">
+                        <tr key={b._id} className="even:bg-white odd:bg-[#F8FAFC]">
                           <td className="px-2 md:px-4 py-2 md:py-3 font-medium text-xs md:text-sm">{categoryLabel(b.category)}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm">{b.name}</td>
                           <td className="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell">{b.period}</td>
@@ -242,24 +242,24 @@ export default function BudgetsPage() {
                               )}
                             </div>
                           </td>
-                          <td className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell ${reste < 0 ? "text-[#495057] font-semibold" : ""}`}>
+                          <td className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm hidden lg:table-cell ${reste < 0 ? "text-[#DC2626] font-semibold" : ""}`}>
                             {reste < 0 ? `-${formatMoney(Math.abs(reste))}` : reste.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
                           </td>
                           <td className="px-2 md:px-4 py-2 md:py-3">
                             <div className="flex items-center gap-2">
                               <div className="flex-1">
-                                <div className="w-full h-2 bg-[#EAF4FB] rounded-full overflow-hidden">
+                                <div className="w-full h-2 bg-[#DBEAFE] rounded-full overflow-hidden">
                                   <div className={`h-2 rounded-full transition-all duration-300 ${color}`} style={{ width: `${Math.min(percent, 100)}%` }}></div>
                                 </div>
                                 <div className="flex justify-between items-center mt-1">
-                                  <span className="text-[10px] md:text-xs font-semibold text-[#22292F]">{percent}%</span>
-                                  <span className="text-[10px] md:text-xs text-[#6C757D] flex items-center gap-1">
+                                  <span className="text-[10px] md:text-xs font-semibold text-[#0F172A]">{percent}%</span>
+                                  <span className="text-[10px] md:text-xs text-[#64748B] flex items-center gap-1">
                                     <StatusIcon size={12} className="md:size-[14px]" />
                                     <span className="hidden md:inline">{statusText}</span>
                                   </span>
                                 </div>
                                 {b.daysRemaining !== null && b.daysRemaining > 0 && (
-                                  <div className="text-[10px] md:text-xs text-[#6C757D] mt-1">
+                                  <div className="text-[10px] md:text-xs text-[#64748B] mt-1">
                                     {b.daysRemaining} jour{b.daysRemaining > 1 ? 's' : ''} restant{b.daysRemaining > 1 ? 's' : ''}
                                   </div>
                                 )}
@@ -269,14 +269,14 @@ export default function BudgetsPage() {
                           <td className="px-2 md:px-4 py-2 md:py-3 flex gap-1 md:gap-2">
                             <button 
                               onClick={() => handleEdit(b)}
-                              className="text-[#1E73BE] hover:underline"
+                              className="text-[#2563EB] hover:underline"
                               title="Modifier"
                             >
                               <MdEdit size={16} className="md:size-5" />
                             </button>
                             <button 
                               onClick={() => handleDelete(b._id)}
-                              className="text-[#6C757D] hover:underline"
+                              className="text-[#64748B] hover:underline"
                               title="Supprimer"
                             >
                               <MdDelete size={16} className="md:size-5" />
@@ -298,13 +298,13 @@ export default function BudgetsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#22292F]">Modifier le budget</h3>
+              <h3 className="text-lg font-semibold text-[#0F172A]">Modifier le budget</h3>
               <button 
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingBudget(null);
                 }}
-                className="text-[#6C757D] hover:text-[#495057] text-xl"
+                className="text-[#64748B] hover:text-[#334155] text-xl"
               >
                 ×
               </button>
@@ -313,24 +313,24 @@ export default function BudgetsPage() {
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Nom du budget</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Nom du budget</label>
                   <input
                     type="text"
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Catégorie</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Catégorie</label>
                   <select
                     name="category"
                     value={form.category}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                   >
                     <option value="">Toutes / Générale</option>
                     {categories.map((c) => (
@@ -340,7 +340,7 @@ export default function BudgetsPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Montant ({currencySymbol()})</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Montant ({currencySymbol()})</label>
                   <input
                     type="number"
                     name="amount"
@@ -348,18 +348,18 @@ export default function BudgetsPage() {
                     onChange={handleChange}
                     min="0"
                     step="0.01"
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Période</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Période</label>
                   <select
                     name="period"
                     value={form.period}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                   >
                     {PERIODS.map(period => (
                       <option key={period} value={period}>{period}</option>
@@ -368,7 +368,7 @@ export default function BudgetsPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Seuil d'alerte (%)</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Seuil d'alerte (%)</label>
                   <input
                     type="number"
                     name="alertThreshold"
@@ -376,17 +376,17 @@ export default function BudgetsPage() {
                     onChange={handleChange}
                     min="10"
                     max="100"
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     title="Pourcentage à partir duquel vous recevrez une alerte"
                   />
-                  <p className="text-xs text-[#6C757D] mt-1">Défaut: 80% (alerte quand 80% du budget est utilisé)</p>
+                  <p className="text-xs text-[#64748B] mt-1">Défaut: 80% (alerte quand 80% du budget est utilisé)</p>
                 </div>
               </div>
               
               <div className="flex gap-3 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-[#1E73BE] text-white py-2 px-4 rounded-md hover:bg-[#1557A0] transition-colors"
+                  className="flex-1 bg-[#2563EB] text-white py-2 px-4 rounded-md hover:bg-[#1557A0] transition-colors"
                 >
                   {editingBudget ? 'Modifier' : 'Créer'}
                 </button>
@@ -396,7 +396,7 @@ export default function BudgetsPage() {
                     setShowEditModal(false);
                     setEditingBudget(null);
                   }}
-                  className="flex-1 bg-[#6C757D] text-white py-2 px-4 rounded-md hover:bg-[#545B62] transition-colors"
+                  className="flex-1 bg-[#64748B] text-white py-2 px-4 rounded-md hover:bg-[#545B62] transition-colors"
                 >
                   Annuler
                 </button>

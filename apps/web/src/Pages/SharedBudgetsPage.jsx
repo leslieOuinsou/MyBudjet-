@@ -10,7 +10,7 @@ import {
 const formatAmount = (n, currency) => formatMoney(n, { currency });
 
 const CARD = 'bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6';
-const INPUT = 'border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E73BE]/40';
+const INPUT = 'border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40';
 const AVATARS = ['bg-blue-500', 'bg-emerald-500', 'bg-orange-500', 'bg-violet-500', 'bg-pink-500', 'bg-cyan-600'];
 const Avatar = ({ name, i = 0 }) => (
   <span className={`w-8 h-8 rounded-full ${AVATARS[i % AVATARS.length]} text-white text-xs font-bold flex items-center justify-center shrink-0`} title={name}>
@@ -58,10 +58,10 @@ export default function SharedBudgetsPage() {
   const refresh = async (id) => { await open(id); await loadList(); };
 
   return (
-    <div className="flex min-h-screen bg-[#F5F7FA]">
+    <div className="flex min-h-screen bg-[#F8FAFC]">
       <DashboardSidebar />
       <main className="flex-1 p-5 md:p-10 space-y-6 max-w-5xl">
-        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
           <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdGroups /></span>
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold">Budgets partagés</h1>
@@ -72,7 +72,7 @@ export default function SharedBudgetsPage() {
         {info && <div className="px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm">{info}</div>}
 
         <section className={CARD}>
-          <h2 className="font-bold text-lg text-[#22292F] mb-4">Mes budgets</h2>
+          <h2 className="font-bold text-lg text-[#0F172A] mb-4">Mes budgets</h2>
           <form
             className="flex gap-3 flex-wrap"
             onSubmit={(e) => {
@@ -92,7 +92,7 @@ export default function SharedBudgetsPage() {
               className={`flex-1 min-w-[200px] ${INPUT}`}
               required
             />
-            <button className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#1E73BE] text-white text-sm font-semibold hover:bg-[#155a8a]">
+            <button className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#2563EB] text-white text-sm font-semibold hover:bg-[#1D4ED8]">
               <MdAdd /> Créer
             </button>
           </form>
@@ -101,7 +101,7 @@ export default function SharedBudgetsPage() {
               <button
                 key={b._id}
                 onClick={() => run(() => open(b._id))}
-                className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${selected?._id === b._id ? 'bg-[#1E73BE] border-[#1E73BE] text-white' : 'bg-white border-gray-200 text-[#22292F] hover:border-[#1E73BE]'}`}
+                className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${selected?._id === b._id ? 'bg-[#2563EB] border-[#2563EB] text-white' : 'bg-white border-gray-200 text-[#0F172A] hover:border-[#2563EB]'}`}
               >
                 {b.name} · {b.members.length} membre{b.members.length > 1 ? 's' : ''}
               </button>
@@ -120,9 +120,9 @@ export default function SharedBudgetsPage() {
             <section className={`${CARD} space-y-5`}>
               <div className="flex justify-between items-start flex-wrap gap-3">
                 <div>
-                  <h2 className="text-xl font-extrabold text-[#22292F]">{selected.name}</h2>
+                  <h2 className="text-xl font-extrabold text-[#0F172A]">{selected.name}</h2>
                   <div className="text-sm text-gray-500">Total des dépenses</div>
-                  <div className="text-3xl font-extrabold text-[#1E73BE]">{formatAmount(selected.total, selected.currency)}</div>
+                  <div className="text-3xl font-extrabold text-[#2563EB]">{formatAmount(selected.total, selected.currency)}</div>
                 </div>
                 {selected.ownerId === me && (
                   <button
@@ -142,18 +142,18 @@ export default function SharedBudgetsPage() {
                 <span className="text-sm text-gray-600">{selected.members.map((m) => m.user.name).join(', ')}</span>
               </div>
 
-              <div className="rounded-xl bg-[#F5F7FA] p-4">
-                <div className="flex items-center gap-2 text-sm font-bold text-[#22292F] mb-3"><MdSwapHoriz className="text-lg text-[#1E73BE]" /> Qui doit quoi</div>
+              <div className="rounded-xl bg-[#F8FAFC] p-4">
+                <div className="flex items-center gap-2 text-sm font-bold text-[#0F172A] mb-3"><MdSwapHoriz className="text-lg text-[#2563EB]" /> Qui doit quoi</div>
                 {selected.transfers.length === 0 ? (
                   <p className="inline-flex items-center gap-2 text-sm text-green-700 font-medium"><MdCheckCircle /> Tout le monde est à jour.</p>
                 ) : (
                   <ul className="space-y-2 text-sm">
                     {selected.transfers.map((t) => (
                       <li key={`${t.from}-${t.to}`} className="flex items-center justify-between gap-2 bg-white rounded-xl border border-gray-100 px-4 py-3">
-                        <span><strong>{t.fromName}</strong> doit <strong className="text-[#EB6834]">{formatAmount(t.amount, selected.currency)}</strong> à <strong>{t.toName}</strong></span>
+                        <span><strong>{t.fromName}</strong> doit <strong className="text-[#F59E0B]">{formatAmount(t.amount, selected.currency)}</strong> à <strong>{t.toName}</strong></span>
                         {t.from === me && (
                           <button
-                            className="px-3 py-1.5 rounded-lg bg-[#28A745] text-white text-xs font-semibold hover:opacity-90"
+                            className="px-3 py-1.5 rounded-lg bg-[#16A34A] text-white text-xs font-semibold hover:opacity-90"
                             onClick={() => run(async () => {
                               await addSharedSettlement(selected._id, { toUserId: t.to, amount: t.amount });
                               await refresh(selected._id);
@@ -184,7 +184,7 @@ export default function SharedBudgetsPage() {
                     className={`flex-1 min-w-[200px] ${INPUT}`}
                     required
                   />
-                  <button className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#1E73BE] text-[#1E73BE] text-sm font-semibold hover:bg-[#E8F1FA]">
+                  <button className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#2563EB] text-[#2563EB] text-sm font-semibold hover:bg-[#DBEAFE]">
                     <MdPersonAdd /> Inviter
                   </button>
                 </form>
@@ -192,7 +192,7 @@ export default function SharedBudgetsPage() {
             </section>
 
             <section className={`${CARD} space-y-4`}>
-              <h2 className="flex items-center gap-2 text-lg font-bold text-[#22292F]"><MdReceiptLong className="text-[#1E73BE]" /> Dépenses</h2>
+              <h2 className="flex items-center gap-2 text-lg font-bold text-[#0F172A]"><MdReceiptLong className="text-[#2563EB]" /> Dépenses</h2>
               <form
                 className="flex gap-2 flex-wrap"
                 onSubmit={(e) => {
@@ -219,7 +219,7 @@ export default function SharedBudgetsPage() {
                   className={`w-32 ${INPUT}`}
                   required
                 />
-                <button className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#1E73BE] text-white text-sm font-semibold hover:bg-[#155a8a]">
+                <button className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#2563EB] text-white text-sm font-semibold hover:bg-[#1D4ED8]">
                   <MdAddShoppingCart /> Ajouter
                 </button>
               </form>
@@ -232,10 +232,10 @@ export default function SharedBudgetsPage() {
                     <li key={x._id} className="flex items-center gap-3 rounded-xl border border-gray-100 px-4 py-3">
                       <Avatar name={x.paidBy.name} i={selected.members.findIndex((m) => m.user.name === x.paidBy.name)} />
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-[#22292F] truncate">{x.description}</div>
+                        <div className="font-medium text-[#0F172A] truncate">{x.description}</div>
                         <div className="text-xs text-gray-500">payé par {x.paidBy.name}</div>
                       </div>
-                      <div className="font-bold text-[#22292F]">{formatAmount(x.amount, selected.currency)}</div>
+                      <div className="font-bold text-[#0F172A]">{formatAmount(x.amount, selected.currency)}</div>
                       <button
                         className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50"
                         title="Supprimer"

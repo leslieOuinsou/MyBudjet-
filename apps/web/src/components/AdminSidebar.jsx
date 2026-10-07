@@ -69,7 +69,7 @@ export default function AdminSidebar() {
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
       <div className="mb-8">
-        <div className="text-xs font-semibold mb-4 text-[#6C757D]">
+        <div className="text-xs font-semibold mb-4 text-[#64748B]">
           ADMINISTRATION
         </div>
         <ul className="space-y-2">
@@ -85,7 +85,7 @@ export default function AdminSidebar() {
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg transition ${
                     active
                       ? 'bg-[#1E3A8A] text-white font-semibold shadow-md'
-                      : 'text-[#343A40] hover:bg-gray-100 hover:text-[#1E3A8A]'
+                      : 'text-[#0F172A] hover:bg-gray-100 hover:text-[#1E3A8A]'
                   }`}
                 >
                   <Icon size={20} />
@@ -104,7 +104,7 @@ export default function AdminSidebar() {
           localStorage.removeItem('token');
           setMobileMenuOpen(false);
         }}
-        className="mt-8 w-full bg-[#DC3545] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#b52a37] flex items-center justify-center gap-2 transition shadow-md hover:shadow-lg"
+        className="mt-8 w-full bg-[#DC2626] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#B91C1C] flex items-center justify-center gap-2 transition shadow-md hover:shadow-lg"
       >
         <MdLogout size={20} />
         Déconnexion

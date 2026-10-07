@@ -12,7 +12,7 @@ export default function TwoFactorPrompt({ emailHint, devCode, loading, onSubmit,
         onSubmit(code);
       }}
     >
-      <p className="text-sm text-[#343A40]">
+      <p className="text-sm text-[#0F172A]">
         Un code de sécurité à 6 chiffres a été envoyé à <strong>{emailHint}</strong>. Il est valable 10 minutes.
       </p>
       {devCode && (
@@ -28,18 +28,18 @@ export default function TwoFactorPrompt({ emailHint, devCode, loading, onSubmit,
         value={code}
         onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
         placeholder="000000"
-        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-center text-2xl tracking-[0.5em] focus:outline-none focus:border-[#1E73BE]"
+        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-center text-2xl tracking-[0.5em] focus:outline-none focus:border-[#2563EB]"
         autoFocus
         required
       />
       <button
         type="submit"
         disabled={loading || code.length !== 6}
-        className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#155a8a] disabled:opacity-50 text-sm md:text-base"
+        className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#1D4ED8] disabled:opacity-50 text-sm md:text-base"
       >
         {loading ? 'Vérification…' : 'Valider le code'}
       </button>
-      <button type="button" onClick={onCancel} className="text-sm text-[#6C757D] hover:underline">
+      <button type="button" onClick={onCancel} className="text-sm text-[#64748B] hover:underline">
         Retour à la connexion
       </button>
     </form>

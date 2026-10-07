@@ -3,14 +3,23 @@ import { formatMoney } from '../../lib/format.js';
 // Thème commun des graphiques. Palette catégorielle validée (écart daltonisme et contraste,
 // script validate_palette) ; l'appli est en mode clair uniquement.
 export const SURFACE = '#FFFFFF';
-export const INK = { primary: '#22292F', secondary: '#52514E', muted: '#8A8983' };
-export const GRID = '#ECEBE8';
+export const INK = { primary: '#0F172A', secondary: '#475569', muted: '#94A3B8' };
+export const GRID = '#E2E8F0';
 
-// Ordre fixe : la couleur suit l'entité, jamais le rang.
-export const SERIES = ['#2A78D6', '#EB6834', '#1BAF7A', '#EDA100', '#E87BA4', '#008300', '#4A3AA7', '#E34948'];
-export const OTHER = '#B6B5AF'; // « Autres » : gris neutre, jamais un 9e hue
-export const BLUE_SOFT = '#86B6EF'; // palette séquentielle bleue, pour la valeur de référence
-export const CRITICAL = '#D03B3B'; // statut « dépassé » (toujours accompagné d'un libellé)
+// Charte MyBudget+ : bleu = principal, vert = revenus / positif, rouge = dépenses / dépassement, orange = alerte
+export const INCOME = '#16A34A';
+export const EXPENSE = '#DC2626';
+export const PRIMARY = '#2563EB';
+export const WARNING = '#F59E0B';
+
+// Courbes : revenus, dépenses, puis solde cumulé et références
+export const LINE_SERIES = [INCOME, EXPENSE, PRIMARY, WARNING];
+
+// Catégories (camembert, barres) : couleur fixe par rang, les 5 premières viennent de la charte
+export const SERIES = ['#2563EB', '#16A34A', '#F59E0B', '#1E3A8A', '#DC2626', '#8B5CF6', '#0EA5E9', '#EC4899'];
+export const OTHER = '#94A3B8'; // « Autres » : gris neutre, jamais un 9e hue
+export const BLUE_SOFT = '#BFDBFE'; // valeur de référence (budget alloué)
+export const CRITICAL = EXPENSE; // statut « dépassé » (toujours accompagné d'un libellé)
 
 export const euro = (value, compact = false) => formatMoney(value, { compact });
 
@@ -31,7 +40,7 @@ export const tooltipStyle = {
   backgroundColor: SURFACE,
   titleColor: INK.primary,
   bodyColor: INK.secondary,
-  borderColor: '#DAD9D4',
+  borderColor: '#E2E8F0',
   borderWidth: 1,
   cornerRadius: 10,
   padding: 12,

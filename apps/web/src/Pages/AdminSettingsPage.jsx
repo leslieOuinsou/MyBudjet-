@@ -72,17 +72,17 @@ export default function AdminSettingsPage() {
   
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E73BE] mx-auto mb-4"></div>
-          <p className={isDarkMode ? 'text-gray-300' : 'text-[#6C757D]'}>Chargement des paramètres...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563EB] mx-auto mb-4"></div>
+          <p className={isDarkMode ? 'text-gray-300' : 'text-[#64748B]'}>Chargement des paramètres...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F5F7FA]'}`}>
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-[#F8FAFC]'}`}>
       <AdminHeader />
       
       <div className="flex flex-1">
@@ -90,10 +90,10 @@ export default function AdminSettingsPage() {
         
         <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 pt-16 md:pt-8">
           <div className="max-w-5xl mx-auto">
-            <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#22292F]'}`}>
+            <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#0F172A]'}`}>
               Paramètres Administrateur
             </h1>
-            <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-400' : 'text-[#6C757D]'}`}>
+            <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-400' : 'text-[#64748B]'}`}>
               Configurez vos préférences et paramètres système
             </p>
             
@@ -119,7 +119,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center gap-2 px-4 py-3 rounded-lg transition whitespace-nowrap ${
                       activeTab === tab.id
-                        ? 'bg-[#1E73BE] text-white'
+                        ? 'bg-[#2563EB] text-white'
                         : isDarkMode
                           ? 'bg-[#2d2d2d] text-gray-300 hover:bg-[#383838]'
                           : 'bg-white text-gray-700 hover:bg-gray-100'
@@ -263,17 +263,17 @@ export default function AdminSettingsPage() {
                       </label>
                     </div>
                     
-                    <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-700' : 'bg-[#E3F2FD] border border-[#1E73BE]'}`}>
+                    <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-700' : 'bg-[#DBEAFE] border border-[#2563EB]'}`}>
                       <div className="flex items-start gap-3">
-                        <MdNotifications size={24} className="text-[#1E73BE] mt-0.5" />
+                        <MdNotifications size={24} className="text-[#2563EB] mt-0.5" />
                         <div>
-                          <div className={`font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-[#1E73BE]'}`}>
+                          <div className={`font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-[#2563EB]'}`}>
                             Notifications Admin
                           </div>
-                          <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-[#6C757D]'}`}>
+                          <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-[#64748B]'}`}>
                             En tant qu'administrateur, vous recevez des notifications pour :
                           </div>
-                          <ul className={`text-sm mt-2 space-y-1 ${isDarkMode ? 'text-purple-300' : 'text-[#6C757D]'}`}>
+                          <ul className={`text-sm mt-2 space-y-1 ${isDarkMode ? 'text-purple-300' : 'text-[#64748B]'}`}>
                             <li>• Nouveaux utilisateurs inscrits</li>
                             <li>• Activités suspectes détectées</li>
                             <li>• Erreurs système critiques</li>
@@ -316,7 +316,7 @@ export default function AdminSettingsPage() {
                     
                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-700' : 'bg-red-50 border border-red-200'}`}>
                       <div className="flex items-start gap-3">
-                        <MdSecurity size={24} className="text-[#1E73BE] mt-0.5" />
+                        <MdSecurity size={24} className="text-[#2563EB] mt-0.5" />
                         <div>
                           <div className={`font-medium mb-1 ${isDarkMode ? 'text-red-400' : 'text-red-900'}`}>
                             Sécurité Renforcée Admin

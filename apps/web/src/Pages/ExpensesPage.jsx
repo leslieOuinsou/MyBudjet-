@@ -11,15 +11,15 @@ import {
 import { formatMoney, formatDate, currencySymbol } from '../lib/format.js';
 // Catégories prédéfinies avec icônes - Palette Fintech
 const EXPENSE_CATEGORIES = [
-  { name: 'Alimentation', icon: 'MdRestaurant', color: '#1E73BE' },
-  { name: 'Transport', icon: 'MdDirectionsCar', color: '#6C757D' },
-  { name: 'Logement', icon: 'MdHome', color: '#495057' },
-  { name: 'Divertissement', icon: 'MdTheaters', color: '#155a8a' },
-  { name: 'Santé', icon: 'MdLocalHospital', color: '#ADB5BD' },
-  { name: 'Éducation', icon: 'MdSchool', color: '#343A40' },
-  { name: 'Shopping', icon: 'MdShoppingCart', color: '#CED4DA' },
-  { name: 'Factures', icon: 'MdReceipt', color: '#1E73BE' },
-  { name: 'Autres', icon: 'MdMoreHoriz', color: '#6C757D' }
+  { name: 'Alimentation', icon: 'MdRestaurant', color: '#2563EB' },
+  { name: 'Transport', icon: 'MdDirectionsCar', color: '#64748B' },
+  { name: 'Logement', icon: 'MdHome', color: '#334155' },
+  { name: 'Divertissement', icon: 'MdTheaters', color: '#1D4ED8' },
+  { name: 'Santé', icon: 'MdLocalHospital', color: '#94A3B8' },
+  { name: 'Éducation', icon: 'MdSchool', color: '#0F172A' },
+  { name: 'Shopping', icon: 'MdShoppingCart', color: '#CBD5E1' },
+  { name: 'Factures', icon: 'MdReceipt', color: '#2563EB' },
+  { name: 'Autres', icon: 'MdMoreHoriz', color: '#64748B' }
 ];
 
 // Dépenses rapides prédéfinies
@@ -382,7 +382,7 @@ export default function ExpensesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA] flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       <div className="flex flex-1">
         <DashboardSidebar />
         
@@ -390,8 +390,8 @@ export default function ExpensesPage() {
         <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 pt-16 md:pt-6">
           {/* En-tête */}
           <div className="mb-6 md:mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-[#22292F] mb-2">Gestion des Dépenses</h1>
-            <p className="text-[#6C757D]">Suivez et analysez vos dépenses quotidiennes</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-2">Gestion des Dépenses</h1>
+            <p className="text-[#64748B]">Suivez et analysez vos dépenses quotidiennes</p>
           </div>
 
           {/* Messages de statut */}
@@ -401,48 +401,48 @@ export default function ExpensesPage() {
             </div>
           )}
           {success && (
-            <div className="mb-4 p-4 bg-[#D4EDDA] border border-[#28A745] text-[#155724] rounded-lg">
+            <div className="mb-4 p-4 bg-[#DCFCE7] border border-[#16A34A] text-[#166534] rounded-lg">
               {success}
             </div>
           )}
 
           {/* Statistiques rapides */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#E2E8F0]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-[#6C757D]">Aujourd'hui</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.totalToday)}</p>
+                  <p className="text-sm text-[#64748B]">Aujourd'hui</p>
+                  <p className="text-2xl font-bold text-[#0F172A]">{formatMoney(stats.totalToday)}</p>
                 </div>
-                <MdAttachMoney className="text-[#1E73BE]" size={32} />
+                <MdAttachMoney className="text-[#2563EB]" size={32} />
               </div>
             </div>
             
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#E2E8F0]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-[#6C757D]">Cette semaine</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.totalThisWeek)}</p>
+                  <p className="text-sm text-[#64748B]">Cette semaine</p>
+                  <p className="text-2xl font-bold text-[#0F172A]">{formatMoney(stats.totalThisWeek)}</p>
                 </div>
                 <MdTrendingDown className="text-[#F87171]" size={32} />
               </div>
             </div>
             
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#E2E8F0]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-[#6C757D]">Ce mois</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.totalThisMonth)}</p>
+                  <p className="text-sm text-[#64748B]">Ce mois</p>
+                  <p className="text-2xl font-bold text-[#0F172A]">{formatMoney(stats.totalThisMonth)}</p>
                 </div>
-                <MdAttachMoney className="text-[#10B981]" size={32} />
+                <MdAttachMoney className="text-[#16A34A]" size={32} />
               </div>
             </div>
             
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB]">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-[#E2E8F0]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-[#6C757D]">Moyenne/jour</p>
-                  <p className="text-2xl font-bold text-[#22292F]">{formatMoney(stats.averagePerDay)}</p>
+                  <p className="text-sm text-[#64748B]">Moyenne/jour</p>
+                  <p className="text-2xl font-bold text-[#0F172A]">{formatMoney(stats.averagePerDay)}</p>
                 </div>
                 <MdTrendingUp className="text-[#6366F1]" size={32} />
               </div>
@@ -451,14 +451,14 @@ export default function ExpensesPage() {
 
           {/* Bouton pour ajouter les données par défaut */}
           {(categories.length <= 1 || wallets.length <= 1) && (
-            <div className="bg-[#E9ECEF] border border-[#CED4DA] rounded-lg p-4 mb-8">
+            <div className="bg-[#E2E8F0] border border-[#CBD5E1] rounded-lg p-4 mb-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-[#495057] mb-2 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-[#334155] mb-2 flex items-center gap-2">
                     <MdFilterList size={24} />
                     Options limitées détectées
                   </h3>
-                  <p className="text-[#6C757D] text-sm">
+                  <p className="text-[#64748B] text-sm">
                     Vous n'avez que {categories.length} catégorie(s) et {wallets.length} portefeuille(s). 
                     Ajoutez des options prédéfinies pour une meilleure expérience !
                   </p>
@@ -466,7 +466,7 @@ export default function ExpensesPage() {
                 <button
                   onClick={handleAddDefaultData}
                   disabled={loading}
-                  className="bg-[#1E3A8A] hover:bg-[#1e40af] text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 disabled:bg-[#9CA3AF] disabled:cursor-not-allowed"
+                  className="bg-[#1E3A8A] hover:bg-[#1e40af] text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 disabled:bg-[#94A3B8] disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -485,8 +485,8 @@ export default function ExpensesPage() {
           )}
 
           {/* Actions rapides */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB] mb-8">
-            <h2 className="text-xl font-semibold text-[#22292F] mb-4">Actions Rapides</h2>
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-[#E2E8F0] mb-8">
+            <h2 className="text-xl font-semibold text-[#0F172A] mb-4">Actions Rapides</h2>
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => setShowAddModal(true)}
@@ -498,7 +498,7 @@ export default function ExpensesPage() {
               
               <button
                 onClick={() => setShowQuickAddModal(true)}
-                className="bg-[#E5E7EB] text-[#374151] px-6 py-3 rounded-lg font-semibold hover:bg-[#D1D5DB] transition-colors flex items-center gap-2"
+                className="bg-[#E2E8F0] text-[#1E293B] px-6 py-3 rounded-lg font-semibold hover:bg-[#CBD5E1] transition-colors flex items-center gap-2"
               >
                 <MdTrendingUp size={20} />
                 Dépenses rapides
@@ -507,26 +507,26 @@ export default function ExpensesPage() {
           </div>
 
           {/* Filtres */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-[#EAF4FB] mb-6">
-            <h3 className="text-lg font-semibold text-[#22292F] mb-4">Filtres et Recherche</h3>
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-[#E2E8F0] mb-6">
+            <h3 className="text-lg font-semibold text-[#0F172A] mb-4">Filtres et Recherche</h3>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Recherche</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Recherche</label>
                 <input
                   type="text"
                   placeholder="Description..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded-lg px-3 py-2 focus:border-[#2563EB]"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Période</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Période</label>
                 <select
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded-lg px-3 py-2 focus:border-[#2563EB]"
                 >
                   <option value="Tous">Tous</option>
                   <option value="Aujourd'hui">Aujourd'hui</option>
@@ -536,11 +536,11 @@ export default function ExpensesPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Catégorie</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Catégorie</label>
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded-lg px-3 py-2 focus:border-[#2563EB]"
                 >
                   <option value="Tous">Tous</option>
                   {EXPENSE_CATEGORIES.map(cat => (
@@ -550,11 +550,11 @@ export default function ExpensesPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Montant</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Montant</label>
                 <select
                   value={amountFilter}
                   onChange={(e) => setAmountFilter(e.target.value)}
-                  className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded-lg px-3 py-2 focus:border-[#2563EB]"
                 >
                   <option value="Tous">Tous</option>
                   <option value="Petites (< 10€)">Petites (&lt; 10€)</option>
@@ -564,11 +564,11 @@ export default function ExpensesPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-[#343A40] mb-1">Trier par</label>
+                <label className="block text-sm font-medium text-[#0F172A] mb-1">Trier par</label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full border border-[#EAF4FB] rounded-lg px-3 py-2 focus:border-[#1E73BE]"
+                  className="w-full border border-[#E2E8F0] rounded-lg px-3 py-2 focus:border-[#2563EB]"
                 >
                   <option value="date">Date</option>
                   <option value="amount">Montant</option>
@@ -579,27 +579,27 @@ export default function ExpensesPage() {
           </div>
 
           {/* Liste des dépenses */}
-          <div className="bg-white rounded-lg shadow-sm border border-[#EAF4FB]">
-            <div className="p-6 border-b border-[#EAF4FB]">
-              <h3 className="text-lg font-semibold text-[#22292F]">
+          <div className="bg-white rounded-lg shadow-sm border border-[#E2E8F0]">
+            <div className="p-6 border-b border-[#E2E8F0]">
+              <h3 className="text-lg font-semibold text-[#0F172A]">
                 Dépenses ({filteredExpenses.length})
               </h3>
             </div>
             
-            <div className="divide-y divide-[#EAF4FB]">
+            <div className="divide-y divide-[#E2E8F0]">
               {loading ? (
                 <div className="p-8 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1E73BE] mx-auto"></div>
-                  <p className="text-[#6C757D] mt-2">Chargement...</p>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2563EB] mx-auto"></div>
+                  <p className="text-[#64748B] mt-2">Chargement...</p>
                 </div>
               ) : filteredExpenses.length === 0 ? (
-                <div className="p-8 text-center text-[#6C757D]">
+                <div className="p-8 text-center text-[#64748B]">
                   <div className="text-4xl mb-4">📝</div>
                   <p>Aucune dépense trouvée</p>
                 </div>
               ) : (
                 filteredExpenses.map((expense) => (
-                  <div key={expense._id} className="p-6 hover:bg-[#F9FAFB] transition-colors">
+                  <div key={expense._id} className="p-6 hover:bg-[#F8FAFC] transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div 
@@ -610,22 +610,22 @@ export default function ExpensesPage() {
                         </div>
                         
                         <div>
-                          <h4 className="font-semibold text-[#22292F]">{expense.description}</h4>
-                          <p className="text-sm text-[#6C757D]">
+                          <h4 className="font-semibold text-[#0F172A]">{expense.description}</h4>
+                          <p className="text-sm text-[#64748B]">
                             {expense.category?.name || 'Non catégorisé'} • {formatDate(expense.date)}
                           </p>
                           {expense.notes && (
-                            <p className="text-xs text-[#9CA3AF] mt-1">{expense.notes}</p>
+                            <p className="text-xs text-[#94A3B8] mt-1">{expense.notes}</p>
                           )}
                         </div>
                       </div>
                       
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
-                          <p className="text-lg font-bold text-[#22292F]">
+                          <p className="text-lg font-bold text-[#DC2626]">
                             -{formatMoney(expense.amount)}
                           </p>
-                          <p className="text-xs text-[#6C757D]">
+                          <p className="text-xs text-[#64748B]">
                             {expense.wallet?.name || 'Portefeuille'}
                           </p>
                         </div>
@@ -633,14 +633,14 @@ export default function ExpensesPage() {
                         <div className="flex space-x-2">
                           <button
                             onClick={() => handleEditExpense(expense)}
-                            className="text-[#1E73BE] hover:text-[#1557A0] p-2"
+                            className="text-[#2563EB] hover:text-[#1557A0] p-2"
                             title="Modifier"
                           >
                             <MdEdit size={20} />
                           </button>
                           <button
                             onClick={() => handleDeleteExpense(expense._id)}
-                            className="text-[#6C757D] hover:text-[#495057] p-2"
+                            className="text-[#64748B] hover:text-[#334155] p-2"
                             title="Supprimer"
                           >
                             <MdDelete size={20} />
@@ -661,12 +661,12 @@ export default function ExpensesPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#22292F]">
+              <h3 className="text-lg font-semibold text-[#0F172A]">
                 {editingExpense ? 'Modifier la dépense' : 'Ajouter une dépense'}
               </h3>
               <button 
                 onClick={resetForm}
-                className="text-[#6C757D] hover:text-[#495057] text-xl"
+                className="text-[#64748B] hover:text-[#334155] text-xl"
               >
                 ×
               </button>
@@ -675,35 +675,35 @@ export default function ExpensesPage() {
             <form onSubmit={handleAddExpense}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Description</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Description</label>
                   <input
                     type="text"
                     value={newExpense.description}
                     onChange={(e) => setNewExpense({...newExpense, description: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Montant ({currencySymbol()})</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Montant ({currencySymbol()})</label>
                   <input
                     type="number"
                     value={newExpense.amount}
                     onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
                     min="0"
                     step="0.01"
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Catégorie</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Catégorie</label>
                   <select
                     value={newExpense.category}
                     onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     required
                   >
                     <option value="">Sélectionner une catégorie</option>
@@ -716,11 +716,11 @@ export default function ExpensesPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Portefeuille</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Portefeuille</label>
                   <select
                     value={newExpense.wallet}
                     onChange={(e) => setNewExpense({...newExpense, wallet: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     required
                   >
                     <option value="">Sélectionner un portefeuille</option>
@@ -731,23 +731,23 @@ export default function ExpensesPage() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Date</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Date</label>
                   <input
                     type="date"
                     value={newExpense.date}
                     onChange={(e) => setNewExpense({...newExpense, date: e.target.value})}
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-[#22292F] mb-1">Notes (optionnel)</label>
+                  <label className="block text-sm font-medium text-[#0F172A] mb-1">Notes (optionnel)</label>
                   <textarea
                     value={newExpense.notes}
                     onChange={(e) => setNewExpense({...newExpense, notes: e.target.value})}
                     rows="3"
-                    className="w-full px-3 py-2 border border-[#D1D5DB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E73BE]"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     placeholder="Ajoutez des détails..."
                   />
                 </div>
@@ -763,7 +763,7 @@ export default function ExpensesPage() {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="flex-1 bg-[#E5E7EB] text-[#374151] py-2 px-4 rounded-md hover:bg-[#D1D5DB] transition-colors"
+                  className="flex-1 bg-[#E2E8F0] text-[#1E293B] py-2 px-4 rounded-md hover:bg-[#CBD5E1] transition-colors"
                 >
                   Annuler
                 </button>
@@ -778,10 +778,10 @@ export default function ExpensesPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-[#22292F]">Dépenses Rapides</h3>
+              <h3 className="text-lg font-semibold text-[#0F172A]">Dépenses Rapides</h3>
               <button 
                 onClick={() => setShowQuickAddModal(false)}
-                className="text-[#6C757D] hover:text-[#495057] text-xl"
+                className="text-[#64748B] hover:text-[#334155] text-xl"
               >
                 ×
               </button>
@@ -792,14 +792,14 @@ export default function ExpensesPage() {
                 <button
                   key={index}
                   onClick={() => handleQuickAdd(expense)}
-                  className="p-4 border border-[#EAF4FB] rounded-lg hover:bg-[#F9FAFB] transition-colors text-left"
+                  className="p-4 border border-[#E2E8F0] rounded-lg hover:bg-[#F8FAFC] transition-colors text-left"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xl">{expense.icon}</span>
-                    <span className="font-semibold text-[#22292F]">{formatMoney(expense.amount)}</span>
+                    <span className="font-semibold text-[#0F172A]">{formatMoney(expense.amount)}</span>
                   </div>
-                  <p className="text-sm text-[#22292F]">{expense.name}</p>
-                  <p className="text-xs text-[#6C757D]">{expense.category}</p>
+                  <p className="text-sm text-[#0F172A]">{expense.name}</p>
+                  <p className="text-xs text-[#64748B]">{expense.category}</p>
                 </button>
               ))}
             </div>

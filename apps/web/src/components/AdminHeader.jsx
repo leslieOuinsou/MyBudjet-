@@ -68,7 +68,7 @@ export default function AdminHeader() {
     }
 
     return (
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] text-white flex items-center justify-center font-bold text-sm border-2 border-[#1E3A8A]">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-sm border-2 border-[#1E3A8A]">
         {getInitials(user?.name)}
       </div>
     );
@@ -78,7 +78,7 @@ export default function AdminHeader() {
     <header className="px-4 md:px-6 lg:px-8 py-3 md:py-4 flex items-center justify-between border-b bg-white border-gray-200">
       {/* Logo/Titre */}
       <div className="flex items-center gap-2 md:gap-3">
-        <div className="p-1.5 md:p-2 bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] rounded-lg">
+        <div className="p-1.5 md:p-2 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] rounded-lg">
           <MdAdminPanelSettings size={20} className="text-white md:w-6 md:h-6" />
         </div>
         <div>

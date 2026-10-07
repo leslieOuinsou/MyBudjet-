@@ -118,7 +118,7 @@ export default function NotificationBell() {
       >
         {/* Icône cloche */}
         <svg 
-          className="w-6 h-6 text-[#343A40]" 
+          className="w-6 h-6 text-[#0F172A]" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -133,7 +133,7 @@ export default function NotificationBell() {
 
         {/* Badge de compteur */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-[#1E73BE] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-[#2563EB] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -141,13 +141,13 @@ export default function NotificationBell() {
 
       {/* Dropdown des notifications */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-[#F5F7FA] z-50 max-h-[500px] overflow-hidden flex flex-col">
+        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-[#E2E8F0] z-50 max-h-[500px] overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b border-[#F5F7FA] flex justify-between items-center">
-            <h3 className="font-semibold text-[#343A40]">
+          <div className="p-4 border-b border-[#E2E8F0] flex justify-between items-center">
+            <h3 className="font-semibold text-[#0F172A]">
               Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 text-xs bg-[#E3F2FD] text-[#1E73BE] px-2 py-1 rounded-full">
+                <span className="ml-2 text-xs bg-[#DBEAFE] text-[#2563EB] px-2 py-1 rounded-full">
                   {unreadCount} nouvelles
                 </span>
               )}
@@ -155,7 +155,7 @@ export default function NotificationBell() {
             <Link 
               to="/notifications" 
               onClick={() => setIsOpen(false)}
-              className="text-xs text-[#1E73BE] hover:underline"
+              className="text-xs text-[#2563EB] hover:underline"
             >
               Tout voir
             </Link>
@@ -164,16 +164,16 @@ export default function NotificationBell() {
           {/* Liste des notifications */}
           <div className="overflow-y-auto flex-1">
             {loading ? (
-              <div className="p-4 text-center text-[#6C757D]">
+              <div className="p-4 text-center text-[#64748B]">
                 Chargement...
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
                 <div className="text-4xl mb-2">🔔</div>
-                <p className="text-[#6C757D]">Aucune notification</p>
+                <p className="text-[#64748B]">Aucune notification</p>
               </div>
             ) : (
-              <div className="divide-y divide-[#F5F7FA]">
+              <div className="divide-y divide-[#F8FAFC]">
                 {notifications.slice(0, 5).map((notification) => (
                   <div
                     key={notification._id}
@@ -192,12 +192,12 @@ export default function NotificationBell() {
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm ${
                           !notification.isRead 
-                            ? 'font-semibold text-[#343A40]' 
-                            : 'text-[#6C757D]'
+                            ? 'font-semibold text-[#0F172A]' 
+                            : 'text-[#64748B]'
                         }`}>
                           {notification.message}
                         </p>
-                        <p className="text-xs text-[#6C757D] mt-1">
+                        <p className="text-xs text-[#64748B] mt-1">
                           {getTimeAgo(notification.createdAt)}
                         </p>
                       </div>
@@ -215,11 +215,11 @@ export default function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-[#F5F7FA] bg-gray-50">
+            <div className="p-3 border-t border-[#E2E8F0] bg-gray-50">
               <Link
                 to="/notifications"
                 onClick={() => setIsOpen(false)}
-                className="block text-center text-sm text-[#1E73BE] hover:underline font-medium"
+                className="block text-center text-sm text-[#2563EB] hover:underline font-medium"
               >
                 Voir toutes les notifications →
               </Link>

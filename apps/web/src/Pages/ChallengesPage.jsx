@@ -17,7 +17,7 @@ const CHALLENGES = [
     stepAmount: (n) => n,
     unit: 'semaine',
     days: 7,
-    gradient: 'from-[#1E3A8A] to-[#1E73BE]',
+    gradient: 'from-[#1E3A8A] to-[#2563EB]',
     level: 'Progressif',
   },
   {
@@ -29,7 +29,7 @@ const CHALLENGES = [
     stepAmount: (n) => n,
     unit: 'jour',
     days: 1,
-    gradient: 'from-[#1E73BE] to-[#4DA3E0]',
+    gradient: 'from-[#2563EB] to-[#60A5FA]',
     level: 'Intense',
   },
   {
@@ -41,7 +41,7 @@ const CHALLENGES = [
     stepAmount: () => 20,
     unit: 'semaine',
     days: 7,
-    gradient: 'from-[#28A745] to-[#5FCB78]',
+    gradient: 'from-[#16A34A] to-[#5FCB78]',
     level: 'Régulier',
   },
 ];
@@ -80,7 +80,7 @@ export default function ChallengesPage() {
 
   const start = async (challenge) => {
     try {
-      await addGoal({ name: `${PREFIX}${challenge.title}`, targetAmount: challenge.target, color: '#1E73BE' });
+      await addGoal({ name: `${PREFIX}${challenge.title}`, targetAmount: challenge.target, color: '#2563EB' });
       await load();
     } catch (err) {
       setError(err.message);
@@ -112,10 +112,10 @@ export default function ChallengesPage() {
   const doneCount = goals.filter((g) => g.achieved).length;
 
   return (
-    <div className="flex min-h-screen bg-[#F5F7FA]">
+    <div className="flex min-h-screen bg-[#F8FAFC]">
       <DashboardSidebar />
       <main className="flex-1 p-5 md:p-10 space-y-8 max-w-6xl">
-        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#1E73BE] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
+        <header className="rounded-2xl bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 shadow-sm flex items-center gap-4">
           <span className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-3xl"><MdEmojiEvents /></span>
           <div>
             <h1 className="text-2xl md:text-3xl font-extrabold">Défis d’épargne</h1>
@@ -126,7 +126,7 @@ export default function ChallengesPage() {
         {error && <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
         {loading && (
           <div className="flex items-center gap-3 text-gray-500">
-            <span className="h-5 w-5 rounded-full border-2 border-[#1E73BE] border-t-transparent animate-spin" /> Chargement…
+            <span className="h-5 w-5 rounded-full border-2 border-[#2563EB] border-t-transparent animate-spin" /> Chargement…
           </div>
         )}
 
@@ -141,7 +141,7 @@ export default function ChallengesPage() {
                 <span className={`w-11 h-11 rounded-xl flex items-center justify-center text-2xl ${tone}`}><Icon /></span>
                 <div>
                   <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</div>
-                  <div className="text-xl font-extrabold text-[#22292F]">{value}</div>
+                  <div className="text-xl font-extrabold text-[#0F172A]">{value}</div>
                 </div>
               </div>
             ))}
@@ -150,7 +150,7 @@ export default function ChallengesPage() {
 
         {goals.length > 0 && (
           <section className="space-y-4">
-            <h2 className="text-lg font-bold text-[#22292F]">Mes défis en cours</h2>
+            <h2 className="text-lg font-bold text-[#0F172A]">Mes défis en cours</h2>
             {goals.map((goal) => {
               const challenge = findChallenge(goal);
               if (!challenge) return null;
@@ -165,18 +165,18 @@ export default function ChallengesPage() {
                   <div className="p-5 md:p-6">
                     <div className="flex justify-between flex-wrap gap-3">
                       <div>
-                        <div className="font-bold text-lg text-[#22292F]">{challenge.title}</div>
+                        <div className="font-bold text-lg text-[#0F172A]">{challenge.title}</div>
                         <div className="text-sm text-gray-500 mt-0.5 flex items-center gap-2 flex-wrap">
                           <MdTimeline /> {challenge.unit} {step}/{challenge.steps}
                           <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs">{challenge.level}</span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-extrabold text-[#22292F]">{pct} %</div>
+                        <div className="text-2xl font-extrabold text-[#0F172A]">{pct} %</div>
                         <div className="text-xs text-gray-500">{formatAmount(goal.currentAmount)} / {formatAmount(goal.targetAmount)}</div>
                       </div>
                     </div>
-                    <div className="h-3 bg-[#E9EEF5] rounded-full mt-4 overflow-hidden">
+                    <div className="h-3 bg-[#E2E8F0] rounded-full mt-4 overflow-hidden">
                       <div className={`h-3 rounded-full bg-gradient-to-r ${challenge.gradient}`} style={{ width: `${pct}%`, transition: 'width 700ms ease' }} />
                     </div>
                     {goal.achieved ? (
@@ -210,7 +210,7 @@ export default function ChallengesPage() {
         )}
 
         <section className="space-y-4">
-          <h2 className="text-lg font-bold text-[#22292F]">Choisir un défi</h2>
+          <h2 className="text-lg font-bold text-[#0F172A]">Choisir un défi</h2>
           <div className="grid gap-5 md:grid-cols-3">
             {CHALLENGES.map((c) => (
               <div key={c.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
@@ -221,11 +221,11 @@ export default function ChallengesPage() {
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <p className="text-sm text-gray-600 flex-1">{c.description}</p>
-                  <div className="mt-3 text-sm font-bold text-[#22292F]">Objectif : {formatAmount(c.target)}</div>
+                  <div className="mt-3 text-sm font-bold text-[#0F172A]">Objectif : {formatAmount(c.target)}</div>
                   <button
                     disabled={activeIds.has(c.id)}
                     onClick={() => start(c)}
-                    className="mt-4 px-4 py-2.5 rounded-xl bg-[#1E73BE] text-white font-semibold hover:bg-[#155a8a] disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
+                    className="mt-4 px-4 py-2.5 rounded-xl bg-[#2563EB] text-white font-semibold hover:bg-[#1D4ED8] disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
                   >
                     {activeIds.has(c.id) ? 'Déjà en cours' : 'Commencer'}
                   </button>

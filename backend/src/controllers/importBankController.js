@@ -156,7 +156,7 @@ export const importBankTransactions = async (req, res) => {
           userId: uid,
           name: 'Import bancaire',
           type: 'expense',
-          color: '#6C757D',
+          color: '#64748B',
           icon: '📥',
         },
       });

@@ -38,7 +38,7 @@ const DEFAULT_WALLETS = [
 const DEFAULT_GOALS = [
   { name: "Fonds d'urgence", targetAmount: 10000, currentAmount: 0, color: '#FDE6E6' },
   { name: 'Épargne voyage', targetAmount: 5000, currentAmount: 0, color: '#FDF6E6' },
-  { name: 'Investissements', targetAmount: 20000, currentAmount: 0, color: '#E6F6FD' },
+  { name: 'Investissements', targetAmount: 20000, currentAmount: 0, color: '#DBEAFE' },
 ];
 
 // Fonction pour initialiser les données par défaut pour un utilisateur

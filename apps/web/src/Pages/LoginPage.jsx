@@ -188,14 +188,14 @@ export default function LoginPage() {
   };
 
   const inputClass =
-    'w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#343A40] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all';
+    'w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-[#0F172A] bg-white focus:outline-none focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/10 transition-all';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col px-4 py-6 md:py-12">
       <div className="w-full max-w-md mx-auto shrink-0 mb-3">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#1E3A8A] hover:text-[#155a8a] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#1E3A8A] hover:text-[#1D4ED8] transition-colors"
         >
           <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -206,11 +206,11 @@ export default function LoginPage() {
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#155a8a] rounded-2xl shadow-lg mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] rounded-2xl shadow-lg mb-4">
               <span className="text-white font-bold text-2xl">M+</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-[#343A40] mb-2">Connexion</h1>
-            <p className="text-[#6C757D] text-sm">Connectez-vous pour accéder à votre compte</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-2">Connexion</h1>
+            <p className="text-[#64748B] text-sm">Connectez-vous pour accéder à votre compte</p>
           </div>
 
           {/* Sélecteur de méthode de connexion */}
@@ -224,7 +224,7 @@ export default function LoginPage() {
               className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
                 loginMethod === 'email'
                   ? 'bg-white text-[#1E3A8A] shadow'
-                  : 'text-[#6C757D] hover:text-[#343A40]'
+                  : 'text-[#64748B] hover:text-[#0F172A]'
               }`}
             >
               E-mail
@@ -237,7 +237,7 @@ export default function LoginPage() {
               className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
                 loginMethod === 'sms'
                   ? 'bg-white text-[#1E3A8A] shadow'
-                  : 'text-[#6C757D] hover:text-[#343A40]'
+                  : 'text-[#64748B] hover:text-[#0F172A]'
               }`}
             >
               Téléphone
@@ -246,9 +246,9 @@ export default function LoginPage() {
           )}
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border-l-4 border-[#DC3545] rounded-lg">
+            <div className="mb-4 p-4 bg-red-50 border-l-4 border-[#DC2626] rounded-lg">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-[#DC3545]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#DC2626]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -256,7 +256,7 @@ export default function LoginPage() {
                     d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="text-[#DC3545] text-sm font-medium">{error}</span>
+                <span className="text-[#DC2626] text-sm font-medium">{error}</span>
               </div>
             </div>
           )}
@@ -289,7 +289,7 @@ export default function LoginPage() {
             <>
               <form className="flex flex-col gap-3 md:gap-4" onSubmit={handleSubmit}>
                 <div>
-                  <label className="block text-[#343A40] text-sm font-semibold mb-2">Adresse e-mail</label>
+                  <label className="block text-[#0F172A] text-sm font-semibold mb-2">Adresse e-mail</label>
                   <input
                     type="email"
                     className={inputClass}
@@ -301,10 +301,10 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <label className="block text-[#343A40] text-sm font-semibold">Mot de passe</label>
+                    <label className="block text-[#0F172A] text-sm font-semibold">Mot de passe</label>
                     <Link
                       to="/forgot-password?from=user"
-                      className="text-xs text-[#1E3A8A] hover:text-[#155a8a] hover:underline font-medium"
+                      className="text-xs text-[#1E3A8A] hover:text-[#1D4ED8] hover:underline font-medium"
                     >
                       Mot de passe oublié ?
                     </Link>
@@ -327,13 +327,13 @@ export default function LoginPage() {
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="w-4 h-4 text-[#1E3A8A] border-gray-300 rounded focus:ring-[#1E3A8A] focus:ring-2"
                     />
-                    <span className="ml-2 text-sm text-[#6C757D]">Se souvenir de moi</span>
+                    <span className="ml-2 text-sm text-[#64748B]">Se souvenir de moi</span>
                   </label>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#155a8a] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#1D4ED8] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Se connecter
                 </button>
@@ -341,7 +341,7 @@ export default function LoginPage() {
 
               <div className="flex items-center my-6">
                 <div className="flex-1 h-px bg-gray-200" />
-                <span className="mx-3 text-[#6C757D] text-xs">ou</span>
+                <span className="mx-3 text-[#64748B] text-xs">ou</span>
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
               <button
@@ -350,7 +350,7 @@ export default function LoginPage() {
                   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
                   window.location.href = `${API_URL}/auth/google`;
                 }}
-                className="w-full flex items-center justify-center gap-3 border-2 border-gray-200 bg-white text-[#343A40] py-3 rounded-xl hover:bg-gray-50 hover:border-gray-300 font-medium mb-4 text-sm transition-all duration-200"
+                className="w-full flex items-center justify-center gap-3 border-2 border-gray-200 bg-white text-[#0F172A] py-3 rounded-xl hover:bg-gray-50 hover:border-gray-300 font-medium mb-4 text-sm transition-all duration-200"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -378,7 +378,7 @@ export default function LoginPage() {
               {smsStep === 'phone' ? (
                 <form className="flex flex-col gap-3 md:gap-4" onSubmit={handleSendCode}>
                   <div>
-                    <label className="block text-[#343A40] text-sm font-semibold mb-2">
+                    <label className="block text-[#0F172A] text-sm font-semibold mb-2">
                       Numéro de téléphone
                     </label>
                     <input
@@ -389,7 +389,7 @@ export default function LoginPage() {
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       required
                     />
-                    <p className="text-xs text-[#6C757D] mt-2">
+                    <p className="text-xs text-[#64748B] mt-2">
                       Format international, ex : +33612345678. Un code à 6 chiffres vous sera envoyé par SMS.
                     </p>
                   </div>
@@ -402,14 +402,14 @@ export default function LoginPage() {
                         onChange={(e) => setRememberMe(e.target.checked)}
                         className="w-4 h-4 text-[#1E3A8A] border-gray-300 rounded focus:ring-[#1E3A8A] focus:ring-2"
                       />
-                      <span className="ml-2 text-sm text-[#6C757D]">Se souvenir de moi</span>
+                      <span className="ml-2 text-sm text-[#64748B]">Se souvenir de moi</span>
                     </label>
                   </div>
 
                   <button
                     type="submit"
                     disabled={smsSending}
-                    className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#155a8a] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#1D4ED8] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {smsSending ? 'Envoi en cours…' : 'Recevoir un code par SMS'}
                   </button>
@@ -418,11 +418,11 @@ export default function LoginPage() {
                 <form className="flex flex-col gap-3 md:gap-4" onSubmit={handleVerifyCode}>
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <label className="block text-[#343A40] text-sm font-semibold">Code de vérification</label>
+                      <label className="block text-[#0F172A] text-sm font-semibold">Code de vérification</label>
                       <button
                         type="button"
                         onClick={backToPhoneStep}
-                        className="text-xs text-[#1E3A8A] hover:text-[#155a8a] hover:underline font-medium"
+                        className="text-xs text-[#1E3A8A] hover:text-[#1D4ED8] hover:underline font-medium"
                       >
                         Modifier le numéro
                       </button>
@@ -437,7 +437,7 @@ export default function LoginPage() {
                       onChange={(e) => setSmsCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       required
                     />
-                    <p className="text-xs text-[#6C757D] mt-2">
+                    <p className="text-xs text-[#64748B] mt-2">
                       Saisissez le code à 6 chiffres envoyé au {phoneNumber.replace(/\s+/g, '')}.
                     </p>
                   </div>
@@ -447,7 +447,7 @@ export default function LoginPage() {
                       <p className="text-[#1E3A8A] text-sm font-medium">
                         Mode développement — code : <span className="font-bold tracking-widest">{devCode}</span>
                       </p>
-                      <p className="text-[#6C757D] text-xs mt-1">
+                      <p className="text-[#64748B] text-xs mt-1">
                         Twilio n&apos;est pas configuré ou l&apos;envoi a échoué ; utilisez ce code pour tester.
                       </p>
                     </div>
@@ -456,7 +456,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={smsVerifying || smsCode.length !== 6}
-                    className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#155a8a] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full bg-[#1E3A8A] text-white font-semibold py-3 rounded-xl hover:bg-[#1D4ED8] mt-4 text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {smsVerifying ? 'Vérification…' : 'Se connecter'}
                   </button>
@@ -465,7 +465,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={requestCode}
                     disabled={cooldown > 0 || smsSending}
-                    className="w-full text-[#1E3A8A] hover:text-[#155a8a] text-sm font-medium py-2 disabled:text-[#6C757D] disabled:cursor-not-allowed"
+                    className="w-full text-[#1E3A8A] hover:text-[#1D4ED8] text-sm font-medium py-2 disabled:text-[#64748B] disabled:cursor-not-allowed"
                   >
                     {cooldown > 0
                       ? `Renvoyer un code (${cooldown} s)`
@@ -478,9 +478,9 @@ export default function LoginPage() {
             </>
           )}
 
-          <div className="text-center text-[#6C757D] text-sm mt-6">
+          <div className="text-center text-[#64748B] text-sm mt-6">
             Pas encore de compte ?{' '}
-            <Link to="/signup" className="text-[#1E3A8A] hover:text-[#155a8a] hover:underline font-semibold">
+            <Link to="/signup" className="text-[#1E3A8A] hover:text-[#1D4ED8] hover:underline font-semibold">
               S'inscrire
             </Link>
           </div>
