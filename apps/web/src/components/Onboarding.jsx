@@ -4,6 +4,7 @@ import { MdAccountBalanceWallet, MdAddCircle, MdEventNote, MdInstallMobile, MdSc
 import { loadDemoData } from '../api.js';
 import { currentOwner } from '../lib/offline.js';
 import { useI18n } from '../context/I18nContext.jsx';
+import { promptInstall, useCanInstall } from '../lib/install.js';
 
 const STEPS = [
   { key: 'welcome', icon: MdWavingHand },
@@ -25,6 +26,7 @@ export default function Onboarding() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [demoState, setDemoState] = useState('idle'); // idle | loading | done | error
+  const canInstall = useCanInstall();
 
   // Première visite du tableau de bord après connexion
   useEffect(() => {
@@ -58,6 +60,7 @@ export default function Onboarding() {
       await loadDemoData();
       setDemoState('done');
       window.dispatchEvent(new CustomEvent('transactions-changed'));
+      window.dispatchEvent(new CustomEvent('demo-changed'));
     } catch (err) {
       // Déjà chargées : même résultat pour l'utilisateur
       setDemoState(/déjà chargées/i.test(err.message) ? 'done' : 'error');
@@ -76,6 +79,10 @@ export default function Onboarding() {
         </div>
         <h2 id="tour-title" className="text-xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">{t(`tour.${key}Title`)}</h2>
         <p className="mt-2 text-gray-600 dark:text-[#CBD5E1]">{t(`tour.${key}Text`)}</p>
+
+        {key === 'install' && canInstall && (
+          <button onClick={promptInstall} className="mt-4 px-5 py-2.5 rounded-xl bg-[#2563EB] dark:bg-[#3B82F6] text-white font-semibold">{t('install.button')}</button>
+        )}
 
         {key === 'demo' && (
           <div className="mt-4">

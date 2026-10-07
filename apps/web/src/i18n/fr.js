@@ -67,7 +67,7 @@ export default {
 
   // Installation
   'install.title': 'Installer MyBudget',
-  'install.text': 'Ajoutez l’application à votre écran d’accueil pour y accéder en un geste.',
+  'install.text': 'Ajoutez l’application à votre écran d’accueil ou à votre ordinateur pour y accéder en un geste.',
   'install.button': 'Installer',
   'install.later': 'Plus tard',
   'install.iosText': 'Sur iPhone : touchez Partager puis « Sur l’écran d’accueil » pour installer MyBudget.',
@@ -119,6 +119,10 @@ export default {
   'help.demoRemove': 'Supprimer les données de démonstration',
   'help.demoActive': '{n} transactions de démonstration présentes',
   'help.demoRemoved': 'Données de démonstration supprimées',
+  'help.install': 'Installer l’application',
+  'demo.banner': 'Mode démonstration actif : {n} transactions d’exemple.',
+  'demo.exit': 'Quitter le mode démo',
+  'demo.exiting': 'Sortie du mode démo…',
 
   // Langue
   'lang.note': 'Change la langue des menus, de l’ajout rapide et du tutoriel, ainsi que le format des nombres et des dates. Les autres pages seront traduites progressivement.',

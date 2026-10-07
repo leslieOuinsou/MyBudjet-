@@ -67,7 +67,7 @@ export default {
 
   // Install
   'install.title': 'Install MyBudget',
-  'install.text': 'Add the app to your home screen to open it in one tap.',
+  'install.text': 'Add the app to your home screen or computer to open it in one click.',
   'install.button': 'Install',
   'install.later': 'Not now',
   'install.iosText': 'On iPhone: tap Share then “Add to Home Screen” to install MyBudget.',
@@ -119,6 +119,10 @@ export default {
   'help.demoRemove': 'Remove demo data',
   'help.demoActive': '{n} demo transactions present',
   'help.demoRemoved': 'Demo data removed',
+  'help.install': 'Install the app',
+  'demo.banner': 'Demo mode is on: {n} sample transactions.',
+  'demo.exit': 'Exit demo mode',
+  'demo.exiting': 'Exiting demo mode…',
 
   // Language
   'lang.note': 'Changes the language of menus, quick add and the tutorial, plus number and date formats. Other pages will be translated progressively.',

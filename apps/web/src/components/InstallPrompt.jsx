@@ -1,41 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { MdClose, MdInstallMobile } from 'react-icons/md';
 import { useI18n } from '../context/I18nContext.jsx';
+import { isIOS, isStandalone, promptInstall, useCanInstall } from '../lib/install.js';
 
 const DISMISS_KEY = 'mybudget_install_dismissed';
 const hasToken = () => Boolean(localStorage.getItem('token') || sessionStorage.getItem('token'));
-const isStandalone = () => window.matchMedia?.('(display-mode: standalone)').matches || navigator.standalone === true;
-const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
 const wasDismissed = () => { try { return localStorage.getItem(DISMISS_KEY) === '1'; } catch { return false; } };
 
 /** Invite à installer l'application (Chrome/Edge/Android) ou explique comment le faire sur iPhone. */
 export default function InstallPrompt() {
   const { t } = useI18n();
-  const [deferred, setDeferred] = useState(null);
+  const deferred = useCanInstall();
   const [hidden, setHidden] = useState(wasDismissed);
-
-  useEffect(() => {
-    const onPrompt = (e) => { e.preventDefault(); setDeferred(e); };
-    const onInstalled = () => setDeferred(null);
-    window.addEventListener('beforeinstallprompt', onPrompt);
-    window.addEventListener('appinstalled', onInstalled);
-    return () => {
-      window.removeEventListener('beforeinstallprompt', onPrompt);
-      window.removeEventListener('appinstalled', onInstalled);
-    };
-  }, []);
 
   const dismiss = () => {
     setHidden(true);
     try { localStorage.setItem(DISMISS_KEY, '1'); } catch { /* stockage indisponible */ }
   };
 
-  const install = async () => {
-    if (!deferred) return;
-    deferred.prompt();
-    await deferred.userChoice.catch(() => {});
-    setDeferred(null);
-  };
+  const install = () => promptInstall();
 
   const showIosHint = isIOS() && !isStandalone();
   if (hidden || isStandalone() || !hasToken() || (!deferred && !showIosHint)) return null;
