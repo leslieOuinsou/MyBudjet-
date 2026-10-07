@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 const __filename = fileURLToPath(import.meta.url);

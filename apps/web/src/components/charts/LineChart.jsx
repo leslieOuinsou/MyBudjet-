@@ -46,10 +46,20 @@ const series = (label, values, color) => ({
   pointHoverBorderColor: SURFACE,
 });
 
+// Accepte deux formats : { labels, income, expense } (Rapports, Tableau de bord)
+// ou { labels, datasets: [{ label, data }, ...] } (Prévisions : revenus, dépenses, solde cumulé).
+// Les couleurs viennent toujours de la palette commune, dans l'ordre des séries.
+const buildSeries = (data) => {
+  if (Array.isArray(data?.datasets)) {
+    return data.datasets.map((d, i) => series(d.label, d.data, SERIES[i % SERIES.length]));
+  }
+  return [series('Revenus', data?.income, INCOME), series('Dépenses', data?.expense, EXPENSE)];
+};
+
 export default function LineChart({ data, title }) {
   const chartData = {
     labels: data?.labels || [],
-    datasets: [series('Revenus', data?.income, INCOME), series('Dépenses', data?.expense, EXPENSE)],
+    datasets: buildSeries(data),
   };
 
   const options = {
@@ -68,7 +78,7 @@ export default function LineChart({ data, title }) {
     scales: axisStyle,
   };
 
-  if (!hasValues([data?.income, data?.expense])) {
+  if (!hasValues(chartData.datasets.map((d) => d.data))) {
     return <div className="h-64 w-full flex items-center justify-center text-sm text-gray-500">Aucune donnée sur cette période.</div>;
   }
 

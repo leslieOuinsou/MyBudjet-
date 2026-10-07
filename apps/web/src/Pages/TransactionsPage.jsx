@@ -11,6 +11,7 @@ import {
   MdEdit, MdDelete, MdAccountBalance, MdRefresh
 } from 'react-icons/md';
 
+import { scanReceiptLocal } from '../lib/receiptOcr.js';
 import { formatMoney, formatDate, currencySymbol } from '../lib/format.js';
 export default function TransactionsPage() {
   const [searchParams] = useSearchParams();
@@ -20,6 +21,7 @@ export default function TransactionsPage() {
   const [categoryHint, setCategoryHint] = useState('');
   const [aiReady, setAiReady] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -194,7 +196,9 @@ export default function TransactionsPage() {
     setScanning(true);
     setError('');
     try {
-      const r = await scanReceipt(file);
+      // IA Claude si le serveur est configuré, sinon lecture gratuite sur l'appareil
+      setScanProgress(0);
+      const r = aiReady ? await scanReceipt(file) : await scanReceiptLocal(file, setScanProgress);
       setNewTransaction((prev) => ({
         ...prev,
         type: 'expense',
@@ -203,11 +207,12 @@ export default function TransactionsPage() {
         category: r.categoryId || prev.category,
         ...(r.date ? { date: r.date } : {}),
       }));
-      setCategoryHint(r.categoryName ? `Catégorie lue sur le ticket : ${r.categoryName}` : 'Vérifie les champs avant de valider.');
+      setCategoryHint(r.categoryName ? `Catégorie suggérée : ${r.categoryName}. Vérifie les champs avant de valider.` : 'Ticket lu : vérifie le montant et la date avant de valider.');
     } catch (err) {
       setError(err.message);
     } finally {
       setScanning(false);
+      setScanProgress(null);
     }
   };
 
@@ -654,9 +659,9 @@ export default function TransactionsPage() {
                    {editingTransaction ? 'Modifier la transaction' : 'Ajouter une transaction'}
                  </h3>
                 <form onSubmit={handleAddTransaction}>
-                  {aiReady && !editingTransaction && (
+                  {!editingTransaction && (
                     <label className="mb-3 md:mb-4 flex items-center justify-center gap-2 border border-dashed border-[#1E73BE] text-[#1E73BE] rounded-lg px-3 py-2 text-sm cursor-pointer hover:bg-[#EAF4FB]">
-                      {scanning ? 'Lecture du ticket…' : '📷 Scanner un ticket de caisse'}
+                      {scanning ? `Lecture du ticket…${scanProgress ? ` ${scanProgress} %` : ''}` : '📷 Scanner un ticket de caisse'}
                       <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="hidden" onChange={handleReceiptScan} disabled={scanning} />
                     </label>
                   )}

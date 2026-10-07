@@ -58,7 +58,7 @@ const SettingSwitch = ({ label, description, settingKey, value, saving, onToggle
       <div className="font-medium flex items-center gap-2">
         {label}
         {saving && (
-          <span className="inline-block h-3 w-3 rounded-full border-2 border-[#1E73BE] border-t-transparent animate-spin" title="Enregistrement…" />
+          <span className="inline-block h-3 w-3 rounded-full border-2 border-green-500 border-t-transparent animate-spin" title="Enregistrement…" />
         )}
       </div>
       <div className="text-gray-500 text-sm">{description}</div>
@@ -71,7 +71,7 @@ const SettingSwitch = ({ label, description, settingKey, value, saving, onToggle
         disabled={saving}
         className="sr-only"
       />
-      <span className={`w-11 h-6 flex items-center bg-gray-200 rounded-full p-1 duration-300 ${value ? 'bg-[#1E73BE]' : ''}`}>
+      <span className={`w-11 h-6 flex items-center rounded-full p-1 duration-300 ${value ? 'bg-green-500' : 'bg-gray-300'}`}>
         <span className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${value ? 'translate-x-5' : ''}`}></span>
       </span>
     </label>

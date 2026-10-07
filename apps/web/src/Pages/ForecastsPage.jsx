@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import DashboardSidebar from '../components/DashboardSidebar.jsx';
 import LineChart from '../components/charts/LineChart.jsx';
 import { useTheme } from '../context/ThemeContext';
@@ -19,6 +20,8 @@ export default function ForecastsPage() {
   const [overview, setOverview] = useState(null);
   const [chartData, setChartData] = useState(null);
   const [advice, setAdvice] = useState([]);
+  const [adviceAnalysis, setAdviceAnalysis] = useState(null);
+  const [selectedAdvice, setSelectedAdvice] = useState(null);
   const [projectionMonths, setProjectionMonths] = useState(1);
 
   // Charger les données au montage du composant
@@ -47,6 +50,7 @@ export default function ForecastsPage() {
       setOverview(overviewData);
       setChartData(chartDataResult);
       setAdvice(adviceData.advice || []);
+      setAdviceAnalysis(adviceData.analysis || null);
       
       console.log('✅ Toutes les données de prévisions chargées avec succès');
     } catch (err) {
@@ -65,11 +69,24 @@ export default function ForecastsPage() {
   // Fonction pour obtenir la couleur selon le type de conseil
   const getAdviceColor = (type) => {
     switch (type) {
-      case 'warning': return 'border-[#6C757D] bg-[#F5F7FA]';
-      case 'success': return 'border-[#28A745] bg-[#D4EDDA]';
-      case 'info': return 'border-[#1E73BE] bg-[#E3F2FD]';
+      case 'warning': return 'border-amber-300 bg-amber-50';
+      case 'success': return 'border-green-300 bg-green-50';
+      case 'info': return 'border-blue-300 bg-blue-50';
+      case 'suggestion': return 'border-violet-300 bg-violet-50';
       default: return 'border-gray-200 bg-gray-50';
     }
+  };
+
+  // Actions concrètes proposées dans la fenêtre « Voir les détails »
+  const getAdviceActions = (item) => {
+    const title = (item.title || '').toLowerCase();
+    if (title.includes('dépassé')) return [{ label: 'Voir mes budgets', to: '/budgets' }, { label: 'Voir mes dépenses', to: '/expenses' }];
+    if (title.includes('épargne')) return [{ label: "Lancer un défi d'épargne", to: '/challenges' }, { label: 'Voir mes budgets', to: '/budgets' }];
+    if (title.includes('optimisez')) return [{ label: `Fixer un budget${item.category ? ` pour ${item.category}` : ''}`, to: '/budgets' }, { label: 'Voir mes dépenses', to: '/expenses' }];
+    if (title.includes('abonnement')) return [{ label: 'Voir mes abonnements détectés', to: '/insights' }, { label: 'Voir mes transactions récurrentes', to: '/recurring' }];
+    if (title.includes('diversifiez')) return [{ label: 'Voir mes revenus', to: '/transactions' }];
+    if (title.includes('excellente')) return [{ label: "Relever un défi d'épargne", to: '/challenges' }];
+    return [{ label: 'Voir mes rapports', to: '/reports' }];
   };
 
   // Fonction pour obtenir l'icône selon le type de conseil
@@ -153,7 +170,16 @@ export default function ForecastsPage() {
 				<DashboardSidebar />
 				{/* Main content */}
 				<main className='flex-1 py-10 px-4 md:px-12'>
-					<h1 className={`text-2xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-[#343A40]'}`}>Prévisions Financières & Conseils</h1>
+					<div className='flex flex-wrap items-center justify-between gap-3 mb-8'>
+						<h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#343A40]'}`}>Prévisions Financières & Conseils</h1>
+						<a
+							href='#conseils'
+							onClick={(e) => { e.preventDefault(); document.getElementById('conseils')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+							className='inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1E73BE] text-white text-sm font-semibold hover:bg-[#155a8a]'
+						>
+							💡 Voir mes conseils{advice.length > 0 ? ` (${advice.length})` : ''}
+						</a>
+					</div>
 					
 					{/* Message d'erreur */}
 					{error && (
@@ -290,7 +316,7 @@ export default function ForecastsPage() {
 						)}
 					</div>
 					{/* Conseils personnalisés */}
-					<div className='mb-8'>
+					<div id='conseils' className='mb-8 scroll-mt-6'>
 						<div className='flex justify-between items-center mb-4'>
 							<div>
 								<div className={`font-semibold ${isDarkMode ? 'text-white' : 'text-[#343A40]'}`}>
@@ -312,7 +338,7 @@ export default function ForecastsPage() {
 								{advice.map((adviceItem, index) => (
 									<div
 										key={index}
-										className={`rounded-lg border p-6 flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : `bg-white ${getAdviceColor(adviceItem.type)}`}`}
+										className={`rounded-lg border p-6 flex flex-col gap-3 ${isDarkMode ? 'bg-[#2d2d2d] border-[#404040]' : getAdviceColor(adviceItem.type)}`}
 									>
 										<div className='flex items-start justify-between'>
 											<div className={`font-bold mb-1 flex-1 ${isDarkMode ? 'text-white' : 'text-[#343A40]'}`}>
@@ -355,10 +381,7 @@ export default function ForecastsPage() {
 										
 										<button 
 											className={`w-fit px-4 py-2 rounded font-semibold text-sm transition ${isDarkMode ? 'bg-[#383838] text-[#1E73BE] border border-[#404040] hover:bg-[#404040]' : 'bg-white bg-opacity-80 text-[#1E73BE] border border-white hover:bg-opacity-100'}`}
-											onClick={() => {
-												// Ici on pourrait ouvrir un modal avec plus de détails
-												console.log('Détails conseil:', adviceItem);
-											}}
+											onClick={() => setSelectedAdvice(adviceItem)}
 										>
 											Voir les détails
 										</button>
@@ -376,6 +399,55 @@ export default function ForecastsPage() {
 						)}
 					</div>
 				</main>
+				{selectedAdvice && (
+					<div
+						className='fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4'
+						role='dialog'
+						aria-modal='true'
+						aria-label={selectedAdvice.title}
+						onClick={() => setSelectedAdvice(null)}
+						onKeyDown={(e) => e.key === 'Escape' && setSelectedAdvice(null)}
+					>
+						<div className='bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6' onClick={(e) => e.stopPropagation()}>
+							<div className='flex items-start justify-between gap-4 mb-3'>
+								<h3 className='text-lg font-bold text-[#343A40]'>{getAdviceIcon(selectedAdvice.type)} {selectedAdvice.title}</h3>
+								<button onClick={() => setSelectedAdvice(null)} className='text-gray-500 hover:text-gray-800' aria-label='Fermer' autoFocus>✕</button>
+							</div>
+							<p className='text-sm text-[#495057] mb-4'>{selectedAdvice.description}</p>
+
+							{(adviceAnalysis || selectedAdvice.category || selectedAdvice.percentage) && (
+								<div className='rounded-xl bg-[#F5F7FA] p-4 mb-4'>
+									<div className='text-xs font-semibold text-[#6C757D] uppercase mb-2'>Pourquoi ce conseil</div>
+									<ul className='text-sm text-[#343A40] space-y-1'>
+										{adviceAnalysis && <li>Revenus de la période : <strong>{formatAmount(adviceAnalysis.totalIncome)}</strong></li>}
+										{adviceAnalysis && <li>Dépenses de la période : <strong>{formatAmount(adviceAnalysis.totalExpenses)}</strong></li>}
+										{adviceAnalysis && <li>Taux d’épargne : <strong>{Number(adviceAnalysis.savingsRate || 0).toFixed(1)} %</strong></li>}
+										{selectedAdvice.category && <li>Catégorie concernée : <strong>{selectedAdvice.category}</strong>{selectedAdvice.percentage ? ` (${Number(selectedAdvice.percentage).toFixed(0)} % de vos dépenses)` : ''}</li>}
+										{selectedAdvice.amount ? <li>Montant concerné : <strong>{formatAmount(selectedAdvice.amount)}</strong></li> : null}
+									</ul>
+									{adviceAnalysis?.topCategories?.length > 0 && (
+										<div className='mt-3 text-sm text-[#343A40]'>
+											<div className='text-xs font-semibold text-[#6C757D] uppercase mb-1'>Vos plus gros postes</div>
+											{adviceAnalysis.topCategories.map((c) => (
+												<div key={c.category} className='flex justify-between'><span>{c.category}</span><span className='font-semibold'>{formatAmount(c.amount)}</span></div>
+											))}
+										</div>
+									)}
+								</div>
+							)}
+
+							<div className='text-xs font-semibold text-[#6C757D] uppercase mb-2'>Que faire ?</div>
+							<div className='flex flex-wrap gap-2'>
+								{getAdviceActions(selectedAdvice).map((action) => (
+									<Link key={action.to + action.label} to={action.to} className='px-4 py-2 rounded-lg bg-[#1E73BE] text-white text-sm font-semibold hover:bg-[#155a8a]'>
+										{action.label}
+									</Link>
+								))}
+								<button onClick={() => setSelectedAdvice(null)} className='px-4 py-2 rounded-lg border border-gray-300 text-sm text-[#343A40]'>Fermer</button>
+							</div>
+						</div>
+					</div>
+				)}
 				{/* Sidebar mobile (déconnexion) */}
 				<aside className='md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#F5F7FA] p-4 flex justify-center'>
 					<button className='bg-[#1E73BE] text-white px-6 py-2 rounded font-semibold hover:bg-[#155a8a] flex items-center gap-2'>
